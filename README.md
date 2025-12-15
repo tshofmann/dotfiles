@@ -1,2 +1,1 @@
-# dotfiles
-MacOS SetUp
+> Dieses Repository enthält meine **Konfigurationsdateien** für ein macOS 26 Setup auf einem MacBook Pro M5.
