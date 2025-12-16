@@ -1,0 +1,13 @@
+# ============================================================
+# homebrew.alias - Homebrew Aliase
+# ============================================================
+# Zweck   : Aliase für Homebrew Paketverwaltung
+# Pfad    : ~/.config/alias/homebrew.alias
+# Quelle  : ~/dotfiles/Terminal/.config/alias/homebrew.alias
+# ============================================================
+
+# ------------------------------------------------------------
+# Update & Wartung
+# ------------------------------------------------------------
+# Vollständiges System-Update: update → upgrade → autoremove → cleanup
+alias brewup='brew update && brew upgrade; brew autoremove; brew cleanup'
