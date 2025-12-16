@@ -1,47 +1,121 @@
 #!/usr/bin/env zsh
+# ============================================================
+# terminal_macos.sh - Terminal.app Setup für macOS
+# ============================================================
+# Zweck   : Installiert Nerd Font und importiert Terminal-Profil
+# Aufruf  : ./terminal_macos.sh
+# Voraus. : macOS mit Terminal.app
+# ============================================================
+
 set -euo pipefail
 
-PROFILE_FILE="tshofmann.terminal"
+# ------------------------------------------------------------
+# Konfiguration
+# ------------------------------------------------------------
+SCRIPT_DIR="${0:A:h}"
+PROFILE_FILE="$SCRIPT_DIR/tshofmann.terminal"
 PROFILE_NAME="tshofmann"
-FONT_NAME="MesloLGS NF"
+FONT_GLOB="MesloLG*NerdFont*"              # Glob für Nerd Font-Dateien
 BREW_FONT_CASK="font-meslo-lg-nerd-font"
+PLIST="$HOME/Library/Preferences/com.apple.Terminal.plist"
 
-print "==> Terminal Setup (macOS, idempotent)"
+# Homebrew-Prefix (Apple Silicon vs Intel)
+if [[ $(uname -m) == "arm64" ]]; then
+  BREW_PREFIX="/opt/homebrew"
+else
+  BREW_PREFIX="/usr/local"
+fi
 
-# 1️⃣ Homebrew prüfen
+# ------------------------------------------------------------
+# Hauptprogramm
+# ------------------------------------------------------------
+print "==> Terminal Setup (macOS)"
+
+# Homebrew prüfen & bei Bedarf installieren
 if ! command -v brew >/dev/null 2>&1; then
-  print "✖ Homebrew nicht installiert"
-  print "  → https://brew.sh"
+  print "→ Homebrew nicht gefunden, starte Installation..."
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  
+  # Homebrew in aktueller Shell verfügbar machen
+  if [[ -x "$BREW_PREFIX/bin/brew" ]]; then
+    eval "$($BREW_PREFIX/bin/brew shellenv)"
+    print "✔ Homebrew installiert und aktiviert"
+  else
+    print "✖ Homebrew-Installation fehlgeschlagen"
+    exit 1
+  fi
+else
+  print "✔ Homebrew vorhanden"
+fi
+
+# Nerd Font prüfen & bei Bedarf installieren
+font_installed() {
+  # Prüfe User- und System-Font-Verzeichnisse (Homebrew installiert nach ~/Library/Fonts)
+  [[ -n $(echo ~/Library/Fonts/${~FONT_GLOB}(N) /Library/Fonts/${~FONT_GLOB}(N)) ]]
+}
+
+if font_installed; then
+  print "✔ Font '$BREW_FONT_CASK' vorhanden"
+else
+  print "→ Installiere Font '$BREW_FONT_CASK'"
+  if ! brew install --cask "$BREW_FONT_CASK"; then
+    print "✖ Font-Installation fehlgeschlagen"
+    exit 1
+  fi
+  
+  # Verifiziere Installation (kurz warten für Systemcache)
+  sleep 1
+  if font_installed; then
+    print "✔ Font '$BREW_FONT_CASK' installiert"
+  else
+    print "✖ Font nicht gefunden nach Installation, Terminal-Profil wird nicht importiert."
+    print "  Prüfe: ls ~/Library/Fonts/$FONT_GLOB"
+    exit 1
+  fi
+fi
+
+# Profil-Datei prüfen
+if [[ ! -f "$PROFILE_FILE" ]]; then
+  print "✖ Profil-Datei nicht gefunden: $PROFILE_FILE"
   exit 1
 fi
 
-# 2️⃣ Nerd Font prüfen & bei Bedarf installieren
-if system_profiler SPFontsDataType 2>/dev/null | grep -q "$FONT_NAME"; then
-  print "✔ Nerd Font '$FONT_NAME' bereits installiert"
-else
-  print "→ Installiere Nerd Font '$FONT_NAME'"
-  brew install --cask "$BREW_FONT_CASK"
+# Terminal-Profil importieren
+# Stelle sicher dass 'Window Settings' Dict existiert
+if ! /usr/libexec/PlistBuddy -c "Print ':Window Settings'" "$PLIST" >/dev/null 2>&1; then
+  /usr/libexec/PlistBuddy -c "Add ':Window Settings' dict" "$PLIST"
 fi
 
-# 3️⃣ Prüfen, ob Terminal-Profil existiert
-if defaults read com.apple.Terminal "Window Settings" 2>/dev/null | grep -q "\"$PROFILE_NAME\""; then
-  print "✔ Profil '$PROFILE_NAME' existiert bereits"
+# Prüfe ob Profil bereits existiert
+if /usr/libexec/PlistBuddy -c "Print ':Window Settings:$PROFILE_NAME'" "$PLIST" >/dev/null 2>&1; then
+  print "→ Aktualisiere Profil '$PROFILE_NAME'"
 else
-  print "→ Importiere Terminal-Profil"
-  [[ -f "$PROFILE_FILE" ]] || { print "✖ $PROFILE_FILE fehlt"; exit 1; }
-  open "$PROFILE_FILE"
+  print "→ Importiere Profil '$PROFILE_NAME'"
+  /usr/libexec/PlistBuddy -c "Add ':Window Settings:$PROFILE_NAME' dict" "$PLIST"
 fi
 
-# 4️⃣ Profil als Default & Startup setzen (nur wenn nötig)
-for KEY in "Default Window Settings" "Startup Window Settings"; do
-  CURRENT=$(defaults read com.apple.Terminal "$KEY" 2>/dev/null || true)
-  if [[ "$CURRENT" != "$PROFILE_NAME" ]]; then
-    print "→ Setze $KEY auf '$PROFILE_NAME'"
-    defaults write com.apple.Terminal "$KEY" -string "$PROFILE_NAME"
+# Profil-Daten mergen (bestehende Einträge werden übersprungen)
+/usr/libexec/PlistBuddy -c "Merge '$PROFILE_FILE' ':Window Settings:$PROFILE_NAME'" "$PLIST" >/dev/null 2>&1 || true
+
+# Preferences-Cache neu laden
+defaults read com.apple.Terminal >/dev/null 2>&1
+print "✔ Profil '$PROFILE_NAME' bereit"
+
+# Profil als Standard setzen
+for key in "Default Window Settings" "Startup Window Settings"; do
+  current=$(defaults read com.apple.Terminal "$key" 2>/dev/null || true)
+  if [[ "$current" != "$PROFILE_NAME" ]]; then
+    print "→ Setze $key"
+    defaults write com.apple.Terminal "$key" -string "$PROFILE_NAME"
   else
-    print "✔ $KEY bereits korrekt"
+    print "✔ $key korrekt"
   fi
 done
 
-print "✔ Terminal Setup abgeschlossen"
-print "ℹ Terminal.app ggf. neu starten"
+print ""
+print "✔ Setup abgeschlossen"
+
+# Hinweis bei laufendem Terminal
+if pgrep -x "Terminal" >/dev/null 2>&1; then
+  print "⚠ Terminal.app neu starten für Änderungen"
+fi
