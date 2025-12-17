@@ -15,8 +15,9 @@ set -euo pipefail
 SCRIPT_DIR="${0:A:h}"
 PROFILE_FILE="$SCRIPT_DIR/tshofmann.terminal"
 PROFILE_NAME="tshofmann"
-FONT_GLOB="MesloLG*NerdFont*"              # Glob für Nerd Font-Dateien
+FONT_GLOB="MesloLG*NerdFont*"
 BREW_FONT_CASK="font-meslo-lg-nerd-font"
+TOOLS=(fzf gh stow starship zoxide)
 
 # Homebrew-Prefix (Apple Silicon vs Intel)
 if [[ $(uname -m) == "arm64" ]]; then
@@ -47,8 +48,7 @@ else
   print "✔ Homebrew vorhanden"
 fi
 
-# CLI-Tools installieren (alphabetisch sortiert)
-TOOLS=(fzf gh stow starship zoxide)
+# CLI-Tools installieren
 print "→ Installiere Tools: ${TOOLS[*]}"
 brew install "${TOOLS[@]}"
 print "✔ Tools installiert"

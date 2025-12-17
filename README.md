@@ -35,20 +35,6 @@ Die Konfiguration basiert auf folgenden Tools:
 | [Starship](https://starship.rs) | Anpassbarer Shell-Prompt |
 | [zoxide](https://github.com/ajeetdsouza/zoxide) | Smartes `cd` mit Frecency |
 
-### Homebrew installieren
-
-Falls Homebrew noch nicht installiert ist:
-
-```zsh
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-
-### Tools installieren
-
-```zsh
-brew install fzf gh stow starship zoxide
-```
-
 ## 🚀 Installation
 
 ### 1. Terminal Setup
@@ -61,6 +47,7 @@ Das Terminal-Setup installiert den Font und das Terminal-Profil:
 
 Dieses Skript:
 - Installiert **Homebrew** (falls nicht vorhanden)
+- Installiert **CLI-Tools**: fzf, gh, stow, starship, zoxide
 - Installiert **MesloLG Nerd Font** für Symbole und Icons
 - Importiert das **Terminal.app Profil** mit vorkonfiguriertem Theme
 
