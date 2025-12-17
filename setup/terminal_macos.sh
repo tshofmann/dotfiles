@@ -127,7 +127,7 @@ if [[ "$current_default" == "$PROFILE_NAME" && "$current_startup" == "$PROFILE_N
 else
   print "→ Setze '$PROFILE_NAME' als Standard- und Startprofil"
   
-  result=$(set_profile_as_default "$PROFILE_NAME")
+  set_profile_as_default "$PROFILE_NAME"
   
   # Verifiziere die Änderung
   sleep 1
