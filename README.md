@@ -83,7 +83,7 @@ cask "font-meslo-lg-nerd-font"
 > 1. Datei nach `terminal/.config/starship.toml` kopieren
 > 2. Eintrag `terminal/.config/starship.toml` aus `.gitignore` entfernen
 > 3. Eintrag `--ignore=starship\.toml` aus `.stowrc` entfernen
-> 4. Mit `stow --restow terminal` verlinken
+> 4. Mit `stow --no-folding --restow terminal` verlinken
 
 ## ⌨️ Aliase
 
