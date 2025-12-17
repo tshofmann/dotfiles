@@ -55,21 +55,21 @@ BREW_PREFIX="/opt/homebrew"
 # ------------------------------------------------------------
 print "==> Terminal Setup (macOS)"
 
-# Homebrew prüfen & bei Bedarf installieren
-if ! command -v brew >/dev/null 2>&1; then
+# Homebrew bei Bedarf installieren
+if ! [[ -x "$BREW_PREFIX/bin/brew" ]]; then
   log "Homebrew nicht gefunden, starte Installation..."
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  
-  # Homebrew in aktueller Shell verfügbar machen
-  if [[ -x "$BREW_PREFIX/bin/brew" ]]; then
-    eval "$($BREW_PREFIX/bin/brew shellenv)"
-    ok "Homebrew installiert und aktiviert"
-  else
-    err "Homebrew-Installation fehlgeschlagen"
-    exit 1
-  fi
+fi
+
+# Homebrew-Umgebung initialisieren (idempotent, daher immer ausführen)
+# Stellt sicher, dass PATH, HOMEBREW_PREFIX etc. korrekt gesetzt sind
+# Unabhängig davon, ob Login-Shell oder Skript-Aufruf
+if [[ -x "$BREW_PREFIX/bin/brew" ]]; then
+  eval "$("$BREW_PREFIX/bin/brew" shellenv)"
+  ok "Homebrew bereit"
 else
-  ok "Homebrew vorhanden"
+  err "Homebrew-Binary nicht gefunden unter $BREW_PREFIX/bin/brew"
+  exit 1
 fi
 
 # Brewfile prüfen
