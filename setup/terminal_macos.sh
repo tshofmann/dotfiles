@@ -168,5 +168,10 @@ else
 fi
 
 print ""
+print "→ Konfiguriere Starship-Theme"
+starship preset catppuccin-powerline -o ~/.config/starship.toml
+print "✔ Starship-Theme gesetzt"
+
+print ""
 print "✔ Setup abgeschlossen"
 print "→ Terminal.app neu starten für vollständige Übernahme aller Einstellungen"

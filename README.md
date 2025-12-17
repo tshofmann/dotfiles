@@ -35,6 +35,7 @@ Das Skript:
 - Installiert CLI-Tools via Brewfile (fzf, gh, stow, starship, zoxide)
 - Installiert MesloLG Nerd Font
 - Importiert & setzt Terminal.app Profil als Standard
+- Konfiguriert Starship-Theme (catppuccin-powerline)
 - ✖ Exit bei kritischen Fehlern (Architektur, Xcode, Font)
 - ⚠ Warnung bei Profil-Problemen (nicht blockierend)
 
