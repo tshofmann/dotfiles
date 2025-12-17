@@ -2,9 +2,9 @@
 # ============================================================
 # terminal_macos.sh - Terminal.app Setup für macOS
 # ============================================================
-# Zweck   : Installiert Nerd Font und importiert Terminal-Profil
+# Zweck   : Homebrew, CLI-Tools, Nerd Font & Terminal-Profil
+# Pfad    : ~/dotfiles/setup/terminal_macos.sh
 # Aufruf  : ./terminal_macos.sh
-# Voraus. : macOS mit Terminal.app
 # ============================================================
 
 set -euo pipefail
@@ -85,37 +85,71 @@ if [[ ! -f "$PROFILE_FILE" ]]; then
   exit 1
 fi
 
-# Terminal-Profil importieren (via offiziellem Apple-Mechanismus)
-if defaults read com.apple.Terminal "Window Settings" 2>/dev/null | grep -q "\"$PROFILE_NAME\""; then
+# Terminal-Profil importieren
+if defaults read com.apple.Terminal "Window Settings" 2>/dev/null | grep -qE "^\s+$PROFILE_NAME\s+="; then
   print "✔ Profil '$PROFILE_NAME' bereits vorhanden"
 else
   print "→ Importiere Profil '$PROFILE_NAME'"
   open "$PROFILE_FILE"
-  # Kurz warten bis Terminal das Profil registriert hat
   sleep 2
   
-  if defaults read com.apple.Terminal "Window Settings" 2>/dev/null | grep -q "\"$PROFILE_NAME\""; then
+  if defaults read com.apple.Terminal "Window Settings" 2>/dev/null | grep -qE "^\s+$PROFILE_NAME\s+="; then
     print "✔ Profil '$PROFILE_NAME' importiert"
   else
     print "⚠ Profil-Import konnte nicht verifiziert werden"
   fi
 fi
 
-# Profil als Standard setzen
-for key in "Default Window Settings" "Startup Window Settings"; do
-  current=$(defaults read com.apple.Terminal "$key" 2>/dev/null || true)
-  if [[ "$current" != "$PROFILE_NAME" ]]; then
-    print "→ Setze $key"
-    defaults write com.apple.Terminal "$key" -string "$PROFILE_NAME"
+# Profil als Standard setzen (AppleScript, da defaults write bei laufendem Terminal nicht persistiert)
+set_profile_as_default() {
+  local profile_name="$1"
+  
+  osascript <<EOF
+tell application "Terminal"
+    set targetProfile to null
+    repeat with s in settings sets
+        if name of s is "$profile_name" then
+            set targetProfile to s
+            exit repeat
+        end if
+    end repeat
+    
+    if targetProfile is not null then
+        set default settings to targetProfile
+        set startup settings to targetProfile
+        return "success"
+    else
+        return "profile not found"
+    end if
+end tell
+EOF
+}
+
+# Aktuelle Einstellungen prüfen
+current_default=$(defaults read com.apple.Terminal "Default Window Settings" 2>/dev/null || true)
+current_startup=$(defaults read com.apple.Terminal "Startup Window Settings" 2>/dev/null || true)
+
+if [[ "$current_default" == "$PROFILE_NAME" && "$current_startup" == "$PROFILE_NAME" ]]; then
+  print "✔ Profil '$PROFILE_NAME' bereits als Standard gesetzt"
+else
+  print "→ Setze '$PROFILE_NAME' als Standard- und Startprofil"
+  
+  result=$(set_profile_as_default "$PROFILE_NAME")
+  
+  # Verifiziere die Änderung
+  sleep 1
+  verify_default=$(defaults read com.apple.Terminal "Default Window Settings" 2>/dev/null || true)
+  verify_startup=$(defaults read com.apple.Terminal "Startup Window Settings" 2>/dev/null || true)
+  
+  if [[ "$verify_default" == "$PROFILE_NAME" && "$verify_startup" == "$PROFILE_NAME" ]]; then
+    print "✔ Profil '$PROFILE_NAME' als Standard gesetzt"
   else
-    print "✔ $key korrekt"
+    print "⚠ Konnte Standardprofil nicht verifizieren"
+    print "  Default: $verify_default (erwartet: $PROFILE_NAME)"
+    print "  Startup: $verify_startup (erwartet: $PROFILE_NAME)"
   fi
-done
+fi
 
 print ""
 print "✔ Setup abgeschlossen"
-
-# Hinweis bei laufendem Terminal
-if pgrep -x "Terminal" >/dev/null 2>&1; then
-  print "⚠ Terminal.app neu starten für Änderungen"
-fi
+print "→ Terminal.app neu starten für vollständige Übernahme aller Einstellungen"
