@@ -4,15 +4,15 @@
 
 ## 📁 Struktur
 
+```zsh
+cd ~/dotfiles && stow --no-folding --adopt --restow terminal && git checkout -- terminal
 ```
-dotfiles/
-├── setup/
-│   ├── terminal_macos.sh       # Automatisiertes Setup (Basis)
-│   ├── Brewfile                # Homebrew Abhängigkeiten
-│   └── tshofmann.terminal      # Terminal.app Profil
-├── terminal/
-│   ├── .zprofile               # Login-Shell
-│   ├── .zshrc                  # Interactive Shell
+
+Der Befehl:
+- Verhindert Tree-Folding und belässt `~/.config` als echten Ordner (`--no-folding`)
+- Übernimmt existierende Dateien ins Repository (`--adopt`)
+- Aktualisiert bestehende Symlinks (`--restow`)
+- Setzt nur das Paket `terminal/` auf den Repo-Stand zurück (`git checkout -- terminal`)
 │   └── .config/alias/
 │       └── homebrew.alias      # Homebrew Aliase
 └── .stowrc                     # Stow-Konfiguration (ignoriert macOS Dateimüll)
@@ -42,19 +42,24 @@ Das Skript:
 **Schritt 2: Konfigurationsdateien verlinken**
 
 ```zsh
-cd ~/dotfiles
-stow --restow terminal
+cd ~/dotfiles && stow --no-folding --adopt --restow terminal && git checkout -- terminal
+```
+oder um alles auf den Stand vom Repo zu bringen
+```zsh
+cd ~/dotfiles && stow --no-folding --adopt --restow terminal && git reset --hard HEAD
 ```
 
-Das erstellt Symlinks ins Home-Verzeichnis:
+Der Befehl:
+- Verhindert Tree-Folding und belässt `~/.config` als echten Ordner (`--no-folding`)
+- Übernimmt existierende Dateien ins Repository (`--adopt`)
+- Aktualisiert bestehende Symlinks (`--restow`)
+- Stellt die Repository-Version wieder her (`git checkout`)
 
 | Symlink | Ziel |
 |---------|------|
 | `~/.zshrc` | `~/dotfiles/terminal/.zshrc` |
 | `~/.zprofile` | `~/dotfiles/terminal/.zprofile` |
 | `~/.config/alias/homebrew.alias` | `~/dotfiles/terminal/.config/alias/homebrew.alias` |
-
-**`--restow`:** Wenn Dateien bereits existieren, werden sie durch Symlinks ersetzt. Stow garantiert, dass die Version aus dem Repository verwendet wird (nicht lokale Änderungen).
 
 ## ⚙️ Details
 
