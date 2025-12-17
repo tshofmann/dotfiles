@@ -10,6 +10,6 @@ brew "gh"           # GitHub CLI
 brew "stow"         # Symlink Farm Manager
 brew "starship"     # Cross-Shell Prompt
 brew "zoxide"       # Smarter cd Command
-# Fonts
-tap "homebrew/cask-fonts"
+
+# Fonts (seit Homebrew 4.0 in homebrew/cask integriert)
 cask "font-meslo-lg-nerd-font"

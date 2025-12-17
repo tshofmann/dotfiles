@@ -78,7 +78,12 @@ print "✔ Abhängigkeiten installiert"
 # Font-Installation verifizieren
 font_installed() {
   # Prüfe User- und System-Font-Verzeichnisse (Homebrew installiert nach ~/Library/Fonts)
-  [[ -n $(echo ~/Library/Fonts/${~FONT_GLOB}(N) /Library/Fonts/${~FONT_GLOB}(N)) ]]
+  # Array sammelt alle gematchten Dateien; (N) = NULL_GLOB, ${~VAR} = Glob-Expansion
+  local -a fonts=(
+    ~/Library/Fonts/${~FONT_GLOB}(N)
+    /Library/Fonts/${~FONT_GLOB}(N)
+  )
+  (( ${#fonts} > 0 ))
 }
 
 profile_exists() {
@@ -107,16 +112,16 @@ if profile_exists; then
 else
   print "→ Importiere Profil '$PROFILE_NAME'"
   open "$PROFILE_FILE"
-  imported=0
+  import_success=0
   for attempt in {1..20}; do
     sleep 1
     if profile_exists; then
       print "✔ Profil '$PROFILE_NAME' importiert"
-      imported=1
+      import_success=1
       break
     fi
   done
-  if [[ $imported -eq 0 ]]; then
+  if (( import_success == 0 )); then
     print "⚠ Profil-Import konnte nicht verifiziert werden (20s Timeout)"
   fi
 fi
@@ -155,7 +160,10 @@ if [[ "$current_default" == "$PROFILE_NAME" && "$current_startup" == "$PROFILE_N
 else
   print "→ Setze '$PROFILE_NAME' als Standard- und Startprofil"
   
-  set_profile_as_default "$PROFILE_NAME"
+  applescript_result=$(set_profile_as_default "$PROFILE_NAME")
+  if [[ "$applescript_result" != "success" ]]; then
+    print "⚠ AppleScript konnte Profil nicht direkt setzen: $applescript_result"
+  fi
   
   # Verifiziere die Änderung
   sleep 1
@@ -196,8 +204,11 @@ else
       mkdir -p "$HOME/.config"
     fi
 
-    starship preset "$STARSHIP_PRESET" -o "$STARSHIP_CONFIG"
-    print "✔ Starship-Theme '$STARSHIP_PRESET' gesetzt → $STARSHIP_CONFIG"
+    if starship preset "$STARSHIP_PRESET" -o "$STARSHIP_CONFIG" 2>/dev/null; then
+      print "✔ Starship-Theme '$STARSHIP_PRESET' gesetzt → $STARSHIP_CONFIG"
+    else
+      print "⚠ Starship-Preset '$STARSHIP_PRESET' konnte nicht gesetzt werden"
+    fi
   fi
 fi
 

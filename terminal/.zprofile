@@ -3,7 +3,7 @@
 # ============================================================
 # Zweck   : Umgebungsvariablen für Login-Shells (einmalig)
 # Pfad    : ~/.zprofile
-# Quelle  : ~/dotfiles/Terminal/.zprofile
+# Quelle  : ~/dotfiles/terminal/.zprofile
 # ============================================================
 
 # ------------------------------------------------------------

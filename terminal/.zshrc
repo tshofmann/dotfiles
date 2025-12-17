@@ -3,7 +3,7 @@
 # ============================================================
 # Zweck   : Hauptkonfiguration für interaktive ZSH Shells
 # Pfad    : ~/.zshrc
-# Quelle  : ~/dotfiles/Terminal/.zshrc
+# Quelle  : ~/dotfiles/terminal/.zshrc
 # ============================================================
 
 # ------------------------------------------------------------
