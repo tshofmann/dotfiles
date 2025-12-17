@@ -18,20 +18,20 @@ err()  { print "✖ $*" >&2; }
 warn() { print "⚠ $*"; }
 
 # ------------------------------------------------------------
-# Konfiguration
+# Konfiguration (readonly verhindert versehentliche Überschreibung)
 # ------------------------------------------------------------
-SCRIPT_DIR="${0:A:h}"
-PROFILE_FILE="$SCRIPT_DIR/tshofmann.terminal"
-PROFILE_NAME="tshofmann"
-FONT_GLOB="MesloLG*NerdFont*"
-BREWFILE="$SCRIPT_DIR/Brewfile"
+readonly SCRIPT_DIR="${0:A:h}"
+readonly PROFILE_FILE="$SCRIPT_DIR/tshofmann.terminal"
+readonly PROFILE_NAME="tshofmann"
+readonly FONT_GLOB="MesloLG*NerdFont*"
+readonly BREWFILE="$SCRIPT_DIR/Brewfile"
 
 # Starship-Konfiguration
-STARSHIP_CONFIG="$HOME/.config/starship.toml"
-STARSHIP_PRESET="catppuccin-powerline"
+readonly STARSHIP_CONFIG="$HOME/.config/starship.toml"
+readonly STARSHIP_PRESET="catppuccin-powerline"
 
 # Regex-Match für Terminal-Profil in defaults
-PROFILE_GREP_PATTERN="(^[[:space:]]+\"$PROFILE_NAME\"|^[[:space:]]+$PROFILE_NAME)[[:space:]]+="
+readonly PROFILE_GREP_PATTERN="(^[[:space:]]+\"$PROFILE_NAME\"|^[[:space:]]+$PROFILE_NAME)[[:space:]]+="
 
 # Nur Apple Silicon (arm64) wird unterstützt
 if [[ $(uname -m) != "arm64" ]]; then
@@ -48,7 +48,7 @@ if ! xcode-select -p >/dev/null 2>&1; then
 fi
 
 # Homebrew-Prefix für Apple Silicon
-BREW_PREFIX="/opt/homebrew"
+readonly BREW_PREFIX="/opt/homebrew"
 
 # ------------------------------------------------------------
 # Hauptprogramm
@@ -225,4 +225,7 @@ fi
 
 print ""
 ok "Setup abgeschlossen"
-log "Terminal.app neu starten für vollständige Übernahme aller Einstellungen"
+print ""
+log "Nächste Schritte:"
+log "  1. Terminal.app neu starten für vollständige Übernahme aller Einstellungen"
+log "  2. Konfigurationsdateien verlinken: cd ~/dotfiles && stow --restow terminal"
