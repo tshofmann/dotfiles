@@ -1,89 +1,83 @@
 # 🍎 dotfiles
 
-> Meine persönlichen **Konfigurationsdateien** für ein macOS Setup auf einem MacBook Pro mit Apple Silicon.
-
-## 📋 Übersicht
-
-Dieses Repository enthält Konfigurationsdateien und Setup-Skripte für eine konsistente Entwicklungsumgebung auf macOS (nur Apple Silicon/arm64, Intel wird nicht unterstützt).
+> macOS Setup für Apple Silicon (arm64) mit automatisierten Installation und Konfiguration.
 
 ## 📁 Struktur
 
 ```
 dotfiles/
-├── setup/                      # Installations- und Setup-Skripte
-│   ├── terminal_macos.sh       # Terminal.app Setup (Font + Profil)
-│   ├── Brewfile                # Homebrew Abhängigkeiten (deklarativ)
-│   └── tshofmann.terminal      # Terminal.app Profil-Export
-│
-└── terminal/                   # Terminal-Konfigurationsdateien
-    ├── .zprofile               # Login-Shell Umgebungsvariablen
-    ├── .zshrc                  # Interaktive Shell-Konfiguration
-    └── .config/
-        └── alias/
-            └── homebrew.alias  # Homebrew Aliase
+├── setup/
+│   ├── terminal_macos.sh       # Automatisiertes Setup (Basis)
+│   ├── Brewfile                # Homebrew Abhängigkeiten
+│   └── tshofmann.terminal      # Terminal.app Profil
+├── terminal/
+│   ├── .zprofile               # Login-Shell
+│   ├── .zshrc                  # Interactive Shell
+│   └── .config/alias/
+│       └── homebrew.alias      # Homebrew Aliase
+└── .stowrc                      # Stow-Konfiguration (ignoriert macOS Dateimüll)
 ```
-
-## 🛠️ Voraussetzungen
-
-Die Konfiguration basiert auf folgenden Tools:
-
-| Tool | Beschreibung |
-|------|-------------|
-| Xcode Command Line Tools | Apple Toolchain inkl. git/clang; Voraussetzung für Homebrew |
-| [Homebrew](https://brew.sh) | Paketmanager für macOS |
-| [fzf](https://github.com/junegunn/fzf) | Fuzzy Finder |
-| [gh](https://cli.github.com) | GitHub CLI |
-| [GNU Stow](https://www.gnu.org/software/stow/) | Symlink-Manager für Dotfiles |
-| [Starship](https://starship.rs) | Anpassbarer Shell-Prompt |
-| [zoxide](https://github.com/ajeetdsouza/zoxide) | Smartes `cd` mit Frecency |
 
 ## 🚀 Installation
 
-### 1. Terminal Setup
-
-Das Terminal-Setup installiert den Font und das Terminal-Profil:
+**Schritt 1: Setup ausführen**
 
 ```zsh
+git clone https://github.com/tshofmann/dotfiles.git ~/dotfiles
+cd ~/dotfiles
 ./setup/terminal_macos.sh
 ```
 
-Dieses Skript:
-- Installiert **Homebrew** (falls nicht vorhanden)
-- Installiert **CLI-Tools**: fzf, gh, stow, starship, zoxide
-- Installiert **MesloLG Nerd Font** für Symbole und Icons
-- Importiert das **Terminal.app Profil** mit vorkonfiguriertem Theme
+Das Skript:
+- Prüft arm64 Architektur (Exit wenn Intel)
+- Installiert/prüft Xcode CLI Tools
+- Installiert/prüft Homebrew
+- Installiert CLI-Tools via Brewfile (fzf, gh, stow, starship, zoxide)
+- Installiert MesloLG Nerd Font
+- Importiert & setzt Terminal.app Profil als Standard
+- ✖ Exit bei kritischen Fehlern (Architektur, Xcode, Font)
+- ⚠ Warnung bei Profil-Problemen (nicht blockierend)
 
-### 2. Konfigurationsdateien verlinken
-
-Die Konfigurationsdateien werden mit [GNU Stow](https://www.gnu.org/software/stow/) ins Home-Verzeichnis verlinkt:
+**Schritt 2: Konfigurationsdateien verlinken**
 
 ```zsh
 cd ~/dotfiles
-stow terminal
+stow --restow terminal
 ```
 
-#### Wie funktioniert Stow?
-
-Stow erstellt Symlinks vom Home-Verzeichnis (`~`) zu den Dateien im Repository. Der Befehl `stow terminal` erzeugt folgende Verlinkungen:
+Das erstellt Symlinks ins Home-Verzeichnis:
 
 | Symlink | Ziel |
 |---------|------|
 | `~/.zshrc` | `~/dotfiles/terminal/.zshrc` |
 | `~/.zprofile` | `~/dotfiles/terminal/.zprofile` |
-| `~/.config/alias/` | `~/dotfiles/terminal/.config/alias/` |
+| `~/.config/alias/homebrew.alias` | `~/dotfiles/terminal/.config/alias/homebrew.alias` |
 
-So kannst du alle Konfigurationen zentral in einem Git-Repository verwalten, während macOS sie an den erwarteten Orten findet.
+**`--restow`:** Wenn Dateien bereits existieren, werden sie durch Symlinks ersetzt. Stow garantiert, dass die Version aus dem Repository verwendet wird (nicht lokale Änderungen).
+
+**macOS Dateien:** Projekt-spezifische `.stowrc` im Root ignoriert macOS-Dateimüll (`.DS_Store`, `._*`, `.localized`).
+
+## ⚙️ Details
+
+**Idempotenz:** Das Skript kann mehrfach hintereinander ausgeführt werden.
+
+**Brewfile:** Deklarative Abhängigkeiten statt `brew install foo bar baz`.
+
+```ruby
+brew "fzf"
+brew "gh"
+brew "stow"
+brew "starship"
+brew "zoxide"
+cask "font-meslo-lg-nerd-font"
+```
 
 ## ⌨️ Aliase
 
-### Homebrew
-
 | Alias | Befehl | Beschreibung |
 |-------|--------|--------------|
-| `brewup` | `brew update && brew upgrade; brew autoremove; brew cleanup` | Vollständiges System-Update |
+| `brewup` | `brew update && brew upgrade && brew autoremove && brew cleanup` | System-Update |
 
 ## 📄 Lizenz
 
-Dieses Projekt steht unter der [MIT Lizenz](LICENSE).
-
----
+[MIT Lizenz](LICENSE)

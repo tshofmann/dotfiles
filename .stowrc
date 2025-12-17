@@ -1,0 +1,3 @@
+--ignore=\.DS_Store
+--ignore=^\._
+--ignore=\.localized
