@@ -62,6 +62,11 @@ Das erstellt Symlinks ins Home-Verzeichnis:
 
 **Brewfile:** Deklarative Abhängigkeiten statt `brew install foo bar baz`.
 
+> **Hinweis:** Das Setup verwendet `brew bundle --no-upgrade`. Bestehende, aber defekte Homebrew-Installationen werden dadurch nicht automatisch repariert. Für frische Setups ist dieses Verhalten beabsichtigt. Falls es zu Problemen durch bestehende, aber defekte Formulae kommt:
+> - **Option 1:** Homebrew-Zustand prüfen: `brew doctor`
+> - **Option 2:** Einzelne Formula reparieren: `brew reinstall <formula>`
+> - **Option 3:** Vollständige Reparatur: `brew update && brew upgrade && brew autoremove && brew cleanup`
+
 ```ruby
 brew "fzf"
 brew "gh"
