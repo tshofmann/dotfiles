@@ -29,9 +29,10 @@ Die Konfiguration basiert auf folgenden Tools:
 | Tool | Beschreibung |
 |------|-------------|
 | [Homebrew](https://brew.sh) | Paketmanager für macOS |
+| [fzf](https://github.com/junegunn/fzf) | Fuzzy Finder |
+| [gh](https://cli.github.com) | GitHub CLI |
 | [GNU Stow](https://www.gnu.org/software/stow/) | Symlink-Manager für Dotfiles |
 | [Starship](https://starship.rs) | Anpassbarer Shell-Prompt |
-| [fzf](https://github.com/junegunn/fzf) | Fuzzy Finder |
 | [zoxide](https://github.com/ajeetdsouza/zoxide) | Smartes `cd` mit Frecency |
 
 ### Homebrew installieren
@@ -45,7 +46,7 @@ Falls Homebrew noch nicht installiert ist:
 ### Tools installieren
 
 ```zsh
-brew install stow starship fzf zoxide
+brew install fzf gh stow starship zoxide
 ```
 
 ## 🚀 Installation

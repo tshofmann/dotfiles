@@ -17,7 +17,6 @@ PROFILE_FILE="$SCRIPT_DIR/tshofmann.terminal"
 PROFILE_NAME="tshofmann"
 FONT_GLOB="MesloLG*NerdFont*"              # Glob für Nerd Font-Dateien
 BREW_FONT_CASK="font-meslo-lg-nerd-font"
-PLIST="$HOME/Library/Preferences/com.apple.Terminal.plist"
 
 # Homebrew-Prefix (Apple Silicon vs Intel)
 if [[ $(uname -m) == "arm64" ]]; then
@@ -47,6 +46,12 @@ if ! command -v brew >/dev/null 2>&1; then
 else
   print "✔ Homebrew vorhanden"
 fi
+
+# CLI-Tools installieren (alphabetisch sortiert)
+TOOLS=(fzf gh stow starship zoxide)
+print "→ Installiere Tools: ${TOOLS[*]}"
+brew install "${TOOLS[@]}"
+print "✔ Tools installiert"
 
 # Nerd Font prüfen & bei Bedarf installieren
 font_installed() {
@@ -80,26 +85,21 @@ if [[ ! -f "$PROFILE_FILE" ]]; then
   exit 1
 fi
 
-# Terminal-Profil importieren
-# Stelle sicher dass 'Window Settings' Dict existiert
-if ! /usr/libexec/PlistBuddy -c "Print ':Window Settings'" "$PLIST" >/dev/null 2>&1; then
-  /usr/libexec/PlistBuddy -c "Add ':Window Settings' dict" "$PLIST"
-fi
-
-# Prüfe ob Profil bereits existiert
-if /usr/libexec/PlistBuddy -c "Print ':Window Settings:$PROFILE_NAME'" "$PLIST" >/dev/null 2>&1; then
-  print "→ Aktualisiere Profil '$PROFILE_NAME'"
+# Terminal-Profil importieren (via offiziellem Apple-Mechanismus)
+if defaults read com.apple.Terminal "Window Settings" 2>/dev/null | grep -q "\"$PROFILE_NAME\""; then
+  print "✔ Profil '$PROFILE_NAME' bereits vorhanden"
 else
   print "→ Importiere Profil '$PROFILE_NAME'"
-  /usr/libexec/PlistBuddy -c "Add ':Window Settings:$PROFILE_NAME' dict" "$PLIST"
+  open "$PROFILE_FILE"
+  # Kurz warten bis Terminal das Profil registriert hat
+  sleep 2
+  
+  if defaults read com.apple.Terminal "Window Settings" 2>/dev/null | grep -q "\"$PROFILE_NAME\""; then
+    print "✔ Profil '$PROFILE_NAME' importiert"
+  else
+    print "⚠ Profil-Import konnte nicht verifiziert werden"
+  fi
 fi
-
-# Profil-Daten mergen (bestehende Einträge werden übersprungen)
-/usr/libexec/PlistBuddy -c "Merge '$PROFILE_FILE' ':Window Settings:$PROFILE_NAME'" "$PLIST" >/dev/null 2>&1 || true
-
-# Preferences-Cache neu laden
-defaults read com.apple.Terminal >/dev/null 2>&1
-print "✔ Profil '$PROFILE_NAME' bereit"
 
 # Profil als Standard setzen
 for key in "Default Window Settings" "Startup Window Settings"; do
