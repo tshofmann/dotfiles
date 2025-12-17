@@ -1,0 +1,15 @@
+# ============================================================
+# Brewfile - Homebrew Abhängigkeiten für macOS Setup
+# ============================================================
+# Verwendung: brew bundle --file=setup/Brewfile
+# ============================================================
+
+# CLI Tools
+brew "fzf"       # Fuzzy Finder
+brew "gh"        # GitHub CLI
+brew "stow"      # Symlink Farm Manager
+brew "starship"  # Cross-Shell Prompt
+brew "zoxide"    # Smarter cd Command
+
+# Fonts
+cask "font-meslo-lg-nerd-font"

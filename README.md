@@ -12,6 +12,7 @@ Dieses Repository enthält Konfigurationsdateien und Setup-Skripte für eine kon
 dotfiles/
 ├── setup/                      # Installations- und Setup-Skripte
 │   ├── terminal_macos.sh       # Terminal.app Setup (Font + Profil)
+│   ├── Brewfile                # Homebrew Abhängigkeiten (deklarativ)
 │   └── tshofmann.terminal      # Terminal.app Profil-Export
 │
 └── terminal/                   # Terminal-Konfigurationsdateien

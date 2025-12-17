@@ -16,8 +16,7 @@ SCRIPT_DIR="${0:A:h}"
 PROFILE_FILE="$SCRIPT_DIR/tshofmann.terminal"
 PROFILE_NAME="tshofmann"
 FONT_GLOB="MesloLG*NerdFont*"
-BREW_FONT_CASK="font-meslo-lg-nerd-font"
-TOOLS=(fzf gh stow starship zoxide)
+BREWFILE="$SCRIPT_DIR/Brewfile"
 
 # Homebrew-Prefix (Apple Silicon vs Intel)
 if [[ $(uname -m) == "arm64" ]]; then
@@ -48,36 +47,29 @@ else
   print "✔ Homebrew vorhanden"
 fi
 
-# CLI-Tools installieren
-print "→ Installiere Tools: ${TOOLS[*]}"
-brew install "${TOOLS[@]}"
-print "✔ Tools installiert"
+# Brewfile prüfen
+if [[ ! -f "$BREWFILE" ]]; then
+  print "✖ Brewfile nicht gefunden: $BREWFILE"
+  exit 1
+fi
 
-# Nerd Font prüfen & bei Bedarf installieren
+# CLI-Tools und Font über Brewfile installieren
+print "→ Installiere Abhängigkeiten aus Brewfile"
+brew bundle --file="$BREWFILE" --no-upgrade
+print "✔ Abhängigkeiten installiert"
+
+# Font-Installation verifizieren
 font_installed() {
   # Prüfe User- und System-Font-Verzeichnisse (Homebrew installiert nach ~/Library/Fonts)
   [[ -n $(echo ~/Library/Fonts/${~FONT_GLOB}(N) /Library/Fonts/${~FONT_GLOB}(N)) ]]
 }
 
-if font_installed; then
-  print "✔ Font '$BREW_FONT_CASK' vorhanden"
-else
-  print "→ Installiere Font '$BREW_FONT_CASK'"
-  if ! brew install --cask "$BREW_FONT_CASK"; then
-    print "✖ Font-Installation fehlgeschlagen"
-    exit 1
-  fi
-  
-  # Verifiziere Installation (kurz warten für Systemcache)
-  sleep 1
-  if font_installed; then
-    print "✔ Font '$BREW_FONT_CASK' installiert"
-  else
-    print "✖ Font nicht gefunden nach Installation, Terminal-Profil wird nicht importiert."
-    print "  Prüfe: ls ~/Library/Fonts/$FONT_GLOB"
-    exit 1
-  fi
+if ! font_installed; then
+  print "✖ Font nicht gefunden nach Installation, Terminal-Profil wird nicht importiert."
+  print "  Prüfe: ls ~/Library/Fonts/$FONT_GLOB"
+  exit 1
 fi
+print "✔ Font vorhanden"
 
 # Profil-Datei prüfen
 if [[ ! -f "$PROFILE_FILE" ]]; then
@@ -86,14 +78,15 @@ if [[ ! -f "$PROFILE_FILE" ]]; then
 fi
 
 # Terminal-Profil importieren
-if defaults read com.apple.Terminal "Window Settings" 2>/dev/null | grep -qE "^    (\"$PROFILE_NAME\"|$PROFILE_NAME) =     \{$"; then
+# Regex prüft ob Profilname als Key existiert (mit oder ohne Quotes, je nach Leerzeichen im Namen)
+if defaults read com.apple.Terminal "Window Settings" 2>/dev/null | grep -qE "(^[[:space:]]+\"$PROFILE_NAME\"|^[[:space:]]+$PROFILE_NAME)[[:space:]]+=" ; then
   print "✔ Profil '$PROFILE_NAME' bereits vorhanden"
 else
   print "→ Importiere Profil '$PROFILE_NAME'"
   open "$PROFILE_FILE"
   sleep 2
   
-  if defaults read com.apple.Terminal "Window Settings" 2>/dev/null | grep -qE "^    (\"$PROFILE_NAME\"|$PROFILE_NAME) =     \{$"; then
+  if defaults read com.apple.Terminal "Window Settings" 2>/dev/null | grep -qE "(^[[:space:]]+\"$PROFILE_NAME\"|^[[:space:]]+$PROFILE_NAME)[[:space:]]+=" ; then
     print "✔ Profil '$PROFILE_NAME' importiert"
   else
     print "⚠ Profil-Import konnte nicht verifiziert werden"
