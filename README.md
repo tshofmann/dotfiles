@@ -4,15 +4,15 @@
 
 ## 📁 Struktur
 
-```zsh
-cd ~/dotfiles && stow --no-folding --adopt --restow terminal && git checkout -- terminal
 ```
-
-Der Befehl:
-- Verhindert Tree-Folding und belässt `~/.config` als echten Ordner (`--no-folding`)
-- Übernimmt existierende Dateien ins Repository (`--adopt`)
-- Aktualisiert bestehende Symlinks (`--restow`)
-- Setzt nur das Paket `terminal/` auf den Repo-Stand zurück (`git checkout -- terminal`)
+dotfiles/
+├── setup/
+│   ├── terminal_macos.sh       # Automatisiertes Setup (Basis)
+│   ├── Brewfile                # Homebrew Abhängigkeiten
+│   └── tshofmann.terminal      # Terminal.app Profil
+├── terminal/
+│   ├── .zprofile               # Login-Shell
+│   ├── .zshrc                  # Interactive Shell
 │   └── .config/alias/
 │       └── homebrew.alias      # Homebrew Aliase
 └── .stowrc                     # Stow-Konfiguration (ignoriert macOS Dateimüll)
@@ -42,10 +42,6 @@ Das Skript:
 **Schritt 2: Konfigurationsdateien verlinken**
 
 ```zsh
-cd ~/dotfiles && stow --no-folding --adopt --restow terminal && git checkout -- terminal
-```
-oder um alles auf den Stand vom Repo zu bringen
-```zsh
 cd ~/dotfiles && stow --no-folding --adopt --restow terminal && git reset --hard HEAD
 ```
 
@@ -53,7 +49,7 @@ Der Befehl:
 - Verhindert Tree-Folding und belässt `~/.config` als echten Ordner (`--no-folding`)
 - Übernimmt existierende Dateien ins Repository (`--adopt`)
 - Aktualisiert bestehende Symlinks (`--restow`)
-- Stellt die Repository-Version wieder her (`git checkout`)
+- Stellt die Repository-Version wieder her (`git reset`)
 
 | Symlink | Ziel |
 |---------|------|
