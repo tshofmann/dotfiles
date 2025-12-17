@@ -23,12 +23,13 @@ dotfiles/
             └── homebrew.alias  # Homebrew Aliase
 ```
 
-## �️ Voraussetzungen
+## 🛠️ Voraussetzungen
 
 Die Konfiguration basiert auf folgenden Tools:
 
 | Tool | Beschreibung |
 |------|-------------|
+| Xcode Command Line Tools | Apple Toolchain inkl. git/clang; Voraussetzung für Homebrew |
 | [Homebrew](https://brew.sh) | Paketmanager für macOS |
 | [fzf](https://github.com/junegunn/fzf) | Fuzzy Finder |
 | [gh](https://cli.github.com) | GitHub CLI |
@@ -86,5 +87,3 @@ So kannst du alle Konfigurationen zentral in einem Git-Repository verwalten, wä
 Dieses Projekt steht unter der [MIT Lizenz](LICENSE).
 
 ---
-
-*Made with ☕ on macOS*

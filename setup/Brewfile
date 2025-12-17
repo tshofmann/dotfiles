@@ -5,11 +5,11 @@
 # ============================================================
 
 # CLI Tools
-brew "fzf"       # Fuzzy Finder
-brew "gh"        # GitHub CLI
-brew "stow"      # Symlink Farm Manager
-brew "starship"  # Cross-Shell Prompt
-brew "zoxide"    # Smarter cd Command
-
+brew "fzf"          # Fuzzy Finder
+brew "gh"           # GitHub CLI
+brew "stow"         # Symlink Farm Manager
+brew "starship"     # Cross-Shell Prompt
+brew "zoxide"       # Smarter cd Command
 # Fonts
+tap "homebrew/cask-fonts"
 cask "font-meslo-lg-nerd-font"

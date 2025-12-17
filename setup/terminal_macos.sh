@@ -18,9 +18,20 @@ PROFILE_NAME="tshofmann"
 FONT_GLOB="MesloLG*NerdFont*"
 BREWFILE="$SCRIPT_DIR/Brewfile"
 
+# Regex-Match für Terminal-Profil in defaults
+PROFILE_GREP_PATTERN="(^[[:space:]]+\"$PROFILE_NAME\"|^[[:space:]]+$PROFILE_NAME)[[:space:]]+="
+
 # Nur Apple Silicon (arm64) wird unterstützt
 if [[ $(uname -m) != "arm64" ]]; then
   print "✖ Dieses Setup ist nur für Apple Silicon (arm64) vorgesehen"
+  exit 1
+fi
+
+# Xcode Command Line Tools (git/clang & Header; Voraussetzung für Homebrew)
+if ! xcode-select -p >/dev/null 2>&1; then
+  print "→ Xcode Command Line Tools werden benötigt (für git/Homebrew). Starte Installation..."
+  xcode-select --install || true
+  print "✖ Bitte Installation der Command Line Tools abschließen und Skript danach erneut ausführen."
   exit 1
 fi
 
@@ -66,6 +77,13 @@ font_installed() {
   [[ -n $(echo ~/Library/Fonts/${~FONT_GLOB}(N) /Library/Fonts/${~FONT_GLOB}(N)) ]]
 }
 
+profile_exists() {
+  local settings
+  settings=$(defaults read com.apple.Terminal "Window Settings" 2>/dev/null || true)
+  [[ -z "$settings" ]] && return 1
+  print -r -- "$settings" | grep -qE "$PROFILE_GREP_PATTERN"
+}
+
 if ! font_installed; then
   print "✖ Font nicht gefunden nach Installation, Terminal-Profil wird nicht importiert."
   print "  Prüfe: ls ~/Library/Fonts/$FONT_GLOB"
@@ -79,19 +97,23 @@ if [[ ! -f "$PROFILE_FILE" ]]; then
   exit 1
 fi
 
-# Terminal-Profil importieren
-# Regex prüft ob Profilname als Key existiert (mit oder ohne Quotes, je nach Leerzeichen im Namen)
-if defaults read com.apple.Terminal "Window Settings" 2>/dev/null | grep -qE "(^[[:space:]]+\"$PROFILE_NAME\"|^[[:space:]]+$PROFILE_NAME)[[:space:]]+=" ; then
+# Terminal-Profil importieren (mit Retry, falls defaults noch nicht aktualisiert sind)
+if profile_exists; then
   print "✔ Profil '$PROFILE_NAME' bereits vorhanden"
 else
   print "→ Importiere Profil '$PROFILE_NAME'"
   open "$PROFILE_FILE"
-  sleep 2
-  
-  if defaults read com.apple.Terminal "Window Settings" 2>/dev/null | grep -qE "(^[[:space:]]+\"$PROFILE_NAME\"|^[[:space:]]+$PROFILE_NAME)[[:space:]]+=" ; then
-    print "✔ Profil '$PROFILE_NAME' importiert"
-  else
-    print "⚠ Profil-Import konnte nicht verifiziert werden"
+  imported=0
+  for attempt in {1..20}; do
+    sleep 1
+    if profile_exists; then
+      print "✔ Profil '$PROFILE_NAME' importiert"
+      imported=1
+      break
+    fi
+  done
+  if [[ $imported -eq 0 ]]; then
+    print "⚠ Profil-Import konnte nicht verifiziert werden (20s Timeout)"
   fi
 fi
 
