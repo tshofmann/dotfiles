@@ -15,7 +15,7 @@ dotfiles/
 │   ├── .zshrc                  # Interactive Shell
 │   └── .config/alias/
 │       └── homebrew.alias      # Homebrew Aliase
-└── .stowrc                      # Stow-Konfiguration (ignoriert macOS Dateimüll)
+└── .stowrc                     # Stow-Konfiguration (ignoriert macOS Dateimüll)
 ```
 
 ## 🚀 Installation
@@ -54,8 +54,6 @@ Das erstellt Symlinks ins Home-Verzeichnis:
 | `~/.config/alias/homebrew.alias` | `~/dotfiles/terminal/.config/alias/homebrew.alias` |
 
 **`--restow`:** Wenn Dateien bereits existieren, werden sie durch Symlinks ersetzt. Stow garantiert, dass die Version aus dem Repository verwendet wird (nicht lokale Änderungen).
-
-**macOS Dateien:** Projekt-spezifische `.stowrc` im Root ignoriert macOS-Dateimüll (`.DS_Store`, `._*`, `.localized`).
 
 ## ⚙️ Details
 
