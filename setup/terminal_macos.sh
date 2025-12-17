@@ -18,6 +18,10 @@ PROFILE_NAME="tshofmann"
 FONT_GLOB="MesloLG*NerdFont*"
 BREWFILE="$SCRIPT_DIR/Brewfile"
 
+# Starship-Konfiguration
+STARSHIP_CONFIG="$HOME/.config/starship.toml"
+STARSHIP_PRESET="catppuccin-powerline"
+
 # Regex-Match für Terminal-Profil in defaults
 PROFILE_GREP_PATTERN="(^[[:space:]]+\"$PROFILE_NAME\"|^[[:space:]]+$PROFILE_NAME)[[:space:]]+="
 
@@ -169,8 +173,33 @@ fi
 
 print ""
 print "→ Konfiguriere Starship-Theme"
-starship preset catppuccin-powerline -o ~/.config/starship.toml
-print "✔ Starship-Theme gesetzt"
+
+# 1. Prüfe ob Starship installiert ist
+if ! command -v starship >/dev/null 2>&1; then
+  # 2. Falls nicht installiert, Theme-Setup überspringen
+  print "⚠ starship nicht gefunden, überspringe Theme-Setup"
+else
+  # 3. Falls installiert, prüfe ob starship.toml vorhanden ist
+  if [[ -f "$STARSHIP_CONFIG" ]]; then
+    # 4. Falls vorhanden, informieren
+    print "✔ $STARSHIP_CONFIG existiert bereits"
+  else
+    # 5. Prüfe ob ~/.config existiert und ein Verzeichnis ist
+    if [[ -e "$HOME/.config" && ! -d "$HOME/.config" ]]; then
+      print "✖ $HOME/.config existiert, ist aber kein Verzeichnis"
+      exit 1
+    fi
+
+    # 6. Erstelle ~/.config falls nicht vorhanden, dann Theme setzen
+    if [[ ! -d "$HOME/.config" ]]; then
+      print "→ Erstelle Verzeichnis ~/.config"
+      mkdir -p "$HOME/.config"
+    fi
+
+    starship preset "$STARSHIP_PRESET" -o "$STARSHIP_CONFIG"
+    print "✔ Starship-Theme '$STARSHIP_PRESET' gesetzt → $STARSHIP_CONFIG"
+  fi
+fi
 
 print ""
 print "✔ Setup abgeschlossen"

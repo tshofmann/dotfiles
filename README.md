@@ -71,6 +71,14 @@ brew "zoxide"
 cask "font-meslo-lg-nerd-font"
 ```
 
+**Starship-Theme:** Das Setup generiert automatisch `~/.config/starship.toml` mit dem `catppuccin-powerline` Preset. Die Datei wird standardmäßig nicht versioniert (`.gitignore` + `.stowrc`).
+
+> **Eigene Starship-Konfiguration versionieren:**
+> 1. Datei nach `terminal/.config/starship.toml` kopieren
+> 2. Eintrag `terminal/.config/starship.toml` aus `.gitignore` entfernen
+> 3. Eintrag `--ignore=starship\.toml` aus `.stowrc` entfernen
+> 4. Mit `stow --restow terminal` verlinken
+
 ## ⌨️ Aliase
 
 | Alias | Befehl | Beschreibung |
