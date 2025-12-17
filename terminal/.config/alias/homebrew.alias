@@ -9,5 +9,5 @@
 # ------------------------------------------------------------
 # Update & Wartung
 # ------------------------------------------------------------
-# Vollständiges System-Update: update → upgrade → autoremove → cleanup
-alias brewup='brew update && brew upgrade; brew autoremove; brew cleanup'
+# Vollständiges System-Update: stoppt bei Fehlern pro Schritt (man brew)
+alias brewup='brew update && brew upgrade && brew autoremove && brew cleanup'

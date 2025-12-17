@@ -18,12 +18,14 @@ PROFILE_NAME="tshofmann"
 FONT_GLOB="MesloLG*NerdFont*"
 BREWFILE="$SCRIPT_DIR/Brewfile"
 
-# Homebrew-Prefix (Apple Silicon vs Intel)
-if [[ $(uname -m) == "arm64" ]]; then
-  BREW_PREFIX="/opt/homebrew"
-else
-  BREW_PREFIX="/usr/local"
+# Nur Apple Silicon (arm64) wird unterstützt
+if [[ $(uname -m) != "arm64" ]]; then
+  print "✖ Dieses Setup ist nur für Apple Silicon (arm64) vorgesehen"
+  exit 1
 fi
+
+# Homebrew-Prefix für Apple Silicon
+BREW_PREFIX="/opt/homebrew"
 
 # ------------------------------------------------------------
 # Hauptprogramm

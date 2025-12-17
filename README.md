@@ -4,7 +4,7 @@
 
 ## 📋 Übersicht
 
-Dieses Repository enthält Konfigurationsdateien und Setup-Skripte für eine konsistente Entwicklungsumgebung auf macOS.
+Dieses Repository enthält Konfigurationsdateien und Setup-Skripte für eine konsistente Entwicklungsumgebung auf macOS (nur Apple Silicon/arm64, Intel wird nicht unterstützt).
 
 ## 📁 Struktur
 
