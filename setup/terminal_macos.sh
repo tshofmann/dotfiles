@@ -86,14 +86,14 @@ if [[ ! -f "$PROFILE_FILE" ]]; then
 fi
 
 # Terminal-Profil importieren
-if defaults read com.apple.Terminal "Window Settings" 2>/dev/null | grep -qE "^\s+$PROFILE_NAME\s+="; then
+if defaults read com.apple.Terminal "Window Settings" 2>/dev/null | grep -qE "^    (\"$PROFILE_NAME\"|$PROFILE_NAME) =     \{$"; then
   print "✔ Profil '$PROFILE_NAME' bereits vorhanden"
 else
   print "→ Importiere Profil '$PROFILE_NAME'"
   open "$PROFILE_FILE"
   sleep 2
   
-  if defaults read com.apple.Terminal "Window Settings" 2>/dev/null | grep -qE "^\s+$PROFILE_NAME\s+="; then
+  if defaults read com.apple.Terminal "Window Settings" 2>/dev/null | grep -qE "^    (\"$PROFILE_NAME\"|$PROFILE_NAME) =     \{$"; then
     print "✔ Profil '$PROFILE_NAME' importiert"
   else
     print "⚠ Profil-Import konnte nicht verifiziert werden"
