@@ -109,24 +109,23 @@ HOMEBREW_NO_AUTO_UPDATE=1 brew bundle check --file=setup/Brewfile
 
 ### Starship-Preset konfigurieren
 
-Standard-Preset ist `catppuccin-powerline`. Für ein anderes Preset kannst du beim Aufruf die Umgebungsvariable setzen:
+Default bleibt `catppuccin-powerline`. Du kannst ein anderes Preset pro Aufruf setzen:
 
 ```zsh
-# Alternatives Preset verwenden
+# Alternatives Preset einmalig nutzen
 STARSHIP_PRESET="tokyo-night" ./setup/bootstrap.sh
 
-# Oder persistent exportieren
+# Persistent (z. B. für mehrere Runs)
 export STARSHIP_PRESET="pure-preset"
 ./setup/bootstrap.sh
 ```
 
-Verhalten:
-- Ohne Variable: Existierende `~/.config/starship.toml` bleibt unverändert (respektiert manuelle Anpassungen)
-- Mit Variable: `starship.toml` wird mit dem gewünschten Preset neu erzeugt/überschrieben
-- Ungültiges Preset: Fallback auf `catppuccin-powerline` mit Warnung
+Verhalten (idempotent und respektvoll):
+- Ohne Variable: Vorhandene `~/.config/starship.toml` bleibt unverändert (manuelle Anpassungen bleiben erhalten)
+- Mit Variable: `starship.toml` wird mit dem gewünschten Preset neu erstellt/überschrieben
+- Ungültiges Preset: Warnung, Fallback auf `catppuccin-powerline` (Config bleibt gültig)
 
 Presets erkunden:
-
 - Online: https://starship.rs/presets/
 - Lokal (nach Installation):
 
