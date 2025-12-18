@@ -31,8 +31,8 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 |--------|--------------|------------|
 | Architektur-Check | Prüft ob arm64 (Apple Silicon) | ❌ Exit |
 | Xcode CLI Tools | Installiert/prüft Developer Tools | ❌ Exit |
-| Homebrew | Installiert/prüft Homebrew unter `/opt/homebrew` | ⚠️ Warnung |
-| Brewfile | Installiert CLI-Tools via `brew bundle` | ⚠️ Warnung |
+| Homebrew | Installiert/prüft Homebrew unter `/opt/homebrew` | ❌ Exit |
+| Brewfile | Installiert CLI-Tools via `brew bundle` | ❌ Exit |
 | MesloLG Nerd Font | Prüft Font-Installation | ❌ Exit |
 | Terminal-Profil | Importiert `tshofmann.terminal` als Standard | ⚠️ Warnung |
 | Starship-Theme | Generiert `~/.config/starship.toml` | ⚠️ Warnung |
