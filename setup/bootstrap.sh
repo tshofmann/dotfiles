@@ -1,10 +1,10 @@
 #!/usr/bin/env zsh
 # ============================================================
-# terminal_macos.sh - Terminal.app Setup für macOS
+# bootstrap.sh - macOS Bootstrap-Skript
 # ============================================================
 # Zweck   : Homebrew, CLI-Tools, Nerd Font & Terminal-Profil
-# Pfad    : ~/dotfiles/setup/terminal_macos.sh
-# Aufruf  : ./terminal_macos.sh
+# Pfad    : ~/dotfiles/setup/bootstrap.sh
+# Aufruf  : ./bootstrap.sh
 # ============================================================
 
 set -euo pipefail

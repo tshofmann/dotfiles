@@ -7,7 +7,7 @@
 ```
 dotfiles/
 ├── setup/
-│   ├── terminal_macos.sh       # Automatisiertes Setup (Basis)
+│   ├── bootstrap.sh            # Automatisiertes Setup (Basis)
 │   ├── Brewfile                # Homebrew Abhängigkeiten
 │   └── tshofmann.terminal      # Terminal.app Profil
 ├── terminal/
@@ -25,7 +25,7 @@ dotfiles/
 ```zsh
 git clone https://github.com/tshofmann/dotfiles.git ~/dotfiles
 cd ~/dotfiles
-./setup/terminal_macos.sh
+./setup/bootstrap.sh
 ```
 
 Das Skript:
