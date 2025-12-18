@@ -3,6 +3,7 @@
 # ============================================================
 # Zweck   : Dateien von Versionskontrolle ausschließen
 # Pfad    : ~/dotfiles/.gitignore
+# Docs    : https://git-scm.com/docs/gitignore
 # ============================================================
 
 .DS_Store

@@ -3,6 +3,7 @@
 # ============================================================
 # Zweck   : Zeilenenden und Dateibehandlung normalisieren
 # Pfad    : ~/dotfiles/.gitattributes
+# Docs    : https://git-scm.com/docs/gitattributes
 # ============================================================
 
 # Textdateien automatisch erkennen und Zeilenenden normalisieren (LF)
