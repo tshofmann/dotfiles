@@ -1,11 +1,22 @@
 # ============================================================
 # .stowrc - Stow-Konfiguration
 # ============================================================
-# Zweck   : Ignore-Patterns für GNU Stow
+# Zweck   : Ignore-Patterns und Standard-Optionen für GNU Stow
 # Pfad    : ~/dotfiles/.stowrc
+# Docs    : https://www.gnu.org/software/stow/manual/stow.html#Resource-Files
 # ============================================================
 
+# Ignore-Patterns (macOS-spezifisch)
 --ignore=\.DS_Store
 --ignore=^\._
 --ignore=\.localized
+
+# Ignore-Patterns (projektspezifisch)
 --ignore=starship\.toml
+
+# Stow-Verhalten
+# Verhindert Tree-Folding: ~/.config bleibt ein echtes Verzeichnis
+--no-folding
+
+# Explizites Target-Verzeichnis (redundant aber dokumentiert Intent)
+--target=~

@@ -7,8 +7,6 @@
 - **Apple Silicon Mac** (arm64) – Intel-Macs werden nicht unterstützt
 - **Internetverbindung** – für Homebrew-Installation und Formulae-Downloads
 - **Admin-Rechte** – für Xcode CLI Tools Installation (`sudo`-Passwort erforderlich)
-- **curl** – auf macOS standardmäßig vorinstalliert
-- **~5 GB freier Speicherplatz** – für Homebrew, Casks und Caches
 
 ## 📁 Struktur
 
@@ -52,7 +50,7 @@ Das Skript:
 **Schritt 2: Konfigurationsdateien verlinken**
 
 ```zsh
-cd ~/dotfiles && stow --no-folding --adopt --restow terminal && git reset --hard HEAD
+cd ~/dotfiles && stow --adopt -R terminal && git reset --hard HEAD
 ```
 
 > ⚠️ **Achtung:** Der Befehl `git reset --hard HEAD` verwirft **alle lokalen Änderungen** im Repository unwiderruflich. Falls du eigene Anpassungen an den Dotfiles vorgenommen hast, sichere diese vorher:
@@ -63,10 +61,11 @@ cd ~/dotfiles && stow --no-folding --adopt --restow terminal && git reset --hard
 > ```
 
 Der Befehl:
-- Verhindert Tree-Folding und belässt `~/.config` als echten Ordner (`--no-folding`)
 - Übernimmt existierende Dateien ins Repository (`--adopt`)
-- Aktualisiert bestehende Symlinks (`--restow`)
+- Aktualisiert bestehende Symlinks (`-R` = `--restow`)
 - Stellt die Repository-Version wieder her (`git reset`)
+
+> **Hinweis:** `--no-folding` und `--target=~` werden automatisch aus `.stowrc` geladen.
 
 | Symlink | Ziel |
 |---------|------|
@@ -100,7 +99,7 @@ cask "font-meslo-lg-nerd-font"
 > 1. Datei nach `terminal/.config/starship.toml` kopieren
 > 2. Eintrag `terminal/.config/starship.toml` aus `.gitignore` entfernen
 > 3. Eintrag `--ignore=starship\.toml` aus `.stowrc` entfernen
-> 4. Mit `stow --no-folding --restow terminal` verlinken
+> 4. Mit `stow -R terminal` verlinken
 
 ## ⌨️ Aliase
 
@@ -142,7 +141,7 @@ Falls nach `stow` die Konfiguration nicht greift:
 ls -la ~/.zshrc ~/.zprofile
 
 # Stow-Vorgang mit Verbose-Output wiederholen
-cd ~/dotfiles && stow -v --no-folding --restow terminal
+cd ~/dotfiles && stow -vR terminal
 ```
 
 ### Homebrew-Probleme

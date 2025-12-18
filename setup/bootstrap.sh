@@ -53,7 +53,7 @@ readonly BREW_PREFIX="/opt/homebrew"
 # ------------------------------------------------------------
 # Hauptprogramm
 # ------------------------------------------------------------
-print "==> Terminal Setup (macOS)"
+print "==> macOS Bootstrap"
 
 # Homebrew bei Bedarf installieren
 if ! [[ -x "$BREW_PREFIX/bin/brew" ]]; then
@@ -228,4 +228,4 @@ ok "Setup abgeschlossen"
 print ""
 log "Nächste Schritte:"
 log "  1. Terminal.app neu starten für vollständige Übernahme aller Einstellungen"
-log "  2. Konfigurationsdateien verlinken: cd $DOTFILES_DIR && stow --no-folding --adopt --restow terminal && git reset --hard HEAD"
+log "  2. Konfigurationsdateien verlinken: cd $DOTFILES_DIR && stow --adopt -R terminal && git reset --hard HEAD"
