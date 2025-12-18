@@ -4,12 +4,12 @@
 # Verwendung: brew bundle --file=setup/Brewfile
 # ============================================================
 
-# CLI Tools
+# CLI-Tools
 brew "fzf"          # Fuzzy Finder
 brew "gh"           # GitHub CLI
-brew "stow"         # Symlink Farm Manager
-brew "starship"     # Cross-Shell Prompt
-brew "zoxide"       # Smarter cd Command
+brew "stow"         # Symlink-Manager
+brew "starship"     # Shell-Prompt
+brew "zoxide"       # Smartes cd
 
 # Fonts (seit Homebrew 4.0 in homebrew/cask integriert)
 cask "font-meslo-lg-nerd-font"

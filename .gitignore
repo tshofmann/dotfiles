@@ -1,2 +1,9 @@
+# ============================================================
+# .gitignore - Git Ignore-Patterns
+# ============================================================
+# Zweck   : Dateien von Versionskontrolle ausschließen
+# Pfad    : ~/dotfiles/.gitignore
+# ============================================================
+
 .DS_Store
 terminal/.config/starship.toml

@@ -26,5 +26,5 @@ if command -v zoxide >/dev/null 2>&1; then
     eval "$(zoxide init zsh)"   # Smartes cd
 fi
 if command -v starship >/dev/null 2>&1; then
-    eval "$(starship init zsh)" # Prompt
+    eval "$(starship init zsh)" # Shell-Prompt
 fi
