@@ -1,0 +1,245 @@
+# 🔧 Troubleshooting
+
+Lösungen für häufige Probleme bei der Installation und Nutzung der dotfiles.
+
+---
+
+## Font-Probleme
+
+### Symptom
+
+- Icons werden als Fragezeichen oder Kästchen angezeigt
+- Terminal-Prompt sieht "kaputt" aus
+- Powerline-Symbole fehlen
+
+### Diagnose
+
+```zsh
+# Prüfen ob MesloLG Nerd Font installiert ist
+ls ~/Library/Fonts/MesloLG*NerdFont*
+```
+
+**Erwartete Ausgabe:** Mehrere `.ttf` Dateien
+
+### Lösung
+
+```zsh
+# Font neu installieren
+brew reinstall font-meslo-lg-nerd-font
+
+# Terminal.app neustarten
+```
+
+Falls das Problem weiterhin besteht:
+
+1. Terminal.app → Einstellungen → Profile → `tshofmann`
+2. Tab "Text" → Schrift ändern → "MesloLGS Nerd Font" auswählen
+
+---
+
+## Terminal-Profil nicht importiert
+
+### Symptom
+
+- Profil `tshofmann` erscheint nicht in Terminal.app
+- Terminal hat weiterhin Standard-Erscheinung
+
+### Diagnose
+
+Terminal.app → Einstellungen → Profile → Liste prüfen
+
+### Lösung
+
+**Schritt 1:** Terminal.app komplett beenden
+
+```zsh
+osascript -e 'quit app "Terminal"'
+```
+
+**Schritt 2:** Profil manuell importieren
+
+```zsh
+open ~/dotfiles/setup/tshofmann.terminal
+```
+
+**Schritt 3:** Als Standard setzen
+
+1. Terminal.app → Einstellungen → Profile
+2. `tshofmann` auswählen
+3. "Standard" Button klicken
+
+---
+
+## Symlinks funktionieren nicht
+
+### Symptom
+
+- Konfiguration wird nicht geladen
+- `~/.zshrc` ist eine Datei statt Symlink
+- Änderungen in `~/dotfiles/terminal/` haben keine Auswirkung
+
+### Diagnose
+
+```zsh
+# Symlink-Status prüfen
+ls -la ~/.zshrc ~/.zprofile
+
+# Erwartete Ausgabe:
+# lrwxr-xr-x  ... .zshrc -> dotfiles/terminal/.zshrc
+```
+
+Falls keine Symlinks (`->`) angezeigt werden, sind es normale Dateien.
+
+### Lösung
+
+```zsh
+# Stow mit Verbose-Output wiederholen
+cd ~/dotfiles
+stow -vvR terminal
+```
+
+Bei Konflikten:
+
+```zsh
+# Existierende Dateien ins Repo übernehmen
+stow --adopt -R terminal
+
+# Repository-Version wiederherstellen
+git reset --hard HEAD
+```
+
+> ⚠️ **Achtung:** `git reset --hard` verwirft lokale Änderungen! Siehe [Installation](installation.md#eigene-änderungen-sichern).
+
+---
+
+## Homebrew-Probleme
+
+### Symptom
+
+- `brew` Befehl nicht gefunden
+- Formulae installieren nicht korrekt
+- Fehlermeldungen bei `brew bundle`
+
+### Diagnose
+
+```zsh
+# Homebrew-Zustand prüfen
+brew doctor
+```
+
+### Lösungen
+
+**Problem:** `brew` nicht gefunden
+
+```zsh
+# Homebrew-Pfad manuell laden
+eval "$(/opt/homebrew/bin/brew shellenv)"
+```
+
+**Problem:** Einzelne Formula defekt
+
+```zsh
+brew reinstall <formula>
+```
+
+**Problem:** Generelle Homebrew-Probleme
+
+```zsh
+# Vollständige Reparatur
+brew update && brew upgrade && brew autoremove && brew cleanup
+```
+
+**Problem:** Brewfile-Installation schlägt fehl
+
+```zsh
+# Ohne Auto-Update installieren
+HOMEBREW_NO_AUTO_UPDATE=1 brew bundle --file=~/dotfiles/setup/Brewfile
+
+# Status prüfen
+HOMEBREW_NO_AUTO_UPDATE=1 brew bundle check --file=~/dotfiles/setup/Brewfile
+```
+
+---
+
+## Starship startet nicht
+
+### Symptom
+
+- Prompt ist Standard-ZSH statt Starship
+- Keine Icons im Prompt
+
+### Diagnose
+
+```zsh
+# Prüfen ob Starship installiert ist
+command -v starship
+
+# Prüfen ob Starship in .zshrc initialisiert wird
+grep starship ~/.zshrc
+```
+
+### Lösung
+
+```zsh
+# Starship neu installieren
+brew reinstall starship
+
+# Shell neu laden
+source ~/.zshrc
+```
+
+Falls `starship.toml` fehlt oder defekt ist:
+
+```zsh
+# Neue Config generieren
+starship preset catppuccin-powerline -o ~/.config/starship.toml
+```
+
+---
+
+## Bootstrap-Skript bricht ab
+
+### Symptom: "Dieses Setup unterstützt nur Apple Silicon"
+
+**Ursache:** Du verwendest einen Intel-Mac.
+
+**Lösung:** Dieses Repository ist nur für Apple Silicon (arm64) konzipiert. Für Intel-Macs müsste das Setup angepasst werden.
+
+### Symptom: "Xcode CLI Tools Installation abgebrochen"
+
+**Ursache:** Installation wurde im Dialog abgebrochen oder ist fehlgeschlagen.
+
+**Lösung:**
+
+```zsh
+# Manuell installieren
+xcode-select --install
+```
+
+### Symptom: "Font konnte nicht verifiziert werden"
+
+**Ursache:** Font-Installation fehlgeschlagen.
+
+**Lösung:**
+
+```zsh
+# Font manuell installieren
+brew install --cask font-meslo-lg-nerd-font
+
+# Prüfen
+ls ~/Library/Fonts/MesloLG*
+```
+
+---
+
+## Weitere Hilfe
+
+Falls dein Problem hier nicht aufgeführt ist:
+
+1. [Issue erstellen](https://github.com/tshofmann/dotfiles/issues/new)
+2. Fehlermeldung und Ausgabe von `brew doctor` beifügen
+3. macOS-Version und Chip (M1/M2/M3) angeben
+
+---
+
+[← Zurück zur Übersicht](../README.md)

@@ -1,0 +1,219 @@
+# 🏗️ Architektur
+
+Technische Details zur Struktur und Funktionsweise dieses dotfiles-Repositories.
+
+---
+
+## Verzeichnisstruktur
+
+```
+dotfiles/
+├── README.md                    # Kurzübersicht & Quickstart
+├── LICENSE                      # MIT Lizenz
+├── .stowrc                      # Stow-Konfiguration
+├── .gitignore                   # Git-Ignore-Patterns
+├── docs/                        # Dokumentation
+│   ├── installation.md         # Installationsanleitung
+│   ├── configuration.md        # Anpassungen
+│   ├── troubleshooting.md      # Fehlerbehebung
+│   ├── architecture.md         # Diese Datei
+│   └── tools.md                # Tool-Übersicht
+├── setup/
+│   ├── bootstrap.sh            # Automatisiertes Setup-Skript
+│   ├── Brewfile                # Homebrew-Abhängigkeiten
+│   └── tshofmann.terminal      # Terminal.app Profil
+└── terminal/
+    ├── .zprofile               # Login-Shell Konfiguration
+    ├── .zshrc                  # Interactive Shell Konfiguration
+    └── .config/
+        └── alias/
+            └── homebrew.alias  # Homebrew-Aliase
+```
+
+> **Wichtig:** Das Bootstrap-Skript erwartet exakt diese Struktur. Es befindet sich in `setup/` und referenziert das übergeordnete Verzeichnis (`..`) als `DOTFILES_DIR`. Ein Verschieben oder Umbenennen der Ordner führt zu Fehlern.
+
+---
+
+## Designentscheidungen
+
+### Nur Apple Silicon (arm64)
+
+Dieses Repository unterstützt **ausschließlich Apple Silicon Macs**:
+
+| Aspekt | Entscheidung |
+|--------|--------------|
+| **Homebrew-Pfad** | `/opt/homebrew` (nicht `/usr/local`) |
+| **Architektur-Check** | Explizit am Skript-Anfang |
+| **Kompatibilität** | Keine Rosetta-Fallbacks |
+
+**Gründe:**
+- Vereinfachte Wartung (kein Dual-Path-Handling)
+- Intel-Support würde Code-Komplexität erhöhen
+- Persönliches Setup – keine Notwendigkeit für Rückwärtskompatibilität
+
+### Idempotenz
+
+Das Bootstrap-Skript ist **idempotent** – es kann beliebig oft ausgeführt werden:
+
+```zsh
+# Sicher wiederholbar
+./setup/bootstrap.sh
+./setup/bootstrap.sh
+./setup/bootstrap.sh  # Identisches Ergebnis
+```
+
+**Implementierung:**
+- `command -v` prüft ob Tools bereits installiert
+- `brew bundle` überspringt installierte Formulae
+- Font-Check prüft Existenz vor Installation
+- Terminal-Profil-Import ist wiederholbar
+
+### Stow statt manuelle Symlinks
+
+[GNU Stow](https://www.gnu.org/software/stow/) verwaltet Symlinks deklarativ:
+
+| Vorteil | Beschreibung |
+|---------|--------------|
+| **Deklarativ** | Struktur in `terminal/` spiegelt Ziel in `~` |
+| **Sicher** | Erkennt Konflikte automatisch |
+| **Reversibel** | `stow -D terminal` entfernt alle Symlinks |
+| **Gruppiert** | Mehrere Packages möglich (`terminal`, `git`, etc.) |
+
+**Konfiguration via `.stowrc`:**
+
+```
+--no-folding      # Keine Verzeichnis-Symlinks, nur Dateien
+--target=~        # Zielverzeichnis
+--ignore=\.DS_Store
+--ignore=\._.*
+--ignore=\.localized
+--ignore=starship\.toml
+```
+
+`--no-folding` verhindert, dass Stow ganze Verzeichnisse verlinkt statt einzelner Dateien. Das ist wichtig, damit andere Programme (nicht aus dem Repo) in denselben Verzeichnissen Dateien anlegen können.
+
+---
+
+## Brewfile-Details
+
+Das Setup verwendet `brew bundle` für deklaratives Package-Management:
+
+```ruby
+# setup/Brewfile
+brew "fzf"                       # Fuzzy Finder
+brew "gh"                        # GitHub CLI
+brew "stow"                      # Symlink Manager
+brew "starship"                  # Shell Prompt
+brew "zoxide"                    # Smarter cd
+cask "font-meslo-lg-nerd-font"   # Nerd Font für Icons
+```
+
+### Installationsverhalten
+
+Das Skript verwendet spezifische Flags:
+
+```zsh
+HOMEBREW_NO_AUTO_UPDATE=1 brew bundle --no-upgrade --file="$BREWFILE"
+```
+
+| Flag | Zweck |
+|------|-------|
+| `HOMEBREW_NO_AUTO_UPDATE=1` | Kein automatisches `brew update` |
+| `--no-upgrade` | Bestehende Formulae nicht upgraden |
+
+**Konsequenz:** Schnellere, reproduzierbare Installationen – aber defekte Formulae werden nicht automatisch repariert.
+
+### Status prüfen
+
+```zsh
+# Prüfen ob alle Abhängigkeiten erfüllt sind
+HOMEBREW_NO_AUTO_UPDATE=1 brew bundle check --file=~/dotfiles/setup/Brewfile
+
+# Detaillierte Liste
+brew bundle list --file=~/dotfiles/setup/Brewfile
+```
+
+### Reparatur bei Problemen
+
+```zsh
+# Vollständige Reparatur
+brew update && brew upgrade && brew autoremove && brew cleanup
+
+# Dann erneut installieren
+brew bundle --file=~/dotfiles/setup/Brewfile
+```
+
+---
+
+## Shell-Konfiguration
+
+### `.zprofile` (Login-Shell)
+
+Wird einmal beim Login ausgeführt:
+
+```zsh
+# Homebrew-Umgebung initialisieren
+eval "$(/opt/homebrew/bin/brew shellenv)"
+```
+
+### `.zshrc` (Interactive Shell)
+
+Wird bei jeder neuen Terminal-Session ausgeführt:
+
+1. **Alias-Loading:** Lädt alle `*.alias` Dateien aus `~/.config/alias/`
+2. **Tool-Initialisierung:** fzf, zoxide, starship (mit `command -v` Guards)
+
+```zsh
+# Alias-Glob mit ZSH-Qualifiers
+for alias_file in ~/.config/alias/*.alias(N-.on); do
+    source "$alias_file"
+done
+```
+
+| Qualifier | Bedeutung |
+|-----------|-----------|
+| `N` | NULL_GLOB – kein Fehler bei leerer Liste |
+| `-` | Folge Symlinks |
+| `.` | Nur reguläre Dateien |
+| `on` | Sortiere nach Name |
+
+---
+
+## Starship-Konfiguration
+
+### Preset-Generierung
+
+```zsh
+# Standard (catppuccin-powerline)
+starship preset catppuccin-powerline -o ~/.config/starship.toml
+
+# Mit benutzerdefiniertem Preset
+STARSHIP_PRESET="tokyo-night" ./setup/bootstrap.sh
+```
+
+### Warum nicht versioniert?
+
+`starship.toml` wird standardmäßig ausgeschlossen:
+
+| Datei | Eintrag |
+|-------|---------|
+| `.gitignore` | `terminal/.config/starship.toml` |
+| `.stowrc` | `--ignore=starship\.toml` |
+
+**Gründe:**
+- Preset wird dynamisch generiert
+- Erlaubt lokale Anpassungen ohne Git-Konflikte
+- Kann bei Bedarf versioniert werden (siehe [Konfiguration](configuration.md))
+
+---
+
+## Weiterführende Links
+
+- [GNU Stow Manual](https://www.gnu.org/software/stow/manual/stow.html)
+- [Homebrew Bundle](https://github.com/Homebrew/homebrew-bundle)
+- [ZSH Documentation](https://zsh.sourceforge.io/Doc/)
+- [Starship Configuration](https://starship.rs/config/)
+
+---
+
+[← Zurück zur Übersicht](../README.md)

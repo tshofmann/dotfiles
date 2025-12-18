@@ -1,195 +1,33 @@
 # 🍎 dotfiles
 
-> macOS Setup für Apple Silicon (arm64) mit automatisierten Installation und Konfiguration.
+> macOS Setup für Apple Silicon (arm64) – automatisiert, idempotent, minimal.
 
-## 📋 Voraussetzungen
-
-- **Apple Silicon Mac** (arm64) – Intel-Macs werden nicht unterstützt
-- **macOS 26 (Tahoe)** – ältere Versionen nicht getestet
-- **Internetverbindung** – für Homebrew-Installation und Formulae-Downloads
-- **Admin-Rechte** – für Xcode CLI Tools Installation (`sudo`-Passwort erforderlich)
-
-## 📁 Struktur
-
-```
-dotfiles/
-├── setup/
-│   ├── bootstrap.sh            # Automatisiertes Setup (Basis)
-│   ├── Brewfile                # Homebrew Abhängigkeiten
-│   └── tshofmann.terminal      # Terminal.app Profil
-├── terminal/
-│   ├── .zprofile               # Login-Shell
-│   ├── .zshrc                  # Interactive Shell
-│   └── .config/alias/
-│       └── homebrew.alias      # Homebrew Aliase
-└── .stowrc                     # Stow-Konfiguration (ignoriert macOS Dateimüll)
-```
-
-> **Hinweis:** Das Bootstrap-Skript erwartet exakt diese Verzeichnisstruktur. Das Skript befindet sich in `setup/` und referenziert das übergeordnete Verzeichnis als `DOTFILES_DIR`. Ein Verschieben oder Umbenennen der Ordner führt zu Fehlern.
-
-## 🚀 Installation
-
-**Schritt 1: Setup ausführen**
+## Quickstart
 
 ```zsh
-git clone https://github.com/tshofmann/dotfiles.git ~/dotfiles && cd ~/dotfiles && ./setup/bootstrap.sh
-```
-
-Das Skript:
-- Prüft arm64 Architektur (Exit wenn Intel)
-- Installiert/prüft Xcode CLI Tools
-- Installiert/prüft Homebrew
-- Installiert CLI-Tools via Brewfile (fzf, gh, stow, starship, zoxide)
-- Installiert MesloLG Nerd Font
-- Importiert & setzt Terminal.app Profil als Standard
-- Konfiguriert Starship-Theme (catppuccin-powerline)
-- ✖ Exit bei kritischen Fehlern (Architektur, Xcode, Font)
-- ⚠ Warnung bei Profil-Problemen (nicht blockierend)
-
-**Schritt 2: Konfigurationsdateien verlinken**
-
-```zsh
+git clone https://github.com/tshofmann/dotfiles.git ~/dotfiles
+cd ~/dotfiles && ./setup/bootstrap.sh
 cd ~/dotfiles && stow --adopt -R terminal && git reset --hard HEAD
 ```
 
-> ⚠️ **Achtung:** Der Befehl `git reset --hard HEAD` verwirft **alle lokalen Änderungen** im Repository unwiderruflich. Falls du eigene Anpassungen an den Dotfiles vorgenommen hast, sichere diese vorher:
-> ```zsh
-> git stash        # Änderungen temporär sichern
-> # Nach dem stow-Befehl:
-> git stash pop    # Änderungen wiederherstellen
-> ```
+> ⚠️ **Achtung:** `git reset --hard` verwirft lokale Änderungen. Siehe [Installation](docs/installation.md) für Details.
 
-Der Befehl:
-- Übernimmt existierende Dateien ins Repository (`--adopt`)
-- Aktualisiert bestehende Symlinks (`-R` = `--restow`)
-- Stellt die Repository-Version wieder her (`git reset`)
+## Voraussetzungen
 
-> **Hinweis:** `--no-folding` und `--target=~` werden automatisch aus `.stowrc` geladen.
+- **Apple Silicon Mac** (arm64)
+- **macOS 26 (Tahoe)**
+- **Internetverbindung** & Admin-Rechte
 
-| Symlink | Ziel |
-|---------|------|
-| `~/.zshrc` | `~/dotfiles/terminal/.zshrc` |
-| `~/.zprofile` | `~/dotfiles/terminal/.zprofile` |
-| `~/.config/alias/homebrew.alias` | `~/dotfiles/terminal/.config/alias/homebrew.alias` |
+## Dokumentation
 
-## ⚙️ Details
+| Thema | Beschreibung |
+|-------|--------------|
+| [Installation](docs/installation.md) | Schritt-für-Schritt Anleitung |
+| [Konfiguration](docs/configuration.md) | Starship, Aliase anpassen |
+| [Architektur](docs/architecture.md) | Struktur & Designentscheidungen |
+| [Tools](docs/tools.md) | Enthaltene CLI-Tools & Aliase |
+| [Troubleshooting](docs/troubleshooting.md) | Häufige Probleme & Lösungen |
 
-**Idempotenz:** Das Skript kann mehrfach hintereinander ausgeführt werden.
+## Lizenz
 
-**Brewfile:** Deklarative Abhängigkeiten statt `brew install foo bar baz`.
-
-> **Hinweis:** Das Setup verwendet `brew bundle --no-upgrade` und setzt während des Installationslaufs `HOMEBREW_NO_AUTO_UPDATE=1` für schnellere, reproduzierbare Runs. Bestehende, aber defekte Homebrew-Installationen werden dadurch nicht automatisch repariert. Für frische Setups ist dieses Verhalten beabsichtigt. Falls es zu Problemen durch bestehende, aber defekte Formulae kommt:
-> - **Option 1:** Homebrew-Zustand prüfen: `brew doctor`
-> - **Option 2:** Einzelne Formula reparieren: `brew reinstall <formula>`
-> - **Option 3:** Vollständige Reparatur: `brew update && brew upgrade && brew autoremove && brew cleanup`
-
-```ruby
-brew "fzf"
-brew "gh"
-brew "stow"
-brew "starship"
-brew "zoxide"
-cask "font-meslo-lg-nerd-font"
-```
-
-Nur prüfen (ohne Änderungen/Update):
-
-```zsh
-HOMEBREW_NO_AUTO_UPDATE=1 brew bundle check --file=setup/Brewfile
-```
-
-**Starship-Theme:** Das Setup generiert automatisch `~/.config/starship.toml` mit dem `catppuccin-powerline` Preset. Die Datei wird standardmäßig nicht versioniert (`.gitignore` + `.stowrc`).
-
-> **Eigene Starship-Konfiguration versionieren:**
-> 1. Datei nach `terminal/.config/starship.toml` kopieren
-> 2. Eintrag `terminal/.config/starship.toml` aus `.gitignore` entfernen
-> 3. Eintrag `--ignore=starship\.toml` aus `.stowrc` entfernen
-> 4. Mit `stow -R terminal` verlinken
-
-## 🎨 Anpassungen
-
-### Starship-Preset konfigurieren
-
-Default bleibt `catppuccin-powerline`. Du kannst ein anderes Preset pro Aufruf setzen:
-
-```zsh
-# Alternatives Preset einmalig nutzen
-STARSHIP_PRESET="tokyo-night" ./setup/bootstrap.sh
-
-# Persistent (z. B. für mehrere Runs)
-export STARSHIP_PRESET="pure-preset"
-./setup/bootstrap.sh
-```
-
-Verhalten (idempotent und respektvoll):
-- Ohne Variable: Vorhandene `~/.config/starship.toml` bleibt unverändert (manuelle Anpassungen bleiben erhalten)
-- Mit Variable: `starship.toml` wird mit dem gewünschten Preset neu erstellt/überschrieben
-- Ungültiges Preset: Warnung, Fallback auf `catppuccin-powerline` (Config bleibt gültig)
-
-Presets erkunden:
-- Online: https://starship.rs/presets/
-- Lokal (nach Installation):
-
-```zsh
-starship preset --list
-```
-
-## ⌨️ Aliase
-
-| Alias | Befehl | Beschreibung |
-|-------|--------|--------------|
-| `brewup` | `brew update && brew upgrade && brew autoremove && brew cleanup` | System-Update |
-
-## 🔧 Troubleshooting
-
-### Font wird nicht gefunden
-
-Falls das Terminal-Profil nicht korrekt angezeigt wird oder Icons fehlen:
-
-```zsh
-# Prüfen ob Font installiert ist
-ls ~/Library/Fonts/MesloLG*NerdFont*
-
-# Font neu installieren
-brew reinstall font-meslo-lg-nerd-font
-```
-
-### Terminal-Profil nicht importiert
-
-Falls das Profil `tshofmann` nicht in Terminal.app erscheint:
-
-1. Terminal.app komplett beenden (`⌘Q`)
-2. Profil manuell importieren:
-   ```zsh
-   open ~/dotfiles/setup/tshofmann.terminal
-   ```
-3. In Terminal → Einstellungen → Profile prüfen ob `tshofmann` vorhanden ist
-
-### Symlinks funktionieren nicht
-
-Falls nach `stow` die Konfiguration nicht greift:
-
-```zsh
-# Symlink-Status prüfen
-ls -la ~/.zshrc ~/.zprofile
-
-# Stow-Vorgang mit Verbose-Output wiederholen
-cd ~/dotfiles && stow -vR terminal
-```
-
-### Homebrew-Probleme
-
-```zsh
-# Homebrew-Zustand prüfen
-brew doctor
-
-# Einzelne Formula reparieren
-brew reinstall <formula>
-
-# Vollständige Reparatur
-brew update && brew upgrade && brew autoremove && brew cleanup
-```
-
-## 📄 Lizenz
-
-[MIT Lizenz](LICENSE)
+[MIT](LICENSE)
