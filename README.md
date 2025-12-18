@@ -77,7 +77,7 @@ Der Befehl:
 
 **Brewfile:** Deklarative Abhängigkeiten statt `brew install foo bar baz`.
 
-> **Hinweis:** Das Setup verwendet `brew bundle --no-upgrade`. Bestehende, aber defekte Homebrew-Installationen werden dadurch nicht automatisch repariert. Für frische Setups ist dieses Verhalten beabsichtigt. Falls es zu Problemen durch bestehende, aber defekte Formulae kommt:
+> **Hinweis:** Das Setup verwendet `brew bundle --no-upgrade` und setzt während des Installationslaufs `HOMEBREW_NO_AUTO_UPDATE=1` für schnellere, reproduzierbare Runs. Bestehende, aber defekte Homebrew-Installationen werden dadurch nicht automatisch repariert. Für frische Setups ist dieses Verhalten beabsichtigt. Falls es zu Problemen durch bestehende, aber defekte Formulae kommt:
 > - **Option 1:** Homebrew-Zustand prüfen: `brew doctor`
 > - **Option 2:** Einzelne Formula reparieren: `brew reinstall <formula>`
 > - **Option 3:** Vollständige Reparatur: `brew update && brew upgrade && brew autoremove && brew cleanup`
@@ -91,6 +91,12 @@ brew "zoxide"
 cask "font-meslo-lg-nerd-font"
 ```
 
+Nur prüfen (ohne Änderungen/Update):
+
+```zsh
+HOMEBREW_NO_AUTO_UPDATE=1 brew bundle check --file=setup/Brewfile
+```
+
 **Starship-Theme:** Das Setup generiert automatisch `~/.config/starship.toml` mit dem `catppuccin-powerline` Preset. Die Datei wird standardmäßig nicht versioniert (`.gitignore` + `.stowrc`).
 
 > **Eigene Starship-Konfiguration versionieren:**
@@ -98,6 +104,35 @@ cask "font-meslo-lg-nerd-font"
 > 2. Eintrag `terminal/.config/starship.toml` aus `.gitignore` entfernen
 > 3. Eintrag `--ignore=starship\.toml` aus `.stowrc` entfernen
 > 4. Mit `stow -R terminal` verlinken
+
+## 🎨 Anpassungen
+
+### Starship-Preset konfigurieren
+
+Standard-Preset ist `catppuccin-powerline`. Für ein anderes Preset kannst du beim Aufruf die Umgebungsvariable setzen:
+
+```zsh
+# Alternatives Preset verwenden
+STARSHIP_PRESET="tokyo-night" ./setup/bootstrap.sh
+
+# Oder persistent exportieren
+export STARSHIP_PRESET="pure-preset"
+./setup/bootstrap.sh
+```
+
+Verhalten:
+- Ohne Variable: Existierende `~/.config/starship.toml` bleibt unverändert (respektiert manuelle Anpassungen)
+- Mit Variable: `starship.toml` wird mit dem gewünschten Preset neu erzeugt/überschrieben
+- Ungültiges Preset: Fallback auf `catppuccin-powerline` mit Warnung
+
+Presets erkunden:
+
+- Online: https://starship.rs/presets/
+- Lokal (nach Installation):
+
+```zsh
+starship preset --list
+```
 
 ## ⌨️ Aliase
 

@@ -28,8 +28,13 @@ readonly FONT_GLOB="MesloLG*NerdFont*"
 readonly BREWFILE="$SCRIPT_DIR/Brewfile"
 
 # Starship-Konfiguration
+# Merke, ob der Nutzer STARSHIP_PRESET explizit gesetzt hat
+preset_from_env=false
+[[ -n "${STARSHIP_PRESET+x}" ]] && preset_from_env=true
+
 readonly STARSHIP_CONFIG="$HOME/.config/starship.toml"
-readonly STARSHIP_PRESET="catppuccin-powerline"
+readonly STARSHIP_PRESET_DEFAULT="catppuccin-powerline"
+readonly STARSHIP_PRESET="${STARSHIP_PRESET:-$STARSHIP_PRESET_DEFAULT}"
 
 # Regex-Match für Terminal-Profil in defaults
 readonly PROFILE_GREP_PATTERN="(^[[:space:]]+\"$PROFILE_NAME\"|^[[:space:]]+$PROFILE_NAME)[[:space:]]+="
@@ -80,8 +85,8 @@ if [[ ! -f "$BREWFILE" ]]; then
 fi
 
 # CLI-Tools und Font über Brewfile installieren
-log "Installiere Abhängigkeiten aus Brewfile"
-if ! brew bundle --file="$BREWFILE" --no-upgrade; then
+log "Installiere Abhängigkeiten aus Brewfile (ohne Auto-Update)"
+if ! HOMEBREW_NO_AUTO_UPDATE=1 brew bundle --file="$BREWFILE" --no-upgrade; then
   err "Brew Bundle fehlgeschlagen – Setup wird abgebrochen"
   exit 1
 fi
@@ -201,16 +206,31 @@ if ! command -v starship >/dev/null 2>&1; then
 else
   # 3. Falls installiert, prüfe ob starship.toml vorhanden ist
   if [[ -f "$STARSHIP_CONFIG" ]]; then
-    # 4. Falls vorhanden, informieren
-    ok "$STARSHIP_CONFIG existiert bereits"
+    # Config existiert bereits
+    if [[ "$preset_from_env" == "true" ]]; then
+      # Nutzer hat explizit ein Preset gesetzt → überschreiben (mit Fallback)
+      log "Überschreibe $STARSHIP_CONFIG mit Preset '$STARSHIP_PRESET'"
+      if starship preset "$STARSHIP_PRESET" -o "$STARSHIP_CONFIG" 2>/dev/null; then
+        ok "Starship-Theme '$STARSHIP_PRESET' gesetzt → $STARSHIP_CONFIG"
+      else
+        warn "Starship-Preset '$STARSHIP_PRESET' ungültig, nutze Fallback '$STARSHIP_PRESET_DEFAULT'"
+        if starship preset "$STARSHIP_PRESET_DEFAULT" -o "$STARSHIP_CONFIG" 2>/dev/null; then
+          ok "Fallback-Theme '$STARSHIP_PRESET_DEFAULT' gesetzt → $STARSHIP_CONFIG"
+        else
+          warn "Auch Fallback-Preset konnte nicht gesetzt werden"
+        fi
+      fi
+    else
+      # Kein explizites Preset → bestehende Config bleibt unverändert
+      ok "$STARSHIP_CONFIG existiert bereits"
+    fi
   else
-    # 5. Prüfe ob ~/.config existiert und ein Verzeichnis ist
+    # Keine Config vorhanden → erstellen
     if [[ -e "$HOME/.config" && ! -d "$HOME/.config" ]]; then
       err "$HOME/.config existiert, ist aber kein Verzeichnis"
       exit 1
     fi
 
-    # 6. Erstelle ~/.config falls nicht vorhanden, dann Theme setzen
     if [[ ! -d "$HOME/.config" ]]; then
       log "Erstelle Verzeichnis ~/.config"
       mkdir -p "$HOME/.config"
@@ -219,7 +239,12 @@ else
     if starship preset "$STARSHIP_PRESET" -o "$STARSHIP_CONFIG" 2>/dev/null; then
       ok "Starship-Theme '$STARSHIP_PRESET' gesetzt → $STARSHIP_CONFIG"
     else
-      warn "Starship-Preset '$STARSHIP_PRESET' konnte nicht gesetzt werden"
+      warn "Starship-Preset '$STARSHIP_PRESET' ungültig, nutze Fallback '$STARSHIP_PRESET_DEFAULT'"
+      if starship preset "$STARSHIP_PRESET_DEFAULT" -o "$STARSHIP_CONFIG" 2>/dev/null; then
+        ok "Fallback-Theme '$STARSHIP_PRESET_DEFAULT' gesetzt → $STARSHIP_CONFIG"
+      else
+        warn "Auch Fallback-Preset konnte nicht gesetzt werden"
+      fi
     fi
   fi
 fi
