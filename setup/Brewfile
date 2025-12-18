@@ -1,6 +1,7 @@
 # ============================================================
 # Brewfile - Homebrew Abhängigkeiten für macOS Setup
 # ============================================================
+# Zweck     : Deklarative Homebrew-Abhängigkeiten (CLI-Tools & Font)
 # Verwendung: brew bundle --file=setup/Brewfile
 # Docs      : https://github.com/Homebrew/homebrew-bundle
 # ============================================================

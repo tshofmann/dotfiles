@@ -5,6 +5,7 @@
 ## 📋 Voraussetzungen
 
 - **Apple Silicon Mac** (arm64) – Intel-Macs werden nicht unterstützt
+- **macOS 26 (Tahoe)** – ältere Versionen nicht getestet
 - **Internetverbindung** – für Homebrew-Installation und Formulae-Downloads
 - **Admin-Rechte** – für Xcode CLI Tools Installation (`sudo`-Passwort erforderlich)
 

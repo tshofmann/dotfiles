@@ -59,7 +59,7 @@ readonly BREW_PREFIX="/opt/homebrew"
 # ------------------------------------------------------------
 # Hauptprogramm
 # ------------------------------------------------------------
-print "==> macOS Bootstrap"
+print "==> macOS Tahoe Bootstrap"
 
 # Homebrew bei Bedarf installieren
 if ! [[ -x "$BREW_PREFIX/bin/brew" ]]; then
