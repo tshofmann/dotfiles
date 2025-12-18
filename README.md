@@ -31,9 +31,7 @@ dotfiles/
 **Schritt 1: Setup ausführen**
 
 ```zsh
-git clone https://github.com/tshofmann/dotfiles.git ~/dotfiles
-cd ~/dotfiles
-./setup/bootstrap.sh
+git clone https://github.com/tshofmann/dotfiles.git ~/dotfiles && cd ~/dotfiles && ./setup/bootstrap.sh
 ```
 
 Das Skript:
