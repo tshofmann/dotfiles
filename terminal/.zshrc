@@ -10,9 +10,9 @@
 # Aliase laden
 # ------------------------------------------------------------
 # (N) = NULL_GLOB - kein Fehler wenn leer
-# (.) = Nur reguläre Dateien
+# (-.) = Reguläre Dateien inkl. Symlinks darauf
 # (on) = Alphabetisch sortiert
-for alias_file in "$HOME/.config/alias"/*.alias(N.on); do
+for alias_file in "$HOME/.config/alias"/*.alias(N-.on); do
     source "$alias_file"
 done
 
