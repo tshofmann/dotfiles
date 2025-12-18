@@ -3,7 +3,6 @@
 # bootstrap.sh - macOS Bootstrap-Skript
 # ============================================================
 # Zweck   : Homebrew, CLI-Tools, Nerd Font & Terminal-Profil
-# Pfad    : ~/dotfiles/setup/bootstrap.sh
 # Aufruf  : ./bootstrap.sh
 # ============================================================
 
@@ -21,6 +20,7 @@ warn() { print "⚠ $*"; }
 # Konfiguration (readonly verhindert versehentliche Überschreibung)
 # ------------------------------------------------------------
 readonly SCRIPT_DIR="${0:A:h}"
+readonly DOTFILES_DIR="${SCRIPT_DIR:h}"
 readonly PROFILE_FILE="$SCRIPT_DIR/tshofmann.terminal"
 readonly PROFILE_NAME="tshofmann"
 readonly FONT_GLOB="MesloLG*NerdFont*"
@@ -228,4 +228,4 @@ ok "Setup abgeschlossen"
 print ""
 log "Nächste Schritte:"
 log "  1. Terminal.app neu starten für vollständige Übernahme aller Einstellungen"
-log "  2. Konfigurationsdateien verlinken: cd ~/dotfiles && stow --restow terminal"
+log "  2. Konfigurationsdateien verlinken: cd $DOTFILES_DIR && stow --no-folding --adopt --restow terminal && git reset --hard HEAD"
