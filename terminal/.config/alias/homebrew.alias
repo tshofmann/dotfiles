@@ -3,7 +3,6 @@
 # ============================================================
 # Zweck   : Aliase für Homebrew Paketverwaltung
 # Pfad    : ~/.config/alias/homebrew.alias
-# Quelle  : ~/dotfiles/terminal/.config/alias/homebrew.alias
 # Docs    : https://docs.brew.sh/Manpage
 # ============================================================
 
