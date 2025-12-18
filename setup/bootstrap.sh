@@ -4,6 +4,7 @@
 # ============================================================
 # Zweck   : Homebrew, CLI-Tools, Nerd Font & Terminal-Profil
 # Aufruf  : ./bootstrap.sh
+# Docs    : https://github.com/tshofmann/dotfiles#readme
 # ============================================================
 
 set -euo pipefail

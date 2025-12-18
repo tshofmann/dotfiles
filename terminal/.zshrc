@@ -4,6 +4,7 @@
 # Zweck   : Hauptkonfiguration für interaktive ZSH Shells
 # Pfad    : ~/.zshrc
 # Quelle  : ~/dotfiles/terminal/.zshrc
+# Docs    : https://zsh.sourceforge.io/Doc/Release/Files.html#Startup_002fShutdown-Files
 # ============================================================
 
 # ------------------------------------------------------------

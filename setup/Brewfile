@@ -2,6 +2,7 @@
 # Brewfile - Homebrew Abhängigkeiten für macOS Setup
 # ============================================================
 # Verwendung: brew bundle --file=setup/Brewfile
+# Docs      : https://github.com/Homebrew/homebrew-bundle
 # ============================================================
 
 # CLI-Tools
