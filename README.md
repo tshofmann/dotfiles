@@ -5,8 +5,12 @@
 ## Quickstart
 
 ```zsh
-git clone https://github.com/tshofmann/dotfiles.git ~/dotfiles
-cd ~/dotfiles && ./setup/bootstrap.sh
+git clone https://github.com/tshofmann/dotfiles.git ~/dotfiles && cd ~/dotfiles && ./setup/bootstrap.sh
+```
+
+Nach Terminal-Neustart:
+
+```zsh
 cd ~/dotfiles && stow --adopt -R terminal && git reset --hard HEAD
 ```
 

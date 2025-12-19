@@ -101,11 +101,8 @@ stow -vvR terminal
 Bei Konflikten:
 
 ```zsh
-# Existierende Dateien ins Repo übernehmen
-stow --adopt -R terminal
-
-# Repository-Version wiederherstellen
-git reset --hard HEAD
+# Existierende Dateien ins Repo übernehmen und Repository-Version wiederherstellen
+stow --adopt -R terminal && git reset --hard HEAD
 ```
 
 > ⚠️ **Achtung:** `git reset --hard` verwirft lokale Änderungen! Siehe [Installation](installation.md#eigene-änderungen-sichern).

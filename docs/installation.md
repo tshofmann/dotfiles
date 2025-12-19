@@ -18,10 +18,10 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles au
 ## Schritt 1: Bootstrap-Skript ausführen
 
 ```zsh
-git clone https://github.com/tshofmann/dotfiles.git ~/dotfiles
-cd ~/dotfiles
-./setup/bootstrap.sh
+git clone https://github.com/tshofmann/dotfiles.git ~/dotfiles && cd ~/dotfiles && ./setup/bootstrap.sh
 ```
+
+> ⚠️ **Wichtig:** Nach Abschluss des Bootstrap-Skripts wird das Terminal automatisch neu gestartet. Fahre danach mit Schritt 2 fort.
 
 ### Was das Skript macht
 
@@ -43,13 +43,13 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 
 ## Schritt 2: Konfigurationsdateien verlinken
 
+Nach dem Terminal-Neustart:
+
 ```zsh
-cd ~/dotfiles
-stow --adopt -R terminal
-git reset --hard HEAD
+cd ~/dotfiles && stow --adopt -R terminal && git reset --hard HEAD
 ```
 
-### Was dieser Befehl macht
+### Was diese Befehle machen
 
 | Flag | Bedeutung |
 |------|-----------|
@@ -109,7 +109,6 @@ ls -la ~/.zshrc ~/.zprofile ~/.config/alias/
 
 ## Nächste Schritte
 
-- **Terminal neustarten** oder `source ~/.zshrc` ausführen
 - [Konfiguration anpassen](configuration.md) – Starship-Theme ändern
 - [Tools-Übersicht](tools.md) – Installierte CLI-Tools kennenlernen
 
