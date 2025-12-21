@@ -36,4 +36,6 @@ alias bat-themes='bat --list-themes'
 alias bat-langs='bat --list-languages'
 
 # Theme-Vorschau (benötigt fzf)
-alias bat-preview='bat --list-themes | fzf --preview="bat --theme={} --color=always ~/.zshrc"'
+if command -v fzf >/dev/null 2>&1; then
+    alias bat-preview='bat --list-themes | fzf --preview="bat --theme={} --color=always ~/.zshrc"'
+fi
