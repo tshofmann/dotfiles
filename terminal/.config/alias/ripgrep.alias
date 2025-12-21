@@ -6,6 +6,11 @@
 # Docs    : https://github.com/BurntSushi/ripgrep
 # ============================================================
 
+# Guard: Aliase nur aktivieren wenn ripgrep installiert ist
+if ! command -v rg >/dev/null 2>&1; then
+    return 0
+fi
+
 # ------------------------------------------------------------
 # Basis-Suche
 # ------------------------------------------------------------

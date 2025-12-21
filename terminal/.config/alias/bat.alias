@@ -6,6 +6,11 @@
 # Docs    : https://github.com/sharkdp/bat
 # ============================================================
 
+# Guard: Aliase nur aktivieren wenn bat installiert ist
+if ! command -v bat >/dev/null 2>&1; then
+    return 0
+fi
+
 # ------------------------------------------------------------
 # Dateiansicht
 # ------------------------------------------------------------

@@ -6,6 +6,11 @@
 # Docs    : https://eza.rocks
 # ============================================================
 
+# Guard: Aliase nur aktivieren wenn eza installiert ist
+if ! command -v eza >/dev/null 2>&1; then
+    return 0
+fi
+
 # ------------------------------------------------------------
 # Basis-Auflistung
 # ------------------------------------------------------------

@@ -25,6 +25,8 @@ Diese Tools werden via Brewfile installiert:
 
 Verfügbare Aliase aus `~/.config/alias/`:
 
+> **Guard-System:** Alle Tool-Aliase prüfen zuerst ob das jeweilige Tool installiert ist (`command -v`). Ist ein Tool nicht vorhanden, bleiben die originalen Befehle (`ls`, `cat`, `grep`) erhalten.
+
 ### homebrew.alias
 
 | Alias | Befehl | Beschreibung |
