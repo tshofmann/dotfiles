@@ -127,11 +127,13 @@ HOMEBREW_NO_AUTO_UPDATE=1 brew bundle --no-upgrade --file="$BREWFILE"
 
 ```zsh
 # Prüfen ob alle Abhängigkeiten erfüllt sind
-HOMEBREW_NO_AUTO_UPDATE=1 brew bundle check --file=~/dotfiles/setup/Brewfile
+brew bundle check
 
 # Detaillierte Liste
-brew bundle list --file=~/dotfiles/setup/Brewfile
+brew bundle list
 ```
+
+> **Hinweis:** Die Umgebungsvariable `HOMEBREW_BUNDLE_FILE` (gesetzt in `.zprofile`) ermöglicht die Nutzung von `brew bundle` ohne `--file` Flag.
 
 ### Reparatur bei Problemen
 
@@ -140,7 +142,7 @@ brew bundle list --file=~/dotfiles/setup/Brewfile
 brew update && brew upgrade && brew autoremove && brew cleanup
 
 # Dann erneut installieren
-brew bundle --file=~/dotfiles/setup/Brewfile
+brew bundle
 ```
 
 ---
@@ -154,7 +156,17 @@ Wird einmal beim Login ausgeführt:
 ```zsh
 # Homebrew-Umgebung initialisieren
 eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# Brewfile-Pfad für 'brew bundle'
+export HOMEBREW_BUNDLE_FILE="$HOME/dotfiles/setup/Brewfile"
 ```
+
+| Variable | Zweck |
+|----------|-------|
+| `HOMEBREW_PREFIX` | Homebrew-Installationspfad (`/opt/homebrew`) |
+| `HOMEBREW_CELLAR` | Installierte Formulae |
+| `HOMEBREW_REPOSITORY` | Homebrew Git-Repository |
+| `HOMEBREW_BUNDLE_FILE` | Standard-Pfad für `brew bundle` |
 
 ### `.zshrc` (Interactive Shell)
 

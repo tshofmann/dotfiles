@@ -154,8 +154,8 @@ $EDITOR ~/dotfiles/setup/Brewfile
 # Beispiel: bat (besseres cat) hinzufügen
 echo 'brew "bat"' >> ~/dotfiles/setup/Brewfile
 
-# Installieren
-brew bundle --file=~/dotfiles/setup/Brewfile
+# Installieren (HOMEBREW_BUNDLE_FILE ist in .zprofile gesetzt)
+brew bundle
 ```
 
 ### Eigene Aliase

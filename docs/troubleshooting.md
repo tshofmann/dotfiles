@@ -150,11 +150,13 @@ brew update && brew upgrade && brew autoremove && brew cleanup
 
 ```zsh
 # Ohne Auto-Update installieren
-HOMEBREW_NO_AUTO_UPDATE=1 brew bundle --file=~/dotfiles/setup/Brewfile
+HOMEBREW_NO_AUTO_UPDATE=1 brew bundle
 
 # Status prüfen
-HOMEBREW_NO_AUTO_UPDATE=1 brew bundle check --file=~/dotfiles/setup/Brewfile
+brew bundle check
 ```
+
+> **Hinweis:** `brew bundle` verwendet automatisch `~/dotfiles/setup/Brewfile` durch die Umgebungsvariable `HOMEBREW_BUNDLE_FILE` (gesetzt in `.zprofile`).
 
 ---
 
