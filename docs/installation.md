@@ -6,7 +6,7 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles au
 
 | Anforderung | Details |
 |-------------|---------|
-| **Apple Silicon Mac** | M1, M2, M3 oder neuer (arm64) – Intel-Macs werden nicht unterstützt |
+| **Apple Silicon Mac** | M1, M2, … (arm64) – Intel-Macs werden nicht unterstützt |
 | **macOS 26 (Tahoe)** | Ältere Versionen sind nicht getestet und können zu unerwarteten Fehlern führen |
 | **Internetverbindung** | Für Homebrew-Installation und Download der Formulae/Casks |
 | **Admin-Rechte** | `sudo`-Passwort erforderlich für Xcode CLI Tools Installation |
@@ -77,12 +77,12 @@ git stash pop            # Änderungen wiederherstellen
 Die Datei `.stowrc` im Repository-Root konfiguriert Stow automatisch:
 
 ```
---no-folding
---target=~
 --ignore=\.DS_Store
---ignore=\._.*
+--ignore=^\._
 --ignore=\.localized
 --ignore=starship\.toml
+--no-folding
+--target=~
 ```
 
 Du musst diese Flags nicht manuell angeben.

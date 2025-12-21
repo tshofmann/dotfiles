@@ -13,21 +13,21 @@ dotfiles/
 ├── .stowrc                      # Stow-Konfiguration
 ├── .gitignore                   # Git-Ignore-Patterns
 ├── docs/                        # Dokumentation
-│   ├── installation.md         # Installationsanleitung
-│   ├── configuration.md        # Anpassungen
-│   ├── troubleshooting.md      # Fehlerbehebung
-│   ├── architecture.md         # Diese Datei
-│   └── tools.md                # Tool-Übersicht
+│   ├── installation.md          # Installationsanleitung
+│   ├── configuration.md         # Anpassungen
+│   ├── troubleshooting.md       # Fehlerbehebung
+│   ├── architecture.md          # Diese Datei
+│   └── tools.md                 # Tool-Übersicht
 ├── setup/
-│   ├── bootstrap.sh            # Automatisiertes Setup-Skript
-│   ├── Brewfile                # Homebrew-Abhängigkeiten
-│   └── tshofmann.terminal      # Terminal.app Profil
+│   ├── bootstrap.sh             # Automatisiertes Setup-Skript
+│   ├── Brewfile                 # Homebrew-Abhängigkeiten
+│   └── tshofmann.terminal       # Terminal.app Profil
 └── terminal/
-    ├── .zprofile               # Login-Shell Konfiguration
-    ├── .zshrc                  # Interactive Shell Konfiguration
+    ├── .zprofile                # Login-Shell Konfiguration
+    ├── .zshrc                   # Interactive Shell Konfiguration
     └── .config/
         └── alias/
-            └── homebrew.alias  # Homebrew-Aliase
+            └── homebrew.alias   # Homebrew-Aliase
 ```
 
 > **Wichtig:** Das Bootstrap-Skript erwartet exakt diese Struktur. Es befindet sich in `setup/` und referenziert das übergeordnete Verzeichnis (`..`) als `DOTFILES_DIR`. Ein Verschieben oder Umbenennen der Ordner führt zu Fehlern.
@@ -82,12 +82,12 @@ Das Bootstrap-Skript ist **idempotent** – es kann beliebig oft ausgeführt wer
 **Konfiguration via `.stowrc`:**
 
 ```
---no-folding      # Keine Verzeichnis-Symlinks, nur Dateien
---target=~        # Zielverzeichnis
 --ignore=\.DS_Store
---ignore=\._.*
+--ignore=^\._
 --ignore=\.localized
 --ignore=starship\.toml
+--no-folding
+--target=~
 ```
 
 `--no-folding` verhindert, dass Stow ganze Verzeichnisse verlinkt statt einzelner Dateien. Das ist wichtig, damit andere Programme (nicht aus dem Repo) in denselben Verzeichnissen Dateien anlegen können.

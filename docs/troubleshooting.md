@@ -231,13 +231,45 @@ ls ~/Library/Fonts/MesloLG*
 
 ---
 
+## Dotfiles deinstallieren
+
+Falls du die dotfiles entfernen möchtest:
+
+### Schritt 1: Symlinks entfernen
+
+```zsh
+cd ~/dotfiles
+stow -D terminal
+```
+
+### Schritt 2: Eigene Konfigurationsdateien wiederherstellen (optional)
+
+Nach dem Entfernen der Symlinks existieren `~/.zshrc` und `~/.zprofile` nicht mehr. Du kannst eigene Dateien anlegen oder das macOS-Standard-Setup nutzen.
+
+### Schritt 3: Homebrew-Pakete entfernen (optional)
+
+```zsh
+brew uninstall fzf gh starship zoxide stow
+brew uninstall --cask font-meslo-lg-nerd-font
+```
+
+### Schritt 4: Repository löschen (optional)
+
+```zsh
+rm -rf ~/dotfiles
+```
+
+> **Hinweis:** Homebrew selbst wird durch diese Schritte nicht entfernt. Falls gewünscht, siehe [Homebrew Uninstallation](https://github.com/Homebrew/install#uninstall-homebrew).
+
+---
+
 ## Weitere Hilfe
 
 Falls dein Problem hier nicht aufgeführt ist:
 
 1. [Issue erstellen](https://github.com/tshofmann/dotfiles/issues/new)
 2. Fehlermeldung und Ausgabe von `brew doctor` beifügen
-3. macOS-Version und Chip (M1/M2/M3) angeben
+3. macOS-Version und Chip (M1, M2, …) angeben
 
 ---
 
