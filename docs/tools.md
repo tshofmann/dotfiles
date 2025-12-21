@@ -51,26 +51,35 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 | Alias | Befehl | Beschreibung |
 |-------|--------|--------------|
-| `cat` | `bat` | cat-Ersatz mit Syntax-Highlighting |
-| `catp` | `bat --plain` | Ohne Zeilennummern/Header (für Pipes) |
-| `catn` | `bat --style=numbers` | Nur Zeilennummern |
-| `catd` | `bat --diff` | Mit Git-Diff-Highlighting |
+| `cat` | `bat -pp` | cat-Ersatz: Plain + kein Pager |
+| `catp` | `bat --paging=never` | Mit Highlighting, ohne Pager |
+| `catn` | `bat --style=numbers --paging=never` | Nur Zeilennummern |
+| `catd` | `bat --diff` | Mit Git-Diff-Markierungen |
 | `bat-themes` | `bat --list-themes` | Verfügbare Themes auflisten |
 | `bat-langs` | `bat --list-languages` | Verfügbare Sprachen auflisten |
+| `bat-preview` | `bat --list-themes \| fzf ...` | Theme-Vorschau (benötigt fzf) |
+
+> **Hinweis:** `-pp` ist die Kurzform für `--style=plain --paging=never` – verhält sich wie das echte `cat`.
 
 ### ripgrep.alias
 
 | Alias | Befehl | Beschreibung |
 |-------|--------|--------------|
-| `rgc` | `rg -C 3` | Suche mit Kontext (3 Zeilen) |
-| `rgf` | `rg --files \| rg` | Suche nur Dateinamen |
-| `rga` | `rg --no-ignore --hidden` | Suche alle Dateien |
-| `rgi` | `rg -i` | Case-insensitive Suche |
-| `rgn` | `rg -n` | Suche mit Zeilennummern |
-| `rgts` | `rg --type ts --type js` | Nur TypeScript/JavaScript |
-| `rgpy` | `rg --type py` | Nur Python |
-| `rgmd` | `rg --type md` | Nur Markdown |
-| `rgsh` | `rg --type sh` | Nur Shell-Skripte |
+| `rgs` | `rg --smart-case` | Smart-Case Suche (empfohlen) |
+| `rgc` | `rg --smart-case -C 3` | Suche mit Kontext (3 Zeilen) |
+| `rgi` | `rg --ignore-case` | Case-insensitive (immer) |
+| `rga` | `rg -uuu` | Alle Dateien (ignoriert nichts) |
+| `rgh` | `rg --hidden` | Inkl. versteckte Dateien |
+| `rgl` | `rg --files-with-matches` | Nur Dateinamen mit Treffern |
+| `rgn` | `rg --count` | Treffer-Anzahl pro Datei |
+| `rgts` | `rg --smart-case -t ts -t js` | TypeScript/JavaScript |
+| `rgpy` | `rg --smart-case -t py` | Python |
+| `rgmd` | `rg --smart-case -t md` | Markdown |
+| `rgsh` | `rg --smart-case -t sh` | Shell-Skripte |
+| `rgrb` | `rg --smart-case -t ruby` | Ruby |
+| `rggo` | `rg --smart-case -t go` | Go |
+
+> **Hinweis:** `--smart-case` ist case-insensitive wenn der Suchbegriff nur Kleinbuchstaben enthält, sonst case-sensitive.
 
 ### Verwendung
 
@@ -116,36 +125,52 @@ lst                # Nach Änderungsdatum (neueste zuerst)
 ### bat – cat mit Syntax-Highlighting
 
 ```zsh
-# Datei mit Syntax-Highlighting anzeigen
-bat README.md
+# cat-Ersatz (Plain, kein Pager)
+cat README.md          # bat -pp
 
-# Nur Plain-Text ausgeben (für Pipes)
-bat --plain file.txt
+# Mit Syntax-Highlighting (ohne Pager)
+catp README.md         # bat --paging=never
+
+# Mit Zeilennummern
+catn config.yaml       # bat --style=numbers --paging=never
 
 # Git-Diff hervorheben
 git diff | bat
 
 # Theme temporär wechseln
 bat --theme="Dracula" file.py
+
+# Theme-Vorschau mit fzf
+bat-preview
 ```
+
+> **Hinweis:** `-pp` = `--style=plain --paging=never` – verhält sich wie echtes `cat`.
 
 ---
 
 ### ripgrep (rg) – Schnelle Textsuche
 
 ```zsh
-# Text rekursiv suchen
-rg "TODO"
+# Smart-Case Suche (empfohlen)
+rgs "TODO"             # case-insensitive da alles klein
+rgs "MyClass"          # case-sensitive da Großbuchstaben
 
-# Nur in bestimmten Dateitypen suchen
-rg "function" --type ts
+# Mit Kontext (3 Zeilen vor/nach)
+rgc "error"            # rg --smart-case -C 3
 
-# Mit Kontext (3 Zeilen vor/nach Treffer)
-rg "error" -C 3
+# Nur in bestimmten Dateitypen
+rgts "function"        # TypeScript/JavaScript
+rgpy "def "            # Python
+rgmd "##"              # Markdown
 
-# Alle Dateien durchsuchen (ignoriert .gitignore nicht)
-rg --no-ignore --hidden "password"
+# Alle Dateien durchsuchen (ignoriert nichts)
+rga "password"         # rg -uuu
+
+# Nur Dateinamen mit Treffern
+rgl "TODO"             # rg --files-with-matches
 ```
+
+> **Hinweis:** `--smart-case` ist Standard in den Dateityp-Aliassen.
 
 ---
 

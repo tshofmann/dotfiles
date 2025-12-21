@@ -7,34 +7,49 @@
 # ============================================================
 
 # ------------------------------------------------------------
-# Suche
+# Basis-Suche
 # ------------------------------------------------------------
+# Smart-Case: case-insensitive wenn alles klein, sonst case-sensitive
+alias rgs='rg --smart-case'
+
 # Suche mit Kontext (3 Zeilen vor/nach Treffer)
-alias rgc='rg -C 3'
+alias rgc='rg --smart-case -C 3'
 
-# Suche nur Dateinamen (nicht Inhalt)
-alias rgf='rg --files | rg'
-
-# Suche ohne .gitignore-Berücksichtigung (alle Dateien)
-alias rga='rg --no-ignore --hidden'
-
-# Suche case-insensitive
-alias rgi='rg -i'
-
-# Suche mit Zeilennummern (Standard, aber explizit)
-alias rgn='rg -n'
+# Suche case-insensitive (immer)
+alias rgi='rg --ignore-case'
 
 # ------------------------------------------------------------
-# Dateityp-Filter
+# Erweiterte Suche
 # ------------------------------------------------------------
-# Nur in TypeScript/JavaScript
-alias rgts='rg --type ts --type js'
+# Alle Dateien durchsuchen (ignoriert nichts: .gitignore, hidden, binary)
+alias rga='rg -uuu'
 
-# Nur in Python
-alias rgpy='rg --type py'
+# Versteckte Dateien inkludieren (aber .gitignore respektieren)
+alias rgh='rg --hidden'
 
-# Nur in Markdown
-alias rgmd='rg --type md'
+# Nur Dateinamen mit Treffern anzeigen
+alias rgl='rg --files-with-matches'
 
-# Nur in Shell-Skripten
-alias rgsh='rg --type sh'
+# Nur Anzahl der Treffer pro Datei
+alias rgn='rg --count'
+
+# ------------------------------------------------------------
+# Dateityp-Filter (Smart-Case als Standard)
+# ------------------------------------------------------------
+# TypeScript/JavaScript
+alias rgts='rg --smart-case -t ts -t js'
+
+# Python
+alias rgpy='rg --smart-case -t py'
+
+# Markdown
+alias rgmd='rg --smart-case -t md'
+
+# Shell-Skripte
+alias rgsh='rg --smart-case -t sh'
+
+# Ruby
+alias rgrb='rg --smart-case -t ruby'
+
+# Go
+alias rggo='rg --smart-case -t go'

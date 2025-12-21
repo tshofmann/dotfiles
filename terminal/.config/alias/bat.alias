@@ -9,16 +9,16 @@
 # ------------------------------------------------------------
 # Dateiansicht
 # ------------------------------------------------------------
-# cat-Ersatz mit Syntax-Highlighting
-alias cat='bat'
+# cat-Ersatz: Plain + kein Pager (verhält sich wie cat)
+alias cat='bat -pp'
 
-# Ohne Zeilennummern und Header (für Pipes)
-alias catp='bat --plain'
+# Mit Syntax-Highlighting, aber ohne Pager
+alias catp='bat --paging=never'
 
-# Nur Zeilennummern, keine Dekoration
-alias catn='bat --style=numbers'
+# Nur Zeilennummern, keine weitere Dekoration
+alias catn='bat --style=numbers --paging=never'
 
-# Mit Git-Diff-Highlighting
+# Mit Git-Diff-Markierungen am Rand
 alias catd='bat --diff'
 
 # ------------------------------------------------------------
@@ -29,3 +29,6 @@ alias bat-themes='bat --list-themes'
 
 # Verfügbare Sprachen auflisten
 alias bat-langs='bat --list-languages'
+
+# Theme-Vorschau (benötigt fzf)
+alias bat-preview='bat --list-themes | fzf --preview="bat --theme={} --color=always ~/.zshrc"'
