@@ -1,0 +1,40 @@
+# ============================================================
+# ripgrep.alias - Aliase für ripgrep (schneller grep-Ersatz)
+# ============================================================
+# Zweck   : Aliase für ripgrep mit häufig genutzten Optionen
+# Pfad    : ~/.config/alias/ripgrep.alias
+# Docs    : https://github.com/BurntSushi/ripgrep
+# ============================================================
+
+# ------------------------------------------------------------
+# Suche
+# ------------------------------------------------------------
+# Suche mit Kontext (3 Zeilen vor/nach Treffer)
+alias rgc='rg -C 3'
+
+# Suche nur Dateinamen (nicht Inhalt)
+alias rgf='rg --files | rg'
+
+# Suche ohne .gitignore-Berücksichtigung (alle Dateien)
+alias rga='rg --no-ignore --hidden'
+
+# Suche case-insensitive
+alias rgi='rg -i'
+
+# Suche mit Zeilennummern (Standard, aber explizit)
+alias rgn='rg -n'
+
+# ------------------------------------------------------------
+# Dateityp-Filter
+# ------------------------------------------------------------
+# Nur in TypeScript/JavaScript
+alias rgts='rg --type ts --type js'
+
+# Nur in Python
+alias rgpy='rg --type py'
+
+# Nur in Markdown
+alias rgmd='rg --type md'
+
+# Nur in Shell-Skripten
+alias rgsh='rg --type sh'

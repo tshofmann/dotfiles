@@ -27,7 +27,10 @@ dotfiles/
     ├── .zshrc                   # Interactive Shell Konfiguration
     └── .config/
         └── alias/
-            └── homebrew.alias   # Homebrew-Aliase
+            ├── homebrew.alias   # Homebrew-Aliase
+            ├── eza.alias        # eza-Aliase (ls-Ersatz)
+            ├── bat.alias        # bat-Aliase (cat-Ersatz)
+            └── ripgrep.alias    # ripgrep-Aliase (grep-Ersatz)
 ```
 
 > **Wichtig:** Das Bootstrap-Skript erwartet exakt diese Struktur. Es befindet sich in `setup/` und referenziert das übergeordnete Verzeichnis (`..`) als `DOTFILES_DIR`. Ein Verschieben oder Umbenennen der Ordner führt zu Fehlern.
@@ -114,7 +117,7 @@ Die visuelle Terminal-Darstellung basiert auf drei eng gekoppelten Komponenten:
                          ▼
 ┌─────────────────────────────────────────────────────────────┐
 │            Starship Preset (catppuccin-powerline)           │
-│          Verwendet: , , 󰀵, , 󰈙 und weitere             │
+│          Verwendet: , , 󰀵, , 󰈙 und weitere                  │
 └─────────────────────────────────────────────────────────────┘
 ```
 

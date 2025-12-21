@@ -10,10 +10,13 @@ Diese Tools werden via Brewfile installiert:
 
 | Tool | Beschreibung | Dokumentation |
 |------|--------------|---------------|
+| **bat** | `cat` mit Syntax-Highlighting und Git-Integration | [github.com/sharkdp/bat](https://github.com/sharkdp/bat) |
+| **eza** | Moderner `ls`-Ersatz mit Icons und Git-Status | [github.com/eza-community/eza](https://github.com/eza-community/eza) |
 | **fzf** | Fuzzy Finder für Kommandozeile und Dateien | [github.com/junegunn/fzf](https://github.com/junegunn/fzf) |
 | **gh** | GitHub CLI – Issues, PRs, Repos von der Kommandozeile | [cli.github.com](https://cli.github.com/) |
-| **stow** | GNU Stow – Symlink-Manager für Dotfiles | [gnu.org/software/stow](https://www.gnu.org/software/stow/) |
+| **ripgrep** | Ultraschneller `grep`-Ersatz (respektiert `.gitignore`) | [github.com/BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep) |
 | **starship** | Schneller, anpassbarer Shell-Prompt | [starship.rs](https://starship.rs/) |
+| **stow** | GNU Stow – Symlink-Manager für Dotfiles | [gnu.org/software/stow](https://www.gnu.org/software/stow/) |
 | **zoxide** | Smarter `cd`-Ersatz – merkt sich häufige Verzeichnisse | [github.com/ajeetdsouza/zoxide](https://github.com/ajeetdsouza/zoxide) |
 
 ---
@@ -28,6 +31,45 @@ Verfügbare Aliase aus `~/.config/alias/`:
 |-------|--------|--------------|
 | `brewup` | `brew update && brew upgrade && brew autoremove && brew cleanup` | Vollständiges Homebrew-Update |
 
+### eza.alias
+
+| Alias | Befehl | Beschreibung |
+|-------|--------|--------------|
+| `ls` | `eza --icons` | ls-Ersatz mit Icons |
+| `ll` | `eza -la --icons --git` | Ausführliche Auflistung mit Git-Status |
+| `ld` | `eza -lD --icons` | Nur Verzeichnisse anzeigen |
+| `lt` | `eza --tree --level=2 --icons` | Baumansicht (2 Ebenen) |
+| `lt3` | `eza --tree --level=3 --icons` | Baumansicht (3 Ebenen) |
+| `lm` | `eza -la --icons --sort=modified` | Sortiert nach Änderungsdatum |
+| `lS` | `eza -la --icons --sort=size --reverse` | Sortiert nach Größe |
+
+> **Hinweis:** eza erfordert eine Nerd Font für korrekte Icon-Darstellung.
+
+### bat.alias
+
+| Alias | Befehl | Beschreibung |
+|-------|--------|--------------|
+| `cat` | `bat` | cat-Ersatz mit Syntax-Highlighting |
+| `catp` | `bat --plain` | Ohne Zeilennummern/Header (für Pipes) |
+| `catn` | `bat --style=numbers` | Nur Zeilennummern |
+| `catd` | `bat --diff` | Mit Git-Diff-Highlighting |
+| `bat-themes` | `bat --list-themes` | Verfügbare Themes auflisten |
+| `bat-langs` | `bat --list-languages` | Verfügbare Sprachen auflisten |
+
+### ripgrep.alias
+
+| Alias | Befehl | Beschreibung |
+|-------|--------|--------------|
+| `rgc` | `rg -C 3` | Suche mit Kontext (3 Zeilen) |
+| `rgf` | `rg --files \| rg` | Suche nur Dateinamen |
+| `rga` | `rg --no-ignore --hidden` | Suche alle Dateien |
+| `rgi` | `rg -i` | Case-insensitive Suche |
+| `rgn` | `rg -n` | Suche mit Zeilennummern |
+| `rgts` | `rg --type ts --type js` | Nur TypeScript/JavaScript |
+| `rgpy` | `rg --type py` | Nur Python |
+| `rgmd` | `rg --type md` | Nur Markdown |
+| `rgsh` | `rg --type sh` | Nur Shell-Skripte |
+
 ### Verwendung
 
 ```zsh
@@ -41,6 +83,63 @@ brew outdated
 ---
 
 ## Tool-Nutzung
+
+### eza – Moderner ls-Ersatz
+
+```zsh
+# Dateien mit Icons und Details auflisten
+eza -la --icons
+
+# Baumstruktur anzeigen (2 Ebenen)
+eza --tree --level=2 --icons
+
+# Git-Status der Dateien anzeigen
+eza --git --long
+
+# Mit Aliassen (nach Installation):
+ll                 # Ausführliche Liste mit Git-Status
+lt                 # Baumansicht
+```
+
+> **Hinweis:** Erfordert eine Nerd Font für korrekte Icon-Darstellung.
+
+---
+
+### bat – cat mit Syntax-Highlighting
+
+```zsh
+# Datei mit Syntax-Highlighting anzeigen
+bat README.md
+
+# Nur Plain-Text ausgeben (für Pipes)
+bat --plain file.txt
+
+# Git-Diff hervorheben
+git diff | bat
+
+# Theme temporär wechseln
+bat --theme="Dracula" file.py
+```
+
+---
+
+### ripgrep (rg) – Schnelle Textsuche
+
+```zsh
+# Text rekursiv suchen
+rg "TODO"
+
+# Nur in bestimmten Dateitypen suchen
+rg "function" --type ts
+
+# Mit Kontext (3 Zeilen vor/nach Treffer)
+rg "error" -C 3
+
+# Alle Dateien durchsuchen (ignoriert .gitignore nicht)
+rg --no-ignore --hidden "password"
+```
+
+---
 
 ### fzf – Fuzzy Finder
 

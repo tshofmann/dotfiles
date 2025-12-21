@@ -1,0 +1,31 @@
+# ============================================================
+# eza.alias - Aliase für eza (moderner ls-Ersatz)
+# ============================================================
+# Zweck   : Aliase für eza mit Icons und Git-Integration
+# Pfad    : ~/.config/alias/eza.alias
+# Docs    : https://github.com/eza-community/eza
+# ============================================================
+
+# ------------------------------------------------------------
+# Dateiauflistung
+# ------------------------------------------------------------
+# ls-Ersatz mit Icons (erfordert Nerd Font)
+alias ls='eza --icons'
+
+# Ausführliche Auflistung mit Icons
+alias ll='eza -la --icons --git'
+
+# Nur Verzeichnisse anzeigen
+alias ld='eza -lD --icons'
+
+# Baumansicht (2 Ebenen tief)
+alias lt='eza --tree --level=2 --icons'
+
+# Baumansicht (3 Ebenen tief)
+alias lt3='eza --tree --level=3 --icons'
+
+# Sortiert nach Änderungsdatum (neueste zuletzt)
+alias lm='eza -la --icons --sort=modified'
+
+# Sortiert nach Größe (größte zuerst)
+alias lS='eza -la --icons --sort=size --reverse'

@@ -1,0 +1,31 @@
+# ============================================================
+# bat.alias - Aliase für bat (cat mit Syntax-Highlighting)
+# ============================================================
+# Zweck   : Aliase für bat mit verschiedenen Ausgabe-Stilen
+# Pfad    : ~/.config/alias/bat.alias
+# Docs    : https://github.com/sharkdp/bat
+# ============================================================
+
+# ------------------------------------------------------------
+# Dateiansicht
+# ------------------------------------------------------------
+# cat-Ersatz mit Syntax-Highlighting
+alias cat='bat'
+
+# Ohne Zeilennummern und Header (für Pipes)
+alias catp='bat --plain'
+
+# Nur Zeilennummern, keine Dekoration
+alias catn='bat --style=numbers'
+
+# Mit Git-Diff-Highlighting
+alias catd='bat --diff'
+
+# ------------------------------------------------------------
+# Hilfs-Aliase
+# ------------------------------------------------------------
+# Verfügbare Themes auflisten
+alias bat-themes='bat --list-themes'
+
+# Verfügbare Sprachen auflisten
+alias bat-langs='bat --list-languages'

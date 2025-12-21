@@ -142,6 +142,15 @@ git commit -m "feat: eigene Starship-Konfiguration"
 
 Eigene Aliase kannst du in `terminal/.config/alias/` hinzufügen.
 
+### Verfügbare Alias-Dateien
+
+| Datei | Beschreibung | Dokumentation |
+|-------|--------------|---------------|
+| `homebrew.alias` | Homebrew-Wartungsbefehle | [Tools → Aliase](tools.md#homebrewalias) |
+| `eza.alias` | Moderne ls-Ersetzungen mit Icons | [Tools → Aliase](tools.md#ezaalias) |
+| `bat.alias` | cat mit Syntax-Highlighting | [Tools → Aliase](tools.md#batalias) |
+| `ripgrep.alias` | Schnelle Textsuche | [Tools → Aliase](tools.md#ripgrepalias) |
+
 ### Neue Alias-Datei erstellen
 
 ```zsh
@@ -155,11 +164,12 @@ cat > ~/dotfiles/terminal/.config/alias/custom.alias << 'EOF'
 # Docs    : https://github.com/tshofmann/dotfiles
 # ============================================================
 
-alias ll='ls -la'
 alias ..='cd ..'
 alias ...='cd ../..'
 EOF
 ```
+
+> **Hinweis:** Der frühere `ll`-Alias wird jetzt durch `eza.alias` bereitgestellt (`ll='eza -la --icons --git'`).
 
 ### Stow aktualisieren
 

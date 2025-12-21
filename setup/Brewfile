@@ -13,5 +13,10 @@ brew "stow"         # Symlink-Manager
 brew "starship"     # Shell-Prompt
 brew "zoxide"       # Smartes cd
 
+# Moderne CLI-Ersetzungen
+brew "eza"          # Moderner ls-Ersatz mit Icons
+brew "bat"          # cat mit Syntax-Highlighting
+brew "ripgrep"      # Ultraschneller grep-Ersatz
+
 # Fonts (seit Homebrew 4.0 in homebrew/cask integriert)
 cask "font-meslo-lg-nerd-font"
