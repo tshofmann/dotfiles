@@ -100,18 +100,34 @@ starship preset --list
 $EDITOR ~/.config/starship.toml
 ```
 
+### Preset-Kompatibilität
+
+| Preset | Nerd Font erforderlich? | Beschreibung |
+|--------|------------------------|---------------|
+| `catppuccin-powerline` | ✅ Ja | Standard-Preset dieses Setups |
+| `gruvbox-rainbow` | ✅ Ja | Retro-Farbschema mit Icons |
+| `tokyo-night` | ✅ Ja | Dunkles Theme mit Powerline |
+| `no-nerd-font` | ❌ Nein | Für Terminals ohne Nerd Font |
+| `plain-text-symbols` | ❌ Nein | ASCII-only, keine Spezialzeichen |
+
+> 📖 Vollständige Liste: [starship.rs/presets](https://starship.rs/presets/)
+>
+> ⚠️ Bei Presets mit Nerd Font-Anforderung müssen Font und Terminal-Profil korrekt konfiguriert sein. Siehe [Architektur → Komponenten-Abhängigkeiten](architecture.md#komponenten-abhängigkeiten).
+
 ---
 
 ## Font
 
-### MesloLGS Nerd Font
+### MesloLG Nerd Font
 
 | Eigenschaft | Wert |
 |-------------|------|
-| **Name** | MesloLGS Nerd Font |
+| **Name** | MesloLGLDZ Nerd Font (Dotted Zero Variante) |
 | **Installiert via** | `brew install --cask font-meslo-lg-nerd-font` |
 | **Speicherort** | `~/Library/Fonts/` |
 | **Zweck** | Icons und Powerline-Symbole im Terminal |
+
+> **Hinweis:** MesloLG gibt es in mehreren Varianten: `NFM` (Mono), `NF`, `NFP` (Propo). Das Terminal-Profil verwendet die `LDZNF`-Variante (L = Large, DZ = Dotted Zero).
 
 ### Warum Nerd Fonts?
 

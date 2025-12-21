@@ -12,6 +12,18 @@ Lösungen für häufige Probleme bei der Installation und Nutzung der dotfiles.
 - Terminal-Prompt sieht "kaputt" aus
 - Powerline-Symbole fehlen
 
+### Ursache
+
+Dieses Problem entsteht durch die Abhängigkeitskette zwischen drei Komponenten:
+
+1. **Starship-Preset** (`catppuccin-powerline`) verwendet Nerd Font-Glyphen wie ``, ``, `󰀵`
+2. **Nerd Font** (MesloLG) muss installiert sein, um diese Glyphen darzustellen
+3. **Terminal-Profil** muss den Nerd Font als Schriftart verwenden
+
+Wenn eine dieser Komponenten fehlt oder falsch konfiguriert ist, werden Icons als □ oder ? angezeigt.
+
+> 📖 Technische Details: [Architektur → Komponenten-Abhängigkeiten](architecture.md#komponenten-abhängigkeiten)
+
 ### Diagnose
 
 ```zsh
@@ -33,7 +45,7 @@ brew reinstall font-meslo-lg-nerd-font
 Falls das Problem weiterhin besteht:
 
 1. Terminal.app → Einstellungen → Profile → `tshofmann`
-2. Tab "Text" → Schrift ändern → "MesloLGS Nerd Font" auswählen
+2. Tab "Text" → Schrift ändern → "MesloLGLDZ Nerd Font" auswählen (oder andere installierte Nerd Font-Variante)
 
 ---
 

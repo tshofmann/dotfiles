@@ -94,6 +94,46 @@ Das Bootstrap-Skript ist **idempotent** – es kann beliebig oft ausgeführt wer
 
 ---
 
+## Komponenten-Abhängigkeiten
+
+Die visuelle Terminal-Darstellung basiert auf drei eng gekoppelten Komponenten:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Terminal.app Profil                      │
+│                   (tshofmann.terminal)                      │
+│         Font: MesloLGLDZNerdFont (binär kodiert)            │
+└────────────────────────┬────────────────────────────────────┘
+                         │ referenziert
+                         ▼
+┌─────────────────────────────────────────────────────────────┐
+│              MesloLG Nerd Font (Homebrew Cask)              │
+│      Enthält: Powerline-Symbole, Devicons, OS-Icons         │
+└────────────────────────┬────────────────────────────────────┘
+                         │ benötigt von
+                         ▼
+┌─────────────────────────────────────────────────────────────┐
+│            Starship Preset (catppuccin-powerline)           │
+│          Verwendet: , , 󰀵, , 󰈙 und weitere             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Abhängigkeitsmatrix
+
+| Wenn du änderst… | …musst du auch anpassen |  
+|------------------|------------------------|
+| **Nerd Font** (z.B. anderer Font-Name) | Terminal-Profil neu exportieren |
+| **Starship-Preset** (auf eines mit Powerline-Symbolen) | Nerd Font muss installiert sein |
+| **Terminal-Profil** | Muss auf installierten Nerd Font verweisen |
+
+### Technische Details
+
+> **Wichtig:** Die Datei `tshofmann.terminal` enthält Base64-kodierte NSArchiver-Daten (Apple plist-Format). Font-Einstellungen können **nicht** durch direktes Editieren geändert werden – nur über die Terminal.app GUI mit anschließendem Export.
+
+Siehe [Konfiguration → Schriftart wechseln](configuration.md#schriftart-wechseln) für den vollständigen Workflow.
+
+---
+
 ## Brewfile-Details
 
 Das Setup verwendet `brew bundle` für deklaratives Package-Management:
