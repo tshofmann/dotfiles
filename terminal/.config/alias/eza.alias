@@ -3,29 +3,38 @@
 # ============================================================
 # Zweck   : Aliase für eza mit Icons und Git-Integration
 # Pfad    : ~/.config/alias/eza.alias
-# Docs    : https://github.com/eza-community/eza
+# Docs    : https://eza.rocks
 # ============================================================
 
 # ------------------------------------------------------------
-# Dateiauflistung
+# Basis-Auflistung
 # ------------------------------------------------------------
-# ls-Ersatz mit Icons (erfordert Nerd Font)
-alias ls='eza --icons'
+# ls-Ersatz mit Icons (auto = erkennt Terminal-Support)
+alias ls='eza --icons=auto --group-directories-first'
 
-# Ausführliche Auflistung mit Icons
-alias ll='eza -la --icons --git'
+# Ausführliche Auflistung (long format)
+alias ll='eza -l --icons=auto --group-directories-first --header'
 
-# Nur Verzeichnisse anzeigen
-alias ld='eza -lD --icons'
+# Alle Dateien inkl. versteckter
+alias la='eza -la --icons=auto --group-directories-first --header'
 
-# Baumansicht (2 Ebenen tief)
-alias lt='eza --tree --level=2 --icons'
+# ------------------------------------------------------------
+# Mit Git-Integration (nur in Git-Repos sinnvoll)
+# ------------------------------------------------------------
+alias lsg='eza -l --icons=auto --git --header'
+alias lag='eza -la --icons=auto --git --header'
 
-# Baumansicht (3 Ebenen tief)
-alias lt3='eza --tree --level=3 --icons'
+# ------------------------------------------------------------
+# Baumansicht
+# ------------------------------------------------------------
+alias lt='eza --tree --icons=auto --level=2'
+alias lt3='eza --tree --icons=auto --level=3'
 
-# Sortiert nach Änderungsdatum (neueste zuletzt)
-alias lm='eza -la --icons --sort=modified'
+# ------------------------------------------------------------
+# Sortierung
+# ------------------------------------------------------------
+# Nach Größe (größte zuerst)
+alias lss='eza -l --icons=auto --sort=size --reverse --header'
 
-# Sortiert nach Größe (größte zuerst)
-alias lS='eza -la --icons --sort=size --reverse'
+# Nach Änderungsdatum (neueste zuerst)
+alias lst='eza -l --icons=auto --sort=modified --reverse --header'

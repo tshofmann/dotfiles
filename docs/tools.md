@@ -35,15 +35,17 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 | Alias | Befehl | Beschreibung |
 |-------|--------|--------------|
-| `ls` | `eza --icons` | ls-Ersatz mit Icons |
-| `ll` | `eza -la --icons --git` | Ausführliche Auflistung mit Git-Status |
-| `ld` | `eza -lD --icons` | Nur Verzeichnisse anzeigen |
-| `lt` | `eza --tree --level=2 --icons` | Baumansicht (2 Ebenen) |
-| `lt3` | `eza --tree --level=3 --icons` | Baumansicht (3 Ebenen) |
-| `lm` | `eza -la --icons --sort=modified` | Sortiert nach Änderungsdatum |
-| `lS` | `eza -la --icons --sort=size --reverse` | Sortiert nach Größe |
+| `ls` | `eza --icons=auto --group-directories-first` | ls-Ersatz mit Icons |
+| `ll` | `eza -l --icons=auto --group-directories-first --header` | Ausführliche Auflistung |
+| `la` | `eza -la --icons=auto --group-directories-first --header` | Alle Dateien inkl. versteckter |
+| `lsg` | `eza -l --icons=auto --git --header` | Long-Format mit Git-Status |
+| `lag` | `eza -la --icons=auto --git --header` | Alle Dateien mit Git-Status |
+| `lt` | `eza --tree --icons=auto --level=2` | Baumansicht (2 Ebenen) |
+| `lt3` | `eza --tree --icons=auto --level=3` | Baumansicht (3 Ebenen) |
+| `lss` | `eza -l --icons=auto --sort=size --reverse --header` | Sortiert nach Größe |
+| `lst` | `eza -l --icons=auto --sort=modified --reverse --header` | Sortiert nach Datum |
 
-> **Hinweis:** eza erfordert eine Nerd Font für korrekte Icon-Darstellung.
+> **Hinweis:** `--icons=auto` erkennt automatisch ob das Terminal Icons unterstützt. Ordner werden immer zuerst angezeigt (`--group-directories-first`).
 
 ### bat.alias
 
@@ -87,21 +89,27 @@ brew outdated
 ### eza – Moderner ls-Ersatz
 
 ```zsh
-# Dateien mit Icons und Details auflisten
-eza -la --icons
+# Basis-Auflistung (Ordner zuerst, Icons automatisch)
+ls                 # eza --icons=auto --group-directories-first
 
-# Baumstruktur anzeigen (2 Ebenen)
-eza --tree --level=2 --icons
+# Ausführliche Auflistung
+ll                 # Long-Format mit Header
+la                 # Alle Dateien inkl. versteckter
 
-# Git-Status der Dateien anzeigen
-eza --git --long
+# Mit Git-Integration (in Git-Repos)
+lsg                # Long-Format mit Git-Status
+lag                # Alle Dateien mit Git-Status
 
-# Mit Aliassen (nach Installation):
-ll                 # Ausführliche Liste mit Git-Status
-lt                 # Baumansicht
+# Baumansicht
+lt                 # 2 Ebenen tief
+lt3                # 3 Ebenen tief
+
+# Sortierung
+lss                # Nach Größe (größte zuerst)
+lst                # Nach Änderungsdatum (neueste zuerst)
 ```
 
-> **Hinweis:** Erfordert eine Nerd Font für korrekte Icon-Darstellung.
+> **Hinweis:** `--icons=auto` erkennt automatisch ob das Terminal Nerd Font Icons unterstützt.
 
 ---
 
