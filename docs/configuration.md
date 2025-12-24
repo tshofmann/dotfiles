@@ -182,6 +182,48 @@ Die `.zshrc` lädt automatisch alle `*.alias` Dateien aus `~/.config/alias/`.
 
 ---
 
+## Shell-History
+
+Die History-Konfiguration in `.zshrc` speichert Kommandos dauerhaft und intelligent.
+
+### Einstellungen
+
+| Variable | Wert | Beschreibung |
+|----------|------|--------------|
+| `HISTFILE` | `~/.zsh_history` | Speicherort der History-Datei |
+| `HISTSIZE` | 25000 | Einträge im Speicher |
+| `SAVEHIST` | 25000 | Einträge in Datei |
+
+### Optionen
+
+| Option | Beschreibung |
+|--------|--------------|
+| `EXTENDED_HISTORY` | Speichert Timestamp und Dauer |
+| `INC_APPEND_HISTORY` | Sofort schreiben (nicht erst bei Exit) |
+| `HIST_IGNORE_SPACE` | Befehle mit führendem Leerzeichen ignorieren |
+| `HIST_IGNORE_DUPS` | Aufeinanderfolgende Duplikate ignorieren |
+| `HIST_REDUCE_BLANKS` | Überflüssige Leerzeichen entfernen |
+| `HIST_SAVE_NO_DUPS` | Keine Duplikate in Datei speichern |
+
+### Privacy-Tipp
+
+Befehle mit sensiblen Daten (Passwörter, Tokens) kannst du von der History ausschließen:
+
+```zsh
+# Leerzeichen am Anfang = wird nicht gespeichert
+ export API_KEY="geheim"
+```
+
+### History durchsuchen
+
+| Methode | Tastenkombination |
+|---------|-------------------|
+| fzf Fuzzy Search | `Ctrl+R` |
+| Zsh-Suche rückwärts | `Ctrl+R` (ohne fzf) |
+| Zsh-Suche vorwärts | `Ctrl+S` |
+
+---
+
 ## Weiterführende Links
 
 - [Starship Dokumentation](https://starship.rs/config/)

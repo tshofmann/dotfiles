@@ -38,25 +38,32 @@ done
 # Tools initialisieren
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    source <(fzf --zsh)     # Fuzzy Finder
+    # fzf Key Bindings:
+    #   Ctrl+R  = History durchsuchen
+    #   Ctrl+T  = Datei suchen und einfügen
+    #   Alt+C   = Verzeichnis wechseln (cd)
+    source <(fzf --zsh)
 
-    # fzf-Vorschau mit bat (falls installiert)
+    # Ctrl+T Vorschau: bat für Dateien (Syntax-Highlighting)
     if command -v bat >/dev/null 2>&1; then
         export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always --line-range=:500 {}'"
     fi
 
-    # fzf-Verzeichnisvorschau mit eza (falls installiert)
+    # Alt+C Vorschau: eza Tree für Verzeichnisse
     if command -v eza >/dev/null 2>&1; then
         export FZF_ALT_C_OPTS="--preview 'eza --tree --level=1 --icons --color=always {}'"
     fi
 fi
 
 if command -v zoxide >/dev/null 2>&1; then
-    # Verzeichnisvorschau für interaktive Suche (zi)
+    # zoxide Befehle:
+    #   z <query>  = Zu Verzeichnis springen (lernt mit der Zeit)
+    #   zi         = Interaktive Auswahl mit fzf
+    # Vorschau für zi: eza mit Details
     if command -v eza >/dev/null 2>&1; then
         export _ZO_FZF_OPTS="--preview 'eza -la --icons --color=always {2..}' --height=40%"
     fi
-    eval "$(zoxide init zsh)"   # Smartes cd
+    eval "$(zoxide init zsh)"
 fi
 
 if command -v gh >/dev/null 2>&1; then

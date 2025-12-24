@@ -178,18 +178,38 @@ rgl "TODO"             # rg --files-with-matches
 
 ### fzf – Fuzzy Finder
 
+**Tastenkombinationen:**
+
+| Taste | Funktion | Vorschau |
+|-------|----------|----------|
+| `Ctrl+R` | History durchsuchen | – |
+| `Ctrl+T` | Datei suchen und einfügen | bat (Syntax-Highlighting) |
+| `Alt+C` | Verzeichnis wechseln (cd) | eza (Tree-Ansicht) |
+
 ```zsh
 # Datei suchen und öffnen
 vim $(fzf)
 
-# History durchsuchen (Ctrl+R)
-# Verzeichnis wechseln (Ctrl+T in manchen Setups)
+# History durchsuchen
+# Ctrl+R drücken, tippen, Enter
+
+# Datei suchen und in Kommandozeile einfügen
+# Ctrl+T drücken → Vorschau mit bat
+
+# Verzeichnis wechseln
+# Alt+C drücken → Vorschau mit eza Tree
 
 # In Pipe verwenden
 cat file.txt | fzf
 ```
 
+> **Hinweis:** Die Vorschau-Funktionen benötigen bat und eza (via Brewfile installiert).
+
 ### gh – GitHub CLI
+
+Die GitHub CLI wird mit Tab-Completion geladen (konfiguriert in `.zshrc`).
+
+**Tab-Completion:** Drücke `Tab` nach `gh` für Befehls-Vorschläge.
 
 ```zsh
 # Authentifizieren (einmalig)
@@ -206,18 +226,31 @@ gh pr create
 
 # Status prüfen
 gh pr status
+
+# Tab-Completion nutzen
+gh <Tab>              # Zeigt alle Befehle
+gh pr <Tab>           # Zeigt PR-Unterbefehle
 ```
 
 ### zoxide – Smarter cd
+
+**Befehle:**
+
+| Befehl | Funktion | Vorschau |
+|--------|----------|----------|
+| `z <query>` | Zu Verzeichnis springen | – |
+| `zi` | Interaktive Auswahl (fzf) | eza (Dateiliste) |
 
 ```zsh
 # Verzeichnis wechseln (lernt mit der Zeit)
 z dotfiles         # Springt zu ~/dotfiles
 z doc              # Springt zu häufig besuchtem Verzeichnis mit "doc"
 
-# Interaktive Auswahl
-zi                 # Zeigt Liste der bekannten Verzeichnisse
+# Interaktive Auswahl mit fzf
+zi                 # Zeigt Liste mit eza-Vorschau
 ```
+
+> **Hinweis:** Die `zi`-Vorschau zeigt den Verzeichnisinhalt mit eza und Icons.
 
 ### starship – Shell Prompt
 
