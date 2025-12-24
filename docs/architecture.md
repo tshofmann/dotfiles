@@ -27,10 +27,12 @@ dotfiles/
     ├── .zshrc                   # Interactive Shell Konfiguration
     └── .config/
         └── alias/
-            ├── homebrew.alias   # Homebrew-Aliase
+            ├── homebrew.alias   # Homebrew + mas Aliase
             ├── eza.alias        # eza-Aliase (ls-Ersatz)
             ├── bat.alias        # bat-Aliase (cat-Ersatz)
-            └── ripgrep.alias    # ripgrep-Aliase (grep-Ersatz)
+            ├── ripgrep.alias    # ripgrep-Aliase (grep-Ersatz)
+            ├── fd.alias         # fd-Aliase (find-Ersatz)
+            └── btop.alias       # btop-Aliase (top-Ersatz)
 ```
 
 > **Wichtig:** Das Bootstrap-Skript erwartet exakt diese Struktur. Es befindet sich in `setup/` und referenziert das übergeordnete Verzeichnis (`..`) als `DOTFILES_DIR`. Ein Verschieben oder Umbenennen der Ordner führt zu Fehlern.
@@ -121,6 +123,36 @@ Die visuelle Terminal-Darstellung basiert auf drei eng gekoppelten Komponenten:
 └─────────────────────────────────────────────────────────────┘
 ```
 
+### Tool-Integrationen
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                         fzf                                 │
+│              Fuzzy Finder (Ctrl+T, Alt+C, Ctrl+R)           │
+└──────────┬─────────────────┬─────────────────┬──────────────┘
+           │                 │                 │
+    ┌──────▼──────┐   ┌──────▼──────┐   ┌──────▼──────┐
+    │     fd      │   │     bat     │   │     eza     │
+    │  (Backend)  │   │  (Preview)  │   │  (Preview)  │
+    │ Ctrl+T/Alt+C│   │   Ctrl+T    │   │    Alt+C    │
+    └─────────────┘   └─────────────┘   └─────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│                       zoxide (z, zi)                        │
+└──────────┬─────────────────┬────────────────────────────────┘
+           │                 │
+    ┌──────▼──────┐   ┌──────▼──────┐
+    │     fzf     │   │     eza     │
+    │ (zi Auswahl)│   │  (Preview)  │
+    └─────────────┘   └─────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│                    brewup (Alias)                           │
+│         brew update → brew upgrade → mas upgrade →          │
+│              brew autoremove → brew cleanup                 │
+└─────────────────────────────────────────────────────────────┘
+```
+
 ### Abhängigkeitsmatrix
 
 | Wenn du änderst… | …musst du auch anpassen |  
@@ -128,6 +160,8 @@ Die visuelle Terminal-Darstellung basiert auf drei eng gekoppelten Komponenten:
 | **Nerd Font** (z.B. anderer Font-Name) | Terminal-Profil neu exportieren |
 | **Starship-Preset** (auf eines mit Powerline-Symbolen) | Nerd Font muss installiert sein |
 | **Terminal-Profil** | Muss auf installierten Nerd Font verweisen |
+| **fd deinstallieren** | fzf fällt auf Standard-find zurück |
+| **mas deinstallieren** | brewup funktioniert ohne App Store Updates |
 
 ### Technische Details
 

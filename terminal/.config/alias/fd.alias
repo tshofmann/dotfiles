@@ -6,9 +6,9 @@
 # Docs    : https://github.com/sharkdp/fd
 # ============================================================
 
-# Guard: nur wenn fd installiert ist
-if (( ! $+commands[fd] )); then
-    return
+# Guard: Aliase nur aktivieren wenn fd installiert ist
+if ! command -v fd >/dev/null 2>&1; then
+    return 0
 fi
 
 # ------------------------------------------------------------

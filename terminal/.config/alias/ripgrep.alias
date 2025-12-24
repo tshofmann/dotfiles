@@ -14,47 +14,24 @@ fi
 # ------------------------------------------------------------
 # Basis-Suche
 # ------------------------------------------------------------
-# Smart-Case: case-insensitive wenn alles klein, sonst case-sensitive
-alias rgs='rg --smart-case'
-
-# Suche mit Kontext (3 Zeilen vor/nach Treffer)
-alias rgc='rg --smart-case -C 3'
-
-# Suche case-insensitive (immer)
-alias rgi='rg --ignore-case'
+alias rgs='rg --smart-case'             # Smart-Case (empfohlen)
+alias rgc='rg --smart-case -C 3'        # Mit Kontext (3 Zeilen)
+alias rgi='rg --ignore-case'            # Case-insensitive (immer)
 
 # ------------------------------------------------------------
 # Erweiterte Suche
 # ------------------------------------------------------------
-# Alle Dateien durchsuchen (ignoriert nichts: .gitignore, hidden, binary)
-alias rga='rg -uuu'
-
-# Versteckte Dateien inkludieren (aber .gitignore respektieren)
-alias rgh='rg --hidden'
-
-# Nur Dateinamen mit Treffern anzeigen
-alias rgl='rg --files-with-matches'
-
-# Nur Anzahl der Treffer pro Datei
-alias rgn='rg --count'
+alias rga='rg -uuu'                     # Alle Dateien (ignoriert nichts)
+alias rgh='rg --hidden'                 # Inkl. versteckte Dateien
+alias rgl='rg --files-with-matches'     # Nur Dateinamen mit Treffern
+alias rgn='rg --count'                  # Treffer-Anzahl pro Datei
 
 # ------------------------------------------------------------
 # Dateityp-Filter (Smart-Case als Standard)
 # ------------------------------------------------------------
-# TypeScript/JavaScript
-alias rgts='rg --smart-case -t ts -t js'
-
-# Python
-alias rgpy='rg --smart-case -t py'
-
-# Markdown
-alias rgmd='rg --smart-case -t md'
-
-# Shell-Skripte
-alias rgsh='rg --smart-case -t sh'
-
-# Ruby
-alias rgrb='rg --smart-case -t ruby'
-
-# Go
-alias rggo='rg --smart-case -t go'
+alias rgts='rg --smart-case -t ts -t js' # TypeScript/JavaScript
+alias rgpy='rg --smart-case -t py'      # Python
+alias rgmd='rg --smart-case -t md'      # Markdown
+alias rgsh='rg --smart-case -t sh'      # Shell-Skripte
+alias rgrb='rg --smart-case -t ruby'    # Ruby
+alias rggo='rg --smart-case -t go'      # Go
