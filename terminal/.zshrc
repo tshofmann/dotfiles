@@ -38,28 +38,23 @@ done
 # Tools initialisieren
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # fzf Key Bindings:
-    #   Ctrl+R  = History durchsuchen
-    #   Ctrl+T  = Datei suchen und einfügen
-    #   Alt+C   = Verzeichnis wechseln (cd)
+    # Key Bindings: Ctrl+R (History), Ctrl+T (Datei), Alt+C (cd)
     source <(fzf --zsh)
 
-    # Ctrl+T Vorschau: bat für Dateien (Syntax-Highlighting)
+    # Ctrl+T Vorschau mit bat (Syntax-Highlighting)
     if command -v bat >/dev/null 2>&1; then
         export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always --line-range=:500 {}'"
     fi
 
-    # Alt+C Vorschau: eza Tree für Verzeichnisse
+    # Alt+C Vorschau mit eza (Baumansicht)
     if command -v eza >/dev/null 2>&1; then
         export FZF_ALT_C_OPTS="--preview 'eza --tree --level=1 --icons --color=always {}'"
     fi
 fi
 
 if command -v zoxide >/dev/null 2>&1; then
-    # zoxide Befehle:
-    #   z <query>  = Zu Verzeichnis springen (lernt mit der Zeit)
-    #   zi         = Interaktive Auswahl mit fzf
-    # Vorschau für zi: eza mit Details
+    # Befehle: z <query> (jump), zi (interaktiv mit fzf)
+    # zi-Vorschau mit eza (Dateiliste)
     if command -v eza >/dev/null 2>&1; then
         export _ZO_FZF_OPTS="--preview 'eza -la --icons --color=always {2..}' --height=40%"
     fi
