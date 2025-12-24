@@ -215,8 +215,9 @@ export HOMEBREW_BUNDLE_FILE="$HOME/dotfiles/setup/Brewfile"
 
 Wird bei jeder neuen Terminal-Session ausgeführt:
 
-1. **Alias-Loading:** Lädt alle `*.alias` Dateien aus `~/.config/alias/`
-2. **Tool-Initialisierung:** fzf, zoxide, starship (mit `command -v` Guards)
+1. **History-Konfiguration:** HISTFILE, HISTSIZE, SAVEHIST + setopt-Optionen
+2. **Alias-Loading:** Lädt alle `*.alias` Dateien aus `~/.config/alias/`
+3. **Tool-Initialisierung:** fzf, zoxide, gh, starship (mit `command -v` Guards)
 
 ```zsh
 # Alias-Glob mit ZSH-Qualifiers
@@ -231,6 +232,35 @@ done
 | `-` | Folge Symlinks |
 | `.` | Nur reguläre Dateien |
 | `on` | Sortiere nach Name |
+
+### Tool-Konfiguration in `.zshrc`
+
+Die Tools werden mit Umgebungsvariablen konfiguriert:
+
+#### fzf (Fuzzy Finder)
+
+| Variable | Wert | Beschreibung |
+|----------|------|--------------|
+| `FZF_CTRL_T_OPTS` | `--preview 'bat ...'` | Datei-Vorschau mit Syntax-Highlighting |
+| `FZF_ALT_C_OPTS` | `--preview 'eza --tree ...'` | Verzeichnis-Vorschau mit Baumansicht |
+
+**Key Bindings:** `Ctrl+R` (History), `Ctrl+T` (Datei einfügen), `Alt+C` (cd)
+
+#### zoxide (Smarter cd)
+
+| Variable | Wert | Beschreibung |
+|----------|------|--------------|
+| `_ZO_FZF_OPTS` | `--preview 'eza -la ...'` | Vorschau für `zi` (interaktive Auswahl) |
+
+**Befehle:** `z <query>` (jump), `zi` (interaktiv mit fzf)
+
+#### gh (GitHub CLI)
+
+Lädt Tab-Completion via `source <(gh completion -s zsh)`.
+
+#### starship (Prompt)
+
+Initialisiert über `eval "$(starship init zsh)"`. Konfiguration in `~/.config/starship.toml`.
 
 ---
 
