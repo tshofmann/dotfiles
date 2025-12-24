@@ -25,6 +25,19 @@ setopt HIST_REDUCE_BLANKS    # Überflüssige Leerzeichen entfernen
 setopt HIST_SAVE_NO_DUPS     # Keine Duplikate in Datei speichern
 
 # ------------------------------------------------------------
+# Completion-System initialisieren
+# ------------------------------------------------------------
+# compinit: Aktiviert Tab-Vervollständigung (z.B. gh <Tab>)
+# Optimierung: Cache täglich erneuern, sonst -C (schneller Start)
+# Docs: https://zsh.sourceforge.io/Doc/Release/Completion-System.html
+autoload -Uz compinit
+if [[ -n "${ZDOTDIR:-$HOME}/.zcompdump"(#qN.mh+24) ]]; then
+    compinit -i                 # Volle Initialisierung wenn >24h alt
+else
+    compinit -i -C              # Cache nutzen wenn aktuell
+fi
+
+# ------------------------------------------------------------
 # Aliase laden
 # ------------------------------------------------------------
 # (N) = NULL_GLOB - kein Fehler wenn leer

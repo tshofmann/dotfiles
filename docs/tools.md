@@ -332,7 +332,7 @@ cat file.txt | fzf
 
 Die GitHub CLI wird mit Tab-Completion geladen (konfiguriert in `.zshrc`).
 
-**Tab-Completion:** Drücke `Tab` nach `gh` für Befehls-Vorschläge.
+**Tab-Completion:** Drücke `Tab` nach `gh` für Befehls-Vorschläge. Dies erfordert das ZSH Completion-System (`compinit`), das automatisch in `.zshrc` initialisiert wird.
 
 ```zsh
 # Authentifizieren (einmalig)

@@ -298,6 +298,55 @@ Initialisiert über `eval "$(starship init zsh)"`. Konfiguration in `~/.config/s
 
 ---
 
+## Completion-System
+
+### Initialisierung (compinit)
+
+Das ZSH Completion-System ermöglicht Tab-Vervollständigung für Befehle, Optionen und Argumente:
+
+```zsh
+# Terminal
+gh <Tab>       # zeigt: api, auth, browse, codespace, ...
+gh pr <Tab>    # zeigt: checkout, close, comment, create, ...
+```
+
+### Optimierte Ladezeit
+
+Die `.zshrc` verwendet einen optimierten Ansatz:
+
+```zsh
+autoload -Uz compinit
+if [[ -n "${ZDOTDIR:-$HOME}/.zcompdump"(#qN.mh+24) ]]; then
+    compinit -i                 # Volle Initialisierung wenn >24h alt
+else
+    compinit -i -C              # Cache nutzen wenn aktuell
+fi
+```
+
+| Aspekt | Beschreibung |
+|--------|--------------|
+| **Cache-Datei** | `~/.zcompdump` – enthält kompilierte Completion-Definitionen |
+| **24h-Check** | `(#qN.mh+24)` – Glob-Qualifier prüft Alter der Datei |
+| **`-C` Flag** | Überspringt Rebuild, nutzt bestehenden Cache |
+| **`-i` Flag** | Ignoriert unsichere Verzeichnisse (Homebrew) |
+
+### Performance-Impact
+
+| Modus | Startup-Zeit | Wann |
+|-------|--------------|------|
+| Mit Cache (`-C`) | ~90ms | Cache < 24h alt |
+| Ohne Cache | ~140ms | Cache > 24h alt oder fehlt |
+
+### Wichtige Reihenfolge
+
+```
+compinit → alias-files → fzf → zoxide → gh completion → starship
+```
+
+`compinit` muss **vor** `gh completion` geladen werden, da `gh completion -s zsh` die Funktion `compdef` verwendet.
+
+---
+
 ## Starship-Konfiguration
 
 ### Preset-Generierung
