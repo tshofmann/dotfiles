@@ -11,9 +11,12 @@ Diese Tools werden via Brewfile installiert:
 | Tool | Beschreibung | Dokumentation |
 |------|--------------|---------------|
 | **bat** | `cat` mit Syntax-Highlighting und Git-Integration | [github.com/sharkdp/bat](https://github.com/sharkdp/bat) |
+| **btop** | Moderner Ressourcen-Monitor (`top`/`htop`-Ersatz) | [github.com/aristocratos/btop](https://github.com/aristocratos/btop) |
 | **eza** | Moderner `ls`-Ersatz mit Icons und Git-Status | [github.com/eza-community/eza](https://github.com/eza-community/eza) |
+| **fd** | Schneller `find`-Ersatz (respektiert `.gitignore`) | [github.com/sharkdp/fd](https://github.com/sharkdp/fd) |
 | **fzf** | Fuzzy Finder für Kommandozeile und Dateien | [github.com/junegunn/fzf](https://github.com/junegunn/fzf) |
 | **gh** | GitHub CLI – Issues, PRs, Repos von der Kommandozeile | [cli.github.com](https://cli.github.com/) |
+| **mas** | Mac App Store CLI – Apps installieren und updaten | [github.com/mas-cli/mas](https://github.com/mas-cli/mas) |
 | **ripgrep** | Ultraschneller `grep`-Ersatz (respektiert `.gitignore`) | [github.com/BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep) |
 | **starship** | Schneller, anpassbarer Shell-Prompt | [starship.rs](https://starship.rs/) |
 | **stow** | GNU Stow – Symlink-Manager für Dotfiles | [gnu.org/software/stow](https://www.gnu.org/software/stow/) |
@@ -31,7 +34,44 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 | Alias | Befehl | Beschreibung |
 |-------|--------|--------------|
-| `brewup` | `brew update && brew upgrade && brew autoremove && brew cleanup` | Vollständiges Homebrew-Update |
+| `brewup` | `brew update && brew upgrade && mas upgrade && brew autoremove && brew cleanup` | Vollständiges System-Update (inkl. App Store) |
+| `maso` | `mas outdated` | Zeige veraltete App Store Apps |
+| `masu` | `mas upgrade` | Aktualisiere alle App Store Apps |
+| `mass` | `mas search <name>` | Suche im App Store |
+| `masi` | `mas install <id>` | Installiere App via ID |
+| `masl` | `mas list` | Liste installierte Apps |
+
+> **Hinweis:** Die mas-Aliase sind nur verfügbar wenn mas installiert ist. `brewup` enthält automatisch `mas upgrade` wenn mas vorhanden ist.
+
+### fd.alias
+
+| Alias | Befehl | Beschreibung |
+|-------|--------|--------------|
+| `fdf` | `fd --type f` | Nur Dateien suchen |
+| `fdd` | `fd --type d` | Nur Verzeichnisse suchen |
+| `fdh` | `fd --hidden` | Inkl. versteckte Dateien |
+| `fda` | `fd --hidden --no-ignore` | Alles (ignoriert nichts) |
+| `fde` | `fd --extension <ext>` | Nach Erweiterung suchen |
+| `fdx` | `fd --exec <cmd>` | Mit Ausführung |
+| `fd0` | `fd --print0` | Null-separiert (für xargs -0) |
+| `fdsh` | `fd --extension sh` | Shell-Skripte |
+| `fdpy` | `fd --extension py` | Python-Dateien |
+| `fdjs` | `fd -e js -e ts` | JavaScript/TypeScript |
+| `fdmd` | `fd --extension md` | Markdown-Dateien |
+| `fdjson` | `fd --extension json` | JSON-Dateien |
+| `fdyaml` | `fd -e yaml -e yml` | YAML-Dateien |
+
+> **Hinweis:** fd respektiert automatisch `.gitignore` und ist deutlich schneller als find.
+
+### btop.alias
+
+| Alias | Befehl | Beschreibung |
+|-------|--------|--------------|
+| `top` | `btop` | top durch btop ersetzen |
+| `htop` | `btop` | htop durch btop ersetzen |
+| `btop-low` | `btop --low-color` | Weniger Farben (einfache Terminals) |
+
+> **Hinweis:** btop bietet CPU, RAM, Disk, Netzwerk und Prozess-Überwachung in einer ansprechenden TUI.
 
 ### eza.alias
 
@@ -176,6 +216,82 @@ rgl "TODO"             # rg --files-with-matches
 
 ---
 
+### fd – Schneller find-Ersatz
+
+```zsh
+# Datei nach Name suchen
+fd readme               # Findet README.md, readme.txt, etc.
+
+# Nur Dateien oder Verzeichnisse
+fdf config              # Nur Dateien
+fdd src                 # Nur Verzeichnisse
+
+# Inkl. versteckter Dateien
+fdh .env                # Findet .env, .envrc, etc.
+
+# Nach Erweiterung
+fde md                  # Alle Markdown-Dateien
+fdpy                    # Alle Python-Dateien
+fdjs                    # JavaScript + TypeScript
+
+# Mit Ausführung
+fdx bat {}              # Jede Datei mit bat anzeigen
+fd -e json -x jq . {}   # Alle JSON-Dateien formatieren
+
+# Alles suchen (ignoriert nichts)
+fda password            # Durchsucht auch .git/, node_modules/, etc.
+```
+
+> **Hinweis:** fd ist das Standard-Backend für fzf (konfiguriert in `.zshrc`). Alle fzf-Suchen nutzen automatisch fd.
+
+---
+
+### btop – Ressourcen-Monitor
+
+```zsh
+# Monitor starten (ersetzt top/htop)
+top                    # Startet btop
+btop                   # Direkt aufrufen
+
+# Für einfache Terminals
+btop-low               # Weniger Farben
+
+# Navigation in btop:
+# m         → Menü
+# Esc       → Zurück
+# q         → Beenden
+# f         → Filter (Prozesse)
+# k         → Kill (Prozess)
+# +/-       → Sortierung ändern
+```
+
+> **Hinweis:** btop zeigt CPU, RAM, Disk, Netzwerk und Prozesse in einer ansprechenden TUI mit Graphen.
+
+---
+
+### mas – Mac App Store CLI
+
+```zsh
+# Veraltete Apps anzeigen
+maso                   # mas outdated
+
+# Alle Apps aktualisieren
+masu                   # mas upgrade
+
+# App suchen
+mass "Xcode"           # Zeigt App-ID und Name
+
+# App installieren (benötigt App-ID)
+masi 497799835         # Installiert Xcode
+
+# Installierte Apps auflisten
+masl                   # Zeigt ID und Name
+```
+
+> **Hinweis:** `brewup` aktualisiert automatisch auch App Store Apps wenn mas installiert ist.
+
+---
+
 ### fzf – Fuzzy Finder
 
 **Tastenkombinationen:**
@@ -185,6 +301,13 @@ rgl "TODO"             # rg --files-with-matches
 | `Ctrl+R` | History durchsuchen | – |
 | `Ctrl+T` | Datei suchen und einfügen | bat (Syntax-Highlighting) |
 | `Alt+C` | Verzeichnis wechseln (cd) | eza (Tree-Ansicht) |
+
+**fd-Integration:**
+
+fzf nutzt automatisch fd als Backend (konfiguriert in `.zshrc`):
+- Schneller als Standard-`find`
+- Respektiert `.gitignore`
+- Zeigt versteckte Dateien (außer `.git/`)
 
 ```zsh
 # Datei suchen und öffnen

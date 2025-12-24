@@ -9,5 +9,22 @@
 # ------------------------------------------------------------
 # Update & Wartung
 # ------------------------------------------------------------
-# Vollständiges System-Update: stoppt bei Fehlern pro Schritt (man brew)
-alias brewup='brew update && brew upgrade && brew autoremove && brew cleanup'
+# Vollständiges System-Update: stoppt bei Fehlern pro Schritt
+# Inkl. mas (Mac App Store) falls installiert
+if command -v mas >/dev/null 2>&1; then
+    alias brewup='brew update && brew upgrade && mas upgrade && brew autoremove && brew cleanup'
+else
+    alias brewup='brew update && brew upgrade && brew autoremove && brew cleanup'
+fi
+
+# ------------------------------------------------------------
+# Mac App Store (mas)
+# ------------------------------------------------------------
+# Guard: nur wenn mas installiert ist
+if command -v mas >/dev/null 2>&1; then
+    alias maso='mas outdated'               # Zeige veraltete Apps
+    alias masu='mas upgrade'                # Aktualisiere alle Apps
+    alias mass='mas search'                 # Suche im App Store
+    alias masi='mas install'                # Installiere App (ID)
+    alias masl='mas list'                   # Liste installierte Apps
+fi

@@ -1,0 +1,37 @@
+# ============================================================
+# fd.alias - fd Aliase (find-Ersatz)
+# ============================================================
+# Zweck   : Aliase für fd – schnelle Alternative zu find
+# Pfad    : ~/.config/alias/fd.alias
+# Docs    : https://github.com/sharkdp/fd
+# ============================================================
+
+# Guard: nur wenn fd installiert ist
+if (( ! $+commands[fd] )); then
+    return
+fi
+
+# ------------------------------------------------------------
+# Basis-Aliase
+# ------------------------------------------------------------
+alias fdf='fd --type f'                     # Nur Dateien
+alias fdd='fd --type d'                     # Nur Verzeichnisse
+alias fdh='fd --hidden'                     # Inkl. versteckte Dateien
+alias fda='fd --hidden --no-ignore'         # Alles (ignoriert nichts)
+
+# ------------------------------------------------------------
+# Erweiterte Suche
+# ------------------------------------------------------------
+alias fde='fd --extension'                  # Nach Erweiterung: fde md
+alias fdx='fd --exec'                       # Mit Ausführung: fdx rm {}
+alias fd0='fd --print0'                     # Null-separiert (für xargs -0)
+
+# ------------------------------------------------------------
+# Typspezifische Suche
+# ------------------------------------------------------------
+alias fdsh='fd --extension sh'              # Shell-Skripte
+alias fdpy='fd --extension py'              # Python-Dateien
+alias fdjs='fd -e js -e ts'                 # JavaScript/TypeScript
+alias fdmd='fd --extension md'              # Markdown-Dateien
+alias fdjson='fd --extension json'          # JSON-Dateien
+alias fdyaml='fd -e yaml -e yml'            # YAML-Dateien

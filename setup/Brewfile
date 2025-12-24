@@ -7,16 +7,19 @@
 # ============================================================
 
 # CLI-Tools
-brew "fzf"          # Fuzzy Finder
-brew "gh"           # GitHub CLI
-brew "stow"         # Symlink-Manager
-brew "starship"     # Shell-Prompt
-brew "zoxide"       # Smartes cd
+brew "fzf"                                  # Fuzzy Finder
+brew "gh"                                   # GitHub CLI
+brew "stow"                                 # Symlink-Manager
+brew "starship"                             # Shell-Prompt
+brew "zoxide"                               # Smartes cd
+brew "mas"                                  # Mac App Store CLI
 
 # Moderne CLI-Ersetzungen
-brew "eza"          # Moderner ls-Ersatz mit Icons
-brew "bat"          # cat mit Syntax-Highlighting
-brew "ripgrep"      # Ultraschneller grep-Ersatz
+brew "eza"                                  # Moderner ls-Ersatz mit Icons
+brew "bat"                                  # cat mit Syntax-Highlighting
+brew "ripgrep"                              # Ultraschneller grep-Ersatz
+brew "fd"                                   # Schneller find-Ersatz
+brew "btop"                                 # Ressourcen-Monitor (top-Ersatz)
 
 # Fonts (seit Homebrew 4.0 in homebrew/cask integriert)
 cask "font-meslo-lg-nerd-font"
