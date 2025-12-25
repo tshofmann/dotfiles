@@ -64,7 +64,7 @@ if command -v zoxide >/dev/null 2>&1; then
         
         dir=$(zoxide query -l | \
             fzf --preview "$preview_cmd" \
-                --bind='ctrl-d:execute(zoxide remove {})' \
+                --bind='ctrl-d:execute-silent(zoxide remove {})+reload(zoxide query -l)' \
                 --header='Ctrl+D: Eintrag löschen')
         
         [[ -n "$dir" ]] && cd "$dir"
