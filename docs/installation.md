@@ -21,6 +21,8 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles au
 git clone https://github.com/tshofmann/dotfiles.git ~/dotfiles && cd ~/dotfiles && ./setup/bootstrap.sh
 ```
 
+> **💡 Frisches System?** Auf einem neuen Mac ist Git noch nicht verfügbar. Der erste `git`-Aufruf öffnet automatisch einen Dialog zur Installation der **Xcode Command Line Tools**. Klicke auf "Installieren" und warte bis die Installation abgeschlossen ist (~1-2 Minuten). Danach den Befehl erneut ausführen.
+
 ### Was das Skript macht
 
 Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
