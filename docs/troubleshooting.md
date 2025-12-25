@@ -172,6 +172,41 @@ brew bundle check
 
 ---
 
+## Mac App Store (mas) Probleme
+
+### Symptom: App Store Apps werden nicht installiert
+
+**Ursache:** mas benötigt eine Anmeldung im App Store mit deiner Apple-ID.
+
+**Lösung:**
+
+1. App Store.app öffnen
+2. Mit Apple-ID anmelden
+3. Erneut versuchen: `mas install <app-id>` oder `brewup`
+
+> **Wichtig:** Die Befehle `mas account` und `mas signin` sind auf macOS 12+ (Monterey und neuer) **nicht verfügbar** – Apple hat die dafür benötigten privaten APIs entfernt. Die Anmeldung muss daher manuell über App Store.app erfolgen.
+
+### Symptom: "This redownload is not available for this Apple Account"
+
+**Ursache:** Die App wurde entweder:
+- Noch nie mit dieser Apple-ID gekauft/geladen
+- Mit einer anderen Apple-ID erworben
+- Erstattet oder storniert
+
+**Lösung:**
+
+```zsh
+# App zuerst im App Store "kaufen" (auch kostenlose Apps)
+mas get <app-id>
+
+# Dann installieren
+mas install <app-id>
+```
+
+> **Hinweis:** `mas install` setzt voraus, dass die App bereits mit deiner Apple-ID verknüpft ist. Für neue Apps verwende `mas get`.
+
+---
+
 ## Starship startet nicht
 
 ### Symptom
@@ -209,6 +244,18 @@ starship preset catppuccin-powerline -o ~/.config/starship.toml
 ---
 
 ## Bootstrap-Skript bricht ab
+
+### Symptom: "Keine Internetverbindung verfügbar"
+
+**Ursache:** Das Skript konnte keine Verbindung zu Apple-Servern herstellen.
+
+**Lösung:**
+
+1. Netzwerkverbindung prüfen (WLAN, Ethernet)
+2. Firewall/VPN-Einstellungen prüfen
+3. Erneut versuchen: `./setup/bootstrap.sh`
+
+> **Hinweis:** Das Bootstrap-Skript benötigt Internet für Homebrew-Installation, CLI-Tools und Fonts.
 
 ### Symptom: "Dieses Setup unterstützt nur Apple Silicon"
 

@@ -86,6 +86,8 @@ Diese Apps werden via `mas` installiert (Benutzer muss im App Store angemeldet s
 | **Numbers** | Tabellenkalkulation |
 | **Keynote** | Präsentationen |
 
+> **Hinweis:** Die Anmeldung im App Store muss manuell über App Store.app erfolgen – die Befehle `mas account` und `mas signin` sind auf macOS 12+ nicht verfügbar. Siehe [Troubleshooting → mas Probleme](troubleshooting.md#mac-app-store-mas-probleme).
+
 ---
 
 ## Aliase

@@ -30,6 +30,7 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 | Aktion | Beschreibung | Bei Fehler |
 |--------|--------------|------------|
 | Architektur-Check | Prüft ob arm64 (Apple Silicon) | ❌ Exit |
+| Netzwerk-Check | Prüft Internetverbindung | ❌ Exit |
 | Xcode CLI Tools | Installiert/prüft Developer Tools | ❌ Exit |
 | Homebrew | Installiert/prüft Homebrew unter `/opt/homebrew` | ❌ Exit |
 | Brewfile | Installiert CLI-Tools via `brew bundle` | ❌ Exit |
@@ -107,6 +108,24 @@ Nach erfolgreicher Installation sind folgende Symlinks aktiv:
 ```zsh
 ls -la ~/.zshrc ~/.zprofile ~/.config/alias/
 ```
+
+---
+
+## Installation validieren
+
+Nach der Installation kannst du mit dem Health-Check-Skript prüfen, ob alle Komponenten korrekt installiert sind:
+
+```zsh
+./setup/health-check.sh
+```
+
+Das Skript prüft:
+- ✔ Alle Symlinks korrekt verlinkt
+- ✔ Homebrew und CLI-Tools installiert
+- ✔ Nerd Font vorhanden
+- ✔ Terminal-Profil als Standard gesetzt
+- ✔ Starship-Konfiguration vorhanden
+- ✔ Brewfile-Abhängigkeiten erfüllt
 
 ---
 

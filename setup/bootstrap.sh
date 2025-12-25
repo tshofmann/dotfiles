@@ -64,6 +64,21 @@ if [[ $(uname -m) != "arm64" ]]; then
   exit 1
 fi
 
+# Internetverbindung prüfen (erforderlich für Homebrew-Installation und Downloads)
+# Verwendet curl mit kurzem Timeout gegen Apple-Server (zuverlässig erreichbar)
+CURRENT_STEP="Netzwerk-Prüfung"
+if ! curl -sfL --connect-timeout 5 --max-time 10 "https://apple.com" >/dev/null 2>&1; then
+  err "Keine Internetverbindung verfügbar"
+  err "Das Bootstrap-Skript benötigt eine aktive Internetverbindung für:"
+  err "  • Homebrew-Installation"
+  err "  • Download von CLI-Tools und Fonts"
+  err "  • Mac App Store Apps (optional)"
+  err ""
+  err "Bitte Netzwerkverbindung herstellen und erneut versuchen."
+  exit 1
+fi
+ok "Internetverbindung verfügbar"
+
 # Xcode Command Line Tools (git/clang & Header; Voraussetzung für Homebrew)
 if ! xcode-select -p >/dev/null 2>&1; then
   log "Xcode Command Line Tools werden benötigt (für git/Homebrew). Starte Installation..."

@@ -20,6 +20,7 @@ dotfiles/
 │   └── tools.md                 # Tool-Übersicht
 ├── setup/
 │   ├── bootstrap.sh             # Automatisiertes Setup-Skript
+│   ├── health-check.sh          # Validierung der Installation
 │   ├── Brewfile                 # Homebrew-Abhängigkeiten
 │   └── tshofmann.terminal       # Terminal.app Profil
 └── terminal/
@@ -56,6 +57,7 @@ Dieses Repository unterstützt **ausschließlich Apple Silicon Macs**:
 |--------|--------------|
 | **Homebrew-Pfad** | `/opt/homebrew` (nicht `/usr/local`) |
 | **Architektur-Check** | Explizit am Skript-Anfang |
+| **Netzwerk-Check** | Verbindungstest vor Installation |
 | **Kompatibilität** | Keine Rosetta-Fallbacks |
 
 **Gründe:**
