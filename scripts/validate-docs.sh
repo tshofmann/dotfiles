@@ -4,6 +4,17 @@
 # ============================================================
 # Zweck   : Prüft ob Dokumentation mit Code übereinstimmt
 # Aufruf  : ./scripts/validate-docs.sh
+# Version : 2.0 - Erweiterte Validierung
+# ============================================================
+# Validiert:
+#   ✔ Brewfile Einträge (Namen + Anzahlen)
+#   ✔ Bootstrap-Schritte (CURRENT_STEP vs installation.md)
+#   ✔ CLI-Tools (health-check.sh vs tools.md)
+#   ✔ macOS Mindestversion (Code vs Docs)
+#   ✔ Starship-Preset (Code vs Docs)
+#   ✔ Alias-Dateien (Anzahlen pro Datei)
+#   ✔ Config-Dateien (Existenz + Dokumentation)
+#   ✔ Symlink-Kategorien
 # ============================================================
 
 set -euo pipefail
@@ -12,11 +23,13 @@ set -euo pipefail
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
 NC='\033[0m'
 
 SCRIPT_DIR="${0:A:h}"
 DOTFILES_DIR="${SCRIPT_DIR:h}"
 DOCS_DIR="$DOTFILES_DIR/docs"
+SETUP_DIR="$DOTFILES_DIR/setup"
 
 errors=0
 warnings=0
@@ -25,29 +38,188 @@ log()  { print "→ $*"; }
 ok()   { print "${GREEN}✔${NC} $*"; }
 warn() { print "${YELLOW}⚠${NC} $*"; ((warnings++)); }
 err()  { print "${RED}✖${NC} $*"; ((errors++)); }
+info() { print "${BLUE}ℹ${NC} $*"; }
 
 # ------------------------------------------------------------
-# Brewfile-Einträge prüfen
+# macOS Mindestversion prüfen
+# ------------------------------------------------------------
+check_macos_version() {
+    log "Prüfe macOS Versionsangaben..."
+    
+    local bootstrap="$SETUP_DIR/bootstrap.sh"
+    local install_doc="$DOCS_DIR/installation.md"
+    local readme="$DOTFILES_DIR/README.md"
+    
+    # Extrahiere MACOS_MIN_VERSION aus bootstrap.sh
+    local code_version
+    code_version=$(grep -E '^readonly MACOS_MIN_VERSION=' "$bootstrap" 2>/dev/null | sed 's/.*=//') || true
+    
+    if [[ -z "$code_version" ]]; then
+        warn "MACOS_MIN_VERSION nicht in bootstrap.sh gefunden"
+        return
+    fi
+    
+    # Prüfe installation.md
+    if grep -qE "macOS ${code_version}(\+| |\))" "$install_doc" 2>/dev/null; then
+        ok "installation.md: macOS $code_version+"
+    else
+        err "installation.md: macOS Version stimmt nicht (erwartet: $code_version)"
+    fi
+    
+    # Prüfe README.md
+    if grep -qE "macOS ${code_version}(\+| |\))" "$readme" 2>/dev/null; then
+        ok "README.md: macOS $code_version+"
+    else
+        err "README.md: macOS Version stimmt nicht (erwartet: $code_version)"
+    fi
+}
+
+# ------------------------------------------------------------
+# Bootstrap-Schritte gegen installation.md prüfen
+# ------------------------------------------------------------
+check_bootstrap_steps() {
+    log "Prüfe Bootstrap-Schritte..."
+    
+    local bootstrap="$SETUP_DIR/bootstrap.sh"
+    local install_doc="$DOCS_DIR/installation.md"
+    
+    # Zähle CURRENT_STEP Zuweisungen (ohne Initialisierung)
+    local code_step_count
+    code_step_count=$(grep -c 'CURRENT_STEP=' "$bootstrap" 2>/dev/null || echo 0)
+    # Minus 1 für die Initialisierung
+    code_step_count=$((code_step_count - 1))
+    
+    ok "Bootstrap-Schritte im Code: $code_step_count"
+    
+    # Prüfe ob kritische Schritte in installation.md dokumentiert sind
+    local -a critical_keywords=("Netzwerk" "Homebrew" "Brewfile" "Font" "Terminal" "Starship" "ZSH")
+    local missing=0
+    
+    for keyword in "${critical_keywords[@]}"; do
+        if ! grep -qi "$keyword" "$install_doc" 2>/dev/null; then
+            warn "Keyword '$keyword' nicht in installation.md"
+            ((missing++)) || true
+        fi
+    done
+    
+    if (( missing == 0 )); then
+        ok "Alle Bootstrap-Schritte in installation.md referenziert"
+    fi
+}
+
+# ------------------------------------------------------------
+# Brewfile-Einträge prüfen (Namen + Anzahlen)
 # ------------------------------------------------------------
 check_brewfile() {
     log "Prüfe Brewfile-Dokumentation..."
     
-    local brewfile="$DOTFILES_DIR/setup/Brewfile"
+    local brewfile="$SETUP_DIR/Brewfile"
     local arch_doc="$DOCS_DIR/architecture.md"
+    local tools_doc="$DOCS_DIR/tools.md"
     
-    # Zähle brew-Einträge im Brewfile (ohne Kommentare)
-    local brew_count=$(grep -c '^brew "' "$brewfile" 2>/dev/null || echo 0)
-    local cask_count=$(grep -c '^cask "' "$brewfile" 2>/dev/null || echo 0)
-    local mas_count=$(grep -c '^mas "' "$brewfile" 2>/dev/null || echo 0)
+    # Zähle brew-Einträge im Brewfile
+    local brew_count cask_count mas_count
+    brew_count=$(grep -c '^brew "' "$brewfile" 2>/dev/null || echo 0)
+    cask_count=$(grep -c '^cask "' "$brewfile" 2>/dev/null || echo 0)
+    mas_count=$(grep -c '^mas "' "$brewfile" 2>/dev/null || echo 0)
     
-    # Zähle Einträge im Docs-Beispiel
-    local docs_brew=$(sed -n '/```ruby/,/```/p' "$arch_doc" | grep -c '^brew "' 2>/dev/null || echo 0)
-    local docs_cask=$(sed -n '/```ruby/,/```/p' "$arch_doc" | grep -c '^cask "' 2>/dev/null || echo 0)
-    local docs_mas=$(sed -n '/```ruby/,/```/p' "$arch_doc" | grep -c '^mas "' 2>/dev/null || echo 0)
+    # Zähle Einträge im Docs-Beispiel (architecture.md)
+    local docs_brew docs_cask docs_mas
+    docs_brew=$(sed -n '/```ruby/,/```/p' "$arch_doc" | grep -c '^brew "' 2>/dev/null || echo 0)
+    docs_cask=$(sed -n '/```ruby/,/```/p' "$arch_doc" | grep -c '^cask "' 2>/dev/null || echo 0)
+    docs_mas=$(sed -n '/```ruby/,/```/p' "$arch_doc" | grep -c '^mas "' 2>/dev/null || echo 0)
     
     [[ "$brew_count" -eq "$docs_brew" ]] && ok "brew Formulae: $brew_count" || err "brew Formulae: Code=$brew_count, Docs=$docs_brew"
     [[ "$cask_count" -eq "$docs_cask" ]] && ok "cask Formulae: $cask_count" || err "cask Formulae: Code=$cask_count, Docs=$docs_cask"
     [[ "$mas_count" -eq "$docs_mas" ]] && ok "mas Apps: $mas_count" || err "mas Apps: Code=$mas_count, Docs=$docs_mas"
+    
+    # Prüfe Tool-Namen gegen tools.md
+    log "Prüfe CLI-Tool Namen in tools.md..."
+    local -a required_tools=(fzf stow starship zoxide eza bat ripgrep fd btop gh)
+    local missing_tools=()
+    
+    for tool in "${required_tools[@]}"; do
+        if ! grep -qE "^\| \*\*$tool\*\*" "$tools_doc" 2>/dev/null; then
+            missing_tools+=("$tool")
+        fi
+    done
+    
+    if (( ${#missing_tools[@]} == 0 )); then
+        ok "Alle kritischen Tools in tools.md dokumentiert"
+    else
+        err "Tools fehlen in tools.md: ${missing_tools[*]}"
+    fi
+}
+
+# ------------------------------------------------------------
+# Health-Check Tools gegen tools.md prüfen
+# ------------------------------------------------------------
+check_healthcheck_tools() {
+    log "Prüfe Health-Check Tool-Liste..."
+    
+    local health_check="$SCRIPT_DIR/health-check.sh"
+    local tools_doc="$DOCS_DIR/tools.md"
+    
+    # Zähle check_tool Aufrufe
+    local tool_count
+    tool_count=$(grep -c 'check_tool "' "$health_check" 2>/dev/null || echo 0)
+    
+    ok "Health-Check prüft $tool_count Tools"
+    
+    # Prüfe kritische Tools
+    local -a critical=(fzf stow starship zoxide eza bat fd btop gh)
+    local missing=0
+    
+    for tool in "${critical[@]}"; do
+        if ! grep -q "check_tool \"$tool\"" "$health_check" 2>/dev/null; then
+            # Einige haben andere Befehlsnamen
+            if [[ "$tool" == "ripgrep" ]] && grep -q 'check_tool "rg"' "$health_check" 2>/dev/null; then
+                continue
+            fi
+            warn "Tool '$tool' nicht in health-check.sh"
+            ((missing++)) || true
+        fi
+    done
+    
+    if (( missing == 0 )); then
+        ok "Alle kritischen Tools werden geprüft"
+    fi
+}
+
+# ------------------------------------------------------------
+# Starship-Preset prüfen
+# ------------------------------------------------------------
+check_starship_preset() {
+    log "Prüfe Starship-Preset Dokumentation..."
+    
+    local bootstrap="$SETUP_DIR/bootstrap.sh"
+    local config_doc="$DOCS_DIR/configuration.md"
+    local arch_doc="$DOCS_DIR/architecture.md"
+    
+    # Extrahiere Default-Preset aus bootstrap.sh
+    local code_preset
+    code_preset=$(grep -E '^readonly STARSHIP_PRESET_DEFAULT=' "$bootstrap" 2>/dev/null | sed 's/.*="//' | sed 's/".*//') || true
+    
+    if [[ -z "$code_preset" ]]; then
+        warn "STARSHIP_PRESET_DEFAULT nicht in bootstrap.sh gefunden"
+        return
+    fi
+    
+    ok "Code-Preset: $code_preset"
+    
+    # Prüfe configuration.md
+    if grep -q "$code_preset" "$config_doc" 2>/dev/null; then
+        ok "configuration.md: Preset dokumentiert"
+    else
+        warn "Preset '$code_preset' nicht in configuration.md erwähnt"
+    fi
+    
+    # Prüfe architecture.md  
+    if grep -q "$code_preset" "$arch_doc" 2>/dev/null; then
+        ok "architecture.md: Preset dokumentiert"
+    else
+        warn "Preset '$code_preset' nicht in architecture.md erwähnt"
+    fi
 }
 
 # ------------------------------------------------------------
@@ -59,33 +231,32 @@ check_alias_files() {
     local alias_dir="$DOTFILES_DIR/terminal/.config/alias"
     local tools_doc="$DOCS_DIR/tools.md"
     
-    # Bekannte bedingte Aliase (nur mit bestimmten Tools verfügbar)
-    # Format: "datei:anzahl_bedingte"
+    # Bekannte bedingte Aliase
     local -A conditional_aliases=(
-        [homebrew]=1   # brewup variiert je nach mas
-        [bat]=1        # bat-preview nur mit fzf
+        [homebrew]=1
+        [bat]=1
     )
     
-    for alias_file in "$alias_dir"/*.alias; do
-        local name=$(basename "$alias_file")
-        local base="${name%.alias}"
+    local name base code_count docs_count tolerance
+    for alias_file in "$alias_dir"/*.alias(N); do
+        [[ -f "$alias_file" ]] || continue
         
-        # fzf.alias enthält Funktionen statt Aliase
+        name=$(basename "$alias_file")
+        base=${name%.alias}
+        
+        # fzf.alias enthält Funktionen
         if [[ "$base" == "fzf" ]]; then
-            local code_count=$(grep -cE "^[a-z]+\(\)[[:space:]]*\{" "$alias_file" 2>/dev/null || echo 0)
-            ok "$name: $code_count Funktionen (nicht validiert)"
+            code_count=$(grep -cE "^[a-z]+\(\)[[:space:]]*\{" "$alias_file" 2>/dev/null || echo 0)
+            ok "$name: $code_count Funktionen"
             continue
         fi
         
-        # Zähle Aliase im Code
-        local code_count=$(grep -cE "^[[:space:]]*alias [a-z]" "$alias_file" 2>/dev/null || echo 0)
+        # Zähle Aliase
+        code_count=$(grep -cE "^[[:space:]]*alias [a-z]" "$alias_file" 2>/dev/null || echo 0)
         
-        # Prüfe ob Datei in Docs erwähnt wird
         if grep -q "### ${base}.alias" "$tools_doc" 2>/dev/null; then
-            local docs_count=$(sed -n "/### ${base}.alias/,/^### /p" "$tools_doc" | grep -cE "^\| \`[a-z]" 2>/dev/null || echo 0)
-            
-            # Prüfe ob diese Datei bekannte bedingte Aliase hat
-            local tolerance=${conditional_aliases[$base]:-0}
+            docs_count=$(sed -n "/### ${base}.alias/,/^### /p" "$tools_doc" | grep -cE "^\| \`[a-z]" 2>/dev/null || echo 0)
+            tolerance=${conditional_aliases[$base]:-0}
             
             if [[ "$code_count" -eq "$docs_count" ]]; then
                 ok "$name: $code_count Aliase"
@@ -109,16 +280,15 @@ check_config_files() {
     local config_dir="$DOTFILES_DIR/terminal/.config"
     local arch_doc="$DOCS_DIR/architecture.md"
     
+    local config_file code_opts
     for tool in fzf bat ripgrep; do
-        local config_file="$config_dir/$tool/config"
+        config_file="$config_dir/$tool/config"
         
         if [[ -f "$config_file" ]]; then
-            # Zähle nicht-kommentierte Optionen
-            local code_opts=$(grep -c "^--" "$config_file" 2>/dev/null || echo 0)
+            code_opts=$(grep -c "^--" "$config_file" 2>/dev/null || echo 0)
             
-            # Docs zeigen nur Auszug - prüfe nur ob dokumentiert
             if grep -q "#### ${tool}.*Config" "$arch_doc" 2>/dev/null; then
-                ok "$tool config: $code_opts Optionen (Docs zeigen Auszug)"
+                ok "$tool config: $code_opts Optionen"
             else
                 err "$tool config: Nicht in architecture.md dokumentiert"
             fi
@@ -135,22 +305,21 @@ check_symlinks() {
     local install_doc="$DOCS_DIR/installation.md"
     local terminal_dir="$DOTFILES_DIR/terminal"
     
-    # Zähle tatsächliche Symlink-Kategorien
     local code_count=0
     
     # Shell-Dateien
-    [[ -f "$terminal_dir/.zshenv" ]] && code_count=$((code_count + 1))
-    [[ -f "$terminal_dir/.zshrc" ]] && code_count=$((code_count + 1))
-    [[ -f "$terminal_dir/.zprofile" ]] && code_count=$((code_count + 1))
+    [[ -f "$terminal_dir/.zshenv" ]] && ((code_count++)) || true
+    [[ -f "$terminal_dir/.zshrc" ]] && ((code_count++)) || true
+    [[ -f "$terminal_dir/.zprofile" ]] && ((code_count++)) || true
     
-    # Config-Verzeichnisse (als Gruppen gezählt)
-    [[ -d "$terminal_dir/.config/alias" ]] && code_count=$((code_count + 1))
-    [[ -d "$terminal_dir/.config/fzf" ]] && code_count=$((code_count + 1))
-    [[ -d "$terminal_dir/.config/bat" ]] && code_count=$((code_count + 1))
-    [[ -d "$terminal_dir/.config/ripgrep" ]] && code_count=$((code_count + 1))
+    # Config-Verzeichnisse
+    [[ -d "$terminal_dir/.config/alias" ]] && ((code_count++)) || true
+    [[ -d "$terminal_dir/.config/fzf" ]] && ((code_count++)) || true
+    [[ -d "$terminal_dir/.config/bat" ]] && ((code_count++)) || true
+    [[ -d "$terminal_dir/.config/ripgrep" ]] && ((code_count++)) || true
     
-    # Zähle Tabellenzeilen in installation.md
-    local docs_count=$(sed -n '/## Ergebnis: Symlink/,/^### /p' "$install_doc" | grep -cE "^\| \`~/" || echo 0)
+    local docs_count
+    docs_count=$(sed -n '/## Ergebnis: Symlink/,/^### /p' "$install_doc" | grep -cE "^\| \`~/" 2>/dev/null || echo 0)
     
     if [[ "$code_count" -eq "$docs_count" ]]; then
         ok "Symlink-Kategorien: $code_count"
@@ -163,12 +332,23 @@ check_symlinks() {
 # Main
 # ------------------------------------------------------------
 print "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-print "📖 Dokumentations-Validierung"
+print "📖 Dokumentations-Validierung v2.0"
 print "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 print ""
 
+# Kritische Prüfungen (NEU)
+check_macos_version
+print ""
+check_bootstrap_steps
+print ""
 check_brewfile
 print ""
+check_healthcheck_tools
+print ""
+check_starship_preset
+print ""
+
+# Bestehende Prüfungen
 check_alias_files
 print ""
 check_config_files

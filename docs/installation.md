@@ -21,8 +21,6 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles au
 git clone https://github.com/tshofmann/dotfiles.git ~/dotfiles && cd ~/dotfiles && ./setup/bootstrap.sh
 ```
 
-> ⚠️ **Wichtig:** Nach Abschluss des Bootstrap-Skripts wird das Terminal automatisch neu gestartet. Fahre danach mit Schritt 2 fort.
-
 ### Was das Skript macht
 
 Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
@@ -30,14 +28,15 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 | Aktion | Beschreibung | Bei Fehler |
 |--------|--------------|------------|
 | Architektur-Check | Prüft ob arm64 (Apple Silicon) | ❌ Exit |
+| macOS-Version-Check | Prüft ob macOS 14+ (Sonoma) | ❌ Exit |
 | Netzwerk-Check | Prüft Internetverbindung | ❌ Exit |
 | Xcode CLI Tools | Installiert/prüft Developer Tools | ❌ Exit |
 | Homebrew | Installiert/prüft Homebrew unter `/opt/homebrew` | ❌ Exit |
 | Brewfile | Installiert CLI-Tools via `brew bundle` | ❌ Exit |
-| MesloLG Nerd Font | Prüft Font-Installation | ❌ Exit |
+| Font-Verifikation | Prüft MesloLG Nerd Font Installation | ❌ Exit |
 | Terminal-Profil | Importiert `tshofmann.terminal` als Standard | ⚠️ Warnung |
 | Starship-Theme | Generiert `~/.config/starship.toml` | ⚠️ Warnung |
-| ZSH-Sessions | Prüft SHELL_SESSIONS_DISABLE in ~/.zshenv | ✅ Immer |
+| ZSH-Sessions | Prüft SHELL_SESSIONS_DISABLE in ~/.zshenv | ⚠️ Warnung |
 
 > **Idempotenz:** Das Skript kann beliebig oft ausgeführt werden – bereits installierte Komponenten werden erkannt und übersprungen.
 
@@ -52,7 +51,10 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 
 ## Schritt 2: Konfigurationsdateien verlinken
 
-Nach dem Terminal-Neustart:
+Nach Abschluss des Bootstrap-Skripts:
+
+1. **Terminal.app neu starten** (für vollständige Übernahme der Profil-Einstellungen)
+2. Dann im neuen Terminal-Fenster:
 
 ```zsh
 cd ~/dotfiles && stow --adopt -R terminal && git reset --hard HEAD
@@ -115,7 +117,11 @@ Nach erfolgreicher Installation sind folgende Symlinks aktiv:
 ### Symlinks prüfen
 
 ```zsh
-ls -la ~/.zshrc ~/.zprofile ~/.config/alias/
+# Alle Shell-Konfigurationsdateien
+ls -la ~/.zshenv ~/.zshrc ~/.zprofile
+
+# Alias- und Tool-Konfigurationen
+ls -la ~/.config/alias/ ~/.config/fzf/ ~/.config/bat/ ~/.config/ripgrep/
 ```
 
 ---
@@ -146,8 +152,8 @@ cd ~/dotfiles
 
 | Komponente | Prüfung |
 |------------|---------|
-| **Symlinks** | `.zshrc`, `.zprofile`, alle Alias-Dateien, Tool-Configs |
-| **CLI-Tools** | fzf, stow, starship, zoxide, eza, bat, ripgrep, fd, btop, gh |
+| **Symlinks** | `.zshenv`, `.zshrc`, `.zprofile`, alle Alias-Dateien, Tool-Configs |
+| **CLI-Tools** | fzf, stow, starship, zoxide, eza, bat, ripgrep, fd, btop, gh, mas (optional) |
 | **Nerd Font** | MesloLG Nerd Font in `~/Library/Fonts/` |
 | **Terminal-Profil** | `tshofmann` als Standard- und Startup-Profil |
 | **Starship** | `~/.config/starship.toml` vorhanden |
