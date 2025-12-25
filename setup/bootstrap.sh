@@ -55,6 +55,18 @@ readonly STARSHIP_CONFIG="$HOME/.config/starship.toml"
 readonly STARSHIP_PRESET_DEFAULT="catppuccin-powerline"
 readonly STARSHIP_PRESET="${STARSHIP_PRESET:-$STARSHIP_PRESET_DEFAULT}"
 
+# Terminal-Profil Import Timeout (Sekunden)
+# Kann via PROFILE_IMPORT_TIMEOUT überschrieben werden (z.B. für langsame Systeme/VMs)
+PROFILE_IMPORT_TIMEOUT_DEFAULT=20
+PROFILE_IMPORT_TIMEOUT="${PROFILE_IMPORT_TIMEOUT:-$PROFILE_IMPORT_TIMEOUT_DEFAULT}"
+
+# Validiere Timeout (muss positive Ganzzahl >= 1 sein)
+if [[ ! "$PROFILE_IMPORT_TIMEOUT" =~ ^[1-9][0-9]*$ ]]; then
+  warn "PROFILE_IMPORT_TIMEOUT='$PROFILE_IMPORT_TIMEOUT' ungültig, nutze Default: ${PROFILE_IMPORT_TIMEOUT_DEFAULT}s"
+  PROFILE_IMPORT_TIMEOUT="$PROFILE_IMPORT_TIMEOUT_DEFAULT"
+fi
+readonly PROFILE_IMPORT_TIMEOUT_DEFAULT PROFILE_IMPORT_TIMEOUT
+
 # Regex-Match für Terminal-Profil in defaults
 readonly PROFILE_GREP_PATTERN="(^[[:space:]]+\"$PROFILE_NAME\"|^[[:space:]]+$PROFILE_NAME)[[:space:]]+="
 
@@ -168,7 +180,7 @@ else
   log "Importiere Profil '$PROFILE_NAME'"
   open "$PROFILE_FILE"
   import_success=0
-  for attempt in {1..20}; do
+  for attempt in {1..$PROFILE_IMPORT_TIMEOUT}; do
     sleep 1
     if profile_exists; then
       ok "Profil '$PROFILE_NAME' importiert"
@@ -177,7 +189,7 @@ else
     fi
   done
   if (( import_success == 0 )); then
-    warn "Profil-Import konnte nicht verifiziert werden (20s Timeout)"
+    warn "Profil-Import konnte nicht verifiziert werden (${PROFILE_IMPORT_TIMEOUT}s Timeout)"
   fi
 fi
 

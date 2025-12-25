@@ -41,6 +41,11 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 
 > **Idempotenz:** Das Skript kann beliebig oft ausgeführt werden – bereits installierte Komponenten werden erkannt und übersprungen.
 
+> **⏱️ Timeout-Konfiguration:** Der Terminal-Profil-Import wartet standardmäßig 20 Sekunden auf Bestätigung. Bei langsamen Systemen oder VMs kann dies erhöht werden:
+> ```bash
+> PROFILE_IMPORT_TIMEOUT=60 ./setup/bootstrap.sh
+> ```
+
 > **📦 Komponenten-Abhängigkeiten:** Terminal-Profil, Nerd Font und Starship-Preset sind eng gekoppelt. Wenn Icons als □ oder ? angezeigt werden, liegt es meist an einer fehlenden oder falschen Font-Konfiguration. Details: [Architektur → Komponenten-Abhängigkeiten](architecture.md#komponenten-abhängigkeiten)
 
 ---
