@@ -186,12 +186,34 @@ Das Setup verwendet `brew bundle` für deklaratives Package-Management:
 
 ```ruby
 # setup/Brewfile
+
+# CLI-Tools
 brew "fzf"                       # Fuzzy Finder
 brew "gh"                        # GitHub CLI
-brew "stow"                      # Symlink Manager
-brew "starship"                  # Shell Prompt
-brew "zoxide"                    # Smarter cd
-cask "font-meslo-lg-nerd-font"   # Nerd Font für Icons
+brew "stow"                      # Symlink-Manager
+brew "starship"                  # Shell-Prompt
+brew "zoxide"                    # Smartes cd
+brew "mas"                       # Mac App Store CLI
+
+# Moderne CLI-Ersetzungen
+brew "eza"                       # ls-Ersatz mit Icons
+brew "bat"                       # cat mit Syntax-Highlighting
+brew "ripgrep"                   # grep-Ersatz
+brew "fd"                        # find-Ersatz
+brew "btop"                      # top-Ersatz
+
+# ZSH-Plugins
+brew "zsh-syntax-highlighting"
+brew "zsh-autosuggestions"
+
+# Font
+cask "font-meslo-lg-nerd-font"
+
+# Mac App Store Apps (via mas)
+mas "Xcode", id: 497799835
+mas "Pages", id: 409201541
+mas "Numbers", id: 409203825
+mas "Keynote", id: 409183694
 ```
 
 ### Installationsverhalten
