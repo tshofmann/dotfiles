@@ -74,6 +74,7 @@ print "   Prüft die Installation auf Vollständigkeit und Korrektheit"
 # --- Symlinks ---
 section "Symlinks"
 
+check_symlink "$HOME/.zshenv" "dotfiles/terminal/.zshenv" "~/.zshenv"
 check_symlink "$HOME/.zshrc" "dotfiles/terminal/.zshrc" "~/.zshrc"
 check_symlink "$HOME/.zprofile" "dotfiles/terminal/.zprofile" "~/.zprofile"
 
@@ -158,10 +159,11 @@ fi
 # --- ZSH-Sessions ---
 section "ZSH-Sessions"
 
-if [[ -f "$HOME/.zsh_sessions_disable" ]]; then
-  pass "macOS zsh_sessions deaktiviert"
+if [[ -f "$HOME/.zshenv" ]] && grep -q "SHELL_SESSIONS_DISABLE=1" "$HOME/.zshenv" 2>/dev/null; then
+  pass "macOS zsh_sessions deaktiviert (SHELL_SESSIONS_DISABLE=1 in ~/.zshenv)"
 else
-  warn "~/.zsh_sessions_disable fehlt (macOS Session-History aktiv)"
+  warn "SHELL_SESSIONS_DISABLE=1 nicht in ~/.zshenv (macOS Session-History aktiv)"
+  warn "  → stow -R terminal ausführen oder ~/.zshenv manuell erstellen"
 fi
 
 # --- Brewfile Status ---

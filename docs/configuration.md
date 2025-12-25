@@ -219,14 +219,20 @@ Die History-Konfiguration in `.zshrc` speichert Kommandos dauerhaft und intellig
 
 ### macOS zsh_sessions deaktiviert
 
-macOS Terminal.app speichert standardmäßig eine separate History pro Tab/Fenster in `~/.zsh_sessions/`. Das Bootstrap-Skript deaktiviert dieses Feature durch Erstellen der leeren Datei `~/.zsh_sessions_disable`.
+macOS Terminal.app speichert standardmäßig eine separate History pro Tab/Fenster in `~/.zsh_sessions/`. Dies wird durch die Umgebungsvariable `SHELL_SESSIONS_DISABLE=1` in `~/.zshenv` deaktiviert.
 
-**Gründe:**
+**Warum `.zshenv`?**
+
+Die Variable muss in `.zshenv` gesetzt werden, da macOS `/etc/zshrc_Apple_Terminal` **vor** `.zprofile` und `.zshrc` lädt. Nur `.zshenv` wird früh genug gelesen.
+
+> **Hinweis:** Eine leere Datei `~/.zsh_sessions_disable` hat **keine Wirkung** – das ist ein verbreiteter Irrtum.
+
+**Gründe für die Deaktivierung:**
 - Konsistenz: Eine zentrale `~/.zsh_history` statt fragmentierter Session-Dateien
 - Kompatibilität: Bessere Integration mit `fzf` History-Suche (`Ctrl+R`)
 - Wartbarkeit: History-Optionen in `.zshrc` wirken auf alle Befehle
 
-> **Hinweis:** Die bestehenden Dateien in `~/.zsh_sessions/` können manuell gelöscht werden: `rm -rf ~/.zsh_sessions/`
+> **Hinweis:** Bestehende Dateien in `~/.zsh_sessions/` können manuell gelöscht werden: `rm -rf ~/.zsh_sessions/`
 
 ### Einstellungen
 

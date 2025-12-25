@@ -139,6 +139,7 @@ check_symlinks() {
     local code_count=0
     
     # Shell-Dateien
+    [[ -f "$terminal_dir/.zshenv" ]] && code_count=$((code_count + 1))
     [[ -f "$terminal_dir/.zshrc" ]] && code_count=$((code_count + 1))
     [[ -f "$terminal_dir/.zprofile" ]] && code_count=$((code_count + 1))
     

@@ -37,7 +37,7 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 | MesloLG Nerd Font | Prüft Font-Installation | ❌ Exit |
 | Terminal-Profil | Importiert `tshofmann.terminal` als Standard | ⚠️ Warnung |
 | Starship-Theme | Generiert `~/.config/starship.toml` | ⚠️ Warnung |
-| ZSH-Sessions | Deaktiviert macOS Session-History | ✅ Immer |
+| ZSH-Sessions | Prüft SHELL_SESSIONS_DISABLE in ~/.zshenv | ✅ Immer |
 
 > **Idempotenz:** Das Skript kann beliebig oft ausgeführt werden – bereits installierte Komponenten werden erkannt und übersprungen.
 
@@ -104,6 +104,7 @@ Nach erfolgreicher Installation sind folgende Symlinks aktiv:
 
 | Symlink | Ziel | Zweck |
 |---------|------|-------|
+| `~/.zshenv` | `terminal/.zshenv` | Umgebungsvariablen (wird zuerst geladen) |
 | `~/.zshrc` | `terminal/.zshrc` | Interactive Shell Konfiguration |
 | `~/.zprofile` | `terminal/.zprofile` | Login Shell (Homebrew Init) |
 | `~/.config/alias/*.alias` | `terminal/.config/alias/*.alias` | 7 Alias-Dateien (homebrew, eza, bat, ripgrep, fd, fzf, btop) |
@@ -150,7 +151,7 @@ cd ~/dotfiles
 | **Nerd Font** | MesloLG Nerd Font in `~/Library/Fonts/` |
 | **Terminal-Profil** | `tshofmann` als Standard- und Startup-Profil |
 | **Starship** | `~/.config/starship.toml` vorhanden |
-| **ZSH-Sessions** | `~/.zsh_sessions_disable` vorhanden |
+| **ZSH-Sessions** | `SHELL_SESSIONS_DISABLE=1` in `~/.zshenv` |
 | **Brewfile** | Alle Abhängigkeiten installiert |
 
 ### Ergebnis interpretieren

@@ -28,6 +28,7 @@ dotfiles/
 │   ├── Brewfile                 # Homebrew-Abhängigkeiten
 │   └── tshofmann.terminal       # Terminal.app Profil
 └── terminal/
+    ├── .zshenv                  # Umgebungsvariablen (wird zuerst geladen)
     ├── .zprofile                # Login-Shell Konfiguration
     ├── .zshrc                   # Interactive Shell Konfiguration
     └── .config/
@@ -262,6 +263,21 @@ brew bundle
 ---
 
 ## Shell-Konfiguration
+
+### `.zshenv` (Umgebungsvariablen)
+
+Wird als **allererste** Datei bei jedem zsh-Start geladen (vor allen anderen):
+
+```zsh
+# macOS zsh Session-Wiederherstellung deaktivieren
+SHELL_SESSIONS_DISABLE=1
+```
+
+| Variable | Zweck |
+|----------|-------|
+| `SHELL_SESSIONS_DISABLE` | Deaktiviert macOS Session-History in `~/.zsh_sessions/` |
+
+> **Wichtig:** Diese Variable muss in `.zshenv` stehen, da `/etc/zshrc_Apple_Terminal` vor `.zprofile` und `.zshrc` geladen wird.
 
 ### `.zprofile` (Login-Shell)
 
