@@ -36,6 +36,7 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 | MesloLG Nerd Font | Prüft Font-Installation | ❌ Exit |
 | Terminal-Profil | Importiert `tshofmann.terminal` als Standard | ⚠️ Warnung |
 | Starship-Theme | Generiert `~/.config/starship.toml` | ⚠️ Warnung |
+| ZSH-Sessions | Deaktiviert macOS Session-History | ✅ Immer |
 
 > **Idempotenz:** Das Skript kann beliebig oft ausgeführt werden – bereits installierte Komponenten werden erkannt und übersprungen.
 

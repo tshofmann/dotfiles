@@ -186,6 +186,17 @@ Die `.zshrc` lädt automatisch alle `*.alias` Dateien aus `~/.config/alias/`.
 
 Die History-Konfiguration in `.zshrc` speichert Kommandos dauerhaft und intelligent.
 
+### macOS zsh_sessions deaktiviert
+
+macOS Terminal.app speichert standardmäßig eine separate History pro Tab/Fenster in `~/.zsh_sessions/`. Das Bootstrap-Skript deaktiviert dieses Feature durch Erstellen der leeren Datei `~/.zsh_sessions_disable`.
+
+**Gründe:**
+- Konsistenz: Eine zentrale `~/.zsh_history` statt fragmentierter Session-Dateien
+- Kompatibilität: Bessere Integration mit `fzf` History-Suche (`Ctrl+R`)
+- Wartbarkeit: History-Optionen in `.zshrc` wirken auf alle Befehle
+
+> **Hinweis:** Die bestehenden Dateien in `~/.zsh_sessions/` können manuell gelöscht werden: `rm -rf ~/.zsh_sessions/`
+
 ### Einstellungen
 
 | Variable | Wert | Beschreibung |
