@@ -20,11 +20,14 @@ fi
 # ------------------------------------------------------------
 # Mac App Store (mas)
 # ------------------------------------------------------------
+# Voraussetzung: Anmeldung im App Store über App Store.app
+# Hinweis: mas account/signin sind seit macOS 12+ nicht verfügbar
+# Docs: https://github.com/mas-cli/mas
 # Guard: nur wenn mas installiert ist
 if command -v mas >/dev/null 2>&1; then
     alias maso='mas outdated'               # Zeige veraltete Apps
     alias masu='mas upgrade'                # Aktualisiere alle Apps
-    alias mass='mas search'                 # Suche im App Store
-    alias masi='mas install'                # Installiere App (ID)
-    alias masl='mas list'                   # Liste installierte Apps
+    alias mass='mas search'                 # Suche im App Store (Name → ID)
+    alias masi='mas install'                # Installiere App (benötigt ID)
+    alias masl='mas list'                   # Liste installierte Apps (ID + Name)
 fi
