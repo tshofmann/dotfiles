@@ -169,21 +169,20 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 | Alias | Befehl | Beschreibung |
 |-------|--------|--------------|
-| `rgs` | `rg --smart-case` | Smart-Case Suche (empfohlen) |
-| `rgc` | `rg --smart-case -C 3` | Suche mit Kontext (3 Zeilen) |
+| `rgc` | `rg -C 3` | Suche mit Kontext (3 Zeilen) |
 | `rgi` | `rg --ignore-case` | Case-insensitive (immer) |
 | `rga` | `rg -uuu` | Alle Dateien (ignoriert nichts) |
 | `rgh` | `rg --hidden` | Inkl. versteckte Dateien |
 | `rgl` | `rg --files-with-matches` | Nur Dateinamen mit Treffern |
 | `rgn` | `rg --count` | Treffer-Anzahl pro Datei |
-| `rgts` | `rg --smart-case -t ts -t js` | TypeScript/JavaScript |
-| `rgpy` | `rg --smart-case -t py` | Python |
-| `rgmd` | `rg --smart-case -t md` | Markdown |
-| `rgsh` | `rg --smart-case -t sh` | Shell-Skripte |
-| `rgrb` | `rg --smart-case -t ruby` | Ruby |
-| `rggo` | `rg --smart-case -t go` | Go |
+| `rgts` | `rg -t ts -t js` | TypeScript/JavaScript |
+| `rgpy` | `rg -t py` | Python |
+| `rgmd` | `rg -t md` | Markdown |
+| `rgsh` | `rg -t sh` | Shell-Skripte |
+| `rgrb` | `rg -t ruby` | Ruby |
+| `rggo` | `rg -t go` | Go |
 
-> **Hinweis:** `--smart-case` ist case-insensitive wenn der Suchbegriff nur Kleinbuchstaben enthält, sonst case-sensitive.
+> **Hinweis:** `--smart-case` ist global in `~/.config/ripgrep/config` konfiguriert – alle Aliase erben diese Einstellung automatisch.
 
 ### fzf.alias – Tool-Kombinationen
 

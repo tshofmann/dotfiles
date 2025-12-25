@@ -200,7 +200,7 @@ alias ...='cd ../..'
 EOF
 ```
 
-> **Hinweis:** Der frühere `ll`-Alias wird jetzt durch `eza.alias` bereitgestellt (`ll='eza -la --icons --git'`).
+> **Hinweis:** Der frühere `ll`-Alias wird jetzt durch `eza.alias` bereitgestellt (`ll='eza -l --icons=auto --group-directories-first --header'`).
 
 ### Stow aktualisieren
 

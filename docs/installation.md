@@ -104,9 +104,12 @@ Nach erfolgreicher Installation sind folgende Symlinks aktiv:
 
 | Symlink | Ziel | Zweck |
 |---------|------|-------|
-| `~/.zshrc` | `~/dotfiles/terminal/.zshrc` | Interactive Shell Konfiguration |
-| `~/.zprofile` | `~/dotfiles/terminal/.zprofile` | Login Shell (Homebrew Init) |
-| `~/.config/alias/homebrew.alias` | `~/dotfiles/terminal/.config/alias/homebrew.alias` | Homebrew Aliase |
+| `~/.zshrc` | `terminal/.zshrc` | Interactive Shell Konfiguration |
+| `~/.zprofile` | `terminal/.zprofile` | Login Shell (Homebrew Init) |
+| `~/.config/alias/*.alias` | `terminal/.config/alias/*.alias` | 7 Alias-Dateien (homebrew, eza, bat, ripgrep, fd, fzf, btop) |
+| `~/.config/fzf/config` | `terminal/.config/fzf/config` | fzf globale Optionen |
+| `~/.config/bat/config` | `terminal/.config/bat/config` | bat Theme und Style |
+| `~/.config/ripgrep/config` | `terminal/.config/ripgrep/config` | ripgrep Defaults |
 
 ### Symlinks prüfen
 
