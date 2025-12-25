@@ -1,0 +1,49 @@
+# ============================================================
+# fzf.alias - Erweiterte fzf-Integrationen
+# ============================================================
+# Zweck   : Zusätzliche fzf-Aliase und Funktionen
+# Pfad    : ~/.config/alias/fzf.alias
+# Docs    : https://github.com/junegunn/fzf
+# ============================================================
+
+# Guard: Nur wenn fzf installiert ist
+if ! command -v fzf >/dev/null 2>&1; then
+    return 0
+fi
+
+# ------------------------------------------------------------
+# Live-Grep: Interaktive Suche mit ripgrep + fzf
+# ------------------------------------------------------------
+# Verwendung: rgf [initiale-suche]
+# Docs: https://github.com/junegunn/fzf/blob/master/ADVANCED.md
+if command -v rg >/dev/null 2>&1; then
+    rgf() {
+        local rg_prefix="rg --column --line-number --no-heading --color=always --smart-case"
+        local preview_cmd="bat --color=always {1} --highlight-line {2} 2>/dev/null || cat {1}"
+        
+        fzf --ansi --disabled --query "${*:-}" \
+            --bind "start:reload:$rg_prefix {q} || true" \
+            --bind "change:reload:sleep 0.1; $rg_prefix {q} || true" \
+            --delimiter : \
+            --preview "$preview_cmd" \
+            --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' \
+            --bind 'enter:become(${EDITOR:-vim} {1} +{2})'
+    }
+fi
+
+# ------------------------------------------------------------
+# Verzeichnis-Navigation mit Vorschau
+# ------------------------------------------------------------
+# cdf: cd mit fzf-Auswahl und eza-Vorschau
+if command -v fd >/dev/null 2>&1; then
+    cdf() {
+        local dir
+        local preview_cmd="eza --tree --level=1 --icons --color=always {} 2>/dev/null || ls -la {}"
+        
+        dir=$(fd --type d --hidden --follow --exclude .git . "${1:-.}" | \
+            fzf --preview "$preview_cmd" --height=50%)
+        
+        [[ -n "$dir" ]] && cd "$dir"
+    }
+fi
+

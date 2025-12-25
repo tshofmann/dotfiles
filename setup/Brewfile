@@ -21,5 +21,16 @@ brew "ripgrep"                              # Ultraschneller grep-Ersatz
 brew "fd"                                   # Schneller find-Ersatz
 brew "btop"                                 # Ressourcen-Monitor (top-Ersatz)
 
+# ZSH-Plugins
+brew "zsh-syntax-highlighting"              # Syntax-Highlighting für Kommandos
+brew "zsh-autosuggestions"                  # History-basierte Vorschläge
+
 # Fonts (seit Homebrew 4.0 in homebrew/cask integriert)
 cask "font-meslo-lg-nerd-font"
+
+# Mac App Store Apps (via mas)
+# Hinweis: Benutzer muss im App Store angemeldet sein
+mas "Xcode", id: 497799835                  # Apple IDE für iOS/macOS
+mas "Pages", id: 409201541                  # Textverarbeitung
+mas "Numbers", id: 409203825                # Tabellenkalkulation
+mas "Keynote", id: 409183694                # Präsentationen

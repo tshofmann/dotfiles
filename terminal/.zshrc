@@ -61,6 +61,12 @@ if command -v fzf >/dev/null 2>&1; then
         export FZF_ALT_C_COMMAND='fd --type d --strip-cwd-prefix --hidden --follow --exclude .git'
     fi
 
+    # Ctrl+R History-Suche: Ctrl+Y kopiert ins Clipboard
+    export FZF_CTRL_R_OPTS="
+        --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
+        --color header:italic
+        --header 'Ctrl+Y: In Clipboard kopieren'"
+
     # Ctrl+T Vorschau mit bat (Syntax-Highlighting)
     if command -v bat >/dev/null 2>&1; then
         export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always --line-range=:500 {}'"
@@ -70,6 +76,11 @@ if command -v fzf >/dev/null 2>&1; then
     if command -v eza >/dev/null 2>&1; then
         export FZF_ALT_C_OPTS="--preview 'eza --tree --level=1 --icons --color=always {}'"
     fi
+fi
+
+# bat als Man-Page-Pager (Syntax-Highlighting für man)
+if command -v bat >/dev/null 2>&1; then
+    export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -plman'"
 fi
 
 if command -v zoxide >/dev/null 2>&1; then
@@ -88,3 +99,14 @@ fi
 if command -v starship >/dev/null 2>&1; then
     eval "$(starship init zsh)" # Shell-Prompt
 fi
+
+# ------------------------------------------------------------
+# ZSH-Plugins (müssen am Ende geladen werden)
+# ------------------------------------------------------------
+# zsh-autosuggestions: History-basierte Vorschläge (Tab = akzeptieren)
+[[ -f /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]] && \
+    source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# zsh-syntax-highlighting: Muss als letztes Plugin geladen werden
+[[ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]] && \
+    source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

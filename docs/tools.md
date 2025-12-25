@@ -22,6 +22,24 @@ Diese Tools werden via Brewfile installiert:
 | **stow** | GNU Stow – Symlink-Manager für Dotfiles | [gnu.org/software/stow](https://www.gnu.org/software/stow/) |
 | **zoxide** | Smarter `cd`-Ersatz – merkt sich häufige Verzeichnisse | [github.com/ajeetdsouza/zoxide](https://github.com/ajeetdsouza/zoxide) |
 
+### ZSH-Plugins
+
+| Plugin | Beschreibung | Dokumentation |
+|--------|--------------|---------------|
+| **zsh-autosuggestions** | History-basierte Befehlsvorschläge beim Tippen | [github.com/zsh-users/zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) |
+| **zsh-syntax-highlighting** | Echtzeit Syntax-Highlighting für Kommandos | [github.com/zsh-users/zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) |
+
+### Mac App Store Apps
+
+Diese Apps werden via `mas` installiert (Benutzer muss im App Store angemeldet sein):
+
+| App | Beschreibung |
+|-----|--------------|
+| **Xcode** | Apple IDE für iOS/macOS Entwicklung |
+| **Pages** | Textverarbeitung |
+| **Numbers** | Tabellenkalkulation |
+| **Keynote** | Präsentationen |
+
 ---
 
 ## Aliase
@@ -123,6 +141,15 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 > **Hinweis:** `--smart-case` ist case-insensitive wenn der Suchbegriff nur Kleinbuchstaben enthält, sonst case-sensitive.
 
+### fzf.alias
+
+| Alias/Funktion | Beschreibung |
+|----------------|--------------|
+| `rgf [query]` | Live-Grep: Interaktive Suche mit ripgrep, Vorschau mit bat, Enter öffnet Editor |
+| `cdf [path]` | Verzeichnis-Navigation mit fzf-Auswahl und eza-Vorschau |
+
+> **Hinweis:** `rgf` kombiniert ripgrep und fzf für Echtzeit-Suche während der Eingabe. Die Vorschau zeigt den Dateiinhalt mit Syntax-Highlighting und markierter Trefferzeile.
+
 ### Verwendung
 
 ```zsh
@@ -179,6 +206,9 @@ catn config.yaml       # bat --style=numbers --paging=never
 # Git-Diff hervorheben
 git diff | bat
 
+# Man-Pages mit Syntax-Highlighting
+man ls                 # Automatisch via MANPAGER
+
 # Theme temporär wechseln
 bat --theme="Dracula" file.py
 
@@ -186,7 +216,7 @@ bat --theme="Dracula" file.py
 bat-preview
 ```
 
-> **Hinweis:** `-pp` = `--style=plain --paging=never` – verhält sich wie echtes `cat`.
+> **Hinweis:** `-pp` = `--style=plain --paging=never` – verhält sich wie echtes `cat`. bat ist automatisch als `MANPAGER` konfiguriert für Syntax-Highlighting in Man-Pages.
 
 ---
 
@@ -299,6 +329,7 @@ masl                   # Zeigt ID und Name
 | Taste | Funktion | Vorschau |
 |-------|----------|----------|
 | `Ctrl+R` | History durchsuchen | – |
+| `Ctrl+Y` | (in Ctrl+R) Befehl ins Clipboard kopieren | – |
 | `Ctrl+T` | Datei suchen und einfügen | bat (Syntax-Highlighting) |
 | `Alt+C` | Verzeichnis wechseln (cd) | eza (Tree-Ansicht) |
 
@@ -315,12 +346,18 @@ vim $(fzf)
 
 # History durchsuchen
 # Ctrl+R drücken, tippen, Enter
+# Ctrl+Y kopiert den Befehl ins Clipboard ohne Ausführung
+
+# Live-Grep (interaktive Suche in Dateien)
+rgf                # Startet interaktive Suche
+rgf "TODO"         # Startet mit Suchbegriff
 
 # Datei suchen und in Kommandozeile einfügen
 # Ctrl+T drücken → Vorschau mit bat
 
 # Verzeichnis wechseln
 # Alt+C drücken → Vorschau mit eza Tree
+cdf                # Alternative: cd mit fzf-Auswahl
 
 # In Pipe verwenden
 cat file.txt | fzf
@@ -446,6 +483,34 @@ brew install --cask font-hack-nerd-font
 
 > **Hinweis:** Nach Font-Änderung muss das Terminal-Profil angepasst werden:
 > Terminal.app → Einstellungen → Profile → Text → Schrift ändern
+
+---
+
+## ZSH-Plugins
+
+### zsh-autosuggestions
+
+Zeigt Befehlsvorschläge basierend auf der History beim Tippen an.
+
+```zsh
+# Vorschlag akzeptieren
+# → (Pfeil rechts) oder End-Taste
+
+# Vorschlag teilweise akzeptieren (Wort für Wort)
+# Alt+→ (Option + Pfeil rechts)
+
+# Vorschlag ignorieren
+# Weiterschreiben oder Escape
+```
+
+### zsh-syntax-highlighting
+
+Färbt Kommandos während der Eingabe ein:
+- **Grün:** Gültiger Befehl
+- **Rot:** Ungültiger Befehl oder Datei nicht gefunden
+- **Unterstrichen:** Existierende Datei/Verzeichnis
+
+> **Hinweis:** Diese Plugins werden automatisch geladen wenn installiert. Sie beeinträchtigen die Shell-Startzeit minimal (~20ms).
 
 ---
 
