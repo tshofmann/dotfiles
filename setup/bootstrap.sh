@@ -249,6 +249,23 @@ else
   fi
 fi
 
+# ------------------------------------------------------------
+# macOS zsh Session-Wiederherstellung deaktivieren
+# ------------------------------------------------------------
+# macOS Terminal.app speichert standardmäßig separate History pro Tab/Fenster
+# in ~/.zsh_sessions/. Diese leere Datei deaktiviert das Feature zugunsten
+# einer zentralen ~/.zsh_history (konfiguriert in .zshrc).
+print ""
+log "Konfiguriere ZSH-Sessions"
+readonly ZSH_SESSIONS_DISABLE="$HOME/.zsh_sessions_disable"
+
+if [[ -f "$ZSH_SESSIONS_DISABLE" ]]; then
+  ok "zsh_sessions bereits deaktiviert"
+else
+  touch "$ZSH_SESSIONS_DISABLE"
+  ok "zsh_sessions deaktiviert → $ZSH_SESSIONS_DISABLE"
+fi
+
 print ""
 ok "Setup abgeschlossen"
 print ""
