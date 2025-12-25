@@ -54,20 +54,22 @@ dotfiles/
 
 ## Designentscheidungen
 
-### Nur Apple Silicon (arm64)
+### Nur Apple Silicon (arm64) + macOS 14+
 
-Dieses Repository unterstützt **ausschließlich Apple Silicon Macs**:
+Dieses Repository unterstützt **ausschließlich Apple Silicon Macs mit macOS 14 (Sonoma) oder neuer**:
 
 | Aspekt | Entscheidung |
 |--------|--------------|
 | **Homebrew-Pfad** | `/opt/homebrew` (nicht `/usr/local`) |
-| **Architektur-Check** | Explizit am Skript-Anfang |
+| **Architektur-Check** | Explizit am Skript-Anfang (`uname -m`) |
+| **macOS-Version-Check** | Mindestens Version 14 (`sw_vers -productVersion`) |
 | **Netzwerk-Check** | Verbindungstest vor Installation |
-| **Kompatibilität** | Keine Rosetta-Fallbacks |
+| **Kompatibilität** | Keine Rosetta-Fallbacks, keine Legacy-Unterstützung |
 
 **Gründe:**
 - Vereinfachte Wartung (kein Dual-Path-Handling)
 - Intel-Support würde Code-Komplexität erhöhen
+- macOS 14+ entspricht [Homebrew Tier 1 Support](https://docs.brew.sh/Support-Tiers)
 - Persönliches Setup – keine Notwendigkeit für Rückwärtskompatibilität
 
 ### Idempotenz

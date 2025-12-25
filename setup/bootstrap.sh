@@ -76,6 +76,20 @@ if [[ $(uname -m) != "arm64" ]]; then
   exit 1
 fi
 
+# macOS-Version prüfen (mindestens macOS 14 Sonoma erforderlich)
+# Homebrew Tier 1 Support: macOS 14+, siehe https://docs.brew.sh/Support-Tiers
+# Extrahiert Major-Version aus ProductVersion (z.B. "26.2" → "26")
+readonly MACOS_VERSION=$(sw_vers -productVersion)
+readonly MACOS_MAJOR=${MACOS_VERSION%%.*}
+readonly MACOS_MIN_VERSION=14
+
+if (( MACOS_MAJOR < MACOS_MIN_VERSION )); then
+  err "macOS $MACOS_VERSION wird nicht unterstützt"
+  err "Mindestversion: macOS $MACOS_MIN_VERSION (Sonoma)"
+  err "Aktuelle Version: macOS $MACOS_VERSION"
+  exit 1
+fi
+
 # Internetverbindung prüfen (erforderlich für Homebrew-Installation und Downloads)
 # Verwendet curl mit kurzem Timeout gegen Apple-Server (zuverlässig erreichbar)
 CURRENT_STEP="Netzwerk-Prüfung"
@@ -105,7 +119,7 @@ readonly BREW_PREFIX="/opt/homebrew"
 # ------------------------------------------------------------
 # Hauptprogramm
 # ------------------------------------------------------------
-print "==> macOS Tahoe Bootstrap"
+print "==> macOS Bootstrap (Version $MACOS_VERSION)"
 
 # Homebrew bei Bedarf installieren
 CURRENT_STEP="Homebrew Installation"
@@ -132,9 +146,11 @@ if [[ ! -f "$BREWFILE" ]]; then
 fi
 
 # CLI-Tools und Font über Brewfile installieren
+# HOMEBREW_NO_AUTO_UPDATE=1: Kein automatisches 'brew update' vor Installation
+# --no-upgrade: Bestehende Formulae nicht upgraden (schneller, reproduzierbarer)
 CURRENT_STEP="Brewfile Installation (brew bundle)"
-log "Installiere Abhängigkeiten aus Brewfile (ohne Auto-Update)"
-if ! HOMEBREW_NO_AUTO_UPDATE=1 brew bundle --file="$BREWFILE" --no-upgrade; then
+log "Installiere Abhängigkeiten aus Brewfile"
+if ! HOMEBREW_NO_AUTO_UPDATE=1 brew bundle --no-upgrade --file="$BREWFILE"; then
   err "Brew Bundle fehlgeschlagen – Setup wird abgebrochen"
   exit 1
 fi

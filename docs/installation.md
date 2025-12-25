@@ -7,11 +7,11 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles au
 | Anforderung | Details |
 |-------------|---------|
 | **Apple Silicon Mac** | M1, M2, … (arm64) – Intel-Macs werden nicht unterstützt |
-| **macOS 26 (Tahoe)** | Ältere Versionen sind nicht getestet und können zu unerwarteten Fehlern führen |
+| **macOS 14+** | Sonoma oder neuer – entspricht [Homebrew Tier 1](https://docs.brew.sh/Support-Tiers) |
 | **Internetverbindung** | Für Homebrew-Installation und Download der Formulae/Casks |
 | **Admin-Rechte** | `sudo`-Passwort erforderlich für Xcode CLI Tools Installation |
 
-> **Hinweis:** Die Architektur-Prüfung erfolgt automatisch beim Start von `bootstrap.sh`. Bei Intel-Macs bricht das Skript mit einer Fehlermeldung ab.
+> **Hinweis:** Architektur- und macOS-Versionsprüfung erfolgen automatisch beim Start von `bootstrap.sh`. Bei nicht unterstützten Systemen bricht das Skript mit einer Fehlermeldung ab.
 
 ---
 

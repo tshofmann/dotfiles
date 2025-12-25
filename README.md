@@ -19,7 +19,7 @@ cd ~/dotfiles && stow --adopt -R terminal && git reset --hard HEAD
 ## Voraussetzungen
 
 - **Apple Silicon Mac** (arm64)
-- **macOS 26 (Tahoe)**
+- **macOS 14+** (Sonoma oder neuer)
 - **Internetverbindung** & Admin-Rechte
 
 ## Dokumentation
