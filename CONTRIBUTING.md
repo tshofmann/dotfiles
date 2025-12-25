@@ -33,7 +33,11 @@ dotfiles/
 │   └── pre-commit          # Docs-Validierung vor Commit
 ├── scripts/                # Utility-Scripts (nicht Setup)
 │   ├── health-check.sh     # Installation validieren
-│   └── validate-docs.sh    # Docs-Code-Synchronisation prüfen
+│   ├── validate-docs.sh    # Docs-Code-Synchronisation prüfen
+│   └── validators/         # Modulare Validierungs-Komponenten
+│       ├── lib.sh          # Shared Library
+│       ├── core/           # 8 Kern-Validierungen
+│       └── extended/       # 2 erweiterte Prüfungen
 ├── setup/                  # Bootstrap & Installation
 │   ├── bootstrap.sh        # Hauptskript
 │   ├── Brewfile            # Homebrew-Abhängigkeiten
@@ -76,17 +80,41 @@ git commit --no-verify -m "..."
 ### Manuell ausführen
 
 ```zsh
+# Alle Validierungen
 ./scripts/validate-docs.sh
+
+# Nur Kern-Validierungen (schnell)
+./scripts/validate-docs.sh --core
+
+# Nur erweiterte Prüfungen
+./scripts/validate-docs.sh --extended
+
+# Verfügbare Validatoren anzeigen
+./scripts/validate-docs.sh --list
+
+# Einzelnen Validator ausführen
+./scripts/validate-docs.sh brewfile
 ```
 
 ### Was wird geprüft?
 
+**Kern-Validierungen (--core):**
 | Prüfung | Details |
 |---------|---------|
 | **Brewfile** | brew/cask/mas Anzahl in `architecture.md` |
 | **Aliase** | Alias-Anzahl pro Datei dokumentiert |
 | **Configs** | fzf/bat/ripgrep Config-Beispiele |
 | **Symlinks** | Symlink-Tabelle in `installation.md` |
+| **macOS** | macOS-Version in Docs |
+| **Bootstrap** | Bootstrap-Schritte dokumentiert |
+| **Health-Check** | Tool-Liste synchron |
+| **Starship** | Starship-Prompt konfiguriert |
+
+**Erweiterte Validierungen (--extended):**
+| Prüfung | Details |
+|---------|---------|
+| **alias-names** | Alias-Namen in Docs existieren im Code |
+| **codeblocks** | Shell-Commands in Code-Blöcken sind gültig |
 
 ### Bei Fehlern
 

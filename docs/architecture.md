@@ -22,7 +22,21 @@ dotfiles/
 │   └── tools.md                 # Tool-Übersicht
 ├── scripts/                     # Utility-Scripts
 │   ├── health-check.sh          # Validierung der Installation
-│   └── validate-docs.sh         # Docs-Code-Synchronisation prüfen
+│   ├── validate-docs.sh         # Docs-Code-Synchronisation prüfen
+│   └── validators/              # Modulare Validierungs-Komponenten
+│       ├── lib.sh               # Shared Library (Logging, Registry)
+│       ├── core/                # Kern-Validierungen (8 Module)
+│       │   ├── macos.sh         # macOS-Kompatibilität
+│       │   ├── bootstrap.sh     # Bootstrap-Skript
+│       │   ├── brewfile.sh      # Brewfile-Pakete
+│       │   ├── healthcheck.sh   # Health-Check-Tools
+│       │   ├── starship.sh      # Starship-Prompt
+│       │   ├── aliases.sh       # Alias-Anzahlen
+│       │   ├── config.sh        # Config-Beispiele
+│       │   └── symlinks.sh      # Symlink-Tabelle
+│       └── extended/            # Erweiterte Validierungen
+│           ├── alias-names.sh   # Alias-Namen vs. Code
+│           └── codeblocks.sh    # Shell-Commands in Docs
 ├── setup/
 │   ├── bootstrap.sh             # Automatisiertes Setup-Skript
 │   ├── Brewfile                 # Homebrew-Abhängigkeiten
