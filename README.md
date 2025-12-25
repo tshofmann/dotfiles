@@ -31,6 +31,7 @@ cd ~/dotfiles && stow --adopt -R terminal && git reset --hard HEAD
 | [Architektur](docs/architecture.md) | Struktur & Designentscheidungen |
 | [Tools](docs/tools.md) | Enthaltene CLI-Tools & Aliase |
 | [Troubleshooting](docs/troubleshooting.md) | Häufige Probleme & Lösungen |
+| [Contributing](CONTRIBUTING.md) | Für Entwickler: Hooks, Workflow |
 
 ## Lizenz
 

@@ -1,0 +1,211 @@
+# 🤝 Contributing
+
+Anleitung für die Entwicklung an diesem dotfiles-Repository.
+
+---
+
+## Quick Setup (Entwickler)
+
+```zsh
+# 1. Repository klonen
+git clone https://github.com/tshofmann/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+
+# 2. Setup ausführen (installiert alle Tools)
+./setup/bootstrap.sh
+
+# 3. Git Hooks aktivieren
+git config core.hooksPath .githooks
+
+# 4. Konfiguration verlinken
+stow --adopt -R terminal && git reset --hard HEAD
+```
+
+Nach Schritt 3 wird bei jedem Commit automatisch geprüft, ob Dokumentation und Code synchron sind.
+
+---
+
+## Repository-Struktur
+
+```
+dotfiles/
+├── .githooks/              # Git Hooks (versioniert)
+│   └── pre-commit          # Docs-Validierung vor Commit
+├── scripts/                # Utility-Scripts (nicht Setup)
+│   └── validate-docs.sh    # Docs-Code-Synchronisation prüfen
+├── setup/                  # Bootstrap & Installation
+│   ├── bootstrap.sh        # Hauptskript
+│   ├── health-check.sh     # Installation validieren
+│   ├── Brewfile            # Homebrew-Abhängigkeiten
+│   └── tshofmann.terminal  # Terminal.app Profil
+├── terminal/               # Dotfiles (werden nach ~ verlinkt)
+│   ├── .zprofile
+│   ├── .zshrc
+│   └── .config/
+└── docs/                   # Dokumentation
+```
+
+---
+
+## Git Hooks
+
+### Aktivierung
+
+```zsh
+git config core.hooksPath .githooks
+```
+
+### Verfügbare Hooks
+
+| Hook | Zweck |
+|------|-------|
+| `pre-commit` | Prüft Docs-Code-Sync bei relevanten Änderungen |
+
+### Hook überspringen (Notfall)
+
+```zsh
+git commit --no-verify -m "..."
+```
+
+> ⚠️ Nur nutzen wenn du weißt was du tust – Docs sollten immer synchron sein.
+
+---
+
+## Dokumentations-Validierung
+
+### Manuell ausführen
+
+```zsh
+./scripts/validate-docs.sh
+```
+
+### Was wird geprüft?
+
+| Prüfung | Details |
+|---------|---------|
+| **Brewfile** | brew/cask/mas Anzahl in `architecture.md` |
+| **Aliase** | Alias-Anzahl pro Datei dokumentiert |
+| **Configs** | fzf/bat/ripgrep Config-Beispiele |
+| **Symlinks** | Symlink-Tabelle in `installation.md` |
+
+### Bei Fehlern
+
+1. Öffne die gemeldete Dokumentationsdatei
+2. Aktualisiere den veralteten Abschnitt
+3. Führe `./scripts/validate-docs.sh` erneut aus
+4. Committe die Änderung
+
+---
+
+## Code-Konventionen
+
+### Shell-Scripts
+
+```zsh
+#!/usr/bin/env zsh
+set -euo pipefail
+
+# Logging-Helper verwenden
+log()  { print "→ $*"; }
+ok()   { print "✔ $*"; }
+err()  { print "✖ $*" >&2; }
+warn() { print "⚠ $*"; }
+```
+
+### Alias-Dateien
+
+- **Guard-Check** am Anfang: `command -v tool &>/dev/null || return`
+- **Kommentar** über jeder Alias-Gruppe
+- **Konsistente Benennung**: `tool.alias`
+
+### Dokumentation
+
+- **Zielgruppe beachten**: `docs/` = Endnutzer, `CONTRIBUTING.md` = Entwickler
+- **Cross-References** nutzen: `[Link](datei.md#anker)`
+- **Tabellen** für Übersichten
+- **Code-Blöcke** mit Sprache: ` ```zsh `
+
+---
+
+## Pull Request Workflow
+
+### 1. Branch erstellen
+
+```zsh
+git checkout -b feature/beschreibung
+```
+
+### 2. Änderungen vornehmen
+
+- Code ändern
+- Dokumentation aktualisieren (falls relevant)
+- `./scripts/validate-docs.sh` ausführen
+
+### 3. Testen
+
+```zsh
+# Installation prüfen
+./setup/health-check.sh
+
+# Bei Shell-Änderungen: neue Session starten
+exec zsh
+```
+
+### 4. Committen
+
+```zsh
+git add .
+git commit -m "type: beschreibung"
+```
+
+**Commit-Typen:**
+- `feat:` – Neue Funktion
+- `fix:` – Bugfix
+- `docs:` – Nur Dokumentation
+- `refactor:` – Code-Umstrukturierung
+- `chore:` – Maintenance (deps, configs)
+
+### 5. Push & PR
+
+```zsh
+git push -u origin feature/beschreibung
+gh pr create
+```
+
+---
+
+## Häufige Aufgaben
+
+### Neues Tool hinzufügen
+
+1. **Brewfile** erweitern: `setup/Brewfile`
+2. **Alias-Datei** erstellen: `terminal/.config/alias/tool.alias`
+3. **tools.md** aktualisieren: Tabelle + Alias-Sektion
+4. **architecture.md** aktualisieren: Brewfile-Beispiel
+5. `./scripts/validate-docs.sh` ausführen
+
+### Dokumentation ändern
+
+1. Datei in `docs/` bearbeiten
+2. Bei strukturellen Änderungen: Cross-References prüfen
+3. `./scripts/validate-docs.sh` ausführen (bei Code-relevanten Docs)
+
+### Terminal-Profil ändern
+
+1. Terminal.app → Einstellungen → Profil anpassen
+2. Rechtsklick → "Exportieren…"
+3. Als `setup/tshofmann.terminal` speichern (überschreiben)
+
+> ⚠️ **Niemals** die `.terminal`-Datei direkt editieren – enthält binäre Daten.
+
+---
+
+## Hilfe
+
+- **Docs stimmen nicht mit Code überein?** → `./scripts/validate-docs.sh` zeigt Details
+- **Hook blockiert Commit?** → Fehlermeldung lesen, Docs aktualisieren
+- **Installation kaputt?** → `./setup/health-check.sh` zur Diagnose
+
+---
+
+[← Zurück zur Übersicht](README.md)
