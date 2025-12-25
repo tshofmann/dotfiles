@@ -2,14 +2,17 @@
 # ============================================================
 # lib.sh - Gemeinsame Bibliothek für Validatoren
 # ============================================================
-# Zweck   : Shared Functions und Konfiguration
+# Zweck   : Shared Utilities, Logging, Registry
 # Aufruf  : source validators/lib.sh
+# Version : 3.1 - Modulare Architektur
 # ============================================================
 
 # Verhindere doppeltes Laden
 [[ -n "${VALIDATOR_LIB_LOADED:-}" ]] && return 0
 
-# Farben (nur wenn Terminal vorhanden)
+# ============================================================
+# ABSCHNITT 1: Farben & Terminal
+# ============================================================
 if [[ -t 1 ]]; then
     RED='\033[0;31m'
     GREEN='\033[0;32m'
@@ -22,25 +25,27 @@ else
     RED='' GREEN='' YELLOW='' BLUE='' CYAN='' BOLD='' NC=''
 fi
 
-# Globale Zähler
+# ============================================================
+# ABSCHNITT 2: Globale Zähler
+# ============================================================
 typeset -gi VALIDATOR_ERRORS=0
 typeset -gi VALIDATOR_WARNINGS=0
 typeset -gi VALIDATOR_PASSED=0
 
-# ------------------------------------------------------------
-# Logging-Funktionen
-# ------------------------------------------------------------
+# ============================================================
+# ABSCHNITT 3: Logging-Funktionen
+# ============================================================
 log()     { print "→ $*"; }
-ok()      { print "${GREEN}✔${NC} $*"; ((VALIDATOR_PASSED++)); }
-warn()    { print "${YELLOW}⚠${NC} $*"; ((VALIDATOR_WARNINGS++)); }
-err()     { print "${RED}✖${NC} $*"; ((VALIDATOR_ERRORS++)); }
+ok()      { print "${GREEN}✔${NC} $*"; ((VALIDATOR_PASSED++)) || true; }
+warn()    { print "${YELLOW}⚠${NC} $*"; ((VALIDATOR_WARNINGS++)) || true; }
+err()     { print "${RED}✖${NC} $*"; ((VALIDATOR_ERRORS++)) || true; }
 info()    { print "${BLUE}ℹ${NC} $*"; }
 debug()   { [[ -n "${VALIDATE_DEBUG:-}" ]] && print "${CYAN}⚙${NC} $*" || true; }
 section() { print "\n${BOLD}━━━ $* ━━━${NC}"; }
 
-# ------------------------------------------------------------
-# Pfad-Konfiguration (wird vom Hauptskript gesetzt)
-# ------------------------------------------------------------
+# ============================================================
+# ABSCHNITT 4: Pfad-Konfiguration
+# ============================================================
 : ${DOTFILES_DIR:="${0:A:h:h:h}"}
 : ${DOCS_DIR:="$DOTFILES_DIR/docs"}
 : ${SETUP_DIR:="$DOTFILES_DIR/setup"}
@@ -49,20 +54,18 @@ section() { print "\n${BOLD}━━━ $* ━━━${NC}"; }
 : ${ALIAS_DIR:="$TERMINAL_DIR/.config/alias"}
 : ${CONFIG_DIR:="$TERMINAL_DIR/.config"}
 
-# ------------------------------------------------------------
-# Hilfsfunktionen
-# ------------------------------------------------------------
+# ============================================================
+# ABSCHNITT 5: Code-Extraktion (für Alias-Validierung)
+# ============================================================
 
-# Extrahiere alle Alias-Namen aus einer Alias-Datei
-# Usage: extract_aliases_from_file <file>
+# Extrahiere Alias-Namen aus einer Datei
 extract_aliases_from_file() {
     local file="$1"
     grep -oE "^[[:space:]]*alias [a-z][a-z0-9_-]*=" "$file" 2>/dev/null | \
         sed 's/.*alias //' | sed 's/=.*//' | sort -u
 }
 
-# Extrahiere alle Funktionsnamen aus einer Alias-Datei
-# Usage: extract_functions_from_file <file>
+# Extrahiere Funktionsnamen aus einer Datei
 extract_functions_from_file() {
     local file="$1"
     grep -oE "^[[:space:]]*[a-z][a-z0-9_]*\(\)[[:space:]]*\{" "$file" 2>/dev/null | \
@@ -70,7 +73,6 @@ extract_functions_from_file() {
 }
 
 # Extrahiere dokumentierte Aliase aus einer Markdown-Tabelle
-# Usage: extract_aliases_from_docs <file> <section_name>
 extract_aliases_from_docs() {
     local file="$1"
     local section="$2"
@@ -80,83 +82,7 @@ extract_aliases_from_docs() {
         sed 's/| `//' | sed 's/`.*//' | sort -u
 }
 
-# Extrahiere dokumentierte Funktionen aus einer Markdown-Tabelle
-# Usage: extract_functions_from_docs <file> <section_pattern>
-extract_functions_from_docs() {
-    local file="$1"
-    local section="$2"
-    
-    sed -n "/${section}/,/^### [^#]/p" "$file" 2>/dev/null | \
-        grep -oE "^\| \`[a-z][a-z0-9_]*(\s|\[|\`)" | \
-        sed 's/| `//' | sed 's/[` \[].*//' | sort -u
-}
-
-# Extrahiere Befehle aus Code-Blöcken in Markdown
-# Usage: extract_commands_from_codeblocks <file>
-extract_commands_from_codeblocks() {
-    local file="$1"
-    
-    # Extrahiere Inhalte von ```zsh ... ``` Blöcken
-    sed -n '/^```zsh/,/^```/p' "$file" 2>/dev/null | \
-        grep -v '^```' | \
-        grep -v '^#' | \
-        grep -v '^$' | \
-        sed 's/[[:space:]]*#.*//' | \
-        awk '{print $1}' | \
-        grep -E '^[a-z]' | \
-        sort -u
-}
-
-# Vergleiche zwei Listen und finde Unterschiede
-# Usage: compare_lists <list1_name> <list2_name>
-# Erwartet Arrays mit diesen Namen im Scope
-compare_lists() {
-    local -a list1=("${(@P)1}")
-    local -a list2=("${(@P)2}")
-    local name1="$1"
-    local name2="$2"
-    
-    local -a only_in_1=()
-    local -a only_in_2=()
-    
-    # Finde Elemente nur in Liste 1
-    for item in "${list1[@]}"; do
-        if [[ ! " ${list2[*]} " =~ " ${item} " ]]; then
-            only_in_1+=("$item")
-        fi
-    done
-    
-    # Finde Elemente nur in Liste 2
-    for item in "${list2[@]}"; do
-        if [[ ! " ${list1[*]} " =~ " ${item} " ]]; then
-            only_in_2+=("$item")
-        fi
-    done
-    
-    # Ausgabe
-    if (( ${#only_in_1[@]} > 0 )); then
-        debug "Nur in $name1: ${only_in_1[*]}"
-    fi
-    if (( ${#only_in_2[@]} > 0 )); then
-        debug "Nur in $name2: ${only_in_2[*]}"
-    fi
-    
-    # Return: 0 wenn identisch, 1 wenn unterschiedlich
-    (( ${#only_in_1[@]} == 0 && ${#only_in_2[@]} == 0 ))
-}
-
-# Prüfe ob ein Befehl in den definierten Aliasen/Funktionen existiert
-# Usage: command_exists_in_definitions <command> <definitions_array_name>
-command_exists_in_definitions() {
-    local cmd="$1"
-    local -a defs=("${(@P)2}")
-    
-    [[ " ${defs[*]} " =~ " ${cmd} " ]]
-}
-
-# Lade alle definierten Aliase und Funktionen
-# Usage: load_all_definitions
-# Setzt: ALL_ALIASES, ALL_FUNCTIONS
+# Lade alle Aliase und Funktionen aus dem Alias-Verzeichnis
 load_all_definitions() {
     typeset -ga ALL_ALIASES=()
     typeset -ga ALL_FUNCTIONS=()
@@ -171,46 +97,96 @@ load_all_definitions() {
         ALL_FUNCTIONS+=("${file_functions[@]}")
     done
     
-    # Deduplizieren
     ALL_ALIASES=(${(u)ALL_ALIASES})
     ALL_FUNCTIONS=(${(u)ALL_FUNCTIONS})
     
     debug "Geladen: ${#ALL_ALIASES[@]} Aliase, ${#ALL_FUNCTIONS[@]} Funktionen"
 }
 
-# ------------------------------------------------------------
-# Validator-Registry
-# ------------------------------------------------------------
+# ============================================================
+# ABSCHNITT 6: Validator-Registry
+# ============================================================
 typeset -ga REGISTERED_VALIDATORS=()
+typeset -ga CORE_VALIDATORS=()
+typeset -ga EXTENDED_VALIDATORS=()
 
 # Registriere einen Validator
-# Usage: register_validator <name> <function> <description>
+# Usage: register_validator <name> <function> <description> [type]
+# type: "core" oder "extended" (default: extended)
 register_validator() {
     local name="$1"
     local func="$2"
     local desc="$3"
+    local type="${4:-extended}"
     
-    REGISTERED_VALIDATORS+=("$name:$func:$desc")
-    debug "Validator registriert: $name"
+    REGISTERED_VALIDATORS+=("$name:$func:$desc:$type")
+    
+    if [[ "$type" == "core" ]]; then
+        CORE_VALIDATORS+=("$name")
+    else
+        EXTENDED_VALIDATORS+=("$name")
+    fi
+    
+    debug "Validator registriert: $name ($type)"
 }
 
-# Führe alle registrierten Validatoren aus
-# Usage: run_all_validators
-run_all_validators() {
+# Führe alle Core-Validatoren aus
+run_core_validators() {
     for entry in "${REGISTERED_VALIDATORS[@]}"; do
         local name="${entry%%:*}"
         local rest="${entry#*:}"
         local func="${rest%%:*}"
-        local desc="${rest#*:}"
+        rest="${rest#*:}"
+        local desc="${rest%%:*}"
+        local type="${rest#*:}"
         
-        section "$desc"
-        "$func"
-        print ""
+        if [[ "$type" == "core" ]]; then
+            log ""
+            "$func"
+        fi
     done
 }
 
+# Führe alle Extended-Validatoren aus
+run_extended_validators() {
+    local has_extended=false
+    
+    for entry in "${REGISTERED_VALIDATORS[@]}"; do
+        local type="${entry##*:}"
+        if [[ "$type" == "extended" ]]; then
+            has_extended=true
+            break
+        fi
+    done
+    
+    $has_extended || return 0
+    
+    print ""
+    print "━━━ Erweiterte Validierung ━━━"
+    
+    for entry in "${REGISTERED_VALIDATORS[@]}"; do
+        local name="${entry%%:*}"
+        local rest="${entry#*:}"
+        local func="${rest%%:*}"
+        rest="${rest#*:}"
+        local desc="${rest%%:*}"
+        local type="${rest#*:}"
+        
+        if [[ "$type" == "extended" ]]; then
+            section "$desc"
+            "$func"
+            print ""
+        fi
+    done
+}
+
+# Führe alle Validatoren aus
+run_all_validators() {
+    run_core_validators
+    run_extended_validators
+}
+
 # Führe einen spezifischen Validator aus
-# Usage: run_validator <name>
 run_validator() {
     local target="$1"
     
@@ -218,7 +194,8 @@ run_validator() {
         local name="${entry%%:*}"
         local rest="${entry#*:}"
         local func="${rest%%:*}"
-        local desc="${rest#*:}"
+        rest="${rest#*:}"
+        local desc="${rest%%:*}"
         
         if [[ "$name" == "$target" ]]; then
             section "$desc"
@@ -232,16 +209,55 @@ run_validator() {
 }
 
 # Liste verfügbare Validatoren
-# Usage: list_validators
 list_validators() {
-    print "Verfügbare Validatoren:"
+    print "${BOLD}Core-Validatoren:${NC}"
     for entry in "${REGISTERED_VALIDATORS[@]}"; do
         local name="${entry%%:*}"
         local rest="${entry#*:}"
-        local desc="${rest#*:}"
-        print "  ${CYAN}$name${NC} - $desc"
+        rest="${rest#*:}"
+        local desc="${rest%%:*}"
+        local type="${rest#*:}"
+        
+        if [[ "$type" == "core" ]]; then
+            print "  ${CYAN}$name${NC} - $desc"
+        fi
+    done
+    
+    print ""
+    print "${BOLD}Erweiterte Validatoren:${NC}"
+    for entry in "${REGISTERED_VALIDATORS[@]}"; do
+        local name="${entry%%:*}"
+        local rest="${entry#*:}"
+        rest="${rest#*:}"
+        local desc="${rest%%:*}"
+        local type="${rest#*:}"
+        
+        if [[ "$type" == "extended" ]]; then
+            print "  ${CYAN}$name${NC} - $desc"
+        fi
     done
 }
 
-# Markiere lib als geladen (am Ende der Datei)
+# ============================================================
+# ABSCHNITT 7: Ergebnis-Zusammenfassung
+# ============================================================
+print_summary() {
+    print ""
+    print "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    
+    if (( VALIDATOR_ERRORS > 0 )); then
+        print "${RED}❌ $VALIDATOR_ERRORS Fehler gefunden${NC}"
+        print "   Dokumentation weicht vom Code ab!"
+        return 1
+    elif (( VALIDATOR_WARNINGS > 0 )); then
+        print "${YELLOW}⚠️  $VALIDATOR_WARNINGS Warnungen${NC}"
+        print "   Kleine Abweichungen (evtl. Beispiele gekürzt)"
+        return 0
+    else
+        print "${GREEN}✅ Dokumentation ist synchron${NC}"
+        return 0
+    fi
+}
+
+# Markiere lib als geladen
 VALIDATOR_LIB_LOADED=1

@@ -8,7 +8,7 @@
 
 # Source lib.sh wenn noch nicht geladen
 if [[ -z "${VALIDATOR_LIB_LOADED:-}" ]]; then
-    source "${0:A:h}/lib.sh"
+    source "${0:A:h:h}/lib.sh"
 fi
 
 # ------------------------------------------------------------
@@ -155,4 +155,4 @@ check_codeblocks() {
 }
 
 # Registrierung
-register_validator "codeblocks" "check_codeblocks" "Code-Block Validierung"
+register_validator "codeblocks" "check_codeblocks" "Code-Block Validierung" "extended"
