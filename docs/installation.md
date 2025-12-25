@@ -113,19 +113,63 @@ ls -la ~/.zshrc ~/.zprofile ~/.config/alias/
 
 ## Installation validieren
 
-Nach der Installation kannst du mit dem Health-Check-Skript prüfen, ob alle Komponenten korrekt installiert sind:
+Der Health-Check hilft dir zu überprüfen, ob alle Komponenten korrekt installiert sind.
+
+### Wann ausführen?
+
+| Situation | Empfehlung |
+|-----------|------------|
+| Nach der Erstinstallation | ✅ Empfohlen – bestätigt erfolgreiche Installation |
+| Nach `stow --adopt -R terminal` | ✅ Empfohlen – prüft ob Symlinks korrekt sind |
+| Bei Problemen (Icons fehlen, Aliase funktionieren nicht) | ✅ Erste Anlaufstelle zur Diagnose |
+| Nach macOS-Update | Optional – bei Problemen |
+| Nach `brew upgrade` | Optional – bei Problemen |
+
+### Ausführung
 
 ```zsh
+# Im dotfiles-Verzeichnis ausführen
+cd ~/dotfiles
 ./setup/health-check.sh
 ```
 
-Das Skript prüft:
-- ✔ Alle Symlinks korrekt verlinkt
-- ✔ Homebrew und CLI-Tools installiert
-- ✔ Nerd Font vorhanden
-- ✔ Terminal-Profil als Standard gesetzt
-- ✔ Starship-Konfiguration vorhanden
-- ✔ Brewfile-Abhängigkeiten erfüllt
+### Was wird geprüft?
+
+| Komponente | Prüfung |
+|------------|---------|
+| **Symlinks** | `.zshrc`, `.zprofile`, alle Alias-Dateien, Tool-Configs |
+| **CLI-Tools** | fzf, stow, starship, zoxide, eza, bat, ripgrep, fd, btop, gh |
+| **Nerd Font** | MesloLG Nerd Font in `~/Library/Fonts/` |
+| **Terminal-Profil** | `tshofmann` als Standard- und Startup-Profil |
+| **Starship** | `~/.config/starship.toml` vorhanden |
+| **ZSH-Sessions** | `~/.zsh_sessions_disable` vorhanden |
+| **Brewfile** | Alle Abhängigkeiten installiert |
+
+### Ergebnis interpretieren
+
+**✅ Alle Prüfungen bestanden:**
+```
+✅ Health Check erfolgreich
+   Alle Komponenten korrekt installiert.
+```
+→ Alles in Ordnung, keine Aktion erforderlich.
+
+**⚠️ Warnungen:**
+```
+⚠️ Health Check mit Warnungen abgeschlossen
+   Das Setup funktioniert, aber einige optionale Komponenten fehlen.
+```
+→ Das Setup funktioniert grundsätzlich. Warnungen betreffen meist optionale Komponenten (z.B. `mas` nicht installiert) oder Einstellungen, die beim nächsten Login aktiv werden.
+
+**❌ Fehler:**
+```
+❌ Health Check fehlgeschlagen
+   Behebe die Fehler und führe den Check erneut aus.
+```
+→ Mindestens eine kritische Komponente fehlt. Lies die Fehlermeldungen und:
+1. Führe `stow --adopt -R terminal && git reset --hard HEAD` aus (bei Symlink-Fehlern)
+2. Führe `brew bundle` aus (bei fehlenden Tools)
+3. Siehe [Troubleshooting](troubleshooting.md) für spezifische Probleme
 
 ---
 
