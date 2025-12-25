@@ -48,6 +48,20 @@ for alias_file in "$HOME/.config/alias"/*.alias(N-.on); do
 done
 
 # ------------------------------------------------------------
+# Tool-Konfigurationen (native Config-Dateien)
+# ------------------------------------------------------------
+# fzf: Native Config-Datei für globale Defaults
+# Docs: https://github.com/junegunn/fzf#environment-variables
+export FZF_DEFAULT_OPTS_FILE="$HOME/.config/fzf/config"
+
+# ripgrep: Native Config-Datei
+# Docs: https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md
+export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/config"
+
+# bat: Nutzt automatisch ~/.config/bat/config
+# Docs: https://github.com/sharkdp/bat#configuration-file
+
+# ------------------------------------------------------------
 # Tools initialisieren
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
@@ -64,7 +78,6 @@ if command -v fzf >/dev/null 2>&1; then
     # Ctrl+R History-Suche: Ctrl+Y kopiert ins Clipboard
     export FZF_CTRL_R_OPTS="
         --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
-        --color header:italic
         --header 'Ctrl+Y: In Clipboard kopieren'"
 
     # Ctrl+T Vorschau mit bat (Syntax-Highlighting)

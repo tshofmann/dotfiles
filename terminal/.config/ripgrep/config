@@ -1,0 +1,40 @@
+# ============================================================
+# ripgrep Config - Globale Standardoptionen
+# ============================================================
+# Zweck   : Native ripgrep-Konfiguration (RIPGREP_CONFIG_PATH)
+# Pfad    : ~/.config/ripgrep/config
+# Docs    : https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md
+# ============================================================
+
+# ------------------------------------------------------------
+# Such-Verhalten
+# ------------------------------------------------------------
+# Smart-Case: Kleinbuchstaben = case-insensitive
+#             Großbuchstaben = case-sensitive
+--smart-case
+
+# ------------------------------------------------------------
+# Ausgabe-Formatierung
+# ------------------------------------------------------------
+# Zeilennummern anzeigen
+--line-number
+
+# Dateiname über den Treffern (statt vor jeder Zeile)
+--heading
+
+# ------------------------------------------------------------
+# Dateitypen (eigene Definitionen)
+# ------------------------------------------------------------
+# Zsh-Dateien als Shell behandeln
+--type-add=zsh:*.zsh
+--type-add=zsh:*.zshrc
+--type-add=zsh:*.zprofile
+--type-add=zsh:*.zshenv
+
+# Alias-Dateien
+--type-add=alias:*.alias
+
+# Config-Dateien
+--type-add=conf:*.conf
+--type-add=conf:*.config
+--type-add=conf:*rc

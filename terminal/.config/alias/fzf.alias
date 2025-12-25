@@ -5,6 +5,10 @@
 # Pfad    : ~/.config/alias/fzf.alias
 # Docs    : https://github.com/junegunn/fzf
 # ============================================================
+# Hinweis : Globale fzf-Optionen sind in ~/.config/fzf/config
+#           (FZF_DEFAULT_OPTS_FILE) definiert. Diese Datei enthält
+#           nur funktionsspezifische Optionen und Funktionen.
+# ============================================================
 
 # Guard: Nur wenn fzf installiert ist
 if ! command -v fzf >/dev/null 2>&1; then
@@ -41,7 +45,7 @@ if command -v fd >/dev/null 2>&1; then
         local preview_cmd="eza --tree --level=1 --icons --color=always {} 2>/dev/null || ls -la {}"
         
         dir=$(fd --type d --hidden --follow --exclude .git . "${1:-.}" | \
-            fzf --preview "$preview_cmd" --height=50%)
+            fzf --preview "$preview_cmd")
         
         [[ -n "$dir" ]] && cd "$dir"
     }
@@ -59,9 +63,7 @@ if command -v zoxide >/dev/null 2>&1; then
         local preview_cmd="eza --tree --level=2 --icons --color=always {2..} 2>/dev/null || ls -la {2..}"
         
         dir=$(zoxide query -l | \
-            fzf --height=50% \
-                --preview "$preview_cmd" \
-                --preview-window='right:50%' \
+            fzf --preview "$preview_cmd" \
                 --bind='ctrl-d:execute(zoxide remove {})' \
                 --header='Ctrl+D: Eintrag löschen')
         
@@ -81,7 +83,6 @@ if command -v fd >/dev/null 2>&1; then
         IFS=$'\n' files=($(fd --type f --hidden --follow --exclude .git . "${1:-.}" | \
             fzf --multi \
                 --preview "$preview_cmd" \
-                --preview-window='right:60%' \
                 --bind 'ctrl-/:change-preview-window(down|hidden|)'))
         
         [[ -n "${files[*]}" ]] && ${EDITOR:-vim} "${files[@]}"
@@ -93,7 +94,7 @@ if command -v fd >/dev/null 2>&1; then
         local preview_cmd="bat --color=always --style=numbers --line-range=:500 {} 2>/dev/null || file {}"
         
         file=$(fd --type f --hidden --follow --exclude .git . "${1:-.}" | \
-            fzf --preview "$preview_cmd" --preview-window='right:60%')
+            fzf --preview "$preview_cmd")
         
         [[ -n "$file" ]] && open "$file"
     }
@@ -108,7 +109,6 @@ if command -v gh >/dev/null 2>&1; then
         gh pr list --limit 50 | \
             fzf --ansi \
                 --preview 'gh pr view {1}' \
-                --preview-window='right:60%:wrap' \
                 --header='Enter: Checkout | Ctrl+O: Im Browser öffnen | Ctrl+D: Diff' \
                 --bind 'enter:execute(gh pr checkout {1})' \
                 --bind 'ctrl-o:execute-silent(gh pr view {1} --web)' \
@@ -120,7 +120,6 @@ if command -v gh >/dev/null 2>&1; then
         gh issue list --limit 50 | \
             fzf --ansi \
                 --preview 'gh issue view {1}' \
-                --preview-window='right:60%:wrap' \
                 --header='Enter: Im Browser öffnen | Ctrl+E: Bearbeiten' \
                 --bind 'enter:execute-silent(gh issue view {1} --web)' \
                 --bind 'ctrl-e:execute(gh issue edit {1})'
@@ -131,7 +130,6 @@ if command -v gh >/dev/null 2>&1; then
         gh run list --limit 20 | \
             fzf --ansi \
                 --preview 'gh run view {1}' \
-                --preview-window='right:60%:wrap' \
                 --header='Enter: Logs anzeigen | Ctrl+O: Im Browser | Ctrl+R: Rerun' \
                 --bind 'enter:execute(gh run view {1} --log | bat --color=always)' \
                 --bind 'ctrl-o:execute-silent(gh run view {1} --web)' \
@@ -144,7 +142,6 @@ if command -v gh >/dev/null 2>&1; then
         gh repo list --limit 30 ${query:+--source} | \
             fzf --ansi \
                 --preview 'gh repo view {1}' \
-                --preview-window='right:60%:wrap' \
                 --header='Enter: Klonen | Ctrl+O: Im Browser öffnen' \
                 --bind 'enter:execute(gh repo clone {1})' \
                 --bind 'ctrl-o:execute-silent(gh repo view {1} --web)'
@@ -159,7 +156,6 @@ glog() {
     git log --oneline --color=always --decorate | \
         fzf --ansi --no-sort --reverse \
             --preview 'git show --color=always {1} | bat --color=always -l diff' \
-            --preview-window='right:60%:wrap' \
             --header='Enter: Show | Ctrl+Y: SHA kopieren | Ctrl+C: Cherry-pick' \
             --bind 'enter:execute(git show --color=always {1} | less -R)' \
             --bind 'ctrl-y:execute-silent(echo -n {1} | pbcopy)+abort' \
@@ -172,7 +168,6 @@ gbr() {
         grep -v HEAD | \
         fzf --ansi \
             --preview 'git log --oneline --color=always {1} | head -20' \
-            --preview-window='right:50%' \
             --header='Enter: Checkout | Ctrl+D: Löschen' \
             --bind 'enter:execute(git checkout {1})' \
             --bind 'ctrl-d:execute(git branch -d {1})'
@@ -183,7 +178,6 @@ gst() {
     git -c color.status=always status --short | \
         fzf --ansi --multi \
             --preview 'git diff --color=always -- {2} | bat --color=always -l diff' \
-            --preview-window='right:60%:wrap' \
             --header='Tab: Auswählen | Enter: Add | Ctrl+R: Reset' \
             --bind 'enter:execute(git add {+2})' \
             --bind 'ctrl-r:execute(git restore {+2})'
@@ -194,7 +188,6 @@ gstash() {
     git stash list | \
         fzf --ansi \
             --preview 'git stash show -p {1} | bat --color=always -l diff' \
-            --preview-window='right:60%:wrap' \
             --header='Enter: Apply | Ctrl+D: Drop | Ctrl+P: Pop' \
             --bind 'enter:execute(git stash apply {1})' \
             --bind 'ctrl-d:execute(git stash drop {1})' \
@@ -209,7 +202,6 @@ bip() {
     local pkg
     pkg=$(brew formulae | fzf --multi \
         --preview 'brew info {}' \
-        --preview-window='right:60%:wrap' \
         --header='Tab: Mehrere auswählen | Enter: Installieren')
     
     [[ -n "$pkg" ]] && echo "$pkg" | xargs brew install
@@ -220,7 +212,6 @@ bup() {
     local pkg
     pkg=$(brew outdated | fzf --multi \
         --preview 'brew info {}' \
-        --preview-window='right:60%:wrap' \
         --header='Tab: Mehrere auswählen | Enter: Upgrade')
     
     [[ -n "$pkg" ]] && echo "$pkg" | xargs brew upgrade
@@ -231,7 +222,6 @@ brp() {
     local pkg
     pkg=$(brew leaves | fzf --multi \
         --preview 'brew info {}' \
-        --preview-window='right:60%:wrap' \
         --header='Tab: Mehrere auswählen | Enter: Deinstallieren')
     
     [[ -n "$pkg" ]] && echo "$pkg" | xargs brew uninstall
@@ -241,7 +231,6 @@ brp() {
 bsp() {
     brew search "${1:-}" | fzf \
         --preview 'brew info {}' \
-        --preview-window='right:60%:wrap' \
         --header='Enter: Installieren | Ctrl+O: Homepage öffnen' \
         --bind 'enter:execute(brew install {})' \
         --bind 'ctrl-o:execute-silent(brew home {})'
@@ -256,7 +245,7 @@ fkill() {
     pid=$(ps -ef | sed 1d | fzf --multi \
         --header='Tab: Mehrere auswählen | Enter: Kill (SIGTERM) | Ctrl+K: Kill -9' \
         --preview 'echo {}' \
-        --preview-window='down:3:wrap' | \
+        --preview-window='down:3' | \
         awk '{print $2}')
     
     [[ -n "$pid" ]] && echo "$pid" | xargs kill "${1:--15}"
@@ -270,7 +259,6 @@ fman() {
     man -k . 2>/dev/null | \
         fzf --prompt='Man> ' \
             --preview "echo {} | awk '{print \$1}' | xargs man 2>/dev/null | bat --color=always -l man -p" \
-            --preview-window='right:60%:wrap' \
             --bind 'enter:execute(echo {} | awk "{print \$1}" | xargs man)'
 }
 
@@ -281,7 +269,7 @@ fman() {
 fenv() {
     printenv | sort | fzf \
         --preview 'echo {} | cut -d= -f2-' \
-        --preview-window='down:3:wrap' \
+        --preview-window='down:3' \
         --header='Enter: Wert kopieren' \
         --bind 'enter:execute-silent(echo {} | cut -d= -f2- | pbcopy)+abort'
 }

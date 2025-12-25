@@ -1,0 +1,34 @@
+# ============================================================
+# fzf Config - Globale Standardoptionen
+# ============================================================
+# Zweck   : Native fzf-Konfiguration (FZF_DEFAULT_OPTS_FILE)
+# Pfad    : ~/.config/fzf/config
+# Docs    : https://github.com/junegunn/fzf#environment-variables
+# ============================================================
+
+# Layout & Darstellung
+--height=50%
+--layout=reverse
+--border=rounded
+--margin=0,1
+
+# Farben & Styling
+--color=header:italic
+--color=prompt:bold
+
+# Preview-Fenster (Standard für alle Funktionen)
+--preview-window=right:60%:wrap
+
+# Keybindings (universell)
+# Ctrl+/ : Preview ein-/ausblenden
+--bind=ctrl-/:toggle-preview
+
+# Ctrl+A : Alle auswählen (im Multi-Modus)
+--bind=ctrl-a:select-all
+
+# Ctrl+D : Alle abwählen (im Multi-Modus)
+--bind=ctrl-d:deselect-all
+
+# Hinweis: --ansi wird NICHT global gesetzt (Performance!)
+# Nur in Funktionen aktivieren wo nötig
+# Docs: https://github.com/junegunn/fzf#performance

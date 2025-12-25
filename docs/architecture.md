@@ -26,6 +26,12 @@ dotfiles/
     ├── .zprofile                # Login-Shell Konfiguration
     ├── .zshrc                   # Interactive Shell Konfiguration
     └── .config/
+        ├── fzf/
+        │   └── config           # fzf globale Optionen (FZF_DEFAULT_OPTS_FILE)
+        ├── bat/
+        │   └── config           # bat native Config
+        ├── ripgrep/
+        │   └── config           # ripgrep native Config (RIPGREP_CONFIG_PATH)
         └── alias/
             ├── homebrew.alias   # Homebrew + mas Aliase
             ├── eza.alias        # eza-Aliase (ls-Ersatz)
@@ -268,18 +274,63 @@ done
 | `.` | Nur reguläre Dateien |
 | `on` | Sortiere nach Name |
 
-### Tool-Konfiguration in `.zshrc`
+### Tool-Konfiguration
 
-Die Tools werden mit Umgebungsvariablen konfiguriert:
+Die Tools nutzen **native Config-Dateien** für globale Einstellungen und Shell-Umgebungsvariablen für tool-spezifische Integrationen.
 
-#### fzf (Fuzzy Finder)
+#### Native Config-Dateien
+
+| Tool | Config-Datei | Env-Variable |
+|------|--------------|--------------|
+| **fzf** | `~/.config/fzf/config` | `FZF_DEFAULT_OPTS_FILE` |
+| **bat** | `~/.config/bat/config` | (automatisch erkannt) |
+| **ripgrep** | `~/.config/ripgrep/config` | `RIPGREP_CONFIG_PATH` |
+
+**Vorteile:**
+- Globale Defaults zentral verwaltet
+- Funktionen in Alias-Dateien enthalten nur spezifische Optionen
+- Konsistente Darstellung über alle fzf-Funktionen
+
+#### fzf Globale Config (`~/.config/fzf/config`)
+
+```
+--height=50%
+--layout=reverse
+--border=rounded
+--preview-window=right:60%:wrap
+--bind=ctrl-/:toggle-preview
+--bind=ctrl-a:select-all
+--bind=ctrl-d:deselect-all
+```
+
+#### fzf Shell-Integration (in `.zshrc`)
 
 | Variable | Wert | Beschreibung |
 |----------|------|--------------|
+| `FZF_DEFAULT_COMMAND` | `fd --type f ...` | Backend für Standard-Suche |
 | `FZF_CTRL_T_OPTS` | `--preview 'bat ...'` | Datei-Vorschau mit Syntax-Highlighting |
 | `FZF_ALT_C_OPTS` | `--preview 'eza --tree ...'` | Verzeichnis-Vorschau mit Baumansicht |
 
 **Key Bindings:** `Ctrl+R` (History), `Ctrl+T` (Datei einfügen), `Alt+C` (cd)
+
+#### ripgrep Config (`~/.config/ripgrep/config`)
+
+```
+--smart-case
+--line-number
+--heading
+--type-add=zsh:*.zsh
+--type-add=alias:*.alias
+```
+
+#### bat Config (`~/.config/bat/config`)
+
+```
+--theme="Monokai Extended"
+--style="numbers,changes"
+--paging=auto
+--map-syntax "*.alias:Bash"
+```
 
 #### zoxide (Smarter cd)
 
