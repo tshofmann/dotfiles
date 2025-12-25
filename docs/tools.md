@@ -141,14 +141,68 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 > **Hinweis:** `--smart-case` ist case-insensitive wenn der Suchbegriff nur Kleinbuchstaben enthält, sonst case-sensitive.
 
-### fzf.alias
+### fzf.alias – Tool-Kombinationen
 
-| Alias/Funktion | Beschreibung |
-|----------------|--------------|
-| `rgf [query]` | Live-Grep: Interaktive Suche mit ripgrep, Vorschau mit bat, Enter öffnet Editor |
-| `cdf [path]` | Verzeichnis-Navigation mit fzf-Auswahl und eza-Vorschau |
+fzf ermöglicht die Kombination mehrerer CLI-Tools für interaktive Workflows:
 
-> **Hinweis:** `rgf` kombiniert ripgrep und fzf für Echtzeit-Suche während der Eingabe. Die Vorschau zeigt den Dateiinhalt mit Syntax-Highlighting und markierter Trefferzeile.
+#### Basis-Funktionen
+
+| Funktion | Beschreibung |
+|----------|--------------|
+| `rgf [query]` | **Live-Grep**: ripgrep + fzf + bat – Echtzeit-Suche während der Eingabe |
+| `cdf [path]` | **Fuzzy CD**: fd + fzf + eza – Verzeichnisnavigation mit Baum-Vorschau |
+
+#### Zoxide + fzf
+
+| Funktion | Beschreibung |
+|----------|--------------|
+| `zi` | zoxide built-in: Interaktive Verzeichnisauswahl |
+| `zf` | Erweitertes zi mit eza-Vorschau, Ctrl+D zum Löschen |
+
+#### fd + fzf + bat
+
+| Funktion | Beschreibung |
+|----------|--------------|
+| `fe [path]` | **Fuzzy Edit**: Datei suchen → Vorschau mit bat → Editor öffnen |
+| `fo [path]` | **Fuzzy Open**: Datei suchen → `open` (macOS) |
+
+#### GitHub CLI + fzf
+
+| Funktion | Beschreibung |
+|----------|--------------|
+| `ghpr` | PRs durchsuchen: Enter=Checkout, Ctrl+O=Browser, Ctrl+D=Diff |
+| `ghis` | Issues durchsuchen: Enter=Browser, Ctrl+E=Bearbeiten |
+| `ghrun` | Actions Runs: Enter=Logs, Ctrl+O=Browser, Ctrl+R=Rerun |
+| `ghrepo` | Repositories: Enter=Klonen, Ctrl+O=Browser |
+
+#### Git + fzf + bat
+
+| Funktion | Beschreibung |
+|----------|--------------|
+| `glog` | Commit-History: Vorschau mit bat, Ctrl+Y=SHA kopieren, Ctrl+C=Cherry-pick |
+| `gbr` | Branch wechseln: Log-Vorschau, Ctrl+D=Branch löschen |
+| `gst` | Status mit Diff-Vorschau: Enter=Add, Ctrl+R=Restore |
+| `gstash` | Stash-Browser: Enter=Apply, Ctrl+D=Drop, Ctrl+P=Pop |
+
+#### Homebrew + fzf
+
+| Funktion | Beschreibung |
+|----------|--------------|
+| `bip` | **Brew Install**: Interaktive Paketsuche → Installieren |
+| `bup` | **Brew Update**: Veraltete Pakete → Upgrade |
+| `brp` | **Brew Remove**: Installierte Pakete → Deinstallieren |
+| `bsp [query]` | **Brew Search**: Suchen mit Info-Vorschau |
+
+#### System-Utilities
+
+| Funktion | Beschreibung |
+|----------|--------------|
+| `fkill` | **Fuzzy Kill**: Prozesse auswählen und beenden |
+| `fman` | **Fuzzy Man**: Man-Pages durchsuchen mit bat-Vorschau |
+| `fenv` | **Fuzzy Env**: Umgebungsvariablen durchsuchen, Enter=Kopieren |
+| `fhist` | **Fuzzy History**: Shell-History, Ctrl+Y=Kopieren, Enter=Ausführen |
+
+> **Hinweis:** Alle Funktionen haben Guard-Checks und funktionieren nur wenn die benötigten Tools installiert sind.
 
 ### Verwendung
 

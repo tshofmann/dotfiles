@@ -47,3 +47,256 @@ if command -v fd >/dev/null 2>&1; then
     }
 fi
 
+# ============================================================
+# ZOXIDE + FZF: Intelligente Directory-Jumps
+# ============================================================
+# zi ist bereits in zoxide eingebaut (zi = zoxide interactive)
+# Erweiterte Version mit eza-Preview
+if command -v zoxide >/dev/null 2>&1; then
+    # zf: zoxide mit fzf und eza-Vorschau
+    zf() {
+        local dir
+        local preview_cmd="eza --tree --level=2 --icons --color=always {2..} 2>/dev/null || ls -la {2..}"
+        
+        dir=$(zoxide query -l | \
+            fzf --height=50% \
+                --preview "$preview_cmd" \
+                --preview-window='right:50%' \
+                --bind='ctrl-d:execute(zoxide remove {})' \
+                --header='Ctrl+D: Eintrag löschen')
+        
+        [[ -n "$dir" ]] && cd "$dir"
+    }
+fi
+
+# ============================================================
+# FD + FZF + BAT: Fuzzy-Dateisuche mit Vorschau
+# ============================================================
+# fe: Fuzzy Edit - Datei suchen und im Editor öffnen
+if command -v fd >/dev/null 2>&1; then
+    fe() {
+        local files
+        local preview_cmd="bat --color=always --style=numbers --line-range=:500 {} 2>/dev/null || cat {}"
+        
+        IFS=$'\n' files=($(fd --type f --hidden --follow --exclude .git . "${1:-.}" | \
+            fzf --multi \
+                --preview "$preview_cmd" \
+                --preview-window='right:60%' \
+                --bind 'ctrl-/:change-preview-window(down|hidden|)'))
+        
+        [[ -n "${files[*]}" ]] && ${EDITOR:-vim} "${files[@]}"
+    }
+    
+    # fo: Fuzzy Open - Datei suchen und mit open öffnen (macOS)
+    fo() {
+        local file
+        local preview_cmd="bat --color=always --style=numbers --line-range=:500 {} 2>/dev/null || file {}"
+        
+        file=$(fd --type f --hidden --follow --exclude .git . "${1:-.}" | \
+            fzf --preview "$preview_cmd" --preview-window='right:60%')
+        
+        [[ -n "$file" ]] && open "$file"
+    }
+fi
+
+# ============================================================
+# GH + FZF: Interaktive GitHub-Workflows
+# ============================================================
+if command -v gh >/dev/null 2>&1; then
+    # ghpr: Interaktive PR-Auswahl mit Vorschau
+    ghpr() {
+        gh pr list --limit 50 | \
+            fzf --ansi \
+                --preview 'gh pr view {1}' \
+                --preview-window='right:60%:wrap' \
+                --header='Enter: Checkout | Ctrl+O: Im Browser öffnen | Ctrl+D: Diff' \
+                --bind 'enter:execute(gh pr checkout {1})' \
+                --bind 'ctrl-o:execute-silent(gh pr view {1} --web)' \
+                --bind 'ctrl-d:execute(gh pr diff {1} | bat --color=always -l diff)'
+    }
+    
+    # ghis: Interaktive Issue-Auswahl
+    ghis() {
+        gh issue list --limit 50 | \
+            fzf --ansi \
+                --preview 'gh issue view {1}' \
+                --preview-window='right:60%:wrap' \
+                --header='Enter: Im Browser öffnen | Ctrl+E: Bearbeiten' \
+                --bind 'enter:execute-silent(gh issue view {1} --web)' \
+                --bind 'ctrl-e:execute(gh issue edit {1})'
+    }
+    
+    # ghrun: GitHub Actions Runs anzeigen
+    ghrun() {
+        gh run list --limit 20 | \
+            fzf --ansi \
+                --preview 'gh run view {1}' \
+                --preview-window='right:60%:wrap' \
+                --header='Enter: Logs anzeigen | Ctrl+O: Im Browser | Ctrl+R: Rerun' \
+                --bind 'enter:execute(gh run view {1} --log | bat --color=always)' \
+                --bind 'ctrl-o:execute-silent(gh run view {1} --web)' \
+                --bind 'ctrl-r:execute(gh run rerun {1})'
+    }
+    
+    # ghrepo: Repository-Auswahl für schnelles Klonen
+    ghrepo() {
+        local query="${1:-}"
+        gh repo list --limit 30 ${query:+--source} | \
+            fzf --ansi \
+                --preview 'gh repo view {1}' \
+                --preview-window='right:60%:wrap' \
+                --header='Enter: Klonen | Ctrl+O: Im Browser öffnen' \
+                --bind 'enter:execute(gh repo clone {1})' \
+                --bind 'ctrl-o:execute-silent(gh repo view {1} --web)'
+    }
+fi
+
+# ============================================================
+# GIT + FZF + BAT: Interaktive Git-Operationen
+# ============================================================
+# glog: Git Log mit Commit-Vorschau
+glog() {
+    git log --oneline --color=always --decorate | \
+        fzf --ansi --no-sort --reverse \
+            --preview 'git show --color=always {1} | bat --color=always -l diff' \
+            --preview-window='right:60%:wrap' \
+            --header='Enter: Show | Ctrl+Y: SHA kopieren | Ctrl+C: Cherry-pick' \
+            --bind 'enter:execute(git show --color=always {1} | less -R)' \
+            --bind 'ctrl-y:execute-silent(echo -n {1} | pbcopy)+abort' \
+            --bind 'ctrl-c:execute(git cherry-pick {1})'
+}
+
+# gbr: Git Branch wechseln mit Vorschau
+gbr() {
+    git branch --all --color=always | \
+        grep -v HEAD | \
+        fzf --ansi \
+            --preview 'git log --oneline --color=always {1} | head -20' \
+            --preview-window='right:50%' \
+            --header='Enter: Checkout | Ctrl+D: Löschen' \
+            --bind 'enter:execute(git checkout {1})' \
+            --bind 'ctrl-d:execute(git branch -d {1})'
+}
+
+# gst: Git Status mit Diff-Vorschau
+gst() {
+    git -c color.status=always status --short | \
+        fzf --ansi --multi \
+            --preview 'git diff --color=always -- {2} | bat --color=always -l diff' \
+            --preview-window='right:60%:wrap' \
+            --header='Tab: Auswählen | Enter: Add | Ctrl+R: Reset' \
+            --bind 'enter:execute(git add {+2})' \
+            --bind 'ctrl-r:execute(git restore {+2})'
+}
+
+# gstash: Stash-Browser
+gstash() {
+    git stash list | \
+        fzf --ansi \
+            --preview 'git stash show -p {1} | bat --color=always -l diff' \
+            --preview-window='right:60%:wrap' \
+            --header='Enter: Apply | Ctrl+D: Drop | Ctrl+P: Pop' \
+            --bind 'enter:execute(git stash apply {1})' \
+            --bind 'ctrl-d:execute(git stash drop {1})' \
+            --bind 'ctrl-p:execute(git stash pop {1})'
+}
+
+# ============================================================
+# BREW + FZF: Homebrew-Paketverwaltung
+# ============================================================
+# bip: Brew Install Package - interaktive Installation
+bip() {
+    local pkg
+    pkg=$(brew formulae | fzf --multi \
+        --preview 'brew info {}' \
+        --preview-window='right:60%:wrap' \
+        --header='Tab: Mehrere auswählen | Enter: Installieren')
+    
+    [[ -n "$pkg" ]] && echo "$pkg" | xargs brew install
+}
+
+# bup: Brew Update Package - interaktives Update
+bup() {
+    local pkg
+    pkg=$(brew outdated | fzf --multi \
+        --preview 'brew info {}' \
+        --preview-window='right:60%:wrap' \
+        --header='Tab: Mehrere auswählen | Enter: Upgrade')
+    
+    [[ -n "$pkg" ]] && echo "$pkg" | xargs brew upgrade
+}
+
+# brp: Brew Remove Package - interaktive Deinstallation
+brp() {
+    local pkg
+    pkg=$(brew leaves | fzf --multi \
+        --preview 'brew info {}' \
+        --preview-window='right:60%:wrap' \
+        --header='Tab: Mehrere auswählen | Enter: Deinstallieren')
+    
+    [[ -n "$pkg" ]] && echo "$pkg" | xargs brew uninstall
+}
+
+# bsp: Brew Search Package mit Vorschau
+bsp() {
+    brew search "${1:-}" | fzf \
+        --preview 'brew info {}' \
+        --preview-window='right:60%:wrap' \
+        --header='Enter: Installieren | Ctrl+O: Homepage öffnen' \
+        --bind 'enter:execute(brew install {})' \
+        --bind 'ctrl-o:execute-silent(brew home {})'
+}
+
+# ============================================================
+# KILL + FZF: Prozess-Management
+# ============================================================
+# fkill: Fuzzy Kill - Prozesse beenden
+fkill() {
+    local pid
+    pid=$(ps -ef | sed 1d | fzf --multi \
+        --header='Tab: Mehrere auswählen | Enter: Kill (SIGTERM) | Ctrl+K: Kill -9' \
+        --preview 'echo {}' \
+        --preview-window='down:3:wrap' | \
+        awk '{print $2}')
+    
+    [[ -n "$pid" ]] && echo "$pid" | xargs kill "${1:--15}"
+}
+
+# ============================================================
+# MAN + FZF + BAT: Man-Pages Browser
+# ============================================================
+# fman: Fuzzy Man - Man-Pages durchsuchen
+fman() {
+    man -k . 2>/dev/null | \
+        fzf --prompt='Man> ' \
+            --preview "echo {} | awk '{print \$1}' | xargs man 2>/dev/null | bat --color=always -l man -p" \
+            --preview-window='right:60%:wrap' \
+            --bind 'enter:execute(echo {} | awk "{print \$1}" | xargs man)'
+}
+
+# ============================================================
+# ENV + FZF: Umgebungsvariablen-Browser
+# ============================================================
+# fenv: Fuzzy Env - Umgebungsvariablen durchsuchen und kopieren
+fenv() {
+    printenv | sort | fzf \
+        --preview 'echo {} | cut -d= -f2-' \
+        --preview-window='down:3:wrap' \
+        --header='Enter: Wert kopieren' \
+        --bind 'enter:execute-silent(echo {} | cut -d= -f2- | pbcopy)+abort'
+}
+
+# ============================================================
+# HISTORY + FZF: Erweiterte History-Suche
+# ============================================================
+# fhist: Fuzzy History - History durchsuchen und ausführen
+fhist() {
+    local cmd
+    cmd=$(fc -l 1 | fzf --tac --no-sort \
+        --header='Enter: Ausführen | Ctrl+Y: Kopieren' \
+        --bind 'ctrl-y:execute-silent(echo {2..} | pbcopy)+abort' | \
+        awk '{$1=""; print substr($0,2)}')
+    
+    [[ -n "$cmd" ]] && eval "$cmd"
+}
+
