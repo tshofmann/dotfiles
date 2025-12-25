@@ -60,7 +60,7 @@ if command -v zoxide >/dev/null 2>&1; then
     # zf: zoxide mit fzf und eza-Vorschau
     zf() {
         local dir
-        local preview_cmd="eza --tree --level=2 --icons --color=always {2..} 2>/dev/null || ls -la {2..}"
+        local preview_cmd="eza --tree --level=2 --icons --color=always {} 2>/dev/null || ls -la {}"
         
         dir=$(zoxide query -l | \
             fzf --preview "$preview_cmd" \
