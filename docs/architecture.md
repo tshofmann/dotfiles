@@ -321,10 +321,12 @@ Die Tools nutzen **native Config-Dateien** für globale Einstellungen und Shell-
 --height=50%
 --layout=reverse
 --border=rounded
+--margin=0,1
+--color=header:italic
+--color=prompt:bold
 --preview-window=right:60%:wrap
 --bind=ctrl-/:toggle-preview
 --bind=ctrl-a:select-all
---bind=ctrl-d:deselect-all
 ```
 
 #### fzf Shell-Integration (in `.zshrc`)
@@ -344,7 +346,10 @@ Die Tools nutzen **native Config-Dateien** für globale Einstellungen und Shell-
 --line-number
 --heading
 --type-add=zsh:*.zsh
+--type-add=zsh:*.zshrc
+--type-add=zsh:*.zprofile
 --type-add=alias:*.alias
+--type-add=conf:*.conf
 ```
 
 #### bat Config (`~/.config/bat/config`)
@@ -353,7 +358,10 @@ Die Tools nutzen **native Config-Dateien** für globale Einstellungen und Shell-
 --theme="Monokai Extended"
 --style="numbers,changes"
 --paging=auto
+--pager="less --RAW-CONTROL-CHARS --quit-if-one-screen"
 --map-syntax "*.alias:Bash"
+--map-syntax ".zshrc:Bash"
+--map-syntax "Brewfile:Ruby"
 ```
 
 #### zoxide (Smarter cd)
