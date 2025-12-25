@@ -18,10 +18,10 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles au
 ## Schritt 1: Bootstrap-Skript ausführen
 
 ```zsh
-git clone https://github.com/tshofmann/dotfiles.git ~/dotfiles && cd ~/dotfiles && ./setup/bootstrap.sh
+curl -fsSL https://github.com/tshofmann/dotfiles/archive/refs/heads/main.tar.gz | tar -xz -C ~ && mv ~/dotfiles-main ~/dotfiles && ~/dotfiles/setup/bootstrap.sh
 ```
 
-> **💡 Frisches System?** Auf einem neuen Mac ist Git noch nicht verfügbar. Der erste `git`-Aufruf öffnet automatisch einen Dialog zur Installation der **Xcode Command Line Tools**. Klicke auf "Installieren" und warte bis die Installation abgeschlossen ist (~1-2 Minuten). Danach den Befehl erneut ausführen.
+> **💡 Warum curl statt git?** Auf einem frischen Mac ist Git erst nach Installation der Xcode CLI Tools verfügbar. Mit `curl` (in macOS enthalten) umgehen wir diese Abhängigkeit – die CLI Tools werden dann automatisch vom Bootstrap-Skript installiert.
 
 ### Was das Skript macht
 
