@@ -59,31 +59,38 @@ check_alias_files() {
     local alias_dir="$DOTFILES_DIR/terminal/.config/alias"
     local tools_doc="$DOCS_DIR/tools.md"
     
+    # Bekannte bedingte Aliase (nur mit bestimmten Tools verfügbar)
+    # Format: "datei:anzahl_bedingte"
+    local -A conditional_aliases=(
+        [homebrew]=1   # brewup variiert je nach mas
+        [bat]=1        # bat-preview nur mit fzf
+    )
+    
     for alias_file in "$alias_dir"/*.alias; do
         local name=$(basename "$alias_file")
         local base="${name%.alias}"
         
         # fzf.alias enthält Funktionen statt Aliase
         if [[ "$base" == "fzf" ]]; then
-            # Zähle Funktionsdefinitionen
             local code_count=$(grep -cE "^[a-z]+\(\)[[:space:]]*\{" "$alias_file" 2>/dev/null || echo 0)
             ok "$name: $code_count Funktionen (nicht validiert)"
             continue
         fi
         
-        # Zähle Aliase im Code (alias xyz= Zeilen)
+        # Zähle Aliase im Code
         local code_count=$(grep -cE "^[[:space:]]*alias [a-z]" "$alias_file" 2>/dev/null || echo 0)
         
         # Prüfe ob Datei in Docs erwähnt wird
         if grep -q "### ${base}.alias" "$tools_doc" 2>/dev/null; then
-            # Zähle Tabellenzeilen mit Backtick-Alias (| `alias` |)
             local docs_count=$(sed -n "/### ${base}.alias/,/^### /p" "$tools_doc" | grep -cE "^\| \`[a-z]" 2>/dev/null || echo 0)
+            
+            # Prüfe ob diese Datei bekannte bedingte Aliase hat
+            local tolerance=${conditional_aliases[$base]:-0}
             
             if [[ "$code_count" -eq "$docs_count" ]]; then
                 ok "$name: $code_count Aliase"
-            elif [[ "$code_count" -le "$((docs_count + 1))" ]] && [[ "$code_count" -ge "$((docs_count - 1))" ]]; then
-                # Toleranz ±1 für bedingte Aliase (z.B. bat-preview nur mit fzf)
-                ok "$name: $code_count Aliase (Docs: $docs_count, bedingte Aliase)"
+            elif [[ "$tolerance" -gt 0 ]] && [[ "$code_count" -eq "$((docs_count + tolerance))" ]]; then
+                ok "$name: $code_count Aliase (inkl. $tolerance bedingte)"
             else
                 err "$name: Code=$code_count, Docs=$docs_count"
             fi
