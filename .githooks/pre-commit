@@ -3,7 +3,7 @@
 # pre-commit - Git Hook für Dokumentations-Validierung
 # ============================================================
 # Zweck   : Prüft Docs-Synchronisation vor jedem Commit
-# Install : ./setup/install-hooks.sh
+# Install : git config core.hooksPath .githooks
 # ============================================================
 
 # Pfad zum dotfiles-Verzeichnis (relativ zum Hook)
@@ -20,7 +20,7 @@ fi
 if [[ "$needs_check" == "true" ]]; then
     echo "📖 Prüfe Dokumentations-Synchronisation..."
     
-    if ! "$DOTFILES_DIR/setup/validate-docs.sh"; then
+    if ! "$DOTFILES_DIR/scripts/validate-docs.sh"; then
         echo ""
         echo "❌ Commit abgebrochen: Dokumentation stimmt nicht mit Code überein!"
         echo ""

@@ -3,7 +3,7 @@
 # validate-docs.sh - Dokumentations-Validierung
 # ============================================================
 # Zweck   : Prüft ob Dokumentation mit Code übereinstimmt
-# Aufruf  : ./setup/validate-docs.sh
+# Aufruf  : ./scripts/validate-docs.sh
 # ============================================================
 
 set -euo pipefail

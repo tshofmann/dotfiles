@@ -12,12 +12,16 @@ dotfiles/
 ├── LICENSE                      # MIT Lizenz
 ├── .stowrc                      # Stow-Konfiguration
 ├── .gitignore                   # Git-Ignore-Patterns
+├── .githooks/                   # Git Hooks (GitHub-Standard)
+│   └── pre-commit               # Docs-Validierung vor Commit
 ├── docs/                        # Dokumentation
 │   ├── installation.md          # Installationsanleitung
 │   ├── configuration.md         # Anpassungen
 │   ├── troubleshooting.md       # Fehlerbehebung
 │   ├── architecture.md          # Diese Datei
 │   └── tools.md                 # Tool-Übersicht
+├── scripts/                     # Utility-Scripts
+│   └── validate-docs.sh         # Docs-Code-Synchronisation prüfen
 ├── setup/
 │   ├── bootstrap.sh             # Automatisiertes Setup-Skript
 │   ├── health-check.sh          # Validierung der Installation
@@ -105,6 +109,38 @@ Das Bootstrap-Skript ist **idempotent** – es kann beliebig oft ausgeführt wer
 ```
 
 `--no-folding` verhindert, dass Stow ganze Verzeichnisse verlinkt statt einzelner Dateien. Das ist wichtig, damit andere Programme (nicht aus dem Repo) in denselben Verzeichnissen Dateien anlegen können.
+
+### Git Hooks (.githooks/)
+
+Git Hooks liegen im Repo-Root unter `.githooks/` (GitHub-Standard):
+
+```zsh
+# Aktivierung (einmalig nach Clone):
+git config core.hooksPath .githooks
+```
+
+| Hook | Zweck |
+|------|-------|
+| `pre-commit` | Prüft Docs-Code-Synchronisation vor jedem Commit |
+
+**Vorteile gegenüber `.git/hooks/`:**
+- Versioniert im Repository
+- Automatisch für alle Klone verfügbar
+- Keine separate Installation nötig
+
+### Utility-Scripts (scripts/)
+
+Der `scripts/`-Ordner enthält Hilfsskripte, die **nicht** zum Setup gehören:
+
+| Script | Zweck |
+|--------|-------|
+| `validate-docs.sh` | Prüft ob Dokumentation mit Code übereinstimmt |
+
+Aufrufe:
+```zsh
+./scripts/validate-docs.sh  # Manueller Check
+# Automatisch via pre-commit Hook bei relevanten Änderungen
+```
 
 ---
 
