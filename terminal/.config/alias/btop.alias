@@ -16,8 +16,3 @@ fi
 # ------------------------------------------------------------
 alias top='btop'                            # top durch btop ersetzen
 alias htop='btop'                           # htop durch btop ersetzen
-
-# ------------------------------------------------------------
-# Optionen
-# ------------------------------------------------------------
-alias btop-low='btop --low-color'           # Weniger Farben (einfache Terminals)

@@ -26,9 +26,6 @@
 # Ctrl+A : Alle auswählen (im Multi-Modus)
 --bind=ctrl-a:select-all
 
-# Ctrl+D : Alle abwählen (im Multi-Modus)
---bind=ctrl-d:deselect-all
-
 # Hinweis: --ansi wird NICHT global gesetzt (Performance!)
 # Nur in Funktionen aktivieren wo nötig
 # Docs: https://github.com/junegunn/fzf#performance

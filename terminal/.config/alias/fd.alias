@@ -20,13 +20,6 @@ alias fdh='fd --hidden'                     # Inkl. versteckte Dateien
 alias fda='fd --hidden --no-ignore'         # Alles (ignoriert nichts)
 
 # ------------------------------------------------------------
-# Erweiterte Suche
-# ------------------------------------------------------------
-alias fde='fd --extension'                  # Nach Erweiterung: fde md
-alias fdx='fd --exec'                       # Mit Ausführung: fdx rm {}
-alias fd0='fd --print0'                     # Null-separiert (für xargs -0)
-
-# ------------------------------------------------------------
 # Typspezifische Suche
 # ------------------------------------------------------------
 alias fdsh='fd --extension sh'              # Shell-Skripte

@@ -78,7 +78,7 @@ fi
 if command -v fd >/dev/null 2>&1; then
     fe() {
         local files
-        local preview_cmd="bat --color=always --style=numbers --line-range=:500 {} 2>/dev/null || cat {}"
+        local preview_cmd="bat --color=always --line-range=:500 {} 2>/dev/null || cat {}"
         
         IFS=$'\n' files=($(fd --type f --hidden --follow --exclude .git . "${1:-.}" | \
             fzf --multi \
@@ -91,7 +91,7 @@ if command -v fd >/dev/null 2>&1; then
     # fo: Fuzzy Open - Datei suchen und mit open öffnen (macOS)
     fo() {
         local file
-        local preview_cmd="bat --color=always --style=numbers --line-range=:500 {} 2>/dev/null || file {}"
+        local preview_cmd="bat --color=always --line-range=:500 {} 2>/dev/null || file {}"
         
         file=$(fd --type f --hidden --follow --exclude .git . "${1:-.}" | \
             fzf --preview "$preview_cmd")
@@ -243,12 +243,13 @@ bsp() {
 fkill() {
     local pid
     pid=$(ps -ef | sed 1d | fzf --multi \
-        --header='Tab: Mehrere auswählen | Enter: Kill (SIGTERM) | Ctrl+K: Kill -9' \
+        --header='Tab: Mehrere auswählen | Enter: Kill | Ctrl+K: Kill -9' \
         --preview 'echo {}' \
-        --preview-window='down:3' | \
+        --preview-window='down:3' \
+        --bind 'ctrl-k:execute(echo {} | awk "{print \$2}" | xargs kill -9)+abort' | \
         awk '{print $2}')
     
-    [[ -n "$pid" ]] && echo "$pid" | xargs kill "${1:--15}"
+    [[ -n "$pid" ]] && echo "$pid" | xargs kill -15
 }
 
 # ============================================================
@@ -277,7 +278,8 @@ fenv() {
 # ============================================================
 # HISTORY + FZF: Erweiterte History-Suche
 # ============================================================
-# fhist: Fuzzy History - History durchsuchen und ausführen
+# fhist: Fuzzy History - History durchsuchen und direkt ausführen
+# Hinweis: Unterschied zu Ctrl+R: Führt Befehl direkt aus statt einzufügen
 fhist() {
     local cmd
     cmd=$(fc -l 1 | fzf --tac --no-sort \
