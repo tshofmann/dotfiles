@@ -32,7 +32,7 @@ dotfiles/
             ├── bat.alias        # bat-Aliase (cat-Ersatz)
             ├── ripgrep.alias    # ripgrep-Aliase (grep-Ersatz)
             ├── fd.alias         # fd-Aliase (find-Ersatz)
-            ├── fzf.alias        # fzf-Aliase (rgf, cdf)
+            ├── fzf.alias        # fzf Tool-Kombinationen (20+ Funktionen)
             └── btop.alias       # btop-Aliase (top-Ersatz)
 ```
 

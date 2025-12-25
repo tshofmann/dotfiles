@@ -275,6 +275,57 @@ rm -rf ~/dotfiles
 
 ---
 
+## fzf-Funktionen funktionieren nicht
+
+### Symptom
+
+- Befehle wie `ghpr`, `glog`, `fe` werden nicht erkannt
+- Fehlermeldung: `command not found`
+
+### Ursache
+
+Die fzf-Funktionen in `fzf.alias` haben Guard-Checks – sie werden nur definiert, wenn die benötigten Tools installiert sind.
+
+### Diagnose
+
+```zsh
+# Prüfe ob fzf geladen wurde
+type rgf
+
+# Prüfe welche Tools fehlen
+command -v fzf gh rg fd bat eza zoxide
+```
+
+### Lösung
+
+**Fehlende Tools installieren:**
+
+```zsh
+brew install fzf ripgrep fd bat eza zoxide gh
+```
+
+**Shell neu laden:**
+
+```zsh
+source ~/.zshrc
+# oder
+exec zsh
+```
+
+### Funktionen und ihre Abhängigkeiten
+
+| Funktion | Benötigte Tools |
+|----------|-----------------|
+| `rgf` | fzf, ripgrep, bat |
+| `fe`, `fo`, `cdf` | fzf, fd, bat/eza |
+| `zf` | fzf, zoxide, eza |
+| `ghpr`, `ghis`, `ghrun`, `ghrepo` | fzf, gh |
+| `glog`, `gbr`, `gst`, `gstash` | fzf, git, bat |
+| `bip`, `bup`, `brp`, `bsp` | fzf, brew |
+| `fkill`, `fman`, `fenv`, `fhist` | fzf |
+
+---
+
 ## Weitere Hilfe
 
 Falls dein Problem hier nicht aufgeführt ist:
