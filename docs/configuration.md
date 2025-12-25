@@ -142,6 +142,34 @@ git commit -m "feat: eigene Starship-Konfiguration"
 
 Eigene Aliase kannst du in `terminal/.config/alias/` hinzufügen.
 
+---
+
+## Tool-Konfigurationen anpassen
+
+Einige Tools nutzen native Konfigurationsdateien für globale Einstellungen:
+
+| Tool | Config-Datei | Beschreibung |
+|------|--------------|--------------|
+| **fzf** | `~/.config/fzf/config` | Layout, Borders, globale Keybindings |
+| **bat** | `~/.config/bat/config` | Theme, Style, Syntax-Mappings |
+| **ripgrep** | `~/.config/ripgrep/config` | Smart-case, Zeilennummern, Custom-Types |
+
+### Config-Dateien bearbeiten
+
+```zsh
+# Alle Config-Dateien sind verlinkt aus dem dotfiles Repo
+bat ~/.config/fzf/config      # fzf-Optionen anzeigen
+bat ~/.config/bat/config      # bat-Optionen anzeigen
+bat ~/.config/ripgrep/config  # ripgrep-Optionen anzeigen
+
+# Bearbeiten (im Repo)
+$EDITOR ~/dotfiles/terminal/.config/fzf/config
+```
+
+> 📖 Technische Details: [Architektur → Tool-Konfiguration](architecture.md#tool-konfiguration)
+
+---
+
 ### Verfügbare Alias-Dateien
 
 | Datei | Beschreibung | Dokumentation |
@@ -150,6 +178,9 @@ Eigene Aliase kannst du in `terminal/.config/alias/` hinzufügen.
 | `eza.alias` | Moderne ls-Ersetzungen mit Icons | [Tools → Aliase](tools.md#ezaalias) |
 | `bat.alias` | cat mit Syntax-Highlighting | [Tools → Aliase](tools.md#batalias) |
 | `ripgrep.alias` | Schnelle Textsuche | [Tools → Aliase](tools.md#ripgrepalias) |
+| `fd.alias` | Dateisuche | [Tools → Aliase](tools.md#fdalias) |
+| `fzf.alias` | Tool-Kombinationen (20+ Funktionen) | [Tools → Aliase](tools.md#fzfalias--tool-kombinationen) |
+| `btop.alias` | Prozess-Monitor | [Tools → Aliase](tools.md#btopalias) |
 
 ### Neue Alias-Datei erstellen
 

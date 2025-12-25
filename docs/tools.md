@@ -69,9 +69,6 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `fdd` | `fd --type d` | Nur Verzeichnisse suchen |
 | `fdh` | `fd --hidden` | Inkl. versteckte Dateien |
 | `fda` | `fd --hidden --no-ignore` | Alles (ignoriert nichts) |
-| `fde` | `fd --extension <ext>` | Nach Erweiterung suchen |
-| `fdx` | `fd --exec <cmd>` | Mit Ausführung |
-| `fd0` | `fd --print0` | Null-separiert (für xargs -0) |
 | `fdsh` | `fd --extension sh` | Shell-Skripte |
 | `fdpy` | `fd --extension py` | Python-Dateien |
 | `fdjs` | `fd -e js -e ts` | JavaScript/TypeScript |
@@ -87,9 +84,8 @@ Verfügbare Aliase aus `~/.config/alias/`:
 |-------|--------|--------------|
 | `top` | `btop` | top durch btop ersetzen |
 | `htop` | `btop` | htop durch btop ersetzen |
-| `btop-low` | `btop --low-color` | Weniger Farben (einfache Terminals) |
 
-> **Hinweis:** btop bietet CPU, RAM, Disk, Netzwerk und Prozess-Überwachung in einer ansprechenden TUI.
+> **Hinweis:** btop bietet CPU, RAM, Disk, Netzwerk und Prozess-Überwachung in einer ansprechenden TUI. Für einfache Terminals: `btop --low-color`.
 
 ### eza.alias
 
@@ -313,14 +309,18 @@ fdd src                 # Nur Verzeichnisse
 # Inkl. versteckter Dateien
 fdh .env                # Findet .env, .envrc, etc.
 
-# Nach Erweiterung
-fde md                  # Alle Markdown-Dateien
+# Nach Erweiterung (mit Aliassen)
+fdmd                    # Alle Markdown-Dateien
 fdpy                    # Alle Python-Dateien
 fdjs                    # JavaScript + TypeScript
 
+# Nach Erweiterung (direkt)
+fd -e yaml              # Alle YAML-Dateien
+fd -e json -e yaml      # JSON und YAML
+
 # Mit Ausführung
-fdx bat {}              # Jede Datei mit bat anzeigen
 fd -e json -x jq . {}   # Alle JSON-Dateien formatieren
+fd -e md -x bat {}      # Alle Markdown mit bat anzeigen
 
 # Alles suchen (ignoriert nichts)
 fda password            # Durchsucht auch .git/, node_modules/, etc.
@@ -338,7 +338,7 @@ top                    # Startet btop
 btop                   # Direkt aufrufen
 
 # Für einfache Terminals
-btop-low               # Weniger Farben
+btop --low-color       # Weniger Farben
 
 # Navigation in btop:
 # m         → Menü
