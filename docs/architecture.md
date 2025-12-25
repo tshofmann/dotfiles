@@ -21,10 +21,10 @@ dotfiles/
 │   ├── architecture.md          # Diese Datei
 │   └── tools.md                 # Tool-Übersicht
 ├── scripts/                     # Utility-Scripts
+│   ├── health-check.sh          # Validierung der Installation
 │   └── validate-docs.sh         # Docs-Code-Synchronisation prüfen
 ├── setup/
 │   ├── bootstrap.sh             # Automatisiertes Setup-Skript
-│   ├── health-check.sh          # Validierung der Installation
 │   ├── Brewfile                 # Homebrew-Abhängigkeiten
 │   └── tshofmann.terminal       # Terminal.app Profil
 └── terminal/

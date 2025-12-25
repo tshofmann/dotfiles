@@ -138,7 +138,7 @@ Der Health-Check hilft dir zu überprüfen, ob alle Komponenten korrekt installi
 ```zsh
 # Im dotfiles-Verzeichnis ausführen
 cd ~/dotfiles
-./setup/health-check.sh
+./scripts/health-check.sh
 ```
 
 ### Was wird geprüft?

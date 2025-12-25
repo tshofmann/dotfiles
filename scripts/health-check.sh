@@ -3,7 +3,7 @@
 # health-check.sh - Validierung der dotfiles-Installation
 # ============================================================
 # Zweck   : Prüft alle Komponenten auf korrekte Installation
-# Aufruf  : ./setup/health-check.sh
+# Aufruf  : ./scripts/health-check.sh
 # Docs    : https://github.com/tshofmann/dotfiles#readme
 # ============================================================
 

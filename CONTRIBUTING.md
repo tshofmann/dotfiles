@@ -32,10 +32,10 @@ dotfiles/
 ├── .githooks/              # Git Hooks (versioniert)
 │   └── pre-commit          # Docs-Validierung vor Commit
 ├── scripts/                # Utility-Scripts (nicht Setup)
+│   ├── health-check.sh     # Installation validieren
 │   └── validate-docs.sh    # Docs-Code-Synchronisation prüfen
 ├── setup/                  # Bootstrap & Installation
 │   ├── bootstrap.sh        # Hauptskript
-│   ├── health-check.sh     # Installation validieren
 │   ├── Brewfile            # Homebrew-Abhängigkeiten
 │   └── tshofmann.terminal  # Terminal.app Profil
 ├── terminal/               # Dotfiles (werden nach ~ verlinkt)
@@ -145,7 +145,7 @@ git checkout -b feature/beschreibung
 
 ```zsh
 # Installation prüfen
-./setup/health-check.sh
+./scripts/health-check.sh
 
 # Bei Shell-Änderungen: neue Session starten
 exec zsh
@@ -204,7 +204,7 @@ gh pr create
 
 - **Docs stimmen nicht mit Code überein?** → `./scripts/validate-docs.sh` zeigt Details
 - **Hook blockiert Commit?** → Fehlermeldung lesen, Docs aktualisieren
-- **Installation kaputt?** → `./setup/health-check.sh` zur Diagnose
+- **Installation kaputt?** → `./scripts/health-check.sh` zur Diagnose
 
 ---
 
