@@ -130,7 +130,7 @@ if command -v gh >/dev/null 2>&1; then
         gh run list --limit 20 | \
             fzf --ansi \
                 --preview 'gh run view {1}' \
-                --header='Enter: Logs anzeigen | Ctrl+O: Im Browser | Ctrl+R: Rerun' \
+                --header='Enter: Logs anzeigen | Ctrl+O: Im Browser | Ctrl+R: Wiederholen' \
                 --bind 'enter:execute(gh run view {1} --log | bat --color=always)' \
                 --bind 'ctrl-o:execute-silent(gh run view {1} --web)' \
                 --bind 'ctrl-r:execute(gh run rerun {1})'
@@ -156,7 +156,7 @@ glog() {
     git log --oneline --color=always --decorate | \
         fzf --ansi --no-sort --reverse \
             --preview 'git show --color=always {1} | bat --color=always -l diff' \
-            --header='Enter: Show | Ctrl+Y: SHA kopieren | Ctrl+C: Cherry-pick' \
+            --header='Enter: Anzeigen | Ctrl+Y: SHA kopieren | Ctrl+C: Cherry-pick' \
             --bind 'enter:execute(git show --color=always {1} | less -R)' \
             --bind 'ctrl-y:execute-silent(echo -n {1} | pbcopy)+abort' \
             --bind 'ctrl-c:execute(git cherry-pick {1})'
@@ -168,7 +168,7 @@ gbr() {
         grep -v HEAD | \
         fzf --ansi \
             --preview 'git log --oneline --color=always {1} | head -20' \
-            --header='Enter: Checkout | Ctrl+D: Löschen' \
+            --header='Enter: Wechseln | Ctrl+D: Löschen' \
             --bind 'enter:execute(git checkout {1})' \
             --bind 'ctrl-d:execute(git branch -d {1})'
 }
@@ -188,7 +188,7 @@ gstash() {
     git stash list | \
         fzf --ansi \
             --preview 'git stash show -p {1} | bat --color=always -l diff' \
-            --header='Enter: Apply | Ctrl+D: Drop | Ctrl+P: Pop' \
+            --header='Enter: Anwenden | Ctrl+D: Löschen | Ctrl+P: Pop' \
             --bind 'enter:execute(git stash apply {1})' \
             --bind 'ctrl-d:execute(git stash drop {1})' \
             --bind 'ctrl-p:execute(git stash pop {1})'
@@ -239,11 +239,11 @@ bsp() {
 # ============================================================
 # KILL + FZF: Prozess-Management
 # ============================================================
-# fkill: Fuzzy Kill - Prozesse beenden
+# fkill: Prozesse interaktiv suchen und beenden
 fkill() {
     local pid
     pid=$(ps -ef | sed 1d | fzf --multi \
-        --header='Tab: Mehrere auswählen | Enter: Kill | Ctrl+K: Kill -9' \
+        --header='Tab: Mehrere auswählen | Enter: Beenden | Ctrl+K: Sofort beenden (-9)' \
         --preview 'echo {}' \
         --preview-window='down:3' \
         --bind 'ctrl-k:execute(echo {} | awk "{print \$2}" | xargs kill -9)+abort' | \
@@ -255,35 +255,36 @@ fkill() {
 # ============================================================
 # MAN + FZF + BAT: Man-Pages Browser
 # ============================================================
-# fman: Fuzzy Man - Man-Pages durchsuchen
+# fman: Man-Pages durchsuchen und anzeigen
 fman() {
     man -k . 2>/dev/null | \
         fzf --prompt='Man> ' \
             --preview "echo {} | awk '{print \$1}' | xargs man 2>/dev/null | bat --color=always -l man -p" \
+            --header='Enter: Man-Page öffnen' \
             --bind 'enter:execute(echo {} | awk "{print \$1}" | xargs man)'
 }
 
 # ============================================================
 # ENV + FZF: Umgebungsvariablen-Browser
 # ============================================================
-# fenv: Fuzzy Env - Umgebungsvariablen durchsuchen und kopieren
+# fenv: Umgebungsvariablen durchsuchen und Wert kopieren
 fenv() {
     printenv | sort | fzf \
         --preview 'echo {} | cut -d= -f2-' \
         --preview-window='down:3' \
-        --header='Enter: Wert kopieren' \
+        --header='Enter: Wert in Zwischenablage kopieren' \
         --bind 'enter:execute-silent(echo {} | cut -d= -f2- | pbcopy)+abort'
 }
 
 # ============================================================
 # HISTORY + FZF: Erweiterte History-Suche
 # ============================================================
-# fhist: Fuzzy History - History durchsuchen und direkt ausführen
+# fhist: History durchsuchen und Befehl direkt ausführen
 # Hinweis: Unterschied zu Ctrl+R: Führt Befehl direkt aus statt einzufügen
 fhist() {
     local cmd
     cmd=$(fc -l 1 | fzf --tac --no-sort \
-        --header='Enter: Ausführen | Ctrl+Y: Kopieren' \
+        --header='Enter: Ausführen | Ctrl+Y: In Zwischenablage' \
         --bind 'ctrl-y:execute-silent(echo {2..} | pbcopy)+abort' | \
         awk '{$1=""; print substr($0,2)}')
     

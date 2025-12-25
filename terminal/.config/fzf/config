@@ -12,15 +12,15 @@
 --border=rounded
 --margin=0,1
 
-# Farben & Styling
+# Farben & Stil
 --color=header:italic
 --color=prompt:bold
 
-# Preview-Fenster (Standard für alle Funktionen)
+# Vorschau-Fenster (Standard für alle Funktionen)
 --preview-window=right:60%:wrap
 
-# Keybindings (universell)
-# Ctrl+/ : Preview ein-/ausblenden
+# Tastenkürzel (universell)
+# Ctrl+/ : Vorschau ein-/ausblenden
 --bind=ctrl-/:toggle-preview
 
 # Ctrl+A : Alle auswählen (im Multi-Modus)

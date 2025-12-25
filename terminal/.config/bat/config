@@ -7,22 +7,22 @@
 # ============================================================
 
 # ------------------------------------------------------------
-# Theme
+# Farbschema
 # ------------------------------------------------------------
-# Verfügbare Themes: bat --list-themes
+# Verfügbare Themes anzeigen: bat --list-themes
 --theme="Monokai Extended"
 
 # ------------------------------------------------------------
 # Darstellung
 # ------------------------------------------------------------
 # Style-Elemente: full, auto, plain, changes, header, grid, numbers
-# numbers: Zeilennummern | changes: Git-Diff-Markierungen
+# numbers = Zeilennummern | changes = Git-Diff-Markierungen
 --style="numbers,changes"
 
 # ------------------------------------------------------------
 # Pager-Verhalten
 # ------------------------------------------------------------
-# Pager nur wenn Output > Terminalfenster
+# Pager nur wenn Ausgabe größer als Terminalfenster
 --paging=auto
 
 # Less mit nützlichen Optionen
@@ -34,7 +34,7 @@
 # Alias-Dateien als Shell/Bash behandeln
 --map-syntax "*.alias:Bash"
 
-# Zsh-Config-Dateien
+# Zsh-Konfigurationsdateien
 --map-syntax ".zshrc:Bash"
 --map-syntax ".zshenv:Bash"
 --map-syntax ".zprofile:Bash"
@@ -42,7 +42,7 @@
 # Brewfile als Ruby
 --map-syntax "Brewfile:Ruby"
 
-# .gitignore-Style Dateien
+# .gitignore-artige Dateien
 --map-syntax ".ignore:Git Ignore"
 --map-syntax ".fdignore:Git Ignore"
 --map-syntax ".rgignore:Git Ignore"
