@@ -4,6 +4,52 @@
 
 ---
 
+## Schnellreferenz für Einsteiger
+
+Die wichtigsten Tastenkombinationen und Befehle auf einen Blick:
+
+### Tastenkombinationen (global)
+
+| Taste | Funktion | Beschreibung |
+|-------|----------|--------------|
+| `Ctrl+R` | History-Suche | Frühere Befehle fuzzy suchen |
+| `Ctrl+T` | Datei einfügen | Datei suchen und in Kommandozeile einfügen |
+| `Alt+C` | Verzeichnis wechseln | Interaktiv in Unterverzeichnis springen |
+| `Tab` | Autovervollständigung | Befehle, Pfade, Optionen vervollständigen |
+| `→` (Pfeil rechts) | Vorschlag übernehmen | zsh-autosuggestion akzeptieren |
+
+### Die wichtigsten Aliase
+
+| Alias | Statt | Funktion |
+|-------|-------|----------|
+| `ls` | `ls` | Dateien mit Icons anzeigen |
+| `ll` | `ls -la` | Ausführliche Auflistung |
+| `cat` | `cat` | Datei mit Syntax-Highlighting |
+| `z <ort>` | `cd <pfad>` | Zu häufig besuchtem Verzeichnis springen |
+| `brewup` | - | Alle Pakete + Apps aktualisieren |
+
+### Erste Schritte nach der Installation
+
+```zsh
+# 1. System aktualisieren
+brewup
+
+# 2. Verzeichnis mit Icons anzeigen
+ls
+
+# 3. Datei mit Syntax-Highlighting anzeigen
+cat ~/.zshrc
+
+# 4. Frühere Befehle suchen (Ctrl+R drücken, tippen, Enter)
+
+# 5. Zu einem Verzeichnis springen (lernt mit der Zeit)
+z dotfiles
+```
+
+> 💡 **Tipp:** Alle Aliase haben Guard-Checks – fehlt ein Tool, funktioniert der Original-Befehl weiterhin.
+
+---
+
 ## Installierte CLI-Tools
 
 Diese Tools werden via Brewfile installiert:
@@ -154,6 +200,15 @@ fzf ermöglicht die Kombination mehrerer CLI-Tools für interaktive Workflows:
 |----------|--------------|
 | `zi` | zoxide built-in: Interaktive Verzeichnisauswahl |
 | `zf` | Erweitertes zi mit eza-Vorschau, Ctrl+D zum Löschen |
+
+> **`zi` vs `zf` – Wann welches verwenden?**
+>
+> | Befehl | Quelle | Vorschau | Lösch-Option | Empfehlung |
+> |--------|--------|----------|--------------|------------|
+> | `zi` | zoxide (built-in) | Keine | Nein | Schnelle Navigation zu bekannten Verzeichnissen |
+> | `zf` | fzf.alias (custom) | eza-Baumansicht | Ctrl+D | Exploration mit visueller Vorschau, Aufräumen alter Einträge |
+>
+> **Faustregel:** `zi` für Geschwindigkeit, `zf` für Übersicht.
 
 #### fd + fzf + bat
 

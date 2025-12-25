@@ -18,6 +18,25 @@ err()  { print "✖ $*" >&2; }
 warn() { print "⚠ $*"; }
 
 # ------------------------------------------------------------
+# Trap-Handler für Abbruch/Fehler
+# ------------------------------------------------------------
+# Trackt den aktuellen Schritt für aussagekräftiges Feedback
+CURRENT_STEP="Initialisierung"
+
+cleanup() {
+  local exit_code=$?
+  if (( exit_code != 0 )); then
+    print ""
+    warn "Bootstrap abgebrochen bei: $CURRENT_STEP"
+    warn "Exit-Code: $exit_code"
+    print ""
+    log "Das Skript ist idempotent – du kannst es erneut ausführen."
+    log "Bereits installierte Komponenten werden übersprungen."
+  fi
+}
+trap cleanup EXIT
+
+# ------------------------------------------------------------
 # Konfiguration (readonly verhindert versehentliche Überschreibung)
 # ------------------------------------------------------------
 readonly SCRIPT_DIR="${0:A:h}"
@@ -62,6 +81,7 @@ readonly BREW_PREFIX="/opt/homebrew"
 print "==> macOS Tahoe Bootstrap"
 
 # Homebrew bei Bedarf installieren
+CURRENT_STEP="Homebrew Installation"
 if ! [[ -x "$BREW_PREFIX/bin/brew" ]]; then
   log "Homebrew nicht gefunden, starte Installation..."
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -85,6 +105,7 @@ if [[ ! -f "$BREWFILE" ]]; then
 fi
 
 # CLI-Tools und Font über Brewfile installieren
+CURRENT_STEP="Brewfile Installation (brew bundle)"
 log "Installiere Abhängigkeiten aus Brewfile (ohne Auto-Update)"
 if ! HOMEBREW_NO_AUTO_UPDATE=1 brew bundle --file="$BREWFILE" --no-upgrade; then
   err "Brew Bundle fehlgeschlagen – Setup wird abgebrochen"
@@ -110,6 +131,7 @@ profile_exists() {
   print -r -- "$settings" | grep -qE "$PROFILE_GREP_PATTERN"
 }
 
+CURRENT_STEP="Font-Verifikation"
 if ! font_installed; then
   err "Font nicht gefunden nach Installation, Terminal-Profil wird nicht importiert."
   err "  Prüfe: ls ~/Library/Fonts/$FONT_GLOB"
@@ -124,6 +146,7 @@ if [[ ! -f "$PROFILE_FILE" ]]; then
 fi
 
 # Terminal-Profil importieren (mit Retry, falls defaults noch nicht aktualisiert sind)
+CURRENT_STEP="Terminal-Profil Import"
 if profile_exists; then
   ok "Profil '$PROFILE_NAME' bereits vorhanden"
 else
@@ -197,6 +220,7 @@ else
 fi
 
 print ""
+CURRENT_STEP="Starship-Theme Konfiguration"
 log "Konfiguriere Starship-Theme"
 
 # 1. Prüfe ob Starship installiert ist
@@ -256,6 +280,7 @@ fi
 # in ~/.zsh_sessions/. Diese leere Datei deaktiviert das Feature zugunsten
 # einer zentralen ~/.zsh_history (konfiguriert in .zshrc).
 print ""
+CURRENT_STEP="ZSH-Sessions Konfiguration"
 log "Konfiguriere ZSH-Sessions"
 readonly ZSH_SESSIONS_DISABLE="$HOME/.zsh_sessions_disable"
 
@@ -265,6 +290,9 @@ else
   touch "$ZSH_SESSIONS_DISABLE"
   ok "zsh_sessions deaktiviert → $ZSH_SESSIONS_DISABLE"
 fi
+
+# Erfolgreicher Abschluss – CURRENT_STEP zurücksetzen für sauberen Exit
+CURRENT_STEP=""
 
 print ""
 ok "Setup abgeschlossen"
