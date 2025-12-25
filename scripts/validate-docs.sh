@@ -3,8 +3,8 @@
 # validate-docs.sh - Dokumentations-Validierung
 # ============================================================
 # Zweck   : Prüft ob Dokumentation mit Code übereinstimmt
-# Aufruf  : ./scripts/validate-docs.sh
-# Version : 2.0 - Erweiterte Validierung
+# Aufruf  : ./scripts/validate-docs.sh [--all|--quick|VALIDATOR]
+# Version : 3.0 - Modulare Architektur
 # ============================================================
 # Validiert:
 #   ✔ Brewfile Einträge (Namen + Anzahlen)
@@ -13,24 +13,39 @@
 #   ✔ macOS Mindestversion (Code vs Docs)
 #   ✔ Starship-Preset (Code vs Docs)
 #   ✔ Alias-Dateien (Anzahlen pro Datei)
+#   ✔ Alias-Namen (Existenz prüfen)        [NEU v3.0]
+#   ✔ FZF-Funktionen (Code vs Docs)        [NEU v3.0]
+#   ✔ Code-Block Befehle (Gültigkeit)      [NEU v3.0]
 #   ✔ Config-Dateien (Existenz + Dokumentation)
 #   ✔ Symlink-Kategorien
+# ============================================================
+# Modulare Erweiterung:
+#   Neue Validatoren in scripts/validators/ ablegen
+#   Format: source lib.sh + register_validator() aufrufen
 # ============================================================
 
 set -euo pipefail
 
-# Farben
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
-BLUE='\033[0;34m'
-NC='\033[0m'
-
+# Pfad-Setup
 SCRIPT_DIR="${0:A:h}"
 DOTFILES_DIR="${SCRIPT_DIR:h}"
 DOCS_DIR="$DOTFILES_DIR/docs"
 SETUP_DIR="$DOTFILES_DIR/setup"
+VALIDATORS_DIR="$SCRIPT_DIR/validators"
 
+# Lade gemeinsame Bibliothek
+if [[ -f "$VALIDATORS_DIR/lib.sh" ]]; then
+    source "$VALIDATORS_DIR/lib.sh"
+else
+    # Fallback wenn lib.sh nicht existiert
+    RED='\033[0;31m'
+    GREEN='\033[0;32m'
+    YELLOW='\033[0;33m'
+    BLUE='\033[0;34m'
+    NC='\033[0m'
+fi
+
+# Legacy-Kompatibilität
 errors=0
 warnings=0
 
@@ -331,32 +346,119 @@ check_symlinks() {
 # ------------------------------------------------------------
 # Main
 # ------------------------------------------------------------
-print "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-print "📖 Dokumentations-Validierung v2.0"
-print "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-print ""
+show_help() {
+    print "Verwendung: validate-docs.sh [OPTION|VALIDATOR]"
+    print ""
+    print "Optionen:"
+    print "  --all, -a      Alle Validatoren ausführen (Standard)"
+    print "  --quick, -q    Nur schnelle Core-Prüfungen"
+    print "  --list, -l     Verfügbare Validatoren auflisten"
+    print "  --help, -h     Diese Hilfe anzeigen"
+    print ""
+    print "Validatoren:"
+    if [[ -d "$VALIDATORS_DIR" ]]; then
+        for v in "$VALIDATORS_DIR"/*.sh(N); do
+            [[ "$(basename "$v")" == "lib.sh" ]] && continue
+            print "  $(basename "$v" .sh)"
+        done
+    fi
+    print ""
+    print "Beispiele:"
+    print "  validate-docs.sh              # Alle Prüfungen"
+    print "  validate-docs.sh --quick      # Nur Core-Prüfungen"
+    print "  validate-docs.sh alias-names  # Nur Alias-Namen prüfen"
+}
 
-# Kritische Prüfungen (NEU)
-check_macos_version
-print ""
-check_bootstrap_steps
-print ""
-check_brewfile
-print ""
-check_healthcheck_tools
-print ""
-check_starship_preset
-print ""
+# Lade modulare Validatoren
+load_validators() {
+    [[ -d "$VALIDATORS_DIR" ]] || return 0
+    
+    for validator_file in "$VALIDATORS_DIR"/*.sh(N); do
+        [[ "$(basename "$validator_file")" == "lib.sh" ]] && continue
+        source "$validator_file"
+    done
+}
 
-# Bestehende Prüfungen
-check_alias_files
-print ""
-check_config_files
-print ""
-check_symlinks
+# Core-Prüfungen (immer ausführen)
+run_core_checks() {
+    print ""
+    check_macos_version
+    print ""
+    check_bootstrap_steps
+    print ""
+    check_brewfile
+    print ""
+    check_healthcheck_tools
+    print ""
+    check_starship_preset
+    print ""
+    check_alias_files
+    print ""
+    check_config_files
+    print ""
+    check_symlinks
+}
+
+# Modulare Validatoren ausführen
+run_module_validators() {
+    if [[ -n "${REGISTERED_VALIDATORS:-}" ]] && (( ${#REGISTERED_VALIDATORS[@]} > 0 )); then
+        print ""
+        print "━━━ Erweiterte Validierung (Modulare Prüfungen) ━━━"
+        run_all_validators
+    fi
+}
+
+# Hauptprogramm
+print "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+print "📖 Dokumentations-Validierung v3.0"
+print "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+# Argumente verarbeiten
+case "${1:-}" in
+    --help|-h)
+        show_help
+        exit 0
+        ;;
+    --list|-l)
+        load_validators
+        if [[ -n "${REGISTERED_VALIDATORS:-}" ]] && (( ${#REGISTERED_VALIDATORS[@]} > 0 )); then
+            list_validators
+        else
+            print "Keine modularen Validatoren gefunden."
+        fi
+        exit 0
+        ;;
+    --quick|-q)
+        run_core_checks
+        ;;
+    --all|-a|"")
+        load_validators
+        run_core_checks
+        run_module_validators
+        ;;
+    *)
+        # Spezifischer Validator
+        load_validators
+        if [[ -n "${REGISTERED_VALIDATORS:-}" ]] && (( ${#REGISTERED_VALIDATORS[@]} > 0 )); then
+            if ! run_validator "$1"; then
+                ((errors++)) || true
+            fi
+        else
+            err "Validator '$1' nicht gefunden"
+        fi
+        ;;
+esac
 
 print ""
 print "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+# Kombiniere Fehler aus Legacy und Modul-System
+if [[ -n "${VALIDATOR_ERRORS:-}" ]] && (( VALIDATOR_ERRORS > 0 )); then
+    ((errors += VALIDATOR_ERRORS)) || true
+fi
+if [[ -n "${VALIDATOR_WARNINGS:-}" ]] && (( VALIDATOR_WARNINGS > 0 )); then
+    ((warnings += VALIDATOR_WARNINGS)) || true
+fi
 
 if (( errors > 0 )); then
     print "${RED}❌ $errors Fehler gefunden${NC}"
