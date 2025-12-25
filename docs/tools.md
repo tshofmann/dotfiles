@@ -329,12 +329,12 @@ bat-preview
 ### ripgrep (rg) – Schnelle Textsuche
 
 ```zsh
-# Smart-Case Suche (empfohlen)
-rgs "TODO"             # case-insensitive da alles klein
-rgs "MyClass"          # case-sensitive da Großbuchstaben
+# Smart-Case Suche (Standard, da in ~/.config/ripgrep/config)
+rg "TODO"              # case-insensitive da alles klein
+rg "MyClass"           # case-sensitive da Großbuchstaben
 
 # Mit Kontext (3 Zeilen vor/nach)
-rgc "error"            # rg --smart-case -C 3
+rgc "error"            # rg -C 3
 
 # Nur in bestimmten Dateitypen
 rgts "function"        # TypeScript/JavaScript
@@ -509,18 +509,22 @@ gh pr <Tab>           # Zeigt PR-Unterbefehle
 | Befehl | Funktion | Vorschau |
 |--------|----------|----------|
 | `z <query>` | Zu Verzeichnis springen | – |
-| `zi` | Interaktive Auswahl (fzf) | eza (Dateiliste) |
+| `zi` | Interaktive Auswahl (zoxide built-in) | – |
+| `zf` | Erweitertes zi mit fzf | eza (Baumansicht) |
 
 ```zsh
 # Verzeichnis wechseln (lernt mit der Zeit)
 z dotfiles         # Springt zu ~/dotfiles
 z doc              # Springt zu häufig besuchtem Verzeichnis mit "doc"
 
-# Interaktive Auswahl mit fzf
-zi                 # Zeigt Liste mit eza-Vorschau
+# Interaktive Auswahl (zoxide built-in)
+zi                 # fzf-Auswahl ohne Vorschau
+
+# Erweiterte Auswahl mit eza-Vorschau
+zf                 # fzf mit Baumansicht, Ctrl+D zum Löschen
 ```
 
-> **Hinweis:** Die `zi`-Vorschau zeigt den Verzeichnisinhalt mit eza und Icons.
+> **Hinweis:** `zi` ist das zoxide built-in. Für visuelle Vorschau und Löschfunktion verwende `zf` (aus fzf.alias).
 
 ### starship – Shell Prompt
 
