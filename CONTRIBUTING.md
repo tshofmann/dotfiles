@@ -63,7 +63,7 @@ git config core.hooksPath .githooks
 
 | Hook | Zweck |
 |------|-------|
-| `pre-commit` | 1. Shell-Syntax (`zsh -n`) für `.sh` Dateien |
+| `pre-commit` | 1. ZSH-Syntax (`zsh -n`) für `.sh`, `.alias`, `.zshrc`, `.zshenv`, `.zprofile` |
 |              | 2. Doku-Konsistenz bei `docs/`, `Brewfile`, `terminal/.config/` |
 
 ### Hook überspringen (Notfall)

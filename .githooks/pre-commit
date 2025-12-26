@@ -3,7 +3,8 @@
 # pre-commit - Git Hook für Validierung vor Commits
 # ============================================================
 # Prüft:
-#   1. Syntax-Check für .sh Dateien (zsh -n)
+#   1. Syntax-Check für ZSH-Dateien (zsh -n)
+#      - *.sh, *.alias, .zshrc, .zshenv, .zprofile, pre-commit
 #   2. Doku-Konsistenz bei relevanten Änderungen
 #
 # Install : git config core.hooksPath .githooks
@@ -13,12 +14,13 @@ DOTFILES_DIR="$(git rev-parse --show-toplevel)"
 changed_files=$(git diff --cached --name-only)
 
 # ------------------------------------------------------------
-# 1. Syntax-Check für Shell-Skripte
+# 1. Syntax-Check für ZSH-Dateien
 # ------------------------------------------------------------
-sh_files=$(echo "$changed_files" | grep -E '\.sh$' || true)
+# Alle Dateien die zsh-Syntax enthalten
+zsh_files=$(echo "$changed_files" | grep -E '\.(sh|alias)$|\.zshrc$|\.zshenv$|\.zprofile$|^\.githooks/pre-commit$' || true)
 
-if [[ -n "$sh_files" ]]; then
-    echo "🔍 Prüfe Shell-Syntax..."
+if [[ -n "$zsh_files" ]]; then
+    echo "🔍 Prüfe ZSH-Syntax..."
     syntax_errors=0
     
     while IFS= read -r file; do
@@ -32,7 +34,7 @@ if [[ -n "$sh_files" ]]; then
         else
             echo "  ✔ $file"
         fi
-    done <<< "$sh_files"
+    done <<< "$zsh_files"
     
     if ((syntax_errors > 0)); then
         echo ""
