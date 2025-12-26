@@ -1,12 +1,16 @@
 #!/usr/bin/env zsh
 # ============================================================
-# validate-docs.sh - Dokumentations-Validierung
+# validate-docs.sh - Konsistenzprüfung Dokumentation ↔ Code
 # ============================================================
-# Zweck   : Prüft ob Dokumentation mit Code übereinstimmt
+# Zweck   : Prüft ob Inhalte der Dokumentation mit dem Code
+#           übereinstimmen (Anzahlen, Namen, Auflistungen)
+#
+# HINWEIS : Dies ist KEINE Code-Validierung oder Syntax-Check!
+#           Für Installationsprüfung: ./scripts/health-check.sh
+#
 # Aufruf  : ./scripts/validate-docs.sh [--all|--quick|--core|VALIDATOR]
-# Version : 3.1 - Vollständig modulare Architektur
 # ============================================================
-# Alle Validatoren sind modularisiert unter:
+# Validatoren unter:
 #   scripts/validators/core/     - Core-Prüfungen
 #   scripts/validators/extended/ - Erweiterte Prüfungen
 # ============================================================
