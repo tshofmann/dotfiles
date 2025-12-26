@@ -117,6 +117,7 @@ git commit --no-verify -m "..."
 |---------|---------|
 | **alias-names** | Alias-Namen in Docs existieren im Code |
 | **codeblocks** | Shell-Commands in Code-Blöcken sind gültig |
+| **structure** | terminal/ Dateien in CONTRIBUTING.md Struktur |
 
 ### Bei Fehlern
 
