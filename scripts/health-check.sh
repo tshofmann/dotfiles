@@ -1,8 +1,13 @@
 #!/usr/bin/env zsh
 # ============================================================
-# health-check.sh - Validierung der dotfiles-Installation
+# health-check.sh - Systemprüfung der dotfiles-Installation
 # ============================================================
-# Zweck   : Prüft alle Komponenten auf korrekte Installation
+# Zweck   : Prüft ob alle Komponenten korrekt INSTALLIERT sind
+#           (Symlinks, Tools, Konfigurationen, Abhängigkeiten)
+#
+# HINWEIS : Dieser Check prüft die INSTALLATION auf dem System.
+#           Für Konsistenz Doku↔Code: ./scripts/validate-docs.sh
+#
 # Aufruf  : ./scripts/health-check.sh
 # Docs    : https://github.com/tshofmann/dotfiles#readme
 # ============================================================
@@ -68,8 +73,8 @@ check_tool() {
 # ------------------------------------------------------------
 # Hauptprüfungen
 # ------------------------------------------------------------
-print "🔍 dotfiles Health Check"
-print "   Prüft die Installation auf Vollständigkeit und Korrektheit"
+print "🔍 dotfiles Health Check (Systemprüfung)"
+print "   Prüft ob alle Komponenten korrekt installiert sind"
 
 # --- Symlinks ---
 section "Symlinks"
@@ -117,6 +122,15 @@ if command -v mas >/dev/null 2>&1; then
 else
   warn "mas nicht installiert (optional, für App Store Updates)"
 fi
+
+# ZSH-Plugins
+for plugin in zsh-syntax-highlighting zsh-autosuggestions; do
+  if [[ -d "$(brew --prefix)/share/$plugin" ]]; then
+    pass "$plugin"
+  else
+    warn "$plugin nicht installiert"
+  fi
+done
 
 # --- Font ---
 section "Nerd Font"
