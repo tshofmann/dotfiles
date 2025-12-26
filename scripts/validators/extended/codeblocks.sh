@@ -1,9 +1,8 @@
 #!/usr/bin/env zsh
 # ============================================================
-# codeblocks.sh - Validator für Code-Beispiele
+# codeblocks.sh - Code-Beispiele Validierung
 # ============================================================
-# Zweck   : Prüft ob Befehle in Code-Blöcken gültig sind
-# Aufruf  : Automatisch via validate-docs.sh
+# Prüft: Befehle in Markdown-Codeblöcken auf Gültigkeit
 # ============================================================
 
 # Source lib.sh wenn noch nicht geladen

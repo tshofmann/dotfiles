@@ -4,7 +4,6 @@
 # ============================================================
 # Zweck   : Shared Utilities, Logging, Registry
 # Aufruf  : source validators/lib.sh
-# Version : 3.1 - Modulare Architektur
 # ============================================================
 
 # Verhindere doppeltes Laden

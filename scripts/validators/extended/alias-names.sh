@@ -1,9 +1,8 @@
 #!/usr/bin/env zsh
 # ============================================================
-# alias-names.sh - Validator für Alias-Namen
+# alias-names.sh - Alias-Namen Validierung
 # ============================================================
-# Zweck   : Prüft ob dokumentierte Aliase auch existieren
-# Aufruf  : Automatisch via validate-docs.sh
+# Prüft: Dokumentierte Aliase vs tatsächlich definierte
 # ============================================================
 
 # Source lib.sh wenn noch nicht geladen
