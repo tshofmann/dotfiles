@@ -1,24 +1,55 @@
 #!/usr/bin/env zsh
 # ============================================================
-# pre-commit - Git Hook für Dokumentations-Validierung
+# pre-commit - Git Hook für Validierung vor Commits
 # ============================================================
-# Zweck   : Prüft Docs-Synchronisation vor jedem Commit
+# Prüft:
+#   1. Syntax-Check für .sh Dateien (zsh -n)
+#   2. Doku-Konsistenz bei relevanten Änderungen
+#
 # Install : git config core.hooksPath .githooks
 # ============================================================
 
-# Pfad zum dotfiles-Verzeichnis (relativ zum Hook)
 DOTFILES_DIR="$(git rev-parse --show-toplevel)"
-
-# Nur prüfen wenn docs/ oder relevante Code-Dateien geändert wurden
 changed_files=$(git diff --cached --name-only)
 
-needs_check=false
-if echo "$changed_files" | grep -qE '^(docs/|setup/Brewfile|terminal/.config/)'; then
-    needs_check=true
+# ------------------------------------------------------------
+# 1. Syntax-Check für Shell-Skripte
+# ------------------------------------------------------------
+sh_files=$(echo "$changed_files" | grep -E '\.sh$' || true)
+
+if [[ -n "$sh_files" ]]; then
+    echo "🔍 Prüfe Shell-Syntax..."
+    syntax_errors=0
+    
+    while IFS= read -r file; do
+        [[ -z "$file" ]] && continue
+        filepath="$DOTFILES_DIR/$file"
+        [[ -f "$filepath" ]] || continue
+        
+        if ! zsh -n "$filepath" 2>&1; then
+            echo "  ✖ $file"
+            ((syntax_errors++))
+        else
+            echo "  ✔ $file"
+        fi
+    done <<< "$sh_files"
+    
+    if ((syntax_errors > 0)); then
+        echo ""
+        echo "❌ Commit abgebrochen: $syntax_errors Datei(en) mit Syntaxfehlern!"
+        echo ""
+        echo "Optionen:"
+        echo "  1. Syntaxfehler beheben und erneut committen"
+        echo "  2. Hook überspringen: git commit --no-verify"
+        exit 1
+    fi
 fi
 
-if [[ "$needs_check" == "true" ]]; then
-    echo "📖 Prüfe Dokumentations-Synchronisation..."
+# ------------------------------------------------------------
+# 2. Dokumentations-Konsistenz
+# ------------------------------------------------------------
+if echo "$changed_files" | grep -qE '^(docs/|setup/Brewfile|terminal/.config/)'; then
+    echo "📖 Prüfe Dokumentations-Konsistenz..."
     
     if ! "$DOTFILES_DIR/scripts/validate-docs.sh"; then
         echo ""
