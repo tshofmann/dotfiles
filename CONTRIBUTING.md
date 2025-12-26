@@ -63,7 +63,8 @@ git config core.hooksPath .githooks
 
 | Hook | Zweck |
 |------|-------|
-| `pre-commit` | Prüft Docs-Code-Sync bei relevanten Änderungen |
+| `pre-commit` | 1. Shell-Syntax (`zsh -n`) für `.sh` Dateien |
+|              | 2. Doku-Konsistenz bei `docs/`, `Brewfile`, `terminal/.config/` |
 
 ### Hook überspringen (Notfall)
 
