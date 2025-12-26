@@ -50,7 +50,8 @@ fi
 # ------------------------------------------------------------
 # 2. Dokumentations-Konsistenz
 # ------------------------------------------------------------
-if echo "$changed_files" | grep -qE '^(docs/|setup/Brewfile|terminal/.config/)'; then
+# Trigger bei: docs/, Brewfile, terminal/.config/, CONTRIBUTING.md, terminal/.zsh*
+if echo "$changed_files" | grep -qE '^(docs/|setup/Brewfile|terminal/\.config/|CONTRIBUTING\.md|terminal/\.zsh)'; then
     echo "📖 Prüfe Dokumentations-Konsistenz..."
     
     if ! "$DOTFILES_DIR/scripts/validate-docs.sh"; then
