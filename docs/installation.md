@@ -9,9 +9,18 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles au
 | **Apple Silicon Mac** | M1, M2, … (arm64) – Intel-Macs werden nicht unterstützt |
 | **macOS 14+** | Sonoma oder neuer – entspricht [Homebrew Tier 1](https://docs.brew.sh/Support-Tiers) |
 | **Internetverbindung** | Für Homebrew-Installation und Download der Formulae/Casks |
-| **Admin-Rechte** | `sudo`-Passwort erforderlich für Xcode CLI Tools Installation |
+| **Admin-Rechte** | `sudo`-Passwort erforderlich (siehe unten) |
 
 > **Hinweis:** Architektur- und macOS-Versionsprüfung erfolgen automatisch beim Start von `bootstrap.sh`. Bei nicht unterstützten Systemen bricht das Skript mit einer Fehlermeldung ab.
+
+### Wann wird `sudo` benötigt?
+
+Das Bootstrap-Skript fragt zu folgenden Zeitpunkten nach dem Admin-Passwort:
+
+1. **Xcode CLI Tools Installation** – `xcode-select --install` triggert einen System-Dialog, der Admin-Rechte erfordert
+2. **Homebrew Erstinstallation** – Das offizielle Installationsskript erstellt Verzeichnisse unter `/opt/homebrew` und benötigt dafür `sudo`
+
+> **Nach der Ersteinrichtung:** Sobald Homebrew installiert ist, laufen alle weiteren `brew`-Befehle ohne `sudo`. Das Bootstrap-Skript ist idempotent – bei erneuter Ausführung werden keine Admin-Rechte mehr benötigt, wenn die Tools bereits vorhanden sind.
 
 ---
 
@@ -46,6 +55,15 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 > ```bash
 > PROFILE_IMPORT_TIMEOUT=60 ./setup/bootstrap.sh
 > ```
+>
+> **Empfohlene Timeout-Werte:**
+> | Umgebung | Empfohlener Wert | Begründung |
+> |----------|------------------|------------|
+> | Native Hardware | `20` (Standard) | Ausreichend für normale Systeme |
+> | macOS VM (Apple Silicon) | `30-45` | VMs haben leicht erhöhte I/O-Latenz |
+> | macOS VM (Parallels/VMware) | `45-60` | Virtualisierungsoverhead bei GUI-Operationen |
+> | CI/CD (GitHub Actions) | `60-90` | Shared Resources, variable Performance |
+> | Langsame Netzwerk-Speicher | `90-120` | Bei NFS/SMB-gemounteten Home-Verzeichnissen |
 
 > **📦 Komponenten-Abhängigkeiten:** Terminal-Profil, Nerd Font und Starship-Preset sind eng gekoppelt. Wenn Icons als □ oder ? angezeigt werden, liegt es meist an einer fehlenden oder falschen Font-Konfiguration. Details: [Architektur → Komponenten-Abhängigkeiten](architecture.md#komponenten-abhängigkeiten)
 
