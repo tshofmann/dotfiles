@@ -116,7 +116,7 @@ fi
 # ------------------------------------------------------------
 # ZSH-Plugins (müssen am Ende geladen werden)
 # ------------------------------------------------------------
-# zsh-autosuggestions: History-basierte Vorschläge (Tab = akzeptieren)
+# zsh-autosuggestions: History-basierte Vorschläge (→ = akzeptieren)
 [[ -f /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]] && \
     source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
