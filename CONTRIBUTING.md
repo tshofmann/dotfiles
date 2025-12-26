@@ -30,7 +30,7 @@ Nach Schritt 3 wird bei jedem Commit automatisch geprüft, ob Dokumentation und 
 ```
 dotfiles/
 ├── .githooks/              # Git Hooks (versioniert)
-│   └── pre-commit          # Docs-Validierung vor Commit
+│   └── pre-commit          # Syntax + Docs-Validierung vor Commit
 ├── scripts/                # Utility-Scripts (nicht Setup)
 │   ├── health-check.sh     # Installation validieren
 │   ├── validate-docs.sh    # Docs-Code-Synchronisation prüfen
@@ -43,6 +43,7 @@ dotfiles/
 │   ├── Brewfile            # Homebrew-Abhängigkeiten
 │   └── tshofmann.terminal  # Terminal.app Profil
 ├── terminal/               # Dotfiles (werden nach ~ verlinkt)
+│   ├── .zshenv
 │   ├── .zprofile
 │   ├── .zshrc
 │   └── .config/
