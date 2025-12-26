@@ -46,6 +46,7 @@ dotfiles/
 │   ├── .zshenv
 │   ├── .zprofile
 │   ├── .zshrc
+│   ├── .zlogin
 │   └── .config/
 └── docs/                   # Dokumentation
 ```
@@ -64,7 +65,7 @@ git config core.hooksPath .githooks
 
 | Hook | Zweck |
 |------|-------|
-| `pre-commit` | 1. ZSH-Syntax (`zsh -n`) für `.sh`, `.alias`, `.zshrc`, `.zshenv`, `.zprofile` |
+| `pre-commit` | 1. ZSH-Syntax (`zsh -n`) für `.sh`, `.alias`, `.zshrc`, `.zshenv`, `.zprofile`, `.zlogin` |
 |              | 2. Doku-Konsistenz bei `docs/`, `Brewfile`, `terminal/.config/`, `CONTRIBUTING.md`, `terminal/.zsh*` |
 
 ### Hook überspringen (Notfall)

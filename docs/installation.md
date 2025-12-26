@@ -127,8 +127,9 @@ Nach erfolgreicher Installation sind folgende Symlinks aktiv:
 | Symlink | Ziel | Zweck |
 |---------|------|-------|
 | `~/.zshenv` | `terminal/.zshenv` | Umgebungsvariablen (wird zuerst geladen) |
-| `~/.zshrc` | `terminal/.zshrc` | Interactive Shell Konfiguration |
 | `~/.zprofile` | `terminal/.zprofile` | Login Shell (Homebrew Init) |
+| `~/.zshrc` | `terminal/.zshrc` | Interactive Shell Konfiguration |
+| `~/.zlogin` | `terminal/.zlogin` | Post-Login (Background-Optimierungen) |
 | `~/.config/alias/*.alias` | `terminal/.config/alias/*.alias` | 7 Alias-Dateien (homebrew, eza, bat, ripgrep, fd, fzf, btop) |
 | `~/.config/fzf/config` | `terminal/.config/fzf/config` | fzf globale Optionen |
 | `~/.config/bat/config` | `terminal/.config/bat/config` | bat Theme und Style |
@@ -138,7 +139,7 @@ Nach erfolgreicher Installation sind folgende Symlinks aktiv:
 
 ```zsh
 # Alle Shell-Konfigurationsdateien
-ls -la ~/.zshenv ~/.zshrc ~/.zprofile
+ls -la ~/.zshenv ~/.zprofile ~/.zshrc ~/.zlogin
 
 # Alias- und Tool-Konfigurationen
 ls -la ~/.config/alias/ ~/.config/fzf/ ~/.config/bat/ ~/.config/ripgrep/
@@ -172,7 +173,7 @@ cd ~/dotfiles
 
 | Komponente | Prüfung |
 |------------|---------|
-| **Symlinks** | `.zshenv`, `.zshrc`, `.zprofile`, alle Alias-Dateien, Tool-Configs |
+| **Symlinks** | `.zshenv`, `.zprofile`, `.zshrc`, `.zlogin`, alle Alias-Dateien, Tool-Configs |
 | **CLI-Tools** | fzf, stow, starship, zoxide, eza, bat, ripgrep, fd, btop, gh, mas (optional) |
 | **Nerd Font** | MesloLG Nerd Font in `~/Library/Fonts/` |
 | **Terminal-Profil** | `tshofmann` als Standard- und Startup-Profil |

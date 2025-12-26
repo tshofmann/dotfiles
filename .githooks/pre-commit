@@ -4,7 +4,7 @@
 # ============================================================
 # Prüft:
 #   1. Syntax-Check für ZSH-Dateien (zsh -n)
-#      - *.sh, *.alias, .zshrc, .zshenv, .zprofile, pre-commit
+#      - *.sh, *.alias, .zshrc, .zshenv, .zprofile, .zlogin, pre-commit
 #   2. Doku-Konsistenz bei relevanten Änderungen
 #
 # Install : git config core.hooksPath .githooks
@@ -17,7 +17,7 @@ changed_files=$(git diff --cached --name-only)
 # 1. Syntax-Check für ZSH-Dateien
 # ------------------------------------------------------------
 # Alle Dateien die zsh-Syntax enthalten
-zsh_files=$(echo "$changed_files" | grep -E '\.(sh|alias)$|\.zshrc$|\.zshenv$|\.zprofile$|^\.githooks/pre-commit$' || true)
+zsh_files=$(echo "$changed_files" | grep -E '\.(sh|alias)$|\.zshrc$|\.zshenv$|\.zprofile$|\.zlogin$|^\.githooks/pre-commit$' || true)
 
 if [[ -n "$zsh_files" ]]; then
     echo "🔍 Prüfe ZSH-Syntax..."

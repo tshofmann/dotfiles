@@ -19,6 +19,7 @@ check_symlinks() {
     [[ -f "$terminal_dir/.zshenv" ]] && ((code_count++)) || true
     [[ -f "$terminal_dir/.zshrc" ]] && ((code_count++)) || true
     [[ -f "$terminal_dir/.zprofile" ]] && ((code_count++)) || true
+    [[ -f "$terminal_dir/.zlogin" ]] && ((code_count++)) || true
     
     # Config-Verzeichnisse
     [[ -d "$terminal_dir/.config/alias" ]] && ((code_count++)) || true

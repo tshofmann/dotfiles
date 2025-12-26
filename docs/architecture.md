@@ -45,6 +45,7 @@ dotfiles/
     ├── .zshenv                  # Umgebungsvariablen (wird zuerst geladen)
     ├── .zprofile                # Login-Shell Konfiguration
     ├── .zshrc                   # Interactive Shell Konfiguration
+    ├── .zlogin                  # Post-Login (Background-Optimierungen)
     └── .config/
         ├── fzf/
         │   └── config           # fzf globale Optionen (FZF_DEFAULT_OPTS_FILE)
@@ -335,6 +336,29 @@ done
 | `-` | Folge Symlinks |
 | `.` | Nur reguläre Dateien |
 | `on` | Sortiere nach Name |
+
+### `.zlogin` (Post-Login)
+
+Wird **nach** `.zshrc` geladen, nur bei Login-Shells:
+
+```zsh
+# Background-Kompilierung der Completion-Cache-Datei
+{
+    zcompdump="${ZDOTDIR:-$HOME}/.zcompdump"
+    if [[ -s "$zcompdump" && (! -s "${zcompdump}.zwc" || "$zcompdump" -nt "${zcompdump}.zwc") ]]; then
+        zcompile "$zcompdump"
+    fi
+} &!
+```
+
+| Aspekt | Beschreibung |
+|--------|--------------|
+| **Zweck** | Kompiliert `.zcompdump` zu `.zcompdump.zwc` im Hintergrund |
+| **Timing** | Läuft NACH dem Prompt, blockiert nicht den Shell-Start |
+| **`&!`** | Disown – Prozess läuft unabhängig weiter |
+| **Bedingung** | Nur wenn `.zwc` fehlt oder älter als `.zcompdump` ist |
+
+> **Hinweis:** Bei aktuellem Setup kein messbarer Performance-Unterschied (~0.1s). Die Optimierung ist eine "Zero-Cost Versicherung" für zukünftige Completions (kubectl, nvm, docker etc.).
 
 ### Tool-Konfiguration
 
