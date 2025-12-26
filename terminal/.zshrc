@@ -99,8 +99,9 @@ fi
 if command -v zoxide >/dev/null 2>&1; then
     # Befehle: z <query> (jump), zi (interaktiv mit fzf)
     # zi-Vorschau mit eza (Dateiliste)
+    # Hinweis: --height nutzt globale fzf-Config (~/.config/fzf/config)
     if command -v eza >/dev/null 2>&1; then
-        export _ZO_FZF_OPTS="--preview 'eza -la --icons --color=always {2..}' --height=40%"
+        export _ZO_FZF_OPTS="--preview 'eza -la --icons --color=always {2..}'"
     fi
     eval "$(zoxide init zsh)"
 fi
@@ -117,9 +118,10 @@ fi
 # ZSH-Plugins (müssen am Ende geladen werden)
 # ------------------------------------------------------------
 # zsh-autosuggestions: History-basierte Vorschläge (→ = akzeptieren)
-[[ -f /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]] && \
-    source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+# Hinweis: $HOMEBREW_PREFIX wird in .zprofile via 'brew shellenv' gesetzt
+[[ -f "${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \
+    source "${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 
 # zsh-syntax-highlighting: Muss als letztes Plugin geladen werden
-[[ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]] && \
-    source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+[[ -f "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
+    source "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
