@@ -91,9 +91,9 @@ if (( MACOS_MAJOR < MACOS_MIN_VERSION )); then
 fi
 
 # Internetverbindung prüfen (erforderlich für Homebrew-Installation und Downloads)
-# Verwendet curl mit kurzem Timeout gegen Apple-Server (zuverlässig erreichbar)
+# Verwendet curl HEAD-Request mit kurzem Timeout gegen Apple-Server (zuverlässig erreichbar)
 CURRENT_STEP="Netzwerk-Prüfung"
-if ! curl -sfL --connect-timeout 5 --max-time 10 "https://apple.com" >/dev/null 2>&1; then
+if ! curl -sfL --head --connect-timeout 5 --max-time 10 "https://apple.com" >/dev/null 2>&1; then
   err "Keine Internetverbindung verfügbar"
   err "Das Bootstrap-Skript benötigt eine aktive Internetverbindung für:"
   err "  • Homebrew-Installation"
