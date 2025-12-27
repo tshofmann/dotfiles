@@ -30,6 +30,7 @@ typeset -gA ALIAS_MAPPINGS=(
 # ------------------------------------------------------------
 validate_alias_names() {
     local tools_md="$DOCS_DIR/tools.md"
+    local alias_dir="$TERMINAL_DIR/.config/alias"
     local errors=0
     
     [[ -f "$tools_md" ]] || { err "tools.md nicht gefunden"; return 1; }
@@ -42,15 +43,24 @@ validate_alias_names() {
     # Erstelle kombinierte Liste aller gültigen Befehle
     local -a all_valid_commands=("${ALL_ALIASES[@]}" "${ALL_FUNCTIONS[@]}")
     
-    # Standard-Shell-Befehle hinzufügen (die nicht als Alias definiert sind)
+    # Standard-Shell-Befehle und System-Tools hinzufügen
     local -a shell_builtins=(
-        cd ls cat grep sed awk find xargs head tail sort uniq
-        echo print printf mkdir rm cp mv ln chmod chown
-        git docker kubectl npm node python pip brew
-        man which type whereis file stat du df
-        z zi  # zoxide Basis-Befehle
-        rg fd bat eza btop fzf  # CLI-Tools selbst
-        nvim vim code  # Editoren
+        # Shell-Builtins
+        cd ls cat grep sed awk find xargs head tail sort uniq wc
+        echo print printf mkdir rm cp mv ln chmod chown touch
+        source eval exec export set unset local typeset
+        compinit autoload zstyle bindkey  # zsh-spezifisch
+        # Entwickler-Tools
+        git docker kubectl npm node python pip brew mas
+        man which type whereis file stat du df ps kill
+        # Navigation
+        z zi zoxide  # zoxide Basis-Befehle
+        # CLI-Tools (aus Brewfile)
+        rg fd bat eza btop fzf gh stow
+        # Editoren
+        nvim vim vi code nano
+        # macOS-spezifisch
+        open pbcopy pbpaste defaults osascript
     )
     all_valid_commands+=("${shell_builtins[@]}")
     
@@ -59,32 +69,24 @@ validate_alias_names() {
     
     debug "Gültige Befehle gesamt: ${#all_valid_commands[@]}"
     
-    # Extrahiere dokumentierte Aliase aus tools.md Tabellen
+    # DYNAMISCH: Extrahiere dokumentierte Aliase aus allen *.alias Dateien
     local -a doc_aliases=()
+    local base_name section_name
     
-    # Ripgrep Aliase
-    local -a rg_doc=($(extract_aliases_from_docs "$tools_md" "ripgrep"))
-    doc_aliases+=("${rg_doc[@]}")
-    
-    # fd Aliase
-    local -a fd_doc=($(extract_aliases_from_docs "$tools_md" "fd"))
-    doc_aliases+=("${fd_doc[@]}")
-    
-    # eza Aliase
-    local -a eza_doc=($(extract_aliases_from_docs "$tools_md" "eza"))
-    doc_aliases+=("${eza_doc[@]}")
-    
-    # bat Aliase
-    local -a bat_doc=($(extract_aliases_from_docs "$tools_md" "bat"))
-    doc_aliases+=("${bat_doc[@]}")
-    
-    # btop Aliase
-    local -a btop_doc=($(extract_aliases_from_docs "$tools_md" "btop"))
-    doc_aliases+=("${btop_doc[@]}")
-    
-    # homebrew Aliase
-    local -a brew_doc=($(extract_aliases_from_docs "$tools_md" "homebrew"))
-    doc_aliases+=("${brew_doc[@]}")
+    for alias_file in "$alias_dir"/*.alias(N); do
+        [[ -f "$alias_file" ]] || continue
+        base_name=$(basename "$alias_file" .alias)
+        
+        # Versuche den passenden Abschnitt in tools.md zu finden
+        # Format: ### <name>.alias
+        if grep -q "### ${base_name}.alias" "$tools_md" 2>/dev/null; then
+            local -a tool_doc=($(extract_aliases_from_docs "$tools_md" "$base_name"))
+            doc_aliases+=("${tool_doc[@]}")
+            debug "Geladen aus $base_name.alias: ${#tool_doc[@]} Einträge"
+        else
+            debug "Kein Doku-Abschnitt für $base_name.alias gefunden"
+        fi
+    done
     
     # Deduplizieren
     doc_aliases=(${(u)doc_aliases})
@@ -110,8 +112,10 @@ validate_alias_names() {
         ok "Alle dokumentierten Aliase existieren im Code"
     fi
     
-    # Prüfe auch umgekehrt: Undokumentierte Aliase
+    # Prüfe auch umgekehrt: Undokumentierte Aliase UND Funktionen
     local -a undocumented=()
+    
+    # Prüfe Aliase
     for alias_name in "${ALL_ALIASES[@]}"; do
         # Ignoriere interne/private Aliase (mit Underscore)
         [[ "$alias_name" == _* ]] && continue
@@ -121,20 +125,35 @@ validate_alias_names() {
         fi
     done
     
+    # Prüfe auch Funktionen (außer die in fzf.alias, die werden separat geprüft)
+    local fzf_funcs=($(extract_functions_from_file "$ALIAS_DIR/fzf.alias" 2>/dev/null))
+    for func_name in "${ALL_FUNCTIONS[@]}"; do
+        # Ignoriere interne/private Funktionen (mit Underscore)
+        [[ "$func_name" == _* ]] && continue
+        # Ignoriere fzf.alias Funktionen (werden separat geprüft)
+        [[ " ${fzf_funcs[*]} " =~ " ${func_name} " ]] && continue
+        
+        if [[ ! " ${doc_aliases[*]} " =~ " ${func_name} " ]]; then
+            undocumented+=("$func_name (Funktion)")
+        fi
+    done
+    
     if (( ${#undocumented[@]} > 0 )); then
-        warn "Undokumentierte Aliase gefunden (${#undocumented[@]}):"
-        for alias_name in "${undocumented[@]}"; do
-            print "   ${YELLOW}→${NC} $alias_name"
+        err "Undokumentierte Aliase/Funktionen gefunden (${#undocumented[@]}):"
+        for item in "${undocumented[@]}"; do
+            print "   ${RED}→${NC} $item"
         done
+        ((errors += ${#undocumented[@]}))
     else
-        ok "Keine undokumentierten Aliase"
+        ok "Alle Aliase und Funktionen sind dokumentiert"
     fi
     
     return $errors
 }
 
 # ------------------------------------------------------------
-# Validierung: FZF-Funktionen
+# Validierung: FZF-Funktionen (nur generische in fzf.alias)
+# Tool-spezifische fzf-Funktionen werden über validate_alias_names geprüft
 # ------------------------------------------------------------
 validate_fzf_functions() {
     local tools_md="$DOCS_DIR/tools.md"
@@ -146,32 +165,36 @@ validate_fzf_functions() {
     
     log "Prüfe FZF-Funktionen..."
     
-    # Extrahiere Funktionen aus Code
+    # Extrahiere Funktionen aus fzf.alias Code
     local -a code_functions=($(extract_functions_from_file "$fzf_alias"))
     
-    # Extrahiere dokumentierte Funktionen aus dem gesamten fzf-Bereich
-    # Die FZF-Funktionen sind unter "### fzf.alias" dokumentiert
+    # Extrahiere nur die generischen FZF-Funktionen aus der Dokumentation
+    # (Tabellen unter "Zoxide + fzf" und "System-Utilities")
     local -a doc_functions=()
     
-    # Alle FZF-Funktions-Tabellen durchsuchen
+    # Suche nur in fzf.alias-Sektion nach Tabellen
     local in_fzf_section=false
+    local in_reference_section=false
     while IFS= read -r line; do
         # Prüfe ob wir in der fzf.alias-Sektion sind
         if [[ "$line" == "### fzf.alias"* ]]; then
             in_fzf_section=true
             continue
         fi
-        # Beende bei nächster ###-Sektion (aber nicht bei ####)
+        # Beende bei nächster ###-Sektion
         if [[ "$line" == "### "* ]] && [[ "$line" != "### fzf"* ]] && $in_fzf_section; then
             break
         fi
-        # Extrahiere Funktionsnamen aus Tabellenzeilen
-        if $in_fzf_section && [[ "$line" == "| \`"* ]]; then
-            # Extrahiere Text zwischen erstem ` und zweitem `
+        # Überspringe Referenz-Sektion (zeigt wo andere Funktionen sind)
+        if [[ "$line" == *"Tool-spezifische"* ]]; then
+            in_reference_section=true
+            continue
+        fi
+        # Extrahiere Funktionsnamen aus Tabellenzeilen (aber nicht aus Referenz)
+        if $in_fzf_section && ! $in_reference_section && [[ "$line" == "| \`"* ]]; then
             local func_name=$(echo "$line" | sed 's/^| `//' | sed 's/`.*//')
-            # Entferne Parameter wie [query] oder [path]
             func_name=$(echo "$func_name" | awk '{print $1}')
-            # Ignoriere leere oder zu kurze Namen und zi (zoxide builtin)
+            # Ignoriere zi (zoxide builtin, nicht in fzf.alias)
             if [[ -n "$func_name" ]] && [[ ${#func_name} -gt 1 ]] && [[ "$func_name" != "zi" ]]; then
                 doc_functions+=("$func_name")
             fi

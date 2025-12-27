@@ -1,0 +1,75 @@
+# ============================================================
+# git.alias - Git Aliase
+# ============================================================
+# Zweck   : Aliase für häufige Git-Operationen
+# Pfad    : ~/.config/alias/git.alias
+# Docs    : https://git-scm.com/docs
+# ============================================================
+# Hinweis : Interaktive Git-Funktionen (mit fzf) sind in
+#           fzf.alias definiert: glog, gbr, gst, gstash
+# ============================================================
+
+# Guard: Aliase nur aktivieren wenn git installiert ist
+if ! command -v git >/dev/null 2>&1; then
+    return 0
+fi
+
+# ------------------------------------------------------------
+# Essenzielle Aliase
+# ------------------------------------------------------------
+alias ga='git add'
+alias gc='git commit'
+alias gcm='git commit -m'
+alias gacm='git add --all && git commit -m'
+alias gp='git push'
+alias gpl='git pull'
+alias gco='git checkout'
+alias gs='git status'
+alias gd='git diff'
+
+# ------------------------------------------------------------
+# Interaktive Funktionen (mit fzf)
+# ------------------------------------------------------------
+if command -v fzf >/dev/null 2>&1; then
+    # glog: Git Log mit Commit-Vorschau
+    glog() {
+        git log --oneline --color=always --decorate | \
+            fzf --ansi --no-sort --reverse \
+                --preview 'git show --color=always {1} | bat --color=always -l diff' \
+                --header='Enter: Anzeigen | Ctrl+Y: SHA kopieren' \
+                --bind 'enter:execute(git show --color=always {1} | less -R)' \
+                --bind 'ctrl-y:execute-silent(echo -n {1} | pbcopy)+abort'
+    }
+    
+    # gbr: Git Branch wechseln mit Vorschau
+    gbr() {
+        git branch --all --color=always | \
+            grep -v HEAD | \
+            fzf --ansi \
+                --preview 'git log --oneline --color=always {1} | head -20' \
+                --header='Enter: Wechseln | Ctrl+D: Löschen' \
+                --bind 'enter:execute(git checkout {1})' \
+                --bind 'ctrl-d:execute(git branch -d {1})'
+    }
+    
+    # gst: Git Status mit Diff-Vorschau
+    gst() {
+        git -c color.status=always status --short | \
+            fzf --ansi --multi \
+                --preview 'git diff --color=always -- {2} | bat --color=always -l diff' \
+                --header='Tab: Auswählen | Enter: Add | Ctrl+R: Reset' \
+                --bind 'enter:execute(git add {+2})' \
+                --bind 'ctrl-r:execute(git restore {+2})'
+    }
+    
+    # gstash: Stash-Browser
+    gstash() {
+        git stash list | \
+            fzf --ansi \
+                --preview 'git stash show -p {1} | bat --color=always -l diff' \
+                --header='Enter: Anwenden | Ctrl+D: Löschen | Ctrl+P: Pop' \
+                --bind 'enter:execute(git stash apply {1})' \
+                --bind 'ctrl-d:execute(git stash drop {1})' \
+                --bind 'ctrl-p:execute(git stash pop {1})'
+    }
+fi

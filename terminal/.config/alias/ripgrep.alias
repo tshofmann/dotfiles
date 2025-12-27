@@ -37,3 +37,23 @@ alias rgmd='rg -t md'                   # Markdown
 alias rgsh='rg -t sh'                   # Shell-Skripte
 alias rgrb='rg -t ruby'                 # Ruby
 alias rggo='rg -t go'                   # Go
+
+# ------------------------------------------------------------
+# Interaktive Suche (mit fzf)
+# ------------------------------------------------------------
+# rgf: Live-Grep mit fzf + bat Vorschau
+# Verwendung: rgf [initiale-suche]
+if command -v fzf >/dev/null 2>&1; then
+    rgf() {
+        local rg_prefix="rg --column --line-number --no-heading --color=always --smart-case"
+        local preview_cmd="bat --color=always {1} --highlight-line {2} 2>/dev/null || cat {1}"
+        
+        fzf --ansi --disabled --query "${*:-}" \
+            --bind "start:reload:$rg_prefix {q} || true" \
+            --bind "change:reload:sleep 0.1; $rg_prefix {q} || true" \
+            --delimiter : \
+            --preview "$preview_cmd" \
+            --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' \
+            --bind 'enter:become(${EDITOR:-vim} {1} +{2})'
+    }
+fi

@@ -28,3 +28,43 @@ alias fdjs='fd -e js -e ts'                 # JavaScript/TypeScript
 alias fdmd='fd --extension md'              # Markdown-Dateien
 alias fdjson='fd --extension json'          # JSON-Dateien
 alias fdyaml='fd -e yaml -e yml'            # YAML-Dateien
+
+# ------------------------------------------------------------
+# Interaktive Funktionen (mit fzf)
+# ------------------------------------------------------------
+if command -v fzf >/dev/null 2>&1; then
+    # cdf: Verzeichnis wechseln mit Vorschau
+    cdf() {
+        local dir
+        local preview_cmd="eza --tree --level=1 --icons --color=always {} 2>/dev/null || ls -la {}"
+        
+        dir=$(fd --type d --hidden --follow --exclude .git . "${1:-.}" | \
+            fzf --preview "$preview_cmd")
+        
+        [[ -n "$dir" ]] && cd "$dir"
+    }
+    
+    # fe: Fuzzy Edit - Datei suchen und im Editor öffnen
+    fe() {
+        local files
+        local preview_cmd="bat --color=always --line-range=:500 {} 2>/dev/null || cat {}"
+        
+        IFS=$'\n' files=($(fd --type f --hidden --follow --exclude .git . "${1:-.}" | \
+            fzf --multi \
+                --preview "$preview_cmd" \
+                --bind 'ctrl-/:change-preview-window(down|hidden|)'))
+        
+        [[ -n "${files[*]}" ]] && ${EDITOR:-vim} "${files[@]}"
+    }
+    
+    # fo: Fuzzy Open - Datei suchen und mit open öffnen (macOS)
+    fo() {
+        local file
+        local preview_cmd="bat --color=always --line-range=:500 {} 2>/dev/null || file {}"
+        
+        file=$(fd --type f --hidden --follow --exclude .git . "${1:-.}" | \
+            fzf --preview "$preview_cmd")
+        
+        [[ -n "$file" ]] && open "$file"
+    }
+fi

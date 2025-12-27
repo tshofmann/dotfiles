@@ -1,0 +1,60 @@
+# ============================================================
+# gh.alias - GitHub CLI Aliase und Funktionen
+# ============================================================
+# Zweck   : Interaktive GitHub-Workflows mit gh CLI
+# Pfad    : ~/.config/alias/gh.alias
+# Docs    : https://cli.github.com/manual/
+# ============================================================
+
+# Guard: Nur wenn gh installiert ist
+if ! command -v gh >/dev/null 2>&1; then
+    return 0
+fi
+
+# ------------------------------------------------------------
+# Interaktive Funktionen (mit fzf)
+# ------------------------------------------------------------
+if command -v fzf >/dev/null 2>&1; then
+    # ghpr: Interaktive PR-Auswahl mit Vorschau
+    ghpr() {
+        gh pr list --limit 50 | \
+            fzf --ansi \
+                --preview 'gh pr view {1}' \
+                --header='Enter: Checkout | Ctrl+O: Im Browser öffnen | Ctrl+D: Diff' \
+                --bind 'enter:execute(gh pr checkout {1})' \
+                --bind 'ctrl-o:execute-silent(gh pr view {1} --web)' \
+                --bind 'ctrl-d:execute(gh pr diff {1} | bat --color=always -l diff)'
+    }
+    
+    # ghis: Interaktive Issue-Auswahl
+    ghis() {
+        gh issue list --limit 50 | \
+            fzf --ansi \
+                --preview 'gh issue view {1}' \
+                --header='Enter: Im Browser öffnen | Ctrl+E: Bearbeiten' \
+                --bind 'enter:execute-silent(gh issue view {1} --web)' \
+                --bind 'ctrl-e:execute(gh issue edit {1})'
+    }
+    
+    # ghrun: GitHub Actions Runs anzeigen
+    ghrun() {
+        gh run list --limit 20 | \
+            fzf --ansi \
+                --preview 'gh run view {1}' \
+                --header='Enter: Logs anzeigen | Ctrl+O: Im Browser | Ctrl+R: Wiederholen' \
+                --bind 'enter:execute(gh run view {1} --log | bat --color=always)' \
+                --bind 'ctrl-o:execute-silent(gh run view {1} --web)' \
+                --bind 'ctrl-r:execute(gh run rerun {1})'
+    }
+    
+    # ghrepo: Repository-Auswahl für schnelles Klonen
+    ghrepo() {
+        local query="${1:-}"
+        gh repo list --limit 30 ${query:+--source} | \
+            fzf --ansi \
+                --preview 'gh repo view {1}' \
+                --header='Enter: Klonen | Ctrl+O: Im Browser öffnen' \
+                --bind 'enter:execute(gh repo clone {1})' \
+                --bind 'ctrl-o:execute-silent(gh repo view {1} --web)'
+    }
+fi
