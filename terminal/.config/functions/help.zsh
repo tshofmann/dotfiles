@@ -131,7 +131,8 @@ _help_search() {
         
         # Search in aliases
         while IFS='|' read -r name cmd desc; do
-            if [[ "$name" =~ "$query" || "$cmd" =~ "$query" || "$desc" =~ "$query" ]]; then
+            # Case-insensitive search
+            if [[ "${name:l}" =~ "${query:l}" || "${cmd:l}" =~ "${query:l}" || "${desc:l}" =~ "${query:l}" ]]; then
                 if [[ $category_printed -eq 0 ]]; then
                     echo "${_HELP_COLOR_CATEGORY}[$category]${_HELP_COLOR_RESET}"
                     category_printed=1
@@ -144,7 +145,8 @@ _help_search() {
         
         # Search in functions
         while IFS='|' read -r name desc; do
-            if [[ "$name" =~ "$query" || "$desc" =~ "$query" ]]; then
+            # Case-insensitive search
+            if [[ "${name:l}" =~ "${query:l}" || "${desc:l}" =~ "${query:l}" ]]; then
                 if [[ $category_printed -eq 0 ]]; then
                     echo "${_HELP_COLOR_CATEGORY}[$category]${_HELP_COLOR_RESET}"
                     category_printed=1
