@@ -8,6 +8,12 @@
 # HINWEIS : Dieser Check prüft die INSTALLATION auf dem System.
 #           Für Konsistenz Doku↔Code: ./scripts/validate-docs.sh
 #
+# Design  : DYNAMISCH – erkennt automatisch neue Dateien in:
+#           - terminal/.zsh* (Shell-Konfiguration)
+#           - terminal/.config/alias/*.alias (Alias-Dateien)
+#           - terminal/.config/*/{config,ignore} (Tool-Configs)
+#           - setup/Brewfile (CLI-Tools via brew)
+#
 # Aufruf  : ./scripts/health-check.sh
 # Docs    : https://github.com/tshofmann/dotfiles#readme
 # ============================================================
@@ -19,6 +25,8 @@ set -uo pipefail
 # ------------------------------------------------------------
 readonly SCRIPT_DIR="${0:A:h}"
 readonly DOTFILES_DIR="${SCRIPT_DIR:h}"
+readonly TERMINAL_DIR="$DOTFILES_DIR/terminal"
+readonly BREWFILE="$DOTFILES_DIR/setup/Brewfile"
 
 # Zähler für Ergebnisse
 typeset -i passed=0
@@ -71,59 +79,102 @@ check_tool() {
 }
 
 # ------------------------------------------------------------
+# Brewfile-Parser: Extrahiert Tool-Namen
+# ------------------------------------------------------------
+# Liest brew-Formulae aus Brewfile und gibt Tool-Namen zurück
+# Filtert ZSH-Plugins (haben kein Binary) und mappt abweichende Namen
+get_tools_from_brewfile() {
+  local brewfile="$1"
+  [[ -f "$brewfile" ]] || return 1
+  
+  # Mapping: Formula-Name → Binary-Name (falls unterschiedlich)
+  typeset -A tool_mapping=(
+    [ripgrep]=rg
+  )
+  
+  # Formulae die kein eigenständiges Binary haben (werden separat geprüft)
+  typeset -a skip_formulae=(
+    zsh-syntax-highlighting
+    zsh-autosuggestions
+  )
+  
+  # Extrahiere brew-Formulae (keine casks, keine mas)
+  grep -E '^brew "[^"]+"' "$brewfile" | \
+    sed 's/brew "\([^"]*\)".*/\1/' | \
+    while read -r formula; do
+      # Überspringe Formulae ohne Binary
+      if (( ${skip_formulae[(Ie)$formula]} )); then
+        continue
+      fi
+      # Verwende Mapping falls vorhanden, sonst Formula-Name
+      print "${tool_mapping[$formula]:-$formula}"
+    done
+}
+
+# ------------------------------------------------------------
 # Hauptprüfungen
 # ------------------------------------------------------------
 print "🔍 dotfiles Health Check (Systemprüfung)"
 print "   Prüft ob alle Komponenten korrekt installiert sind"
+print "   ℹ Dynamische Erkennung aus terminal/ und Brewfile"
 
-# --- Symlinks ---
-section "Symlinks"
+# --- Symlinks: ZSH-Dotfiles ---
+section "Symlinks (ZSH-Konfiguration)"
 
-check_symlink "$HOME/.zshenv" "dotfiles/terminal/.zshenv" "~/.zshenv"
-check_symlink "$HOME/.zshrc" "dotfiles/terminal/.zshrc" "~/.zshrc"
-check_symlink "$HOME/.zprofile" "dotfiles/terminal/.zprofile" "~/.zprofile"
-
-# Alias-Dateien
-for alias_file in homebrew eza bat ripgrep fd fzf btop; do
-  check_symlink "$HOME/.config/alias/${alias_file}.alias" \
-                "dotfiles/terminal/.config/alias/${alias_file}.alias" \
-                "~/.config/alias/${alias_file}.alias"
+# DYNAMISCH: Alle ZSH-Konfigurationsdateien im terminal/ Verzeichnis
+# Matcht: .zshenv, .zshrc, .zprofile, .zlogin (alle Standard-ZSH-Dateien)
+for dotfile in "$TERMINAL_DIR"/.z(shenv|shrc|profile|login)(N); do
+  [[ -f "$dotfile" ]] || continue
+  local filename="${dotfile:t}"
+  check_symlink "$HOME/$filename" "dotfiles/terminal/$filename" "~/$filename"
 done
 
-# Tool-Konfigurationen
-check_symlink "$HOME/.config/fzf/config" "dotfiles/terminal/.config/fzf/config" "~/.config/fzf/config"
-check_symlink "$HOME/.config/bat/config" "dotfiles/terminal/.config/bat/config" "~/.config/bat/config"
-check_symlink "$HOME/.config/ripgrep/config" "dotfiles/terminal/.config/ripgrep/config" "~/.config/ripgrep/config"
+# --- Symlinks: Alias-Dateien ---
+section "Symlinks (Alias-Dateien)"
+
+# DYNAMISCH: Alle .alias Dateien
+for alias_file in "$TERMINAL_DIR/.config/alias"/*.alias(N); do
+  [[ -f "$alias_file" ]] || continue
+  local filename="${alias_file:t}"
+  check_symlink "$HOME/.config/alias/$filename" \
+                "dotfiles/terminal/.config/alias/$filename" \
+                "~/.config/alias/$filename"
+done
+
+# --- Symlinks: Tool-Konfigurationen ---
+section "Symlinks (Tool-Konfigurationen)"
+
+# DYNAMISCH: Alle config/ignore Dateien in .config/*/
+for config_file in "$TERMINAL_DIR/.config"/*/(config|ignore)(N); do
+  [[ -f "$config_file" ]] || continue
+  # Extrahiere relativen Pfad ab .config/
+  local rel_path="${config_file#$TERMINAL_DIR/}"
+  local display_path="~/${rel_path}"
+  check_symlink "$HOME/$rel_path" "dotfiles/terminal/$rel_path" "$display_path"
+done
 
 # --- Homebrew & Tools ---
 section "Homebrew & CLI-Tools"
 
 if command -v brew >/dev/null 2>&1; then
   pass "Homebrew installiert ($(brew --version | head -1))"
+  
+  # DYNAMISCH: Tools aus Brewfile extrahieren
+  if [[ -f "$BREWFILE" ]]; then
+    local -a tools=($(get_tools_from_brewfile "$BREWFILE"))
+    for tool in "${tools[@]}"; do
+      check_tool "$tool" "$tool"
+    done
+  else
+    warn "Brewfile nicht gefunden: $BREWFILE"
+  fi
 else
   fail "Homebrew nicht installiert"
 fi
 
-# Pflicht-Tools aus Brewfile
-check_tool "fzf" "fzf (Fuzzy Finder)"
-check_tool "stow" "GNU Stow"
-check_tool "starship" "Starship Prompt"
-check_tool "zoxide" "zoxide (smarter cd)"
-check_tool "eza" "eza (ls-Ersatz)"
-check_tool "bat" "bat (cat-Ersatz)"
-check_tool "rg" "ripgrep (grep-Ersatz)"
-check_tool "fd" "fd (find-Ersatz)"
-check_tool "btop" "btop (top-Ersatz)"
-check_tool "gh" "GitHub CLI"
+# ZSH-Plugins (aus Brewfile, aber spezielle Prüfung da kein Binary)
+section "ZSH-Plugins"
 
-# Optionale Tools
-if command -v mas >/dev/null 2>&1; then
-  pass "mas (Mac App Store CLI)"
-else
-  warn "mas nicht installiert (optional, für App Store Updates)"
-fi
-
-# ZSH-Plugins
 for plugin in zsh-syntax-highlighting zsh-autosuggestions; do
   if [[ -d "$(brew --prefix)/share/$plugin" ]]; then
     pass "$plugin"
