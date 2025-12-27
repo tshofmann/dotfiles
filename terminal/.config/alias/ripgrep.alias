@@ -17,26 +17,47 @@ fi
 # ------------------------------------------------------------
 # Basis-Suche (--smart-case ist global default)
 # ------------------------------------------------------------
-alias rgc='rg -C 3'                     # Mit Kontext (3 Zeilen)
-alias rgi='rg --ignore-case'            # Case-insensitive (immer)
+# Mit Kontext (3 Zeilen vor/nach)
+alias rgc='rg -C 3'
+
+# Case-insensitive (immer)
+alias rgi='rg --ignore-case'
 
 # ------------------------------------------------------------
 # Erweiterte Suche
 # ------------------------------------------------------------
-alias rga='rg -uuu'                     # Alle Dateien (ignoriert nichts)
-alias rgh='rg --hidden'                 # Inkl. versteckte Dateien
-alias rgl='rg --files-with-matches'     # Nur Dateinamen mit Treffern
-alias rgn='rg --count'                  # Treffer-Anzahl pro Datei
+# Alle Dateien (ignoriert nichts)
+alias rga='rg -uuu'
+
+# Inkl. versteckte Dateien
+alias rgh='rg --hidden'
+
+# Nur Dateinamen mit Treffern
+alias rgl='rg --files-with-matches'
+
+# Treffer-Anzahl pro Datei
+alias rgn='rg --count'
 
 # ------------------------------------------------------------
 # Dateityp-Filter
 # ------------------------------------------------------------
-alias rgts='rg -t ts -t js'             # TypeScript/JavaScript
-alias rgpy='rg -t py'                   # Python
-alias rgmd='rg -t md'                   # Markdown
-alias rgsh='rg -t sh'                   # Shell-Skripte
-alias rgrb='rg -t ruby'                 # Ruby
-alias rggo='rg -t go'                   # Go
+# TypeScript/JavaScript durchsuchen
+alias rgts='rg -t ts -t js'
+
+# Python durchsuchen
+alias rgpy='rg -t py'
+
+# Markdown durchsuchen
+alias rgmd='rg -t md'
+
+# Shell-Skripte durchsuchen
+alias rgsh='rg -t sh'
+
+# Ruby durchsuchen
+alias rgrb='rg -t ruby'
+
+# Go durchsuchen
+alias rggo='rg -t go'
 
 # ------------------------------------------------------------
 # Interaktive Suche (mit fzf)

@@ -14,7 +14,7 @@ fi
 # ------------------------------------------------------------
 # Dateiansicht
 # ------------------------------------------------------------
-# cat-Ersatz: Plain + kein Pager (verhält sich wie cat)
+# cat-Ersatz: Plain + kein Pager
 alias cat='bat -pp'
 
 # Mit Syntax-Highlighting, aber ohne Pager

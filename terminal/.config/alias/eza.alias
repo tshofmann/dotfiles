@@ -16,7 +16,7 @@ fi
 # ------------------------------------------------------------
 # Basis-Auflistung
 # ------------------------------------------------------------
-# ls-Ersatz (Icons durch EZA_ICONS_AUTO automatisch)
+# Dateien mit Icons anzeigen
 alias ls='eza --group-directories-first'
 
 # Ausführliche Auflistung (long format)
@@ -28,13 +28,19 @@ alias la='eza -la --group-directories-first --header'
 # ------------------------------------------------------------
 # Mit Git-Integration (nur in Git-Repos sinnvoll)
 # ------------------------------------------------------------
+# Long-Format mit Git-Status
 alias lsg='eza -l --git --header'
+
+# Alle Dateien mit Git-Status
 alias lag='eza -la --git --header'
 
 # ------------------------------------------------------------
 # Baumansicht
 # ------------------------------------------------------------
+# Baumansicht (2 Ebenen)
 alias lt='eza --tree --level=2'
+
+# Baumansicht (3 Ebenen)
 alias lt3='eza --tree --level=3'
 
 # ------------------------------------------------------------

@@ -9,8 +9,7 @@
 # ------------------------------------------------------------
 # Update & Wartung
 # ------------------------------------------------------------
-# Vollständiges System-Update: stoppt bei Fehlern pro Schritt
-# Inkl. mas (Mac App Store) falls installiert
+# Vollständiges System-Update (brew + mas)
 if command -v mas >/dev/null 2>&1; then
     alias brewup='brew update && brew upgrade && mas upgrade && brew autoremove && brew cleanup'
 else
@@ -20,16 +19,22 @@ fi
 # ------------------------------------------------------------
 # Mac App Store (mas)
 # ------------------------------------------------------------
-# Voraussetzung: Anmeldung im App Store über App Store.app
-# Hinweis: mas account/signin sind seit macOS 12+ nicht verfügbar
-# Docs: https://github.com/mas-cli/mas
 # Guard: nur wenn mas installiert ist
 if command -v mas >/dev/null 2>&1; then
-    alias maso='mas outdated'               # Zeige veraltete Apps
-    alias masu='mas upgrade'                # Aktualisiere alle Apps
-    alias mass='mas search'                 # Suche im App Store (Name → ID)
-    alias masi='mas install'                # Installiere App (benötigt ID)
-    alias masl='mas list'                   # Liste installierte Apps (ID + Name)
+    # Zeige veraltete Apps
+    alias maso='mas outdated'
+    
+    # Aktualisiere alle Apps
+    alias masu='mas upgrade'
+    
+    # Suche im App Store (Name → ID)
+    alias mass='mas search'
+    
+    # Installiere App (benötigt ID)
+    alias masi='mas install'
+    
+    # Liste installierte Apps
+    alias masl='mas list'
 fi
 
 # ------------------------------------------------------------

@@ -14,20 +14,38 @@ fi
 # ------------------------------------------------------------
 # Basis-Aliase
 # ------------------------------------------------------------
-alias fdf='fd --type f'                     # Nur Dateien
-alias fdd='fd --type d'                     # Nur Verzeichnisse
-alias fdh='fd --hidden'                     # Inkl. versteckte Dateien
-alias fda='fd -u'                           # Alles (unrestricted = -HI)
+# Nur Dateien suchen
+alias fdf='fd --type f'
+
+# Nur Verzeichnisse suchen
+alias fdd='fd --type d'
+
+# Inkl. versteckte Dateien
+alias fdh='fd --hidden'
+
+# Alles (unrestricted = -HI)
+alias fda='fd -u'
 
 # ------------------------------------------------------------
 # Typspezifische Suche
 # ------------------------------------------------------------
-alias fdsh='fd --extension sh'              # Shell-Skripte
-alias fdpy='fd --extension py'              # Python-Dateien
-alias fdjs='fd -e js -e ts'                 # JavaScript/TypeScript
-alias fdmd='fd --extension md'              # Markdown-Dateien
-alias fdjson='fd --extension json'          # JSON-Dateien
-alias fdyaml='fd -e yaml -e yml'            # YAML-Dateien
+# Shell-Skripte suchen
+alias fdsh='fd --extension sh'
+
+# Python-Dateien suchen
+alias fdpy='fd --extension py'
+
+# JavaScript/TypeScript suchen
+alias fdjs='fd -e js -e ts'
+
+# Markdown-Dateien suchen
+alias fdmd='fd --extension md'
+
+# JSON-Dateien suchen
+alias fdjson='fd --extension json'
+
+# YAML-Dateien suchen
+alias fdyaml='fd -e yaml -e yml'
 
 # ------------------------------------------------------------
 # Interaktive Funktionen (mit fzf)

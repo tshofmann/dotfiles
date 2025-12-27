@@ -46,6 +46,18 @@ for alias_file in "$HOME/.config/alias"/*.alias(N-.on); do
 done
 
 # ------------------------------------------------------------
+# Funktionen laden (lazy loading)
+# ------------------------------------------------------------
+# help-Funktion wird beim ersten Aufruf geladen
+help() {
+    # Beim ersten Aufruf: Funktion laden
+    unfunction help
+    source "${HOME}/.config/functions/help.zsh"
+    # Dann aufrufen
+    help "$@"
+}
+
+# ------------------------------------------------------------
 # Tool-Konfigurationen
 # ------------------------------------------------------------
 # Config-Dateien für fzf, ripgrep und bat liegen in ~/.config/
