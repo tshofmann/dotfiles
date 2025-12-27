@@ -245,6 +245,28 @@ else
   warn "HOMEBREW_BUNDLE_FILE nicht gesetzt (neu einloggen nach stow)"
 fi
 
+# --- Help System ---
+section "Help System"
+
+if [[ -f "$HOME/.config/functions/help.zsh" ]]; then
+  pass "help.zsh vorhanden"
+else
+  fail "help.zsh fehlt"
+fi
+
+if [[ -f "$HOME/.config/functions/_help_parser.zsh" ]]; then
+  pass "_help_parser.zsh vorhanden"
+else
+  fail "_help_parser.zsh fehlt"
+fi
+
+# Test if help function is available (will be lazy-loaded)
+if type help >/dev/null 2>&1; then
+  pass "help Funktion verfügbar"
+else
+  fail "help Funktion nicht verfügbar"
+fi
+
 # ------------------------------------------------------------
 # Zusammenfassung
 # ------------------------------------------------------------

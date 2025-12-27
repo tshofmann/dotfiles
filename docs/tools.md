@@ -4,6 +4,43 @@
 
 ---
 
+## 🚀 Interaktives Help-System
+
+Das neue Help-System bietet eine interaktive Übersicht aller Aliase, Funktionen und Tools:
+
+### Befehle
+
+```zsh
+help                    # Übersicht aller Kategorien
+help <kategorie>        # Aliase einer Kategorie (z.B. help git)
+help search <text>      # Suche in Aliasen und Funktionen
+help tools              # Installierte Tools mit Versionen
+help --fzf              # Interaktive fzf-Auswahl
+```
+
+### Beispiele
+
+```zsh
+# Übersicht anzeigen
+help
+
+# Git-Aliase anzeigen
+help git
+
+# Aliase suchen die "add" enthalten
+help search add
+
+# Tool-Versionen prüfen
+help tools
+
+# Interaktive Suche (benötigt fzf)
+help --fzf
+```
+
+> 💡 **Tipp:** Das Help-System nutzt Lazy Loading und beeinträchtigt die Shell-Startzeit nicht.
+
+---
+
 ## Schnellreferenz für Einsteiger
 
 Die wichtigsten Tastenkombinationen und Befehle auf einen Blick:
@@ -31,18 +68,22 @@ Die wichtigsten Tastenkombinationen und Befehle auf einen Blick:
 ### Erste Schritte nach der Installation
 
 ```zsh
-# 1. System aktualisieren
+# 1. Help-System nutzen
+help                   # Übersicht anzeigen
+help git               # Git-Aliase anzeigen
+
+# 2. System aktualisieren
 brewup
 
-# 2. Verzeichnis mit Icons anzeigen
+# 3. Verzeichnis mit Icons anzeigen
 ls
 
-# 3. Datei mit Syntax-Highlighting anzeigen
+# 4. Datei mit Syntax-Highlighting anzeigen
 cat ~/.zshrc
 
-# 4. Frühere Befehle suchen (Ctrl+R drücken, tippen, Enter)
+# 5. Frühere Befehle suchen (Ctrl+R drücken, tippen, Enter)
 
-# 5. Zu einem Verzeichnis springen (lernt mit der Zeit)
+# 6. Zu einem Verzeichnis springen (lernt mit der Zeit)
 z dotfiles
 ```
 
