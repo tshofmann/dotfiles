@@ -1,0 +1,12 @@
+# ============================================================
+# CODEOWNERS - Code-Review Zuständigkeiten
+# ============================================================
+# Docs: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+# ============================================================
+
+# Standard: Repository-Owner für alle Änderungen
+* @tshofmann
+
+# Sicherheitsrelevante Dateien erfordern besondere Aufmerksamkeit
+setup/bootstrap.sh @tshofmann
+.github/SECURITY.md @tshofmann
