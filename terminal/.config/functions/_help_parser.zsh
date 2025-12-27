@@ -9,30 +9,52 @@
 # Parse alias file and extract aliases with descriptions
 # Format: name|command|description
 _help_parse_aliases() {
+    setopt local_options extended_glob
+    
     local file="$1"
     [[ -f "$file" ]] || return 1
     
     local prev_comment=""
     local in_function=0
+    local in_guard_if=0
     
     while IFS= read -r line; do
         # Skip empty lines and section headers
         [[ -z "$line" || "$line" =~ ^#\ =+ || "$line" =~ ^#\ -+ ]] && continue
         
-        # Detect function definitions (to skip them)
-        if [[ "$line" =~ ^[[:space:]]*[a-zA-Z_][a-zA-Z0-9_]*\(\) ]]; then
+        # Special handling for guard clauses (if ! command -v ...)
+        if [[ "$line" =~ ^if\ !\ command\ -v ]]; then
+            in_guard_if=1
+            continue
+        fi
+        
+        # Handle return statements in guards
+        if [[ "$line" =~ ^[[:space:]]*return\ 0 ]]; then
+            continue
+        fi
+        
+        # End of guard if
+        if [[ $in_guard_if -eq 1 ]] && { [[ "$line" == "fi" ]] || [[ "$line" =~ ^[[:space:]]*fi[[:space:]]*$ ]]; }; then
+            in_guard_if=0
+            continue
+        fi
+        
+        # Detect function definitions - skip until closing brace (but not alias lines)
+        if [[ "$line" =~ ^[[:space:]]*[a-zA-Z_][a-zA-Z0-9_]*\(\) ]] && [[ ! "$line" =~ alias ]]; then
             in_function=1
             prev_comment=""
             continue
         fi
         
-        # Detect end of function
+        # End of function blocks (closing brace)
         if [[ $in_function -eq 1 ]]; then
-            [[ "$line" =~ ^\} ]] && in_function=0
+            if [[ "$line" == "}" ]] || [[ "$line" =~ ^[[:space:]]*\}[[:space:]]*$ ]]; then
+                in_function=0
+            fi
             continue
         fi
         
-        # Extract single-line comments
+        # Extract single-line comments (only outside blocks)
         if [[ "$line" =~ ^#\ ([^=].+)$ ]]; then
             local comment="${match[1]}"
             # Skip section comments and documentation links
@@ -58,17 +80,45 @@ _help_parse_aliases() {
 # Parse alias file and extract function definitions
 # Format: name|description
 _help_parse_functions() {
+    setopt local_options extended_glob
+    
     local file="$1"
     [[ -f "$file" ]] || return 1
     
     local prev_comment=""
+    local in_guard_if=0
     local in_function=0
     
     while IFS= read -r line; do
         # Skip empty lines and section headers
         [[ -z "$line" || "$line" =~ ^#\ =+ || "$line" =~ ^#\ -+ ]] && continue
         
-        # Extract single-line comments
+        # Special handling for guard clauses
+        if [[ "$line" =~ ^if\ !\ command\ -v ]]; then
+            in_guard_if=1
+            continue
+        fi
+        
+        # Handle return statements in guards
+        if [[ "$line" =~ ^[[:space:]]*return\ 0 ]]; then
+            continue
+        fi
+        
+        # End of guard if
+        if [[ $in_guard_if -eq 1 ]] && { [[ "$line" == "fi" ]] || [[ "$line" =~ ^[[:space:]]*fi[[:space:]]*$ ]]; }; then
+            in_guard_if=0
+            continue
+        fi
+        
+        # Skip content inside functions
+        if [[ $in_function -eq 1 ]]; then
+            if [[ "$line" == "}" ]] || [[ "$line" =~ ^[[:space:]]*\}[[:space:]]*$ ]]; then
+                in_function=0
+            fi
+            continue
+        fi
+        
+        # Extract single-line comments (only outside blocks)
         if [[ "$line" =~ ^#\ ([^=].+)$ ]]; then
             local comment="${match[1]}"
             # Skip section comments and documentation links
@@ -76,12 +126,16 @@ _help_parse_functions() {
                 prev_comment="$comment"
             fi
         # Detect function definitions
-        elif [[ "$line" =~ ^[[:space:]]*([a-zA-Z_][a-zA-Z0-9_]*)\(\) ]]; then
+        elif [[ "$line" =~ ^[[:space:]]*([a-zA-Z_][a-zA-Z0-9_]*)\(\) ]] && [[ ! "$line" =~ alias ]]; then
             local name="${match[1]}"
-            echo "$name|${prev_comment:-}"
+            # Only include if we have a description
+            if [[ -n "$prev_comment" ]]; then
+                echo "$name|$prev_comment"
+            fi
             prev_comment=""
+            in_function=1
         else
-            # Reset comment if we encounter a non-comment, non-function line
+            # Reset comment if we encounter a non-comment line
             [[ ! "$line" =~ ^# ]] && prev_comment=""
         fi
     done < "$file"
