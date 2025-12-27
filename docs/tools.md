@@ -116,7 +116,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `fdf` | `fd --type f` | Nur Dateien suchen |
 | `fdd` | `fd --type d` | Nur Verzeichnisse suchen |
 | `fdh` | `fd --hidden` | Inkl. versteckte Dateien |
-| `fda` | `fd --hidden --no-ignore` | Alles (ignoriert nichts) |
+| `fda` | `fd -u` | Alles (unrestricted = --hidden --no-ignore) |
 | `fdsh` | `fd --extension sh` | Shell-Skripte |
 | `fdpy` | `fd --extension py` | Python-Dateien |
 | `fdjs` | `fd -e js -e ts` | JavaScript/TypeScript |

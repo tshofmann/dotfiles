@@ -1,0 +1,42 @@
+# ============================================================
+# fd Global Ignore Patterns
+# ============================================================
+# Zweck   : Globale Ausschlüsse für fd (auch bei --hidden)
+# Pfad    : ~/.config/fd/ignore
+# Docs    : https://github.com/sharkdp/fd#excluding-specific-files-or-directories
+# Tipp    : "fd -u" ignoriert diese Datei (unrestricted mode)
+# ============================================================
+
+# Git internals (bei --hidden nicht durchsuchen)
+# Siehe: man fd → "Tips and Tricks"
+.git/
+
+# ------------------------------------------------------------
+# macOS (basierend auf github/gitignore/Global/macOS.gitignore)
+# ------------------------------------------------------------
+.DS_Store
+._*
+__MACOSX/
+.AppleDouble
+.LSOverride
+
+# ------------------------------------------------------------
+# Python
+# ------------------------------------------------------------
+__pycache__/
+*.pyc
+.venv/
+.mypy_cache/
+.pytest_cache/
+
+# ------------------------------------------------------------
+# Node.js
+# ------------------------------------------------------------
+node_modules/
+
+# ------------------------------------------------------------
+# Build artifacts
+# ------------------------------------------------------------
+dist/
+build/
+*.egg-info/

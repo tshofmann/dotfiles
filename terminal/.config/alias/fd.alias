@@ -17,7 +17,7 @@ fi
 alias fdf='fd --type f'                     # Nur Dateien
 alias fdd='fd --type d'                     # Nur Verzeichnisse
 alias fdh='fd --hidden'                     # Inkl. versteckte Dateien
-alias fda='fd --hidden --no-ignore'         # Alles (ignoriert nichts)
+alias fda='fd -u'                           # Alles (unrestricted = -HI)
 
 # ------------------------------------------------------------
 # Typspezifische Suche
