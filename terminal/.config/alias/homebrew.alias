@@ -31,3 +31,47 @@ if command -v mas >/dev/null 2>&1; then
     alias masi='mas install'                # Installiere App (benötigt ID)
     alias masl='mas list'                   # Liste installierte Apps (ID + Name)
 fi
+
+# ------------------------------------------------------------
+# Interaktive Funktionen (mit fzf)
+# ------------------------------------------------------------
+if command -v fzf >/dev/null 2>&1; then
+    # bip: Brew Install - interaktive Installation
+    bip() {
+        local pkg
+        pkg=$(brew formulae | fzf --multi \
+            --preview 'brew info {}' \
+            --header='Tab: Mehrere auswählen | Enter: Installieren')
+        
+        [[ -n "$pkg" ]] && echo "$pkg" | xargs brew install
+    }
+    
+    # bup: Brew Upgrade - interaktives Update
+    bup() {
+        local pkg
+        pkg=$(brew outdated | fzf --multi \
+            --preview 'brew info {}' \
+            --header='Tab: Mehrere auswählen | Enter: Upgrade')
+        
+        [[ -n "$pkg" ]] && echo "$pkg" | xargs brew upgrade
+    }
+    
+    # brp: Brew Remove - interaktive Deinstallation
+    brp() {
+        local pkg
+        pkg=$(brew leaves | fzf --multi \
+            --preview 'brew info {}' \
+            --header='Tab: Mehrere auswählen | Enter: Deinstallieren')
+        
+        [[ -n "$pkg" ]] && echo "$pkg" | xargs brew uninstall
+    }
+    
+    # bsp: Brew Search - Suche mit Vorschau
+    bsp() {
+        brew search "${1:-}" | fzf \
+            --preview 'brew info {}' \
+            --header='Enter: Installieren | Ctrl+O: Homepage' \
+            --bind 'enter:execute(brew install {})' \
+            --bind 'ctrl-o:execute-silent(brew home {})'
+    }
+fi

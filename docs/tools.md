@@ -107,7 +107,16 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `masi` | `mas install <id>` | Installiere App via ID |
 | `masl` | `mas list` | Liste installierte Apps |
 
-> **Hinweis:** Die mas-Aliase sind nur verfügbar wenn mas installiert ist. `brewup` enthält automatisch `mas upgrade` wenn mas vorhanden ist.
+**Interaktive Funktionen (mit fzf):**
+
+| Funktion | Beschreibung |
+|----------|--------------|
+| `bip` | **Brew Install**: Interaktive Paketsuche → Installieren |
+| `bup` | **Brew Update**: Veraltete Pakete → Upgrade |
+| `brp` | **Brew Remove**: Installierte Pakete → Deinstallieren |
+| `bsp [query]` | **Brew Search**: Suchen mit Info-Vorschau |
+
+> **Hinweis:** Die mas-Aliase sind nur verfügbar wenn mas installiert ist. `brewup` enthält automatisch `mas upgrade` wenn mas vorhanden ist. Die interaktiven Funktionen benötigen fzf.
 
 ### fd.alias
 
@@ -124,7 +133,15 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `fdjson` | `fd --extension json` | JSON-Dateien |
 | `fdyaml` | `fd -e yaml -e yml` | YAML-Dateien |
 
-> **Hinweis:** fd respektiert automatisch `.gitignore` und ist deutlich schneller als find.
+**Interaktive Funktionen (mit fzf):**
+
+| Funktion | Beschreibung |
+|----------|--------------|
+| `cdf [path]` | **Fuzzy CD**: fd + fzf + eza – Verzeichnisnavigation mit Baum-Vorschau |
+| `fe [path]` | **Fuzzy Edit**: Datei suchen → Vorschau mit bat → Editor öffnen |
+| `fo [path]` | **Fuzzy Open**: Datei suchen → `open` (macOS) |
+
+> **Hinweis:** fd respektiert automatisch `.gitignore` und ist deutlich schneller als find. Die interaktiven Funktionen benötigen fzf.
 
 ### btop.alias
 
@@ -134,6 +151,31 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `htop` | `btop` | htop durch btop ersetzen |
 
 > **Hinweis:** btop bietet CPU, RAM, Disk, Netzwerk und Prozess-Überwachung in einer ansprechenden TUI. Für einfache Terminals: `btop --low-color`.
+
+### git.alias
+
+| Alias | Befehl | Beschreibung |
+|-------|--------|--------------|
+| `ga` | `git add` | Dateien stagen |
+| `gc` | `git commit` | Commit |
+| `gcm` | `git commit -m` | Commit mit Message |
+| `gacm` | `git add --all && git commit -m` | Add all + Commit |
+| `gp` | `git push` | Push |
+| `gpl` | `git pull` | Pull |
+| `gco` | `git checkout` | Checkout |
+| `gs` | `git status` | Status |
+| `gd` | `git diff` | Diff |
+
+**Interaktive Funktionen (mit fzf):**
+
+| Funktion | Beschreibung |
+|----------|--------------|
+| `glog` | Commit-History: Vorschau mit bat, Ctrl+Y=SHA kopieren |
+| `gbr` | Branch wechseln: Log-Vorschau, Ctrl+D=Branch löschen |
+| `gst` | Status mit Diff-Vorschau: Enter=Add, Ctrl+R=Restore |
+| `gstash` | Stash-Browser: Enter=Apply, Ctrl+D=Drop, Ctrl+P=Pop |
+
+> **Hinweis:** Die interaktiven Funktionen benötigen fzf und werden nur geladen wenn fzf installiert ist.
 
 ### eza.alias
 
@@ -182,43 +224,17 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `rgrb` | `rg -t ruby` | Ruby |
 | `rggo` | `rg -t go` | Go |
 
-> **Hinweis:** `--smart-case` ist global in `~/.config/ripgrep/config` konfiguriert – alle Aliase erben diese Einstellung automatisch.
-
-### fzf.alias – Tool-Kombinationen
-
-fzf ermöglicht die Kombination mehrerer CLI-Tools für interaktive Workflows:
-
-#### Basis-Funktionen
+**Interaktive Funktionen (mit fzf):**
 
 | Funktion | Beschreibung |
 |----------|--------------|
 | `rgf [query]` | **Live-Grep**: ripgrep + fzf + bat – Echtzeit-Suche während der Eingabe |
-| `cdf [path]` | **Fuzzy CD**: fd + fzf + eza – Verzeichnisnavigation mit Baum-Vorschau |
 
-#### Zoxide + fzf
+> **Hinweis:** `--smart-case` ist global in `~/.config/ripgrep/config` konfiguriert – alle Aliase erben diese Einstellung automatisch. Die interaktive Funktion `rgf` benötigt fzf.
 
-| Funktion | Beschreibung |
-|----------|--------------|
-| `zi` | zoxide built-in: Interaktive Verzeichnisauswahl |
-| `zf` | Erweitertes zi mit eza-Vorschau, Ctrl+D zum Löschen |
+### gh.alias
 
-> **`zi` vs `zf` – Wann welches verwenden?**
->
-> | Befehl | Quelle | Vorschau | Lösch-Option | Empfehlung |
-> |--------|--------|----------|--------------|------------|
-> | `zi` | zoxide (built-in) | Keine | Nein | Schnelle Navigation zu bekannten Verzeichnissen |
-> | `zf` | fzf.alias (custom) | eza-Baumansicht | Ctrl+D | Exploration mit visueller Vorschau, Aufräumen alter Einträge |
->
-> **Faustregel:** `zi` für Geschwindigkeit, `zf` für Übersicht.
-
-#### fd + fzf + bat
-
-| Funktion | Beschreibung |
-|----------|--------------|
-| `fe [path]` | **Fuzzy Edit**: Datei suchen → Vorschau mit bat → Editor öffnen |
-| `fo [path]` | **Fuzzy Open**: Datei suchen → `open` (macOS) |
-
-#### GitHub CLI + fzf
+**Interaktive Funktionen (mit fzf):**
 
 | Funktion | Beschreibung |
 |----------|--------------|
@@ -227,25 +243,30 @@ fzf ermöglicht die Kombination mehrerer CLI-Tools für interaktive Workflows:
 | `ghrun` | Actions Runs: Enter=Logs, Ctrl+O=Browser, Ctrl+R=Rerun |
 | `ghrepo` | Repositories: Enter=Klonen, Ctrl+O=Browser |
 
-#### Git + fzf + bat
+> **Hinweis:** Alle gh-Funktionen benötigen sowohl gh CLI als auch fzf.
+
+### fzf.alias – Generische Utilities
+
+fzf ist als "Enhancer" in die jeweiligen Tool-Alias-Dateien integriert. Diese Datei enthält nur generische Funktionen:
+
+**Zoxide + fzf:**
 
 | Funktion | Beschreibung |
 |----------|--------------|
-| `glog` | Commit-History: Vorschau mit bat, Ctrl+Y=SHA kopieren, Ctrl+C=Cherry-pick |
-| `gbr` | Branch wechseln: Log-Vorschau, Ctrl+D=Branch löschen |
-| `gst` | Status mit Diff-Vorschau: Enter=Add, Ctrl+R=Restore |
-| `gstash` | Stash-Browser: Enter=Apply, Ctrl+D=Drop, Ctrl+P=Pop |
+| `zf` | zoxide + fzf mit eza-Vorschau, Ctrl+D zum Löschen |
 
-#### Homebrew + fzf
+> **`zi` vs `zf` – Wann welches verwenden?**
+>
+> `zi` ist ein zoxide built-in (keine eigene Funktion in fzf.alias).
+>
+> | Befehl | Quelle | Vorschau | Lösch-Option | Empfehlung |
+> |--------|--------|----------|--------------|------------|
+> | `zi` | zoxide (built-in) | Keine | Nein | Schnelle Navigation zu bekannten Verzeichnissen |
+> | `zf` | fzf.alias (custom) | eza-Baumansicht | Ctrl+D | Exploration mit visueller Vorschau, Aufräumen alter Einträge |
+>
+> **Faustregel:** `zi` für Geschwindigkeit, `zf` für Übersicht.
 
-| Funktion | Beschreibung |
-|----------|--------------|
-| `bip` | **Brew Install**: Interaktive Paketsuche → Installieren |
-| `bup` | **Brew Update**: Veraltete Pakete → Upgrade |
-| `brp` | **Brew Remove**: Installierte Pakete → Deinstallieren |
-| `bsp [query]` | **Brew Search**: Suchen mit Info-Vorschau |
-
-#### System-Utilities
+**System-Utilities:**
 
 | Funktion | Beschreibung |
 |----------|--------------|
@@ -254,7 +275,17 @@ fzf ermöglicht die Kombination mehrerer CLI-Tools für interaktive Workflows:
 | `fenv` | **Fuzzy Env**: Umgebungsvariablen durchsuchen, Enter=Kopieren |
 | `fhist` | **Fuzzy History**: Shell-History, Ctrl+Y=Kopieren, Enter=Ausführen |
 
-> **Hinweis:** Alle Funktionen haben Guard-Checks und funktionieren nur wenn die benötigten Tools installiert sind.
+**Tool-spezifische fzf-Funktionen:**
+
+Die folgenden Funktionen nutzen fzf, sind aber nach ihrem primären Zweck in den jeweiligen Tool-Dateien organisiert:
+
+- **ripgrep.alias**: `rgf`
+- **fd.alias**: `cdf`, `fe`, `fo`
+- **git.alias**: `glog`, `gbr`, `gst`, `gstash`
+- **homebrew.alias**: `bip`, `bup`, `brp`, `bsp`
+- **gh.alias**: `ghpr`, `ghis`, `ghrun`, `ghrepo`
+
+> **Design-Prinzip:** Aliase werden nach ihrem primären Zweck organisiert, nicht nach den verwendeten Tools. `rgf` nutzt fzf+bat, ist aber primär eine Suche – daher in `ripgrep.alias`.
 
 ### Verwendung
 

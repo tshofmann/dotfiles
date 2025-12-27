@@ -71,14 +71,18 @@ extract_functions_from_file() {
         sed 's/().*//' | sed 's/^[[:space:]]*//' | sort -u
 }
 
-# Extrahiere dokumentierte Aliase aus einer Markdown-Tabelle
+# Extrahiere dokumentierte Aliase/Funktionen aus einer Markdown-Sektion
+# Unterstützt mehrere Namen pro Zeile: | `cmd1`, `cmd2` |
 extract_aliases_from_docs() {
     local file="$1"
     local section="$2"
     
+    # Extrahiere alle Backtick-Wörter aus dem Abschnitt
     sed -n "/### ${section}/,/^### /p" "$file" 2>/dev/null | \
-        grep -oE "^\| \`[a-z][a-z0-9_-]*\`" | \
-        sed 's/| `//' | sed 's/`.*//' | sort -u
+        grep -oE "\`[a-z][a-z0-9_-]*\`" | \
+        sed 's/`//g' | \
+        grep -v '^\(path\|query\)$' | \
+        sort -u
 }
 
 # Lade alle Aliase und Funktionen aus dem Alias-Verzeichnis
