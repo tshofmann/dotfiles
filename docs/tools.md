@@ -181,17 +181,17 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 | Alias | Befehl | Beschreibung |
 |-------|--------|--------------|
-| `ls` | `eza --icons=auto --group-directories-first` | ls-Ersatz mit Icons |
-| `ll` | `eza -l --icons=auto --group-directories-first --header` | Ausführliche Auflistung |
-| `la` | `eza -la --icons=auto --group-directories-first --header` | Alle Dateien inkl. versteckter |
-| `lsg` | `eza -l --icons=auto --git --header` | Long-Format mit Git-Status |
-| `lag` | `eza -la --icons=auto --git --header` | Alle Dateien mit Git-Status |
-| `lt` | `eza --tree --icons=auto --level=2` | Baumansicht (2 Ebenen) |
-| `lt3` | `eza --tree --icons=auto --level=3` | Baumansicht (3 Ebenen) |
-| `lss` | `eza -l --icons=auto --sort=size --reverse --header` | Sortiert nach Größe |
-| `lst` | `eza -l --icons=auto --sort=modified --reverse --header` | Sortiert nach Datum |
+| `ls` | `eza --group-directories-first` | ls-Ersatz mit Icons |
+| `ll` | `eza -l --group-directories-first --header` | Ausführliche Auflistung |
+| `la` | `eza -la --group-directories-first --header` | Alle Dateien inkl. versteckter |
+| `lsg` | `eza -l --git --header` | Long-Format mit Git-Status |
+| `lag` | `eza -la --git --header` | Alle Dateien mit Git-Status |
+| `lt` | `eza --tree --level=2` | Baumansicht (2 Ebenen) |
+| `lt3` | `eza --tree --level=3` | Baumansicht (3 Ebenen) |
+| `lss` | `eza -l --sort=size --reverse --header` | Sortiert nach Größe |
+| `lst` | `eza -l --sort=modified --reverse --header` | Sortiert nach Datum |
 
-> **Hinweis:** `--icons=auto` erkennt automatisch ob das Terminal Icons unterstützt. Ordner werden immer zuerst angezeigt (`--group-directories-first`).
+> **Hinweis:** Icons werden automatisch über `EZA_ICONS_AUTO=1` in `.zshrc` aktiviert. Ordner werden immer zuerst angezeigt (`--group-directories-first`).
 
 ### bat.alias
 

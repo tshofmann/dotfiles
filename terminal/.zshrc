@@ -53,6 +53,9 @@ export FZF_DEFAULT_OPTS_FILE="$HOME/.config/fzf/config"
 export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/config"
 # bat nutzt automatisch ~/.config/bat/config
 
+# eza: Icons automatisch aktivieren wenn Terminal unterstützt wird
+export EZA_ICONS_AUTO=1
+
 # ------------------------------------------------------------
 # Tools initialisieren
 # ------------------------------------------------------------
