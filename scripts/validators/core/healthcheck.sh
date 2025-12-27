@@ -2,7 +2,8 @@
 # ============================================================
 # healthcheck.sh - Health-Check Tools Validierung
 # ============================================================
-# Prüft: health-check.sh Tools vs tools.md
+# Prüft: health-check.sh verwendet dynamische Erkennung
+#        und alle Brewfile-Tools werden geprüft
 # ============================================================
 
 [[ -z "${VALIDATOR_LIB_LOADED:-}" ]] && source "${0:A:h:h}/lib.sh"
@@ -11,31 +12,28 @@ check_healthcheck_tools() {
     log "Prüfe Health-Check Tool-Liste..."
     
     local health_check="$SCRIPTS_DIR/health-check.sh"
-    local tools_doc="$DOCS_DIR/tools.md"
+    local brewfile="$SETUP_DIR/Brewfile"
     
-    # Zähle check_tool Aufrufe
-    local tool_count
-    tool_count=$(grep -c 'check_tool "' "$health_check" 2>/dev/null || echo 0)
+    # Prüfe ob health-check.sh dynamisch arbeitet (get_tools_from_brewfile)
+    if grep -q 'get_tools_from_brewfile' "$health_check" 2>/dev/null; then
+        ok "Health-Check verwendet dynamische Brewfile-Erkennung"
+    else
+        warn "Health-Check nutzt keine dynamische Erkennung"
+        return
+    fi
     
-    ok "Health-Check prüft $tool_count Tools"
+    # Extrahiere Tools aus Brewfile (gleiche Logik wie health-check.sh)
+    local -a tools=($(grep -E '^brew "[^"]+"' "$brewfile" | \
+        sed 's/brew "\([^"]*\)".*/\1/' | \
+        grep -v 'zsh-syntax-highlighting\|zsh-autosuggestions'))
     
-    # Prüfe kritische Tools
-    local -a critical=(fzf stow starship zoxide eza bat fd btop gh)
-    local missing=0
+    ok "Brewfile enthält ${#tools[@]} CLI-Tools (werden dynamisch geprüft)"
     
-    for tool in "${critical[@]}"; do
-        if ! grep -q "check_tool \"$tool\"" "$health_check" 2>/dev/null; then
-            # Einige haben andere Befehlsnamen
-            if [[ "$tool" == "ripgrep" ]] && grep -q 'check_tool "rg"' "$health_check" 2>/dev/null; then
-                continue
-            fi
-            warn "Tool '$tool' nicht in health-check.sh"
-            ((missing++)) || true
-        fi
-    done
-    
-    if (( missing == 0 )); then
-        ok "Alle kritischen Tools werden geprüft"
+    # Prüfe dass das Mapping für ripgrep existiert
+    if grep -q '\[ripgrep\]=rg' "$health_check" 2>/dev/null; then
+        ok "Tool-Mapping für ripgrep → rg vorhanden"
+    else
+        warn "Tool-Mapping für ripgrep fehlt"
     fi
 }
 

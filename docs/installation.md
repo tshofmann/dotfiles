@@ -171,15 +171,20 @@ cd ~/dotfiles
 
 ### Was wird geprüft?
 
-| Komponente | Prüfung |
-|------------|---------|
-| **Symlinks** | `.zshenv`, `.zprofile`, `.zshrc`, `.zlogin`, alle Alias-Dateien, Tool-Configs |
-| **CLI-Tools** | fzf, stow, starship, zoxide, eza, bat, ripgrep, fd, btop, gh, mas (optional) |
-| **Nerd Font** | MesloLG Nerd Font in `~/Library/Fonts/` |
-| **Terminal-Profil** | `tshofmann` als Standard- und Startup-Profil |
-| **Starship** | `~/.config/starship.toml` vorhanden |
-| **ZSH-Sessions** | `SHELL_SESSIONS_DISABLE=1` in `~/.zshenv` |
-| **Brewfile** | Alle Abhängigkeiten installiert |
+> **Dynamische Erkennung:** Der Health-Check erkennt automatisch neue Dateien im Repository. Wenn du eine neue Alias-Datei oder Tool-Konfiguration hinzufügst, wird sie automatisch geprüft.
+
+| Komponente | Prüfung | Quelle |
+|------------|---------|--------|
+| **ZSH-Symlinks** | `.zshenv`, `.zprofile`, `.zshrc`, `.zlogin` | `terminal/.z*` (dynamisch) |
+| **Alias-Symlinks** | Alle `*.alias` Dateien | `terminal/.config/alias/` (dynamisch) |
+| **Tool-Configs** | Alle `config`/`ignore` Dateien | `terminal/.config/*/` (dynamisch) |
+| **CLI-Tools** | Alle Formulae aus Brewfile | `setup/Brewfile` (dynamisch) |
+| **ZSH-Plugins** | zsh-syntax-highlighting, zsh-autosuggestions | Homebrew-Verzeichnis |
+| **Nerd Font** | MesloLG Nerd Font | `~/Library/Fonts/` |
+| **Terminal-Profil** | `tshofmann` als Standard | Terminal.app defaults |
+| **Starship** | `~/.config/starship.toml` vorhanden | Dateisystem |
+| **ZSH-Sessions** | `SHELL_SESSIONS_DISABLE=1` | `~/.zshenv` |
+| **Brewfile** | Alle Abhängigkeiten erfüllt | `brew bundle check` |
 
 ### Ergebnis interpretieren
 
