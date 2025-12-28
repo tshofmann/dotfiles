@@ -50,6 +50,36 @@ z dotfiles
 
 ---
 
+## Integriertes Help-System
+
+Die `help`-Funktion bietet eine interaktive Übersicht aller Aliase und Funktionen:
+
+```zsh
+help                  # Übersicht aller Kategorien
+help <kategorie>      # Details zu einer Kategorie (z.B. help git)
+help search <text>    # Suche in allen Aliasen
+help tools            # Installierte Tools mit Versionen
+help --fzf            # Interaktive Auswahl mit fzf
+```
+
+**Beispiel-Ausgabe:**
+
+```
+╭─────────────────────────────────────────────────────────────────╮
+│ 🚀 Dotfiles Help                                                │
+╰─────────────────────────────────────────────────────────────────╯
+
+📁 Alias-Kategorien:
+  bat          Aliase für bat mit verschiedenen Ausgabe-Stilen
+  eza          Aliase für eza mit Icons und Git-Integration
+  git          Aliase für häufige Git-Operationen
+  ...
+```
+
+> 💡 Die Help-Funktion parst automatisch alle `.alias`-Dateien und extrahiert Beschreibungen aus den Kommentaren.
+
+---
+
 ## Installierte CLI-Tools
 
 Diese Tools werden via Brewfile installiert:
@@ -286,6 +316,18 @@ Die folgenden Funktionen nutzen fzf, sind aber nach ihrem primären Zweck in den
 - **gh.alias**: `ghpr`, `ghis`, `ghrun`, `ghrepo`
 
 > **Design-Prinzip:** Aliase werden nach ihrem primären Zweck organisiert, nicht nach den verwendeten Tools. `rgf` nutzt fzf+bat, ist aber primär eine Suche – daher in `ripgrep.alias`.
+
+### help.alias – Integriertes Help-System
+
+| Funktion | Beschreibung |
+|----------|--------------|
+| `help` | Übersicht aller Alias-Kategorien und Funktionen |
+| `help <kategorie>` | Details zu einer Kategorie (z.B. `help git`) |
+| `help search <text>` | Suche in allen Aliasen und Funktionen |
+| `help tools` | Installierte Tools mit Versionsnummern |
+| `help --fzf` | Interaktive Auswahl mit fzf |
+
+> **Hinweis:** Die Help-Funktion parst automatisch alle `.alias`-Dateien und extrahiert Beschreibungen aus den Kommentaren. Siehe [Integriertes Help-System](#integriertes-help-system) für Beispiele.
 
 ### Verwendung
 

@@ -1,14 +1,168 @@
 # ============================================================
-# help.zsh - Interaktives Help-System für dotfiles
+# help.alias - Interaktives Help-System für dotfiles
 # ============================================================
 # Zweck   : Zeigt Aliase, Funktionen und Tool-Informationen
-# Pfad    : ~/.config/functions/help.zsh
+# Pfad    : ~/.config/alias/help.alias
 # Nutzung : help [command] [args]
 # ============================================================
 
-# Load parser functions
-source "${HOME}/.config/functions/_help_parser.zsh"
+# ------------------------------------------------------------
+# Parser-Hilfsfunktionen
+# ------------------------------------------------------------
 
+# Shared patterns for section header filtering
+typeset -g _HELP_SECTION_HEADERS='Zweck|Pfad|Docs|Hinweis|Guard|Basis|Essenzielle|Erweiterte|Interaktive|Update|Baumansicht|Mit Git|Dateiansicht|Dateityp|Mac App|Voraussetzung|------------'
+
+# Check if a line should be skipped (empty, header dividers)
+_help_should_skip_line() {
+    local line="$1"
+    [[ -z "$line" || "$line" =~ ^#\ =+ || "$line" =~ ^#\ -+ ]]
+}
+
+# Check if line starts an EARLY EXIT guard clause
+_help_is_early_exit_guard() {
+    local line="$1"
+    [[ "$line" =~ ^if\ !\ command\ -v ]]
+}
+
+# Check if line ends a guard clause
+_help_is_guard_end() {
+    local line="$1"
+    [[ "$line" == "fi" || "$line" =~ ^[[:space:]]*fi[[:space:]]*$ ]]
+}
+
+# Check if line is a return statement in guard
+_help_is_guard_return() {
+    local line="$1"
+    [[ "$line" =~ ^[[:space:]]*return\ 0 ]]
+}
+
+# Check if line is a function definition
+_help_is_function_def() {
+    local line="$1"
+    [[ "$line" =~ "^[[:space:]]*[a-zA-Z_][a-zA-Z0-9_]*\(\)" ]] && [[ ! "$line" =~ alias ]]
+}
+
+# Count net brace change in a line
+_help_count_braces() {
+    local line="$1"
+    local opens="${line//[^\{]/}"
+    local closes="${line//[^\}]/}"
+    REPLY=$(( ${#opens} - ${#closes} ))
+}
+
+# Check if comment is a section header
+_help_is_section_header() {
+    local comment="$1"
+    [[ "$comment" =~ ^($_HELP_SECTION_HEADERS) ]] || \
+    [[ "$comment" =~ ^[[:space:]]{3,} ]] || \
+    [[ "$comment" =~ \.alias\ -\  ]]
+}
+
+# Parse alias file and extract aliases with descriptions
+# Format: name|command|description
+_help_parse_aliases() {
+    setopt local_options extended_glob
+    local file="$1"
+    [[ -f "$file" ]] || return 1
+
+    local prev_comment="" brace_depth=0 in_guard_if=0
+
+    while IFS= read -r line; do
+        _help_should_skip_line "$line" && continue
+        if _help_is_early_exit_guard "$line"; then in_guard_if=1; continue; fi
+        _help_is_guard_return "$line" && continue
+        if [[ $in_guard_if -eq 1 ]] && _help_is_guard_end "$line"; then in_guard_if=0; continue; fi
+        if _help_is_function_def "$line"; then
+            _help_count_braces "$line"; ((brace_depth += REPLY)); prev_comment=""; continue
+        fi
+        if [[ $brace_depth -gt 0 ]]; then
+            _help_count_braces "$line"; ((brace_depth += REPLY)); continue
+        fi
+        if [[ "$line" =~ ^[[:space:]]*#\ ([^=].+)$ ]]; then
+            local comment="${match[1]}"
+            ! _help_is_section_header "$comment" && prev_comment="$comment"
+        elif [[ "$line" =~ ^[[:space:]]*alias\ +([^=]+)=(.+)$ ]]; then
+            local name="${match[1]}" cmd="${match[2]}"
+            cmd="${cmd#[\'\"]}" cmd="${cmd%[\'\"]}"
+            echo "$name|$cmd|${prev_comment:-}"; prev_comment=""
+        else
+            [[ ! "$line" =~ ^# ]] && prev_comment=""
+        fi
+    done < "$file"
+}
+
+# Parse alias file and extract function definitions
+# Format: name|description
+_help_parse_functions() {
+    setopt local_options extended_glob
+    local file="$1"
+    [[ -f "$file" ]] || return 1
+
+    local prev_comment="" in_guard_if=0 brace_depth=0
+
+    while IFS= read -r line; do
+        _help_should_skip_line "$line" && continue
+        if _help_is_early_exit_guard "$line"; then in_guard_if=1; continue; fi
+        _help_is_guard_return "$line" && continue
+        if [[ $in_guard_if -eq 1 ]] && _help_is_guard_end "$line"; then in_guard_if=0; continue; fi
+        if [[ $brace_depth -gt 0 ]]; then
+            _help_count_braces "$line"; ((brace_depth += REPLY)); continue
+        fi
+        if [[ "$line" =~ ^[[:space:]]*#\ ([^=].+)$ ]]; then
+            local comment="${match[1]}"
+            ! _help_is_section_header "$comment" && prev_comment="$comment"
+        elif _help_is_function_def "$line"; then
+            local name=""
+            [[ "$line" =~ "^[[:space:]]*([a-zA-Z_][a-zA-Z0-9_]*)\(\)" ]] && name="${match[1]}"
+            [[ -n "$prev_comment" && -n "$name" ]] && echo "$name|$prev_comment"
+            prev_comment=""
+            _help_count_braces "$line"; ((brace_depth += REPLY))
+        else
+            [[ ! "$line" =~ ^# ]] && prev_comment=""
+        fi
+    done < "$file"
+}
+
+# Get category name from alias file
+_help_get_category() {
+    local file="$1"
+    echo "${file:t:r}"
+}
+
+# Get category description from alias file header
+_help_get_category_description() {
+    local file="$1"
+    [[ -f "$file" ]] || return 1
+    local desc=$(grep -m1 "^# Zweck" "$file" | sed 's/^# Zweck[[:space:]]*:[[:space:]]*//')
+    [[ -n "$desc" ]] && echo "$desc" || echo ""
+}
+
+# Get documentation URL from alias file header
+_help_get_docs_url() {
+    local file="$1"
+    [[ -f "$file" ]] || return 1
+    local url=$(grep -m1 "^# Docs" "$file" | sed 's/^# Docs[[:space:]]*:[[:space:]]*//')
+    [[ -n "$url" ]] && echo "$url" || echo ""
+}
+
+# Check if a tool is installed and get its version
+_help_get_tool_version() {
+    local tool="$1"
+    if ! command -v "$tool" >/dev/null 2>&1; then echo "not_installed"; return 1; fi
+    local version=""
+    case "$tool" in
+        eza) version=$("$tool" --version 2>/dev/null | grep -oE 'v?[0-9]+\.[0-9]+\.[0-9]+' | tr -d 'v' | head -1) ;;
+        bat|fd|fzf|rg|starship|zoxide|gh|btop) version=$("$tool" --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1) ;;
+        mas) version=$(mas version 2>/dev/null) ;;
+        *) version=$("$tool" --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1) ;;
+    esac
+    [[ -n "$version" ]] && echo "$version" || echo "unknown"
+}
+
+# ------------------------------------------------------------
+# Farben (Catppuccin Mocha - True Color 24-bit)
+# ------------------------------------------------------------
 # Color codes (Catppuccin Mocha - True Color 24-bit)
 typeset -g _HELP_COLOR_RESET=$'\e[0m'
 typeset -g _HELP_COLOR_HEADER=$'\e[1;38;2;203;166;247m'  # Mauve (bold)
@@ -21,13 +175,31 @@ typeset -g _HELP_COLOR_ERROR=$'\e[38;2;243;139;168m'     # Red
 typeset -g _HELP_COLOR_ICON=$'\e[38;2;137;180;250m'      # Blue
 
 # Print colored header box
+# Note: Emojis take 2 terminal columns but zsh ${#var} counts them as 1
+# We need to reduce padding by 1 for each emoji
 _help_print_header() {
     local title="$1"
-    local width=65
+    local inner_width=63
 
-    echo "${_HELP_COLOR_HEADER}╭$(printf '─%.0s' {1..$width})╮${_HELP_COLOR_RESET}"
-    printf "${_HELP_COLOR_HEADER}│${_HELP_COLOR_RESET} %-${width}s ${_HELP_COLOR_HEADER}│${_HELP_COLOR_RESET}\n" "$title"
-    echo "${_HELP_COLOR_HEADER}╰$(printf '─%.0s' {1..$width})╯${_HELP_COLOR_RESET}"
+    # Count wide characters (emojis): byte length vs zsh char count difference
+    # Each emoji is 4 bytes but zsh counts it as 1 char, displays as 2 cols
+    local char_len=${#title}
+    local byte_len=$(printf '%s' "$title" | wc -c | tr -d ' ')
+    # Each emoji adds 3 extra bytes (4 bytes - 1 char count)
+    local emoji_count=$(( (byte_len - char_len) / 3 ))
+
+    # Calculate padding: inner_width - display_width of title
+    # display_width = char_len + emoji_count (each emoji adds 1 extra column)
+    local display_width=$((char_len + emoji_count))
+    local padding=$((inner_width - display_width))
+    local spaces=$(printf '%*s' "$padding" '')
+
+    # Build border line
+    local border=$(printf '─%.0s' {1..$inner_width})
+
+    print "${_HELP_COLOR_HEADER}╭─${border}─╮${_HELP_COLOR_RESET}"
+    print "${_HELP_COLOR_HEADER}│${_HELP_COLOR_RESET} ${title}${spaces} ${_HELP_COLOR_HEADER}│${_HELP_COLOR_RESET}"
+    print "${_HELP_COLOR_HEADER}╰─${border}─╯${_HELP_COLOR_RESET}"
 }
 
 # Show overview of all categories
@@ -39,11 +211,19 @@ _help_overview() {
 
     local alias_dir="${HOME}/.config/alias"
     if [[ -d "$alias_dir" ]]; then
+        # Collect and sort categories first, then format output
+        local -a categories=()
         for file in "$alias_dir"/*.alias(N); do
             local category=$(_help_get_category "$file")
             local desc=$(_help_get_category_description "$file")
+            categories+=("$category|$desc")
+        done
+        # Sort and format with proper alignment
+        for entry in ${(o)categories}; do
+            local category="${entry%%|*}"
+            local desc="${entry#*|}"
             printf "  ${_HELP_COLOR_ALIAS}%-12s${_HELP_COLOR_RESET} ${_HELP_COLOR_DESC}%s${_HELP_COLOR_RESET}\n" "$category" "$desc"
-        done | sort
+        done
     fi
 
     echo ""
