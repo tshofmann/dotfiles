@@ -51,7 +51,7 @@ alias fdyaml='fd -e yaml -e yml'
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # cdf: Verzeichnis wechseln mit Vorschau
+    # Verzeichnis wechseln mit Vorschau
     cdf() {
         local dir
         local preview_cmd="eza --tree --level=1 --icons --color=always {} 2>/dev/null || ls -la {}"
@@ -62,7 +62,7 @@ if command -v fzf >/dev/null 2>&1; then
         [[ -n "$dir" ]] && cd "$dir"
     }
     
-    # fe: Fuzzy Edit - Datei suchen und im Editor öffnen
+    # Fuzzy Edit - Datei suchen und im Editor öffnen
     fe() {
         local files
         local preview_cmd="bat --color=always --line-range=:500 {} 2>/dev/null || cat {}"
@@ -75,7 +75,7 @@ if command -v fzf >/dev/null 2>&1; then
         [[ -n "${files[*]}" ]] && ${EDITOR:-vim} "${files[@]}"
     }
     
-    # fo: Fuzzy Open - Datei suchen und mit open öffnen (macOS)
+    # Fuzzy Open - Datei suchen und mit open öffnen (macOS)
     fo() {
         local file
         local preview_cmd="bat --color=always --line-range=:500 {} 2>/dev/null || file {}"

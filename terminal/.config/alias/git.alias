@@ -48,7 +48,7 @@ alias gd='git diff'
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # glog: Git Log mit Commit-Vorschau
+    # Git Log mit Commit-Vorschau
     glog() {
         git log --oneline --color=always --decorate | \
             fzf --ansi --no-sort --reverse \
@@ -58,7 +58,7 @@ if command -v fzf >/dev/null 2>&1; then
                 --bind 'ctrl-y:execute-silent(echo -n {1} | pbcopy)+abort'
     }
     
-    # gbr: Git Branch wechseln mit Vorschau
+    # Git Branch wechseln mit Vorschau
     gbr() {
         git branch --all --color=always | \
             grep -v HEAD | \
@@ -69,7 +69,7 @@ if command -v fzf >/dev/null 2>&1; then
                 --bind 'ctrl-d:execute(git branch -d {1})'
     }
     
-    # gst: Git Status mit Diff-Vorschau
+    # Git Status mit Diff-Vorschau
     gst() {
         git -c color.status=always status --short | \
             fzf --ansi --multi \
@@ -79,7 +79,7 @@ if command -v fzf >/dev/null 2>&1; then
                 --bind 'ctrl-r:execute(git restore {+2})'
     }
     
-    # gstash: Stash-Browser
+    # Stash-Browser
     gstash() {
         git stash list | \
             fzf --ansi \

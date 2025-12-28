@@ -11,7 +11,7 @@
 # ------------------------------------------------------------
 
 # Shared patterns for section header filtering
-typeset -g _HELP_SECTION_HEADERS='Zweck|Pfad|Docs|Hinweis|Guard|Basis|Essenzielle|Erweiterte|Interaktive|Update|Baumansicht|Mit Git|Dateiansicht|Dateityp|Mac App|Voraussetzung|------------'
+typeset -g _HELP_SECTION_HEADERS='Zweck|Pfad|Docs|Hinweis|Guard|Basis-|Essenzielle|Erweiterte|Interaktive|Update|Baumansicht|Mit Git-Integration|Dateiansicht|Dateityp|Mac App|Voraussetzung|------------'
 
 # Check if a line should be skipped (empty, header dividers)
 _help_should_skip_line() {
@@ -60,13 +60,14 @@ _help_is_section_header() {
 }
 
 # Parse alias file and extract aliases with descriptions
-# Format: name|command|description
+# Format: name␞command␞description (␞ = Unit Separator)
 _help_parse_aliases() {
     setopt local_options extended_glob
     local file="$1"
     [[ -f "$file" ]] || return 1
 
     local prev_comment="" brace_depth=0 in_guard_if=0
+    local SEP=$'\x1e'  # Unit Separator (ASCII 30)
 
     while IFS= read -r line; do
         _help_should_skip_line "$line" && continue
@@ -85,7 +86,7 @@ _help_parse_aliases() {
         elif [[ "$line" =~ ^[[:space:]]*alias\ +([^=]+)=(.+)$ ]]; then
             local name="${match[1]}" cmd="${match[2]}"
             cmd="${cmd#[\'\"]}" cmd="${cmd%[\'\"]}"
-            echo "$name|$cmd|${prev_comment:-}"; prev_comment=""
+            echo "${name}${SEP}${cmd}${SEP}${prev_comment:-}"; prev_comment=""
         else
             [[ ! "$line" =~ ^# ]] && prev_comment=""
         fi
@@ -93,13 +94,14 @@ _help_parse_aliases() {
 }
 
 # Parse alias file and extract function definitions
-# Format: name|description
+# Format: name␞description (␞ = Unit Separator)
 _help_parse_functions() {
     setopt local_options extended_glob
     local file="$1"
     [[ -f "$file" ]] || return 1
 
     local prev_comment="" in_guard_if=0 brace_depth=0
+    local SEP=$'\x1e'  # Unit Separator (ASCII 30)
 
     while IFS= read -r line; do
         _help_should_skip_line "$line" && continue
@@ -115,7 +117,7 @@ _help_parse_functions() {
         elif _help_is_function_def "$line"; then
             local name=""
             [[ "$line" =~ "^[[:space:]]*([a-zA-Z_][a-zA-Z0-9_]*)\(\)" ]] && name="${match[1]}"
-            [[ -n "$prev_comment" && -n "$name" ]] && echo "$name|$prev_comment"
+            [[ -n "$prev_comment" && -n "$name" ]] && echo "${name}${SEP}${prev_comment}"
             prev_comment=""
             _help_count_braces "$line"; ((brace_depth += REPLY))
         else
@@ -265,12 +267,21 @@ _help_category() {
     # Parse and display aliases
     local has_aliases=0
     local alias_output=""
-    while IFS='|' read -r name cmd desc; do
+    local SEP=$'\x1e'  # Unit Separator
+    while IFS=$SEP read -r name cmd desc; do
         has_aliases=1
-        alias_output+=$(printf "       ${_HELP_COLOR_ALIAS}%-8s${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}%s${_HELP_COLOR_RESET}\n" "$name" "$cmd")
-        # Add description if available
-        [[ -n "$desc" ]] && alias_output+=$(printf "                ${_HELP_COLOR_DESC}%s${_HELP_COLOR_RESET}\n" "$desc")
-        alias_output+=$'\n'
+        # Kürze Command wenn zu lang für bessere Übersicht
+        local cmd_short="$cmd"
+        [[ ${#cmd} -gt 30 ]] && cmd_short="${cmd:0:27}..."
+        # Formatiere mit Padding, dann füge Farben hinzu
+        # Name: 12 Zeichen für längere Alias-Namen wie bat-themes
+        local name_padded=$(printf "%-12s" "$name")
+        local cmd_padded=$(printf "%-28s" "$cmd_short")
+        if [[ -n "$desc" ]]; then
+            alias_output+="       ${_HELP_COLOR_ALIAS}${name_padded}${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}${cmd_padded}${_HELP_COLOR_RESET}  ${_HELP_COLOR_DESC}${desc}${_HELP_COLOR_RESET}"$'\n'
+        else
+            alias_output+="       ${_HELP_COLOR_ALIAS}${name_padded}${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}${cmd}${_HELP_COLOR_RESET}"$'\n'
+        fi
     done < <(_help_parse_aliases "$alias_file")
 
     if [[ $has_aliases -eq 1 ]]; then
@@ -281,10 +292,10 @@ _help_category() {
     # Parse and display functions
     local has_functions=0
     local func_output=""
-    while IFS='|' read -r name fdesc; do
+    while IFS=$SEP read -r name fdesc; do
         has_functions=1
-        func_output+=$(printf "       ${_HELP_COLOR_ALIAS}%-8s${_HELP_COLOR_RESET} %s\n" "$name" "$fdesc")
-        func_output+=$'\n'
+        local name_padded=$(printf "%-12s" "$name")
+        func_output+="       ${_HELP_COLOR_ALIAS}${name_padded}${_HELP_COLOR_RESET} ${_HELP_COLOR_DESC}${fdesc}${_HELP_COLOR_RESET}"$'\n'
     done < <(_help_parse_functions "$alias_file")
 
     if [[ $has_functions -eq 1 ]]; then
@@ -323,25 +334,26 @@ _help_search() {
     local alias_dir="${HOME}/.config/alias"
     local current_category=""
     local results=""
+    local SEP=$'\x1e'  # Unit Separator
 
     for file in "$alias_dir"/*.alias(N); do
         local category=$(_help_get_category "$file")
         local category_results=""
 
         # Search in aliases
-        while IFS='|' read -r name cmd desc; do
+        while IFS=$SEP read -r name cmd desc; do
             if [[ "${name:l}" =~ "${query:l}" || "${cmd:l}" =~ "${query:l}" || "${desc:l}" =~ "${query:l}" ]]; then
-                category_results+=$(printf "       ${_HELP_COLOR_ALIAS}%-8s${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}%s${_HELP_COLOR_RESET}\n" "$name" "$cmd")
-                category_results+=$'\n'
+                local name_padded=$(printf "%-12s" "$name")
+                category_results+="       ${_HELP_COLOR_ALIAS}${name_padded}${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}${cmd}${_HELP_COLOR_RESET}"$'\n'
                 found=1
             fi
         done < <(_help_parse_aliases "$file")
 
         # Search in functions
-        while IFS='|' read -r name desc; do
+        while IFS=$SEP read -r name desc; do
             if [[ "${name:l}" =~ "${query:l}" || "${desc:l}" =~ "${query:l}" ]]; then
-                category_results+=$(printf "       ${_HELP_COLOR_ALIAS}%-8s${_HELP_COLOR_RESET} ${_HELP_COLOR_DESC}%s${_HELP_COLOR_RESET}\n" "$name" "$desc")
-                category_results+=$'\n'
+                local name_padded=$(printf "%-12s" "$name")
+                category_results+="       ${_HELP_COLOR_ALIAS}${name_padded}${_HELP_COLOR_RESET} ${_HELP_COLOR_DESC}${desc}${_HELP_COLOR_RESET}"$'\n'
                 found=1
             fi
         done < <(_help_parse_functions "$file")
@@ -412,19 +424,21 @@ _help_interactive() {
 
     local alias_dir="${HOME}/.config/alias"
     local -a items=()
+    local SEP=$'\x1e'  # Unit Separator for parsing
+    local DISPLAY_SEP='│'  # Visible separator for display
 
     # Collect all aliases and functions
     for file in "$alias_dir"/*.alias(N); do
         local category=$(_help_get_category "$file")
 
         # Add aliases
-        while IFS='|' read -r name cmd desc; do
-            items+=("[$category] $name|$cmd|$desc")
+        while IFS=$SEP read -r name cmd desc; do
+            items+=("[$category] $name${DISPLAY_SEP}$cmd${DISPLAY_SEP}$desc")
         done < <(_help_parse_aliases "$file")
 
         # Add functions
-        while IFS='|' read -r name desc; do
-            items+=("[$category] $name|(Funktion)|$desc")
+        while IFS=$SEP read -r name desc; do
+            items+=("[$category] $name${DISPLAY_SEP}(Funktion)${DISPLAY_SEP}$desc")
         done < <(_help_parse_functions "$file")
     done
 
@@ -433,23 +447,23 @@ _help_interactive() {
     # Uses zsh parameter expansion instead of sed/cut for better performance
     local preview_cmd='zsh -c '\''
         # Extract fields from fzf selection line using zsh parameter expansion
-        # Format: [category] name|cmd|desc
+        # Format: [category] name│cmd│desc
         input="$1"
         
-        # Extract name: remove "[category] " prefix, then take everything before first "|"
+        # Extract name: remove "[category] " prefix, then take everything before first "│"
         name=${input#\[*\] }
-        name=${name%%|*}
+        name=${name%%│*}
         
         # Extract category: remove "[" prefix, then take everything before "]"
         category=${input#\[}
         category=${category%%\]*}
         
-        # Extract cmd: remove everything before first "|", then take before next "|"
-        cmd=${input#*|}
-        cmd=${cmd%%|*}
+        # Extract cmd: remove everything before first "│", then take before next "│"
+        cmd=${input#*│}
+        cmd=${cmd%%│*}
         
-        # Extract desc: take everything after last "|"
-        desc=${input##*|}
+        # Extract desc: take everything after last "│"
+        desc=${input##*│}
         
         # Catppuccin Mocha colors (24-bit) - must match _HELP_COLOR_* constants
         local C_HEADER=$'\''\e[1;38;2;203;166;247m'\''  # Mauve bold
