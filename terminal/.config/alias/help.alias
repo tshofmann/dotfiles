@@ -429,14 +429,21 @@ _help_interactive() {
     done
 
     # Define preview command with rich formatting
+    # NOTE: This command runs in a subshell by fzf, so it cannot access zsh variables.
+    # Color codes must be hardcoded here to match the global _HELP_COLOR_* constants.
     local preview_cmd='
-        # Extract fields using cut
+        # Extract fields from fzf selection line
+        # Format: [category] name|cmd|desc
+        # - name: Extract text after "] " and before first "|" 
+        # - category: Extract text between "[" and "]"
+        # - cmd: Second pipe-delimited field
+        # - desc: Third pipe-delimited field
         name=$(echo {} | sed "s/^\[[^]]*\] \([^|]*\).*/\1/")
         category=$(echo {} | sed "s/^\[\([^]]*\)\].*/\1/")
         cmd=$(echo {} | cut -d"|" -f2)
         desc=$(echo {} | cut -d"|" -f3)
         
-        # Color codes (Catppuccin Mocha)
+        # Color codes (Catppuccin Mocha - must match _HELP_COLOR_* constants)
         COLOR_HEADER='\''\e[1;38;2;203;166;247m'\''  # Mauve bold
         COLOR_NAME='\''\e[38;2;249;226;175m'\''      # Yellow
         COLOR_COMMAND='\''\e[38;2;166;227;161m'\''   # Green
