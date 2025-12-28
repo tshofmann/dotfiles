@@ -272,13 +272,13 @@ _help_category() {
         has_aliases=1
         # Kürze Command wenn zu lang für bessere Übersicht
         local cmd_short="$cmd"
-        [[ ${#cmd} -gt 30 ]] && cmd_short="${cmd:0:27}..."
+        [[ ${#cmd} -gt 32 ]] && cmd_short="${cmd:0:29}..."
         # Formatiere mit Padding, dann füge Farben hinzu
-        # Name: 12 Zeichen für längere Alias-Namen wie bat-themes
+        # Name: 12 Zeichen, Command: 32 Zeichen für längere Befehle
         local name_padded=$(printf "%-12s" "$name")
-        local cmd_padded=$(printf "%-28s" "$cmd_short")
+        local cmd_padded=$(printf "%-32s" "$cmd_short")
         if [[ -n "$desc" ]]; then
-            alias_output+="       ${_HELP_COLOR_ALIAS}${name_padded}${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}${cmd_padded}${_HELP_COLOR_RESET}  ${_HELP_COLOR_DESC}${desc}${_HELP_COLOR_RESET}"$'\n'
+            alias_output+="       ${_HELP_COLOR_ALIAS}${name_padded}${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}${cmd_padded}${_HELP_COLOR_RESET} ${_HELP_COLOR_DESC}${desc}${_HELP_COLOR_RESET}"$'\n'
         else
             alias_output+="       ${_HELP_COLOR_ALIAS}${name_padded}${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}${cmd}${_HELP_COLOR_RESET}"$'\n'
         fi
@@ -344,9 +344,11 @@ _help_search() {
         while IFS=$SEP read -r name cmd desc; do
             if [[ "${name:l}" =~ "${query:l}" || "${cmd:l}" =~ "${query:l}" || "${desc:l}" =~ "${query:l}" ]]; then
                 local name_padded=$(printf "%-12s" "$name")
-                local cmd_padded=$(printf "%-28s" "$cmd")
+                local cmd_short="$cmd"
+                [[ ${#cmd} -gt 32 ]] && cmd_short="${cmd:0:29}..."
+                local cmd_padded=$(printf "%-32s" "$cmd_short")
                 if [[ -n "$desc" ]]; then
-                    category_results+="       ${_HELP_COLOR_ALIAS}${name_padded}${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}${cmd_padded}${_HELP_COLOR_RESET}  ${_HELP_COLOR_DESC}${desc}${_HELP_COLOR_RESET}"$'\n'
+                    category_results+="       ${_HELP_COLOR_ALIAS}${name_padded}${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}${cmd_padded}${_HELP_COLOR_RESET} ${_HELP_COLOR_DESC}${desc}${_HELP_COLOR_RESET}"$'\n'
                 else
                     category_results+="       ${_HELP_COLOR_ALIAS}${name_padded}${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}${cmd}${_HELP_COLOR_RESET}"$'\n'
                 fi
