@@ -16,6 +16,8 @@ cd ~/dotfiles && stow --adopt -R terminal && git reset --hard HEAD
 
 > ⚠️ **Achtung:** `git reset --hard` verwirft lokale Änderungen. Siehe [Installation](docs/installation.md) für Details.
 
+> 💡 **Tipp:** Nach der Installation `help` eingeben für eine Übersicht aller Aliase und Funktionen.
+
 ## Voraussetzungen
 
 - **Apple Silicon Mac** (arm64)

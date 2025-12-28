@@ -26,9 +26,9 @@ check_alias_files() {
         name=$(basename "$alias_file")
         base=${name%.alias}
         
-        # Zähle Aliase und Funktionen
+        # Zähle Aliase und öffentliche Funktionen (ignoriere _private Funktionen)
         alias_count=$(grep -cE "^[[:space:]]*alias [a-z]" "$alias_file" 2>/dev/null) || alias_count=0
-        func_count=$(grep -cE "^[[:space:]]*[a-z_]+\(\)[[:space:]]*\{" "$alias_file" 2>/dev/null) || func_count=0
+        func_count=$(grep -cE "^[[:space:]]*[a-z][a-z0-9_]*\(\)[[:space:]]*\{" "$alias_file" 2>/dev/null) || func_count=0
         code_count=$((alias_count + func_count))
         
         if grep -q "### ${base}.alias" "$tools_doc" 2>/dev/null; then
