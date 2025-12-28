@@ -9,8 +9,7 @@
 # ------------------------------------------------------------
 # Update & Wartung
 # ------------------------------------------------------------
-# Vollständiges System-Update: stoppt bei Fehlern pro Schritt
-# Inkl. mas (Mac App Store) falls installiert
+# Vollständiges Homebrew-Update inkl. Cleanup und mas (falls installiert)
 if command -v mas >/dev/null 2>&1; then
     alias brewup='brew update && brew upgrade && mas upgrade && brew autoremove && brew cleanup'
 else
@@ -25,18 +24,27 @@ fi
 # Docs: https://github.com/mas-cli/mas
 # Guard: nur wenn mas installiert ist
 if command -v mas >/dev/null 2>&1; then
-    alias maso='mas outdated'               # Zeige veraltete Apps
-    alias masu='mas upgrade'                # Aktualisiere alle Apps
-    alias mass='mas search'                 # Suche im App Store (Name → ID)
-    alias masi='mas install'                # Installiere App (benötigt ID)
-    alias masl='mas list'                   # Liste installierte Apps (ID + Name)
+    # Zeige veraltete Mac App Store Apps
+    alias maso='mas outdated'
+
+    # Alle Mac App Store Apps aktualisieren
+    alias masu='mas upgrade'
+
+    # Im Mac App Store nach Apps suchen (gibt ID zurück)
+    alias mass='mas search'
+
+    # App aus Mac App Store installieren (benötigt ID)
+    alias masi='mas install'
+
+    # Alle installierten Mac App Store Apps auflisten
+    alias masl='mas list'
 fi
 
 # ------------------------------------------------------------
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # bip: Brew Install - interaktive Installation
+    # Pakete interaktiv suchen und installieren (Tab für Mehrfachauswahl)
     bip() {
         local pkg
         pkg=$(brew formulae | fzf --multi \
@@ -46,7 +54,7 @@ if command -v fzf >/dev/null 2>&1; then
         [[ -n "$pkg" ]] && echo "$pkg" | xargs brew install
     }
     
-    # bup: Brew Upgrade - interaktives Update
+    # Veraltete Pakete interaktiv aktualisieren (Tab für Mehrfachauswahl)
     bup() {
         local pkg
         pkg=$(brew outdated | fzf --multi \
@@ -56,7 +64,7 @@ if command -v fzf >/dev/null 2>&1; then
         [[ -n "$pkg" ]] && echo "$pkg" | xargs brew upgrade
     }
     
-    # brp: Brew Remove - interaktive Deinstallation
+    # Ungenutzte Pakete interaktiv entfernen (nur Leaves)
     brp() {
         local pkg
         pkg=$(brew leaves | fzf --multi \
@@ -66,7 +74,7 @@ if command -v fzf >/dev/null 2>&1; then
         [[ -n "$pkg" ]] && echo "$pkg" | xargs brew uninstall
     }
     
-    # bsp: Brew Search - Suche mit Vorschau
+    # Pakete suchen mit Info-Vorschau und direkter Installation
     bsp() {
         brew search "${1:-}" | fzf \
             --preview 'brew info {}' \

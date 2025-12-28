@@ -28,7 +28,7 @@ fi
 # zi ist bereits in zoxide eingebaut (zi = zoxide interactive)
 # Erweiterte Version mit eza-Preview
 if command -v zoxide >/dev/null 2>&1; then
-    # zf: zoxide mit fzf und eza-Vorschau
+    # Schneller Verzeichniswechsel mit Vorschau und Lösch-Option
     zf() {
         local dir
         local preview_cmd="eza --tree --level=2 --icons --color=always {} 2>/dev/null || ls -la {}"
@@ -45,7 +45,7 @@ fi
 # ============================================================
 # KILL + FZF: Prozess-Management
 # ============================================================
-# fkill: Prozesse interaktiv suchen und beenden
+# Prozesse interaktiv suchen und beenden (Tab für Mehrfachauswahl)
 fkill() {
     local pid
     pid=$(ps -ef | sed 1d | fzf --multi \
@@ -61,7 +61,7 @@ fkill() {
 # ============================================================
 # MAN + FZF + BAT: Man-Pages Browser
 # ============================================================
-# fman: Man-Pages durchsuchen und anzeigen
+# Man-Pages interaktiv durchsuchen mit Syntax-Highlighting
 fman() {
     man -k . 2>/dev/null | \
         fzf --prompt='Man> ' \
@@ -73,7 +73,7 @@ fman() {
 # ============================================================
 # ENV + FZF: Umgebungsvariablen-Browser
 # ============================================================
-# fenv: Umgebungsvariablen durchsuchen und Wert kopieren
+# Umgebungsvariablen durchsuchen und Wert in Zwischenablage kopieren
 fenv() {
     printenv | sort | fzf \
         --preview 'echo {} | cut -d= -f2-' \
@@ -85,8 +85,7 @@ fenv() {
 # ============================================================
 # HISTORY + FZF: Erweiterte History-Suche
 # ============================================================
-# fhist: History durchsuchen und Befehl direkt ausführen
-# Hinweis: Unterschied zu Ctrl+R: Führt Befehl direkt aus statt einzufügen
+# Befehlshistorie durchsuchen und direkt ausführen (anders als Ctrl+R)
 fhist() {
     local cmd
     cmd=$(fc -l 1 | fzf --tac --no-sort \
