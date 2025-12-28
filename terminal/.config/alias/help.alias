@@ -429,39 +429,46 @@ _help_interactive() {
     done
 
     # Define preview command with rich formatting
-    # NOTE: This command runs in a subshell by fzf, so it cannot access zsh variables.
-    # Color codes must be hardcoded here to match the global _HELP_COLOR_* constants.
-    local preview_cmd='
-        # Extract fields from fzf selection line
+    # NOTE: Must use 'zsh -c' to ensure zsh execution (fzf defaults to /bin/sh)
+    # Uses zsh parameter expansion instead of sed/cut for better performance
+    local preview_cmd='zsh -c '\''
+        # Extract fields from fzf selection line using zsh parameter expansion
         # Format: [category] name|cmd|desc
-        # - name: Extract text after "] " and before first "|" 
-        # - category: Extract text between "[" and "]"
-        # - cmd: Second pipe-delimited field
-        # - desc: Third pipe-delimited field
-        name=$(echo {} | sed "s/^\[[^]]*\] \([^|]*\).*/\1/")
-        category=$(echo {} | sed "s/^\[\([^]]*\)\].*/\1/")
-        cmd=$(echo {} | cut -d"|" -f2)
-        desc=$(echo {} | cut -d"|" -f3)
+        input="$1"
         
-        # Color codes (Catppuccin Mocha - must match _HELP_COLOR_* constants)
-        COLOR_HEADER='\''\e[1;38;2;203;166;247m'\''  # Mauve bold
-        COLOR_NAME='\''\e[38;2;249;226;175m'\''      # Yellow
-        COLOR_COMMAND='\''\e[38;2;166;227;161m'\''   # Green
-        COLOR_DESC='\''\e[38;2;166;173;200m'\''      # Subtext0
-        COLOR_CATEGORY='\''\e[38;2;137;220;235m'\''  # Sky
-        COLOR_RESET='\''\e[0m'\''
+        # Extract name: remove "[category] " prefix, then take everything before first "|"
+        name=${input#\[*\] }
+        name=${name%%|*}
+        
+        # Extract category: remove "[" prefix, then take everything before "]"
+        category=${input#\[}
+        category=${category%%\]*}
+        
+        # Extract cmd: remove everything before first "|", then take before next "|"
+        cmd=${input#*|}
+        cmd=${cmd%%|*}
+        
+        # Extract desc: take everything after last "|"
+        desc=${input##*|}
+        
+        # Catppuccin Mocha colors (24-bit) - must match _HELP_COLOR_* constants
+        local C_HEADER=$'\''\e[1;38;2;203;166;247m'\''  # Mauve bold
+        local C_NAME=$'\''\e[38;2;249;226;175m'\''      # Yellow
+        local C_CMD=$'\''\e[38;2;166;227;161m'\''       # Green
+        local C_DESC=$'\''\e[38;2;166;173;200m'\''      # Subtext0
+        local C_CAT=$'\''\e[38;2;137;220;235m'\''       # Sky
+        local C_RST=$'\''\e[0m'\''
         
         # Print formatted preview
-        printf "${COLOR_NAME}%s${COLOR_RESET}\n" "$name"
-        [[ -n "$desc" ]] && printf "${COLOR_DESC}%s${COLOR_RESET}\n\n" "$desc"
-        [[ -z "$desc" ]] && echo ""
+        printf "${C_NAME}%s${C_RST}\n" "$name"
+        [[ -n "$desc" ]] && printf "${C_DESC}%s${C_RST}\n\n" "$desc" || echo ""
         
-        printf "${COLOR_HEADER}BEFEHL${COLOR_RESET}\n"
-        printf "  ${COLOR_COMMAND}%s${COLOR_RESET}\n\n" "$cmd"
+        printf "${C_HEADER}BEFEHL${C_RST}\n"
+        printf "  ${C_CMD}%s${C_RST}\n\n" "$cmd"
         
-        printf "${COLOR_HEADER}KATEGORIE${COLOR_RESET}\n"
-        printf "  ${COLOR_CATEGORY}%s${COLOR_RESET}\n" "$category"
-    '
+        printf "${C_HEADER}KATEGORIE${C_RST}\n"
+        printf "  ${C_CAT}%s${C_RST}\n" "$category"
+    '\'' -- {}'
     
     # Show in fzf with rich preview
     local selection=$(printf '%s\n' "${items[@]}" | \
@@ -470,7 +477,7 @@ _help_interactive() {
             --preview "$preview_cmd" \
             --preview-window='right:50%:wrap' \
             --header='Enter: Kopieren │ Esc: Beenden' \
-            --prompt='🔍 ')
+            --prompt='Suche> ')
 
     if [[ -n "$selection" ]]; then
         # Extract and display selection
