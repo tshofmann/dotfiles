@@ -14,5 +14,8 @@ fi
 # ------------------------------------------------------------
 # Basis-Aliase
 # ------------------------------------------------------------
-alias top='btop'                            # top durch btop ersetzen
-alias htop='btop'                           # htop durch btop ersetzen
+# Systemmonitor mit modernem Interface
+alias top='btop'
+
+# Bessere Alternative zu htop
+alias htop='btop'

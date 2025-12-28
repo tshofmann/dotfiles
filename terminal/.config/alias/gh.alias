@@ -15,7 +15,7 @@ fi
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # ghpr: Interaktive PR-Auswahl mit Vorschau
+    # Pull Requests interaktiv durchsuchen, auschecken oder im Browser öffnen
     ghpr() {
         gh pr list --limit 50 | \
             fzf --ansi \
@@ -26,7 +26,7 @@ if command -v fzf >/dev/null 2>&1; then
                 --bind 'ctrl-d:execute(gh pr diff {1} | bat --color=always -l diff)'
     }
     
-    # ghis: Interaktive Issue-Auswahl
+    # Issues interaktiv durchsuchen, öffnen oder bearbeiten
     ghis() {
         gh issue list --limit 50 | \
             fzf --ansi \
@@ -36,7 +36,7 @@ if command -v fzf >/dev/null 2>&1; then
                 --bind 'ctrl-e:execute(gh issue edit {1})'
     }
     
-    # ghrun: GitHub Actions Runs anzeigen
+    # GitHub Actions Workflow-Runs anzeigen, Logs lesen oder wiederholen
     ghrun() {
         gh run list --limit 20 | \
             fzf --ansi \
@@ -47,7 +47,7 @@ if command -v fzf >/dev/null 2>&1; then
                 --bind 'ctrl-r:execute(gh run rerun {1})'
     }
     
-    # ghrepo: Repository-Auswahl für schnelles Klonen
+    # Eigene Repositories durchsuchen und schnell klonen
     ghrepo() {
         local query="${1:-}"
         gh repo list --limit 30 ${query:+--source} | \

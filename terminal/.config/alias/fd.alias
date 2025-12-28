@@ -14,26 +14,44 @@ fi
 # ------------------------------------------------------------
 # Basis-Aliase
 # ------------------------------------------------------------
-alias fdf='fd --type f'                     # Nur Dateien
-alias fdd='fd --type d'                     # Nur Verzeichnisse
-alias fdh='fd --hidden'                     # Inkl. versteckte Dateien
-alias fda='fd -u'                           # Alles (unrestricted = -HI)
+# Nur Dateien suchen
+alias fdf='fd --type f'
+
+# Nur Verzeichnisse suchen
+alias fdd='fd --type d'
+
+# Inklusive versteckte Dateien
+alias fdh='fd --hidden'
+
+# Uneingeschränkt: alle Dateien inklusive .gitignore
+alias fda='fd -u'
 
 # ------------------------------------------------------------
 # Typspezifische Suche
 # ------------------------------------------------------------
-alias fdsh='fd --extension sh'              # Shell-Skripte
-alias fdpy='fd --extension py'              # Python-Dateien
-alias fdjs='fd -e js -e ts'                 # JavaScript/TypeScript
-alias fdmd='fd --extension md'              # Markdown-Dateien
-alias fdjson='fd --extension json'          # JSON-Dateien
-alias fdyaml='fd -e yaml -e yml'            # YAML-Dateien
+# Shell-Skripte finden
+alias fdsh='fd --extension sh'
+
+# Python-Dateien finden
+alias fdpy='fd --extension py'
+
+# JavaScript/TypeScript Dateien
+alias fdjs='fd -e js -e ts'
+
+# Markdown-Dateien finden
+alias fdmd='fd --extension md'
+
+# JSON-Dateien finden
+alias fdjson='fd --extension json'
+
+# YAML-Dateien finden
+alias fdyaml='fd -e yaml -e yml'
 
 # ------------------------------------------------------------
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # cdf: Verzeichnis wechseln mit Vorschau
+    # Verzeichnis wechseln mit Vorschau
     cdf() {
         local dir
         local preview_cmd="eza --tree --level=1 --icons --color=always {} 2>/dev/null || ls -la {}"
@@ -44,7 +62,7 @@ if command -v fzf >/dev/null 2>&1; then
         [[ -n "$dir" ]] && cd "$dir"
     }
     
-    # fe: Fuzzy Edit - Datei suchen und im Editor öffnen
+    # Fuzzy Edit - Datei suchen und im Editor öffnen
     fe() {
         local files
         local preview_cmd="bat --color=always --line-range=:500 {} 2>/dev/null || cat {}"
@@ -57,7 +75,7 @@ if command -v fzf >/dev/null 2>&1; then
         [[ -n "${files[*]}" ]] && ${EDITOR:-vim} "${files[@]}"
     }
     
-    # fo: Fuzzy Open - Datei suchen und mit open öffnen (macOS)
+    # Fuzzy Open - Datei suchen und mit open öffnen (macOS)
     fo() {
         local file
         local preview_cmd="bat --color=always --line-range=:500 {} 2>/dev/null || file {}"

@@ -16,32 +16,38 @@ fi
 # ------------------------------------------------------------
 # Basis-Auflistung
 # ------------------------------------------------------------
-# ls-Ersatz (Icons durch EZA_ICONS_AUTO automatisch)
+# Verzeichnisse zuerst anzeigen mit Icons
 alias ls='eza --group-directories-first'
 
-# Ausführliche Auflistung (long format)
+# Lange Listenansicht mit Details
 alias ll='eza -l --group-directories-first --header'
 
-# Alle Dateien inkl. versteckter
+# Alle Dateien inklusive versteckte
 alias la='eza -la --group-directories-first --header'
 
 # ------------------------------------------------------------
 # Mit Git-Integration (nur in Git-Repos sinnvoll)
 # ------------------------------------------------------------
+# Lange Liste mit Git-Status
 alias lsg='eza -l --git --header'
+
+# Alle Dateien mit Git-Status
 alias lag='eza -la --git --header'
 
 # ------------------------------------------------------------
 # Baumansicht
 # ------------------------------------------------------------
+# Verzeichnisbaum bis Tiefe 2
 alias lt='eza --tree --level=2'
+
+# Verzeichnisbaum bis Tiefe 3
 alias lt3='eza --tree --level=3'
 
 # ------------------------------------------------------------
 # Sortierung
 # ------------------------------------------------------------
-# Nach Größe (größte zuerst)
+# Nach Größe sortieren (größte zuerst)
 alias lss='eza -l --sort=size --reverse --header'
 
-# Nach Änderungsdatum (neueste zuerst)
+# Nach Änderungsdatum sortieren (neueste zuerst)
 alias lst='eza -l --sort=modified --reverse --header'
