@@ -322,10 +322,16 @@ Die folgenden Funktionen nutzen fzf, sind aber nach ihrem primären Zweck in den
 | Funktion | Beschreibung |
 |----------|--------------|
 | `help` | Übersicht aller Alias-Kategorien und Funktionen |
-| `help <kategorie>` | Details zu einer Kategorie (z.B. `help git`) |
-| `help search <text>` | Suche in allen Aliasen und Funktionen |
-| `help tools` | Installierte Tools mit Versionsnummern |
-| `help --fzf` | Interaktive Auswahl mit fzf |
+
+**Unterbefehle:**
+
+```
+help                  # Übersicht aller Kategorien
+help <kategorie>      # Details zu einer Kategorie (z.B. help git)
+help search <text>    # Suche in allen Aliasen und Funktionen
+help tools            # Installierte Tools mit Versionsnummern
+help --fzf            # Interaktive Auswahl mit fzf
+```
 
 > **Hinweis:** Die Help-Funktion parst automatisch alle `.alias`-Dateien und extrahiert Beschreibungen aus den Kommentaren. Siehe [Integriertes Help-System](#integriertes-help-system) für Beispiele.
 
