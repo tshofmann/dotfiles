@@ -265,9 +265,11 @@ _help_category() {
     # Parse and display aliases
     local has_aliases=0
     local alias_output=""
-    while IFS='|' read -r name cmd adesc; do
+    while IFS='|' read -r name cmd desc; do
         has_aliases=1
         alias_output+=$(printf "       ${_HELP_COLOR_ALIAS}%-8s${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}%s${_HELP_COLOR_RESET}\n" "$name" "$cmd")
+        # Add description if available
+        [[ -n "$desc" ]] && alias_output+=$(printf "                ${_HELP_COLOR_DESC}%s${_HELP_COLOR_RESET}\n" "$desc")
         alias_output+=$'\n'
     done < <(_help_parse_aliases "$alias_file")
 
@@ -426,14 +428,42 @@ _help_interactive() {
         done < <(_help_parse_functions "$file")
     done
 
-    # Show in fzf
+    # Define preview command with rich formatting
+    local preview_cmd='
+        # Extract fields using cut
+        name=$(echo {} | sed "s/^\[[^]]*\] \([^|]*\).*/\1/")
+        category=$(echo {} | sed "s/^\[\([^]]*\)\].*/\1/")
+        cmd=$(echo {} | cut -d"|" -f2)
+        desc=$(echo {} | cut -d"|" -f3)
+        
+        # Color codes (Catppuccin Mocha)
+        COLOR_HEADER='\''\e[1;38;2;203;166;247m'\''  # Mauve bold
+        COLOR_NAME='\''\e[38;2;249;226;175m'\''      # Yellow
+        COLOR_COMMAND='\''\e[38;2;166;227;161m'\''   # Green
+        COLOR_DESC='\''\e[38;2;166;173;200m'\''      # Subtext0
+        COLOR_CATEGORY='\''\e[38;2;137;220;235m'\''  # Sky
+        COLOR_RESET='\''\e[0m'\''
+        
+        # Print formatted preview
+        printf "${COLOR_NAME}%s${COLOR_RESET}\n" "$name"
+        [[ -n "$desc" ]] && printf "${COLOR_DESC}%s${COLOR_RESET}\n\n" "$desc"
+        [[ -z "$desc" ]] && echo ""
+        
+        printf "${COLOR_HEADER}BEFEHL${COLOR_RESET}\n"
+        printf "  ${COLOR_COMMAND}%s${COLOR_RESET}\n\n" "$cmd"
+        
+        printf "${COLOR_HEADER}KATEGORIE${COLOR_RESET}\n"
+        printf "  ${COLOR_CATEGORY}%s${COLOR_RESET}\n" "$category"
+    '
+    
+    # Show in fzf with rich preview
     local selection=$(printf '%s\n' "${items[@]}" | \
         fzf --ansi \
             --delimiter='|' \
-            --preview 'echo {2} | fold -w 60' \
-            --preview-window='down:3:wrap' \
-            --header='Enter: Details kopieren | Esc: Beenden' \
-            --prompt='Aliase> ')
+            --preview "$preview_cmd" \
+            --preview-window='right:50%:wrap' \
+            --header='Enter: Kopieren │ Esc: Beenden' \
+            --prompt='🔍 ')
 
     if [[ -n "$selection" ]]; then
         # Extract and display selection

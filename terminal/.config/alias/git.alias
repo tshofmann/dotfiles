@@ -17,14 +17,31 @@ fi
 # ------------------------------------------------------------
 # Essenzielle Aliase
 # ------------------------------------------------------------
+# Dateien zum Staging hinzufügen
 alias ga='git add'
+
+# Neuen Commit erstellen
 alias gc='git commit'
+
+# Commit mit Nachricht
 alias gcm='git commit -m'
+
+# Alle Änderungen stagen und committen
 alias gacm='git add --all && git commit -m'
+
+# Änderungen pushen
 alias gp='git push'
+
+# Änderungen pullen
 alias gpl='git pull'
+
+# Branch wechseln oder Datei zurücksetzen
 alias gco='git checkout'
+
+# Status des Repositories anzeigen
 alias gs='git status'
+
+# Änderungen anzeigen
 alias gd='git diff'
 
 # ------------------------------------------------------------
