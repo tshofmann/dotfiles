@@ -149,6 +149,10 @@ warn() { print "⚠ $*"; }
 - **Guard-Check** am Anfang: `command -v tool &>/dev/null || return`
 - **Kommentar** über jeder Alias-Gruppe
 - **Konsistente Benennung**: `tool.alias`
+- **Private Funktionen**: Mit `_` Präfix (z.B. `_helper_func()`)
+  - Werden von Validatoren ignoriert
+  - Müssen nicht dokumentiert werden
+  - Für interne Helper, Parser, etc.
 
 ### Dokumentation
 
