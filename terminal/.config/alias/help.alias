@@ -344,7 +344,12 @@ _help_search() {
         while IFS=$SEP read -r name cmd desc; do
             if [[ "${name:l}" =~ "${query:l}" || "${cmd:l}" =~ "${query:l}" || "${desc:l}" =~ "${query:l}" ]]; then
                 local name_padded=$(printf "%-12s" "$name")
-                category_results+="       ${_HELP_COLOR_ALIAS}${name_padded}${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}${cmd}${_HELP_COLOR_RESET}"$'\n'
+                local cmd_padded=$(printf "%-28s" "$cmd")
+                if [[ -n "$desc" ]]; then
+                    category_results+="       ${_HELP_COLOR_ALIAS}${name_padded}${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}${cmd_padded}${_HELP_COLOR_RESET}  ${_HELP_COLOR_DESC}${desc}${_HELP_COLOR_RESET}"$'\n'
+                else
+                    category_results+="       ${_HELP_COLOR_ALIAS}${name_padded}${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}${cmd}${_HELP_COLOR_RESET}"$'\n'
+                fi
                 found=1
             fi
         done < <(_help_parse_aliases "$file")
