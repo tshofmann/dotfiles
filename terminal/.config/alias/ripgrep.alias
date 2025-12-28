@@ -17,26 +17,47 @@ fi
 # ------------------------------------------------------------
 # Basis-Suche (--smart-case ist global default)
 # ------------------------------------------------------------
-alias rgc='rg -C 3'                     # Mit Kontext (3 Zeilen)
-alias rgi='rg --ignore-case'            # Case-insensitive (immer)
+# Suche mit 3 Zeilen Kontext vor und nach Treffer
+alias rgc='rg -C 3'
+
+# Suche ohne Berücksichtigung von Groß-/Kleinschreibung
+alias rgi='rg --ignore-case'
 
 # ------------------------------------------------------------
 # Erweiterte Suche
 # ------------------------------------------------------------
-alias rga='rg -uuu'                     # Alle Dateien (ignoriert nichts)
-alias rgh='rg --hidden'                 # Inkl. versteckte Dateien
-alias rgl='rg --files-with-matches'     # Nur Dateinamen mit Treffern
-alias rgn='rg --count'                  # Treffer-Anzahl pro Datei
+# Suche in allen Dateien ohne Einschränkungen
+alias rga='rg -uuu'
+
+# Suche inklusive versteckter Dateien
+alias rgh='rg --hidden'
+
+# Zeige nur Dateinamen mit Treffern
+alias rgl='rg --files-with-matches'
+
+# Zähle Treffer pro Datei
+alias rgn='rg --count'
 
 # ------------------------------------------------------------
 # Dateityp-Filter
 # ------------------------------------------------------------
-alias rgts='rg -t ts -t js'             # TypeScript/JavaScript
-alias rgpy='rg -t py'                   # Python
-alias rgmd='rg -t md'                   # Markdown
-alias rgsh='rg -t sh'                   # Shell-Skripte
-alias rgrb='rg -t ruby'                 # Ruby
-alias rggo='rg -t go'                   # Go
+# Suche in TypeScript/JavaScript Dateien
+alias rgts='rg -t ts -t js'
+
+# Suche in Python-Dateien
+alias rgpy='rg -t py'
+
+# Suche in Markdown-Dateien
+alias rgmd='rg -t md'
+
+# Suche in Shell-Skripten
+alias rgsh='rg -t sh'
+
+# Suche in Ruby-Dateien
+alias rgrb='rg -t ruby'
+
+# Suche in Go-Dateien
+alias rggo='rg -t go'
 
 # ------------------------------------------------------------
 # Interaktive Suche (mit fzf)

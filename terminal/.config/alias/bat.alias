@@ -14,25 +14,25 @@ fi
 # ------------------------------------------------------------
 # Dateiansicht
 # ------------------------------------------------------------
-# cat-Ersatz: Plain + kein Pager (verhält sich wie cat)
+# Ersetzt cat mit Syntax-Highlighting (plain style)
 alias cat='bat -pp'
 
-# Mit Syntax-Highlighting, aber ohne Pager
+# Syntax-Highlighting ohne Pager
 alias catp='bat --paging=never'
 
-# Nur Zeilennummern, keine weitere Dekoration
+# Mit Zeilennummern, ohne weitere Dekoration
 alias catn='bat --style=numbers --paging=never'
 
-# Mit Git-Diff-Markierungen am Rand
+# Mit Git-Diff-Markierungen anzeigen
 alias catd='bat --diff'
 
 # ------------------------------------------------------------
 # Hilfs-Aliase
 # ------------------------------------------------------------
-# Verfügbare Themes auflisten
+# Liste aller verfügbaren Themes
 alias bat-themes='bat --list-themes'
 
-# Verfügbare Sprachen auflisten
+# Liste aller unterstützten Sprachen
 alias bat-langs='bat --list-languages'
 
 # Theme-Vorschau (benötigt fzf)
