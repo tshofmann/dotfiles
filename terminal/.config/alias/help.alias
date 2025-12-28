@@ -152,7 +152,7 @@ _help_get_tool_version() {
     if ! command -v "$tool" >/dev/null 2>&1; then echo "not_installed"; return 1; fi
     local version=""
     case "$tool" in
-        eza) version=$("$tool" --version 2>/dev/null | grep -oE 'v?[0-9]+\.[0-9]+\.[0-9]+' | tr -d 'v' | head -1) ;;
+        eza) version=$("$tool" --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1) ;;
         bat|fd|fzf|rg|starship|zoxide|gh|btop) version=$("$tool" --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1) ;;
         mas) version=$(mas version 2>/dev/null) ;;
         *) version=$("$tool" --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1) ;;
@@ -163,7 +163,6 @@ _help_get_tool_version() {
 # ------------------------------------------------------------
 # Farben (Catppuccin Mocha - True Color 24-bit)
 # ------------------------------------------------------------
-# Color codes (Catppuccin Mocha - True Color 24-bit)
 typeset -g _HELP_COLOR_RESET=$'\e[0m'
 typeset -g _HELP_COLOR_HEADER=$'\e[1;38;2;203;166;247m'  # Mauve (bold)
 typeset -g _HELP_COLOR_CATEGORY=$'\e[38;2;137;220;235m'  # Sky
