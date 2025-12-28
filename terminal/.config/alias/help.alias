@@ -494,16 +494,18 @@ _help_interactive() {
     # Show in fzf with rich preview
     local selection=$(printf '%s\n' "${items[@]}" | \
         fzf --ansi \
-            --delimiter='|' \
+            --delimiter='│' \
             --preview "$preview_cmd" \
             --preview-window='right:50%:wrap' \
             --header='Enter: Kopieren │ Esc: Beenden' \
             --prompt='Suche> ')
 
     if [[ -n "$selection" ]]; then
-        # Extract and display selection
-        local name=$(echo "$selection" | sed 's/^\[[^]]*\] \([^|]*\).*/\1/')
-        local cmd=$(echo "$selection" | cut -d'|' -f2)
+        # Extract and display selection using zsh parameter expansion
+        local name="${selection#\[*\] }"
+        name="${name%%│*}"
+        local cmd="${selection#*│}"
+        cmd="${cmd%%│*}"
         echo ""
         echo "${_HELP_COLOR_SUCCESS}✔${_HELP_COLOR_RESET} ${_HELP_COLOR_ALIAS}$name${_HELP_COLOR_RESET} → ${_HELP_COLOR_COMMAND}$cmd${_HELP_COLOR_RESET}"
         echo ""

@@ -20,13 +20,13 @@ fi
 # Dateien zum Staging hinzufügen
 alias ga='git add'
 
-# Neuen Commit erstellen
+# Einen neuen Commit erstellen
 alias gc='git commit'
 
 # Commit mit Nachricht
 alias gcm='git commit -m'
 
-# Alle Änderungen stagen und committen
+# Alle Änderungen stagen und einen Commit erstellen
 alias gacm='git add --all && git commit -m'
 
 # Änderungen pushen

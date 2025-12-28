@@ -23,7 +23,7 @@ alias catp='bat --paging=never'
 # Mit Zeilennummern, ohne weitere Dekoration
 alias catn='bat --style=numbers --paging=never'
 
-# Mit Git-Diff-Markierungen anzeigen
+# Zeigt Git-Diff-Markierungen an
 alias catd='bat --diff'
 
 # ------------------------------------------------------------
