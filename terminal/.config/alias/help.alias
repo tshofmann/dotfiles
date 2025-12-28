@@ -203,38 +203,37 @@ _help_print_header() {
 
 # Show overview of all categories
 _help_overview() {
-    _help_print_header "🚀 Dotfiles Help"
-
+    _help_print_header "📖 help"
     echo ""
-    echo "${_HELP_COLOR_CATEGORY}📁 Alias-Kategorien:${_HELP_COLOR_RESET}"
+    echo "${_HELP_COLOR_HEADER}NAME${_HELP_COLOR_RESET}"
+    echo "       help - Zeigt Aliase, Funktionen und Tool-Informationen"
+    echo ""
+    echo "${_HELP_COLOR_HEADER}SYNOPSIS${_HELP_COLOR_RESET}"
+    echo "       ${_HELP_COLOR_COMMAND}help${_HELP_COLOR_RESET} [KATEGORIE]"
+    echo "       ${_HELP_COLOR_COMMAND}help search${_HELP_COLOR_RESET} <text>"
+    echo "       ${_HELP_COLOR_COMMAND}help tools${_HELP_COLOR_RESET} | ${_HELP_COLOR_COMMAND}help --fzf${_HELP_COLOR_RESET}"
+    echo ""
+    echo "${_HELP_COLOR_HEADER}KATEGORIEN${_HELP_COLOR_RESET}"
 
     local alias_dir="${HOME}/.config/alias"
     if [[ -d "$alias_dir" ]]; then
-        # Collect and sort categories first, then format output
         local -a categories=()
         for file in "$alias_dir"/*.alias(N); do
             local category=$(_help_get_category "$file")
             local desc=$(_help_get_category_description "$file")
             categories+=("$category|$desc")
         done
-        # Sort and format with proper alignment
         for entry in ${(o)categories}; do
             local category="${entry%%|*}"
             local desc="${entry#*|}"
-            printf "  ${_HELP_COLOR_ALIAS}%-12s${_HELP_COLOR_RESET} ${_HELP_COLOR_DESC}%s${_HELP_COLOR_RESET}\n" "$category" "$desc"
+            printf "       ${_HELP_COLOR_ALIAS}%-12s${_HELP_COLOR_RESET} %s\n" "$category" "$desc"
         done
     fi
 
     echo ""
-    echo "${_HELP_COLOR_CATEGORY}⚡ Funktionen:${_HELP_COLOR_RESET}"
-    printf "  ${_HELP_COLOR_ALIAS}%-12s${_HELP_COLOR_RESET} ${_HELP_COLOR_DESC}%s${_HELP_COLOR_RESET}\n" "help" "Diese Hilfe anzeigen"
-
-    echo ""
-    echo "${_HELP_COLOR_CATEGORY}💡 Nutzung:${_HELP_COLOR_RESET}"
-    echo "  ${_HELP_COLOR_COMMAND}help <name>${_HELP_COLOR_RESET}        Details zu Kategorie/Funktion"
-    echo "  ${_HELP_COLOR_COMMAND}help search <text>${_HELP_COLOR_RESET} Suche in allen Aliasen"
-    echo "  ${_HELP_COLOR_COMMAND}help tools${_HELP_COLOR_RESET}         Installierte Tools anzeigen"
-    echo "  ${_HELP_COLOR_COMMAND}help --fzf${_HELP_COLOR_RESET}         Interaktive Auswahl"
+    echo "${_HELP_COLOR_HEADER}BEISPIELE${_HELP_COLOR_RESET}"
+    echo "       ${_HELP_COLOR_COMMAND}help git${_HELP_COLOR_RESET}            Zeige Git-Aliase"
+    echo "       ${_HELP_COLOR_COMMAND}help search commit${_HELP_COLOR_RESET}  Suche nach 'commit'"
     echo ""
 }
 
@@ -257,35 +256,52 @@ _help_category() {
     _help_print_header "📁 $category"
     echo ""
 
+    # Get description
+    local desc=$(_help_get_category_description "$alias_file")
+    echo "${_HELP_COLOR_HEADER}NAME${_HELP_COLOR_RESET}"
+    echo "       $category - $desc"
+    echo ""
+
     # Parse and display aliases
     local has_aliases=0
-    while IFS='|' read -r name cmd desc; do
+    local alias_output=""
+    while IFS='|' read -r name cmd adesc; do
         has_aliases=1
-        printf "  ${_HELP_COLOR_ALIAS}%-8s${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}%-25s${_HELP_COLOR_RESET} ${_HELP_COLOR_DESC}%s${_HELP_COLOR_RESET}\n" \
-            "$name" "$cmd" "$desc"
+        alias_output+=$(printf "       ${_HELP_COLOR_ALIAS}%-8s${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}%s${_HELP_COLOR_RESET}\n" "$name" "$cmd")
+        alias_output+=$'\n'
     done < <(_help_parse_aliases "$alias_file")
+
+    if [[ $has_aliases -eq 1 ]]; then
+        echo "${_HELP_COLOR_HEADER}ALIASE${_HELP_COLOR_RESET}"
+        printf "%s" "$alias_output"
+    fi
 
     # Parse and display functions
     local has_functions=0
-    while IFS='|' read -r name desc; do
-        [[ $has_functions -eq 0 && $has_aliases -eq 1 ]] && echo ""
+    local func_output=""
+    while IFS='|' read -r name fdesc; do
         has_functions=1
-        printf "  ${_HELP_COLOR_ALIAS}%-8s${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}%-25s${_HELP_COLOR_RESET} ${_HELP_COLOR_DESC}%s${_HELP_COLOR_RESET}\n" \
-            "$name" "(Funktion)" "$desc"
+        func_output+=$(printf "       ${_HELP_COLOR_ALIAS}%-8s${_HELP_COLOR_RESET} %s\n" "$name" "$fdesc")
+        func_output+=$'\n'
     done < <(_help_parse_functions "$alias_file")
 
+    if [[ $has_functions -eq 1 ]]; then
+        echo "${_HELP_COLOR_HEADER}FUNKTIONEN${_HELP_COLOR_RESET}"
+        printf "%s" "$func_output"
+    fi
+
     if [[ $has_aliases -eq 0 && $has_functions -eq 0 ]]; then
-        echo "  ${_HELP_COLOR_DESC}Keine Aliase oder Funktionen gefunden${_HELP_COLOR_RESET}"
+        echo "       ${_HELP_COLOR_DESC}Keine Aliase oder Funktionen gefunden${_HELP_COLOR_RESET}"
+        echo ""
     fi
 
     # Show documentation link if available
     local docs_url=$(_help_get_docs_url "$alias_file")
     if [[ -n "$docs_url" ]]; then
+        echo "${_HELP_COLOR_HEADER}SIEHE AUCH${_HELP_COLOR_RESET}"
+        echo "       $docs_url"
         echo ""
-        echo "${_HELP_COLOR_ICON}📖 Docs:${_HELP_COLOR_RESET} $docs_url"
     fi
-
-    echo ""
 }
 
 # Search through all aliases and functions
@@ -303,51 +319,55 @@ _help_search() {
 
     local found=0
     local alias_dir="${HOME}/.config/alias"
+    local current_category=""
+    local results=""
 
     for file in "$alias_dir"/*.alias(N); do
         local category=$(_help_get_category "$file")
-        local category_printed=0
+        local category_results=""
 
         # Search in aliases
         while IFS='|' read -r name cmd desc; do
-            # Case-insensitive search
             if [[ "${name:l}" =~ "${query:l}" || "${cmd:l}" =~ "${query:l}" || "${desc:l}" =~ "${query:l}" ]]; then
-                if [[ $category_printed -eq 0 ]]; then
-                    echo "${_HELP_COLOR_CATEGORY}[$category]${_HELP_COLOR_RESET}"
-                    category_printed=1
-                fi
-                printf "  ${_HELP_COLOR_ALIAS}%-8s${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}%-25s${_HELP_COLOR_RESET} ${_HELP_COLOR_DESC}%s${_HELP_COLOR_RESET}\n" \
-                    "$name" "$cmd" "$desc"
+                category_results+=$(printf "       ${_HELP_COLOR_ALIAS}%-8s${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}%s${_HELP_COLOR_RESET}\n" "$name" "$cmd")
+                category_results+=$'\n'
                 found=1
             fi
         done < <(_help_parse_aliases "$file")
 
         # Search in functions
         while IFS='|' read -r name desc; do
-            # Case-insensitive search
             if [[ "${name:l}" =~ "${query:l}" || "${desc:l}" =~ "${query:l}" ]]; then
-                if [[ $category_printed -eq 0 ]]; then
-                    echo "${_HELP_COLOR_CATEGORY}[$category]${_HELP_COLOR_RESET}"
-                    category_printed=1
-                fi
-                printf "  ${_HELP_COLOR_ALIAS}%-8s${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}%-25s${_HELP_COLOR_RESET} ${_HELP_COLOR_DESC}%s${_HELP_COLOR_RESET}\n" \
-                    "$name" "(Funktion)" "$desc"
+                category_results+=$(printf "       ${_HELP_COLOR_ALIAS}%-8s${_HELP_COLOR_RESET} ${_HELP_COLOR_DESC}%s${_HELP_COLOR_RESET}\n" "$name" "$desc")
+                category_results+=$'\n'
                 found=1
             fi
         done < <(_help_parse_functions "$file")
 
-        [[ $category_printed -eq 1 ]] && echo ""
+        if [[ -n "$category_results" ]]; then
+            results+="${_HELP_COLOR_HEADER}${category}${_HELP_COLOR_RESET}"$'\n'
+            results+="$category_results"
+        fi
     done
 
     if [[ $found -eq 0 ]]; then
-        echo "  ${_HELP_COLOR_DESC}Keine Treffer gefunden${_HELP_COLOR_RESET}"
+        echo "${_HELP_COLOR_HEADER}ERGEBNIS${_HELP_COLOR_RESET}"
+        echo "       Keine Treffer für '$query'"
         echo ""
+    else
+        echo "${_HELP_COLOR_HEADER}TREFFER${_HELP_COLOR_RESET}"
+        echo ""
+        printf "%s" "$results"
     fi
 }
 
 # Show installed tools with versions
 _help_tools() {
-    _help_print_header "🔧 Installierte Tools"
+    _help_print_header "🔧 Tools"
+    echo ""
+
+    echo "${_HELP_COLOR_HEADER}NAME${_HELP_COLOR_RESET}"
+    echo "       tools - Installierte CLI-Tools aus dem Brewfile"
     echo ""
 
     # Define tools to check (from Brewfile)
@@ -364,20 +384,20 @@ _help_tools() {
         "mas:Mac App Store CLI"
     )
 
+    echo "${_HELP_COLOR_HEADER}INSTALLIERT${_HELP_COLOR_RESET}"
     for tool_info in "${tools[@]}"; do
         local tool="${tool_info%%:*}"
         local desc="${tool_info##*:}"
         local version=$(_help_get_tool_version "$tool")
 
         if [[ "$version" == "not_installed" ]]; then
-            printf "  ${_HELP_COLOR_ERROR}✖${_HELP_COLOR_RESET} ${_HELP_COLOR_ALIAS}%-12s${_HELP_COLOR_RESET} ${_HELP_COLOR_DESC}%-10s  %s${_HELP_COLOR_RESET}\n" \
+            printf "       ${_HELP_COLOR_ERROR}✖${_HELP_COLOR_RESET} ${_HELP_COLOR_ALIAS}%-10s${_HELP_COLOR_RESET} ${_HELP_COLOR_DESC}%-10s %s${_HELP_COLOR_RESET}\n" \
                 "$tool" "—" "$desc"
         else
-            printf "  ${_HELP_COLOR_SUCCESS}✔${_HELP_COLOR_RESET} ${_HELP_COLOR_ALIAS}%-12s${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}%-10s${_HELP_COLOR_RESET}  ${_HELP_COLOR_DESC}%s${_HELP_COLOR_RESET}\n" \
+            printf "       ${_HELP_COLOR_SUCCESS}✔${_HELP_COLOR_RESET} ${_HELP_COLOR_ALIAS}%-10s${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}%-10s${_HELP_COLOR_RESET} ${_HELP_COLOR_DESC}%s${_HELP_COLOR_RESET}\n" \
                 "$tool" "$version" "$desc"
         fi
     done
-
     echo ""
 }
 
@@ -425,6 +445,29 @@ _help_interactive() {
     fi
 }
 
+# Pipe output through pager if content is long
+_help_with_pager() {
+    local content="$1"
+    local lines=$(echo "$content" | wc -l | tr -d ' ')
+    local term_lines=${LINES:-24}
+
+    # Use pager if output exceeds terminal height
+    if (( lines > term_lines - 2 )); then
+        # Add navigation hint at the end
+        local hint="\n${_HELP_COLOR_DESC}───────────────────────────────────────────────────────────────────${_HELP_COLOR_RESET}"
+        hint+="\n${_HELP_COLOR_DESC}Navigation: ↑/↓ scrollen │ q beenden │ / suchen${_HELP_COLOR_RESET}"
+        content+="$hint"
+
+        if command -v bat >/dev/null 2>&1; then
+            echo "$content" | bat --plain --paging=always --style=plain
+        else
+            echo "$content" | less -R
+        fi
+    else
+        echo "$content"
+    fi
+}
+
 # Main help function
 help() {
     local cmd="${1:-}"
@@ -432,19 +475,19 @@ help() {
 
     case "$cmd" in
         "")
-            _help_overview
+            _help_with_pager "$(_help_overview)"
             ;;
         "search")
-            _help_search "$arg"
+            _help_with_pager "$(_help_search "$arg")"
             ;;
         "tools")
-            _help_tools
+            _help_with_pager "$(_help_tools)"
             ;;
         "--fzf")
             _help_interactive
             ;;
         *)
-            _help_category "$cmd"
+            _help_with_pager "$(_help_category "$cmd")"
             ;;
     esac
 }
