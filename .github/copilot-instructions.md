@@ -59,6 +59,41 @@ Gilt für **jede** Änderung – Features, Bugfixes, Refactoring, Dokumentation:
 - **Modularität**: Ein Tool = Eine Alias-Datei (z.B. `bat.alias`, `fd.alias`)
 - **Symlinks**: Via GNU Stow mit `--no-folding` (keine Verzeichnis-Symlinks)
 
+### Verzeichnisstruktur
+```
+dotfiles/
+├── .github/
+│   └── copilot-instructions.md  # Diese Datei
+├── setup/
+│   ├── bootstrap.sh             # Installations-Script
+│   └── Brewfile                 # Homebrew-Pakete
+├── terminal/
+│   ├── .zshrc                   # Shell-Konfiguration
+│   ├── .zshenv                  # Environment (wird zuerst geladen)
+│   ├── .zprofile                # Login-Shell (Homebrew-Pfade)
+│   └── .config/
+│       ├── alias/*.alias        # Tool-Aliase (10 Dateien)
+│       ├── bat/config           # bat-Konfiguration
+│       ├── fd/ignore            # fd-Ignoreliste
+│       ├── fzf/config           # fzf-Optionen
+│       └── ripgrep/config       # ripgrep-Optionen
+├── scripts/
+│   ├── health-check.sh          # System-Status prüfen
+│   ├── validate-docs.sh         # Doku-Konsistenz prüfen
+│   └── validators/              # Validierungs-Module
+└── docs/                        # Benutzer-Dokumentation
+```
+
+### Installierte Tools (Brewfile)
+`bat`, `btop`, `eza`, `fd`, `fzf`, `gh`, `ripgrep`, `starship`, `stow`, `zoxide`
+
+Plus: `mas` (Mac App Store), `zsh-syntax-highlighting`, `zsh-autosuggestions`
+
+### Help-System
+- `help` – Interaktive Suche aller Aliase/Funktionen mit fzf
+- Jede Funktion/Alias braucht Beschreibungskommentar darüber
+- Private Helper mit `_` Prefix werden ignoriert
+
 ## Validierung vor Änderungen
 
 **Konsistenz-Prinzip**: Code = Help = Doku = Copilot-Instructions
