@@ -42,7 +42,7 @@ zstyle ':fzf-tab:complete:*:*' fzf-preview \
 # kill/ps: Prozess-Details
 zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
 zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-preview \
-    '[[ $group == "[process ID]" ]] && ps --pid=$word -o cmd --no-headers -w -w'
+    '[[ $group == "[process ID]" ]] && ps --pid="$word" -o cmd --no-headers -w -w'
 zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-flags --preview-window=down:3:wrap
 
 # Umgebungsvariablen: Wert anzeigen
@@ -51,22 +51,22 @@ zstyle ':fzf-tab:complete:(-command-|-parameter-|-brace-parameter-|export|unset|
 
 # git: Kontextabhängige Previews
 zstyle ':fzf-tab:complete:git-(add|diff|restore):*' fzf-preview \
-    'git diff $word | head -100'
+    'git diff "$word" | head -100'
 zstyle ':fzf-tab:complete:git-log:*' fzf-preview \
-    'git log --color=always --oneline -20 $word'
+    'git log --color=always --oneline -20 "$word"'
 zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview \
     'case "$group" in
-        "modified file") git diff $word | head -50 ;;
-        *) git log --color=always --oneline -10 $word ;;
+        "modified file") git diff "$word" | head -50 ;;
+        *) git log --color=always --oneline -10 "$word" ;;
     esac'
 
 # ssh: Host-Info (wenn verfügbar)
 zstyle ':fzf-tab:complete:ssh:*' fzf-preview \
-    'ping -c1 -W1 $word 2>/dev/null && echo "Host erreichbar" || echo "Host nicht erreichbar"'
+    'ping -c1 -W1 "$word" 2>/dev/null && echo "Host erreichbar" || echo "Host nicht erreichbar"'
 
 # brew: Paket-Info
 zstyle ':fzf-tab:complete:brew-(install|uninstall|search|info):*-argument-rest' fzf-preview \
-    'brew info $word 2>/dev/null | head -20'
+    'brew info "$word" 2>/dev/null | head -20'
 
 # ------------------------------------------------------------
 # Performance-Optimierung
