@@ -64,6 +64,31 @@ validate_copilot_instructions() {
         (( errors++ )) || true
     fi
     
+    # 6. Prüfe ob Alias-Datei-Anzahl stimmt
+    local actual_alias_count=$(ls "$DOTFILES_DIR/terminal/.config/alias/"*.alias 2>/dev/null | wc -l | tr -d ' ')
+    if grep -q "alias.*([0-9]* Dateien)" "$instructions_file"; then
+        local doc_alias_count=$(grep -o "alias.*([0-9]* Dateien)" "$instructions_file" | grep -o "[0-9]*")
+        if [[ "$actual_alias_count" != "$doc_alias_count" ]]; then
+            err "Alias-Datei-Anzahl veraltet: Docs=$doc_alias_count, Actual=$actual_alias_count"
+            (( errors++ )) || true
+        fi
+    fi
+    
+    # 7. Prüfe ob alle Brewfile-Tools erwähnt sind (Kern-CLI-Tools)
+    local brewfile="$DOTFILES_DIR/setup/Brewfile"
+    if [[ -f "$brewfile" ]]; then
+        local missing_tools=()
+        for tool in bat btop eza fd fzf gh ripgrep starship stow zoxide; do
+            if grep -q "^brew \"$tool\"" "$brewfile" && ! grep -q "$tool" "$instructions_file"; then
+                missing_tools+=("$tool")
+            fi
+        done
+        if (( ${#missing_tools[@]} > 0 )); then
+            err "Brewfile-Tools nicht in Instructions: ${missing_tools[*]}"
+            (( errors++ )) || true
+        fi
+    fi
+    
     if (( errors > 0 )); then
         err "Copilot Instructions haben $errors Inkonsistenz(en)"
         return 1
