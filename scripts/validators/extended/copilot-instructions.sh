@@ -21,18 +21,25 @@ validate_copilot_instructions() {
     local doc_guard=$(grep "Guard-Check" "$instructions_file" | grep -o '`[^`]*`' | head -1 | tr -d '`')
     
     if [[ -n "$doc_guard" ]]; then
-        # Extrahiere das Pattern ohne tool-spezifischen Namen
-        # Docs: "if ! command -v tool >/dev/null 2>&1; then return 0; fi"
-        # Code: "if ! command -v bat >/dev/null 2>&1; then"
-        if ! grep -q "if ! command -v .* >/dev/null 2>&1; then" "$DOTFILES_DIR/terminal/.config/alias/bat.alias"; then
-            err "Guard-Check Syntax im Code weicht von Dokumentation ab"
-            (( errors++ )) || true
-        fi
-        # Prüfe ob return 0 auch im Code ist
-        if ! grep -q "return 0" "$DOTFILES_DIR/terminal/.config/alias/bat.alias"; then
-            err "Guard-Check: 'return 0' fehlt im Code"
-            (( errors++ )) || true
-        fi
+        # Prüfe alle Alias-Dateien die einen Guard-Check AM ANFANG haben
+        # Pattern: "if ! command -v <tool> >/dev/null 2>&1; then ... return 0"
+        local alias_dir="$DOTFILES_DIR/terminal/.config/alias"
+        for alias_file in "$alias_dir"/*.alias; do
+            [[ -f "$alias_file" ]] || continue
+            local filename=$(basename "$alias_file")
+            # Prüfe nur Dateien mit Guard-Check in den ersten 20 Zeilen (Header-Bereich)
+            local header=$(head -20 "$alias_file")
+            if echo "$header" | grep -q "^if ! command -v"; then
+                if ! echo "$header" | grep -Eq 'if ! command -v [a-zA-Z0-9_-]+ >/dev/null 2>&1; then'; then
+                    err "Guard-Check Syntax in $filename weicht von Dokumentation ab"
+                    (( errors++ )) || true
+                fi
+                if ! echo "$header" | grep -q "return 0"; then
+                    err "Guard-Check: 'return 0' fehlt in $filename"
+                    (( errors++ )) || true
+                fi
+            fi
+        done
     fi
     
     # 2. Prüfe ob CONTRIBUTING.md Verweis existiert
@@ -66,8 +73,8 @@ validate_copilot_instructions() {
     
     # 6. Prüfe ob Alias-Datei-Anzahl stimmt
     local actual_alias_count=$(ls "$DOTFILES_DIR/terminal/.config/alias/"*.alias 2>/dev/null | wc -l | tr -d ' ')
-    if grep -q "alias.*([0-9]* Dateien)" "$instructions_file"; then
-        local doc_alias_count=$(grep -o "alias.*([0-9]* Dateien)" "$instructions_file" | grep -o "[0-9]*")
+    if grep -Eq "alias.*\([0-9]+ Dateien\)" "$instructions_file"; then
+        local doc_alias_count=$(grep -Eo "alias.*\([0-9]+ Dateien\)" "$instructions_file" | grep -Eo "[0-9]+")
         if [[ "$actual_alias_count" != "$doc_alias_count" ]]; then
             err "Alias-Datei-Anzahl veraltet: Docs=$doc_alias_count, Actual=$actual_alias_count"
             (( errors++ )) || true
