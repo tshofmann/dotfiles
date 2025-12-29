@@ -42,6 +42,12 @@
 3. `./scripts/health-check.sh` – System-Health bei Tool-Änderungen
 4. `./scripts/validate-docs.sh` – Dokumentations-Sync prüfen
 
+**Wichtig:** Validatoren können selbst fehlerhaft sein. Bei Änderungen:
+- **Nicht blind vertrauen** – Ergebnisse manuell verifizieren
+- **Zeile für Zeile prüfen** – `grep`, `cat`, `diff` verwenden
+- **Vor UND nach** Änderungen testen – Regression erkennen
+- **Bei Validator-Fehlern**: Erst Validator fixen, dann Änderung validieren
+
 ## Bekannte Patterns
 
 ### Arithmetik mit `set -e`
