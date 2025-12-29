@@ -31,18 +31,18 @@ zstyle ':fzf-tab:*' switch-group '<' '>'
 
 # cd: Verzeichnisinhalt mit eza
 zstyle ':fzf-tab:complete:cd:*' fzf-preview \
-    'eza -1 --color=always --icons $realpath 2>/dev/null || ls -la $realpath'
+    'eza -1 --color=always --icons "$realpath" 2>/dev/null || ls -la "$realpath"'
 
 # Allgemeine Datei-Vorschau
 zstyle ':fzf-tab:complete:*:*' fzf-preview \
-    '[[ -d $realpath ]] && eza -1 --color=always --icons $realpath 2>/dev/null || \
-     [[ -f $realpath ]] && bat --color=always --line-range=:100 $realpath 2>/dev/null || \
-     echo $word'
+    '[[ -d "$realpath" ]] && eza -1 --color=always --icons "$realpath" 2>/dev/null || \
+     [[ -f "$realpath" ]] && bat --color=always --line-range=:100 "$realpath" 2>/dev/null || \
+     echo "$word"'
 
 # kill/ps: Prozess-Details
 zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
 zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-preview \
-    '[[ $group == "[process ID]" ]] && ps --pid="$word" -o cmd --no-headers -w -w'
+    '[[ "$group" == "[process ID]" ]] && ps --pid="$word" -o cmd --no-headers -w -w'
 zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-flags --preview-window=down:3:wrap
 
 # Umgebungsvariablen: Wert anzeigen
