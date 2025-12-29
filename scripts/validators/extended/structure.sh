@@ -33,7 +33,7 @@ check_structure() {
         if [[ -f "$terminal_dir/$file" ]]; then
             if ! grep -q "$file" <<< "${doc_files[*]}"; then
                 err "terminal/$file existiert aber fehlt in CONTRIBUTING.md Struktur"
-                ((errors++))
+                (( errors++ )) || true
             fi
         fi
     done
@@ -43,7 +43,7 @@ check_structure() {
         [[ -z "$file" ]] && continue
         if [[ ! -f "$terminal_dir/$file" && ! -d "$terminal_dir/$file" ]]; then
             err "CONTRIBUTING.md listet terminal/$file aber existiert nicht"
-            ((errors++))
+            (( errors++ )) || true
         fi
     done
     
