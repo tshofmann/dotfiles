@@ -17,6 +17,7 @@ Das gesamte Setup verwendet [Catppuccin Mocha](https://catppuccin.com/) als einh
 | **bat** | `~/.config/bat/themes/Catppuccin Mocha.tmTheme` | Via Stow verlinkt (+ Cache-Build) |
 | **fzf** | `~/.config/fzf/config` | Farben in Config-Datei (via Stow) |
 | **btop** | `~/.config/btop/themes/catppuccin_mocha.theme` | Via Stow verlinkt |
+| **eza** | `~/.config/eza/theme.yml` | Via Stow verlinkt |
 | **zsh-syntax-highlighting** | `~/.config/zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh` | Via Stow verlinkt |
 
 ### Farbpalette (Referenz)
