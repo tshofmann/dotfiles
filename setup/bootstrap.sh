@@ -156,6 +156,22 @@ if ! HOMEBREW_NO_AUTO_UPDATE=1 brew bundle --no-upgrade --file="$BREWFILE"; then
 fi
 ok "Abhängigkeiten installiert"
 
+# fzf-tab Plugin installieren
+# Fuzzy Tab-Completion für ZSH (muss nach Homebrew verfügbar sein)
+CURRENT_STEP="fzf-tab Plugin Installation"
+FZF_TAB_DIR="$HOME/.config/zsh/plugins/fzf-tab"
+if [[ ! -d "$FZF_TAB_DIR" ]]; then
+  log "Installiere fzf-tab Plugin"
+  mkdir -p "$(dirname "$FZF_TAB_DIR")"
+  if git clone --depth 1 https://github.com/Aloxaf/fzf-tab "$FZF_TAB_DIR"; then
+    ok "fzf-tab Plugin installiert → $FZF_TAB_DIR"
+  else
+    warn "fzf-tab konnte nicht installiert werden"
+  fi
+else
+  ok "fzf-tab Plugin bereits vorhanden"
+fi
+
 # Font-Installation verifizieren
 font_installed() {
   # Prüfe User- und System-Font-Verzeichnisse (Homebrew installiert nach ~/Library/Fonts)

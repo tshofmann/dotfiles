@@ -1,0 +1,76 @@
+# ============================================================
+# fzf-tab.alias - fzf-tab Konfiguration
+# ============================================================
+# Zweck   : Fuzzy Tab-Completion mit Previews
+# Pfad    : ~/.config/alias/fzf-tab.alias
+# Docs    : https://github.com/Aloxaf/fzf-tab/wiki/Configuration
+# ============================================================
+
+# Guard: Nur wenn fzf-tab geladen ist
+(( $+functions[fzf-tab-complete] )) || return 0
+
+# ------------------------------------------------------------
+# Basis-Konfiguration
+# ------------------------------------------------------------
+
+# Gruppen-Beschreibungen aktivieren (wichtig für Previews!)
+zstyle ':completion:*:descriptions' format '[%d]'
+
+# Dateifarben via LS_COLORS
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+
+# Standard-Completion-Menü deaktivieren (fzf-tab übernimmt)
+zstyle ':completion:*' menu no
+
+# Gruppen-Wechsel mit < und >
+zstyle ':fzf-tab:*' switch-group '<' '>'
+
+# ------------------------------------------------------------
+# Previews
+# ------------------------------------------------------------
+
+# cd: Verzeichnisinhalt mit eza
+zstyle ':fzf-tab:complete:cd:*' fzf-preview \
+    'eza -1 --color=always --icons $realpath 2>/dev/null || ls -la $realpath'
+
+# Allgemeine Datei-Vorschau
+zstyle ':fzf-tab:complete:*:*' fzf-preview \
+    '[[ -d $realpath ]] && eza -1 --color=always --icons $realpath 2>/dev/null || \
+     [[ -f $realpath ]] && bat --color=always --line-range=:100 $realpath 2>/dev/null || \
+     echo $word'
+
+# kill/ps: Prozess-Details
+zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
+zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-preview \
+    '[[ $group == "[process ID]" ]] && ps --pid=$word -o cmd --no-headers -w -w'
+zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-flags --preview-window=down:3:wrap
+
+# Umgebungsvariablen: Wert anzeigen
+zstyle ':fzf-tab:complete:(-command-|-parameter-|-brace-parameter-|export|unset|expand):*' \
+    fzf-preview 'echo ${(P)word}'
+
+# git: Kontextabhängige Previews
+zstyle ':fzf-tab:complete:git-(add|diff|restore):*' fzf-preview \
+    'git diff $word | head -100'
+zstyle ':fzf-tab:complete:git-log:*' fzf-preview \
+    'git log --color=always --oneline -20 $word'
+zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview \
+    'case "$group" in
+        "modified file") git diff $word | head -50 ;;
+        *) git log --color=always --oneline -10 $word ;;
+    esac'
+
+# ssh: Host-Info (wenn verfügbar)
+zstyle ':fzf-tab:complete:ssh:*' fzf-preview \
+    'ping -c1 -W1 $word 2>/dev/null && echo "Host erreichbar" || echo "Host nicht erreichbar"'
+
+# brew: Paket-Info
+zstyle ':fzf-tab:complete:brew-(install|uninstall|search|info):*-argument-rest' fzf-preview \
+    'brew info $word 2>/dev/null | head -20'
+
+# ------------------------------------------------------------
+# Performance-Optimierung
+# ------------------------------------------------------------
+
+# Minimale Höhe für fzf-Fenster
+zstyle ':fzf-tab:*' fzf-min-height 15

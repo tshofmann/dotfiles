@@ -38,6 +38,16 @@ else
 fi
 
 # ------------------------------------------------------------
+# fzf-tab: Fuzzy Tab-Completion
+# ------------------------------------------------------------
+# KRITISCH: Muss nach compinit aber vor zsh-autosuggestions geladen werden!
+# Docs: https://github.com/Aloxaf/fzf-tab
+FZF_TAB_DIR="${HOME}/.config/zsh/plugins/fzf-tab"
+if [[ -f "$FZF_TAB_DIR/fzf-tab.plugin.zsh" ]]; then
+    source "$FZF_TAB_DIR/fzf-tab.plugin.zsh"
+fi
+
+# ------------------------------------------------------------
 # Aliase laden
 # ------------------------------------------------------------
 # Lädt alle .alias-Dateien aus ~/.config/alias/
@@ -70,19 +80,35 @@ if command -v fzf >/dev/null 2>&1; then
         export FZF_ALT_C_COMMAND='fd --type d --strip-cwd-prefix --hidden --follow --exclude .git'
     fi
 
-    # Ctrl+Y in History-Suche kopiert Befehl ins Clipboard
+    # CTRL-T: Dateien suchen mit erweiterten Optionen
+    export FZF_CTRL_T_OPTS="
+        --walker-skip .git,node_modules,target,.venv,__pycache__,.cache
+        --preview 'bat -n --color=always --line-range=:200 {} 2>/dev/null || eza --tree --level=2 --icons --color=always {} 2>/dev/null || cat {}'
+        --bind 'ctrl-/:change-preview-window(down|hidden|)'
+        --header 'CTRL-/: Preview umschalten'"
+
+    # CTRL-R: History mit erweiterten Optionen
     export FZF_CTRL_R_OPTS="
         --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
-        --header 'Ctrl+Y: Kopieren'"
+        --preview 'echo {2..} | bat --color=always -l zsh --style=plain'
+        --preview-window 'down:3:wrap:hidden'
+        --bind '?:toggle-preview'
+        --header 'CTRL-Y: Kopieren | ?: Preview'"
 
-    # Dateivorschau mit Syntax-Highlighting
-    if command -v bat >/dev/null 2>&1; then
-        export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always --line-range=:500 {}'"
-    fi
+    # ALT-C: Verzeichnis wechseln mit erweiterten Optionen
+    export FZF_ALT_C_OPTS="
+        --walker-skip .git,node_modules,target,.venv,__pycache__,.cache
+        --preview 'eza --tree --level=2 --icons --color=always {} 2>/dev/null || tree -C {} | head -50'
+        --header 'Verzeichnis wählen'"
 
-    # Verzeichnisvorschau als Baum
-    if command -v eza >/dev/null 2>&1; then
-        export FZF_ALT_C_OPTS="--preview 'eza --tree --level=1 --icons --color=always {}'"
+    # Fuzzy completion mit fd (für vim **<TAB>, etc.)
+    if command -v fd >/dev/null 2>&1; then
+        _fzf_compgen_path() {
+            fd --hidden --follow --exclude .git --exclude node_modules . "$1"
+        }
+        _fzf_compgen_dir() {
+            fd --type d --hidden --follow --exclude .git --exclude node_modules . "$1"
+        }
     fi
 fi
 
