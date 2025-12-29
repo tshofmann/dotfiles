@@ -50,15 +50,15 @@ check_metadata_padding() {
     local line_num=0
     
     while IFS= read -r line || [[ -n "$line" ]]; do
-        ((line_num++))
+        (( line_num++ )) || true
         
         for field in "${METADATA_FIELDS[@]}"; do
             # Prüfe ob die Zeile das Feld enthält
             if [[ "$line" =~ "^# ${field}" ]]; then
                 # Berechne erwartetes Format
                 local padded_field="$field"
-                local padding=$((METADATA_WIDTH - ${#field}))
-                for ((i=0; i<padding; i++)); do
+                local padding=$(( METADATA_WIDTH - ${#field} ))
+                for (( i=0; i<padding; i++ )); do
                     padded_field+=" "
                 done
                 
@@ -67,7 +67,7 @@ check_metadata_padding() {
                     err "$(basename "$file"):$line_num: Falsches Metadaten-Format"
                     debug "  Erwartet: '# ${padded_field}:'"
                     debug "  Gefunden: '$line'"
-                    ((errors++))
+                    (( errors++ )) || true
                 fi
                 break
             fi
@@ -86,14 +86,14 @@ check_guard_format() {
     local line_num=0
     
     while IFS= read -r line || [[ -n "$line" ]]; do
-        ((line_num++))
+        (( line_num++ )) || true
         
         # Prüfe auf altes Guard-Format
         if [[ "$line" =~ "$GUARD_WRONG_PATTERN" ]]; then
             err "$(basename "$file"):$line_num: Altes Guard-Format gefunden"
             debug "  Falsch: 'Aliase nur aktivieren wenn...'"
             debug "  Richtig: 'Nur wenn ... installiert ist'"
-            ((errors++))
+            (( errors++ )) || true
         fi
     done < "$file"
     
@@ -111,7 +111,7 @@ check_section_separators() {
     local header_end_found=false
     
     while IFS= read -r line || [[ -n "$line" ]]; do
-        ((line_num++))
+        (( line_num++ )) || true
         
         # Header-Block endet nach der ersten leeren Zeile nach ====
         if $in_header_block; then
@@ -127,7 +127,7 @@ check_section_separators() {
             if [[ "$line" =~ "^# ============" ]]; then
                 err "$(basename "$file"):$line_num: Falscher Sektions-Trenner"
                 debug "  Verwende '# ------------' statt '# ============'"
-                ((errors++))
+                (( errors++ )) || true
             fi
         fi
     done < "$file"
@@ -144,7 +144,7 @@ check_fzf_headers() {
     local line_num=0
     
     while IFS= read -r line || [[ -n "$line" ]]; do
-        ((line_num++))
+        (( line_num++ )) || true
         
         # Nur Zeilen mit --header= prüfen
         if [[ "$line" =~ "--header=" ]]; then
@@ -152,7 +152,7 @@ check_fzf_headers() {
             if [[ "$line" =~ "│" ]]; then
                 err "$(basename "$file"):$line_num: Unicode-Pipe in fzf-Header"
                 debug "  Verwende ASCII '|' statt Unicode '│'"
-                ((errors++))
+                (( errors++ )) || true
             fi
             
             # 2. Prüfe ob Enter am Anfang steht (nach Anführungszeichen)
@@ -170,7 +170,7 @@ check_fzf_headers() {
                         if [[ ! "$header_content" =~ ^Enter: ]]; then
                             err "$(basename "$file"):$line_num: fzf-Header muss mit 'Enter:' beginnen"
                             debug "  Gefunden: '$header_content'"
-                            ((errors++))
+                            (( errors++ )) || true
                         fi
                     fi
                 fi
@@ -180,7 +180,7 @@ check_fzf_headers() {
             if [[ "$line" =~ "\|" ]] && [[ ! "$line" =~ " \| " ]]; then
                 err "$(basename "$file"):$line_num: Pipe ohne Leerzeichen in fzf-Header"
                 debug "  Verwende ' | ' mit Leerzeichen"
-                ((errors++))
+                (( errors++ )) || true
             fi
         fi
     done < "$file"
@@ -205,22 +205,22 @@ validate_style_consistency() {
         file_errors=0
         
         check_metadata_padding "$alias_file"
-        ((file_errors += $?))
+        (( file_errors += $? )) || true
         
         check_guard_format "$alias_file"
-        ((file_errors += $?))
+        (( file_errors += $? )) || true
         
         check_fzf_headers "$alias_file"
-        ((file_errors += $?))
+        (( file_errors += $? )) || true
         
         check_section_separators "$alias_file"
-        ((file_errors += $?))
+        (( file_errors += $? )) || true
         
-        if ((file_errors == 0)); then
+        if (( file_errors == 0 )); then
             debug "  ✓ $(basename "$alias_file")"
         fi
         
-        ((total_errors += file_errors))
+        (( total_errors += file_errors )) || true
     done
     
     # Prüfe fzf/config
@@ -229,26 +229,26 @@ validate_style_consistency() {
         file_errors=0
         
         check_metadata_padding "$fzf_config"
-        ((file_errors += $?))
+        (( file_errors += $? )) || true
         
         check_fzf_headers "$fzf_config"
-        ((file_errors += $?))
+        (( file_errors += $? )) || true
         
-        if ((file_errors == 0)); then
+        if (( file_errors == 0 )); then
             debug "  ✓ fzf/config"
         fi
         
-        ((total_errors += file_errors))
+        (( total_errors += file_errors )) || true
     fi
     
     # Zusammenfassung
-    if ((total_errors == 0)); then
+    if (( total_errors == 0 )); then
         ok "Alle Dateien folgen dem Stil-Standard"
     else
         err "$total_errors Stil-Verletzungen gefunden"
     fi
     
-    return $((total_errors > 0 ? 1 : 0))
+    return $(( total_errors > 0 ? 1 : 0 ))
 }
 
 register_validator "style-consistency" "validate_style_consistency" "Code-Stil Konsistenz" "extended"
