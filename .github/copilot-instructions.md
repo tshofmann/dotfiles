@@ -38,8 +38,11 @@
 - Private Funktionen mit `_` Prefix (z.B. `_help_format`)
 
 ### fzf-Integration
-- Preview-Commands mit **ZSH-Syntax** (z.B. `[[ ]]`, Parameter Expansion) **müssen** mit `zsh -c '...'` gewrappt werden (fzf nutzt /bin/sh!)
-- Einfache externe Befehle (`bat`, `eza`, `gh`) brauchen kein `zsh -c`
+- **Shell-Verhalten**: fzf nutzt `$SHELL -c` für Preview-Commands (also zsh auf macOS)
+- Preview-Commands mit **ZSH-Syntax** sollten dennoch mit `zsh -c '...'` gewrappt werden:
+  - Explizite Dokumentation der Shell-Abhängigkeit
+  - Portabilität falls jemand `SHELL=/bin/bash` hat
+- Einfache externe Befehle (`bat`, `eza`, `gh`) brauchen kein Wrapping
 - ZSH Parameter Expansion statt `sed`/`cut` für Performance
 - Catppuccin Mocha Farben (definiert in `help.alias`, Zeile 166+)
 - `--header=` für Keybinding-Hinweise im Format `Key: Aktion | Key: Aktion`
@@ -79,9 +82,12 @@ count=$((count + 1))
 
 ### fzf Preview mit ZSH
 ```zsh
-# FALSCH – läuft in /bin/sh:
---preview='[[ -f {} ]] && cat {}'
+# fzf nutzt $SHELL -c (also zsh auf macOS)
+# Aber ZSH-Syntax sollte explizit gewrappt werden für Klarheit/Portabilität:
 
-# RICHTIG – explizit zsh:
+# Einfache Befehle – kein Wrapping nötig:
+--preview='bat --color=always {}'
+
+# ZSH-Syntax (Parameter Expansion etc.) – explizit wrappen:
 --preview='zsh -c '\''[[ -f "$1" ]] && cat "$1"'\'' -- {}'
 ```

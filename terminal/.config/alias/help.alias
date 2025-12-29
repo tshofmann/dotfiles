@@ -452,7 +452,8 @@ _help_interactive() {
     done
 
     # Define preview command with rich formatting
-    # NOTE: Must use 'zsh -c' to ensure zsh execution (fzf defaults to /bin/sh)
+    # NOTE: Uses 'zsh -c' explicitly for ZSH-specific syntax (parameter expansion)
+    # fzf uses $SHELL -c by default, but explicit wrapper ensures portability
     # Uses zsh parameter expansion instead of sed/cut for better performance
     local preview_cmd='zsh -c '\''
         # Extract fields from fzf selection line using zsh parameter expansion
