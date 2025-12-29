@@ -8,18 +8,57 @@
 
 ## Code-Stil
 
-- Shell-Dateien: ZSH-kompatibel, `set -euo pipefail` wo sinnvoll
-- Aliase: Guard-Check am Anfang (`command -v tool &>/dev/null || return`)
-- Kommentare: Deutsch, außer bei technischen Begriffen
+### Shell-Dateien (ausschließlich ZSH)
+- **Kein POSIX** – dieses Projekt ist rein ZSH (macOS Standard-Shell)
+- ZSH-Features nutzen: `[[ ]]`, Parameter Expansion `${var##pattern}`, Arrays (1-indexed!)
+- `set -euo pipefail` wo sinnvoll (nicht in Alias-Dateien)
+- Variablen immer quoten: `"$var"` statt `$var`
+
+### Alias-Dateien (`terminal/.config/alias/*.alias`)
+- **Header-Block** am Dateianfang (siehe fzf.alias als Template)
+- **Guard-Check**: `command -v tool >/dev/null 2>&1 || return 0`
+- **Beschreibungskommentar** vor jeder Funktion/Alias für Help-System
+- Lokale Variablen mit `local` deklarieren
+- Private Funktionen mit `_` Prefix (z.B. `_help_format`)
+
+### fzf-Integration
+- Preview-Commands **müssen** mit `zsh -c '...'` gewrappt werden (fzf nutzt /bin/sh!)
+- ZSH Parameter Expansion statt `sed`/`cut` für Performance
+- Catppuccin Mocha Farben (24-bit) für konsistentes Design
+- `--header=` für Keybinding-Hinweise im Format `Key: Aktion | Key: Aktion`
 
 ## Architektur-Entscheidungen
 
-- Plattform: macOS mit Apple Silicon (arm64) – Bootstrap blockiert andere Architekturen
-- Homebrew-Pfade: Dynamisch erkannt (Apple Silicon → Intel → Linux)
-- Designprinzip: **So dynamisch wie möglich, so statisch wie nötig**
+- **Plattform**: macOS mit Apple Silicon (arm64) – Bootstrap blockiert andere Architekturen
+- **Homebrew-Pfade**: Dynamisch erkannt (Apple Silicon → Intel → Linux)
+- **Designprinzip**: So dynamisch wie möglich, so statisch wie nötig
+- **Modularität**: Ein Tool = Eine Alias-Datei (z.B. `bat.alias`, `fd.alias`)
+- **Symlinks**: Via GNU Stow mit `--no-folding` (keine Verzeichnis-Symlinks)
 
 ## Validierung vor Änderungen
 
 1. `zsh -n <datei>` – Syntax-Check
 2. `./scripts/tests/run-tests.sh` – Unit-Tests bei Validator-Änderungen
 3. `./scripts/health-check.sh` – System-Health bei Tool-Änderungen
+4. `./scripts/validate-docs.sh` – Dokumentations-Sync prüfen
+
+## Bekannte Patterns
+
+### Arithmetik mit `set -e`
+```zsh
+# FALSCH – bricht bei 0 ab:
+((count++))
+
+# RICHTIG:
+(( count++ )) || true
+count=$((count + 1))
+```
+
+### fzf Preview mit ZSH
+```zsh
+# FALSCH – läuft in /bin/sh:
+--preview='[[ -f {} ]] && cat {}'
+
+# RICHTIG – explizit zsh:
+--preview='zsh -c '\''[[ -f "$1" ]] && cat "$1"'\'' -- {}'
+```
