@@ -53,6 +53,9 @@ dotfiles/
         │   └── config           # bat native Config
         ├── ripgrep/
         │   └── config           # ripgrep native Config (RIPGREP_CONFIG_PATH)
+        ├── zsh/
+        │   └── plugins/
+        │       └── fzf-tab/     # fzf-tab Plugin (von bootstrap.sh geklont)
         └── alias/
             ├── homebrew.alias   # Homebrew + mas Aliase
             ├── eza.alias        # eza-Aliase (ls-Ersatz)
@@ -60,6 +63,7 @@ dotfiles/
             ├── ripgrep.alias    # ripgrep-Aliase (grep-Ersatz)
             ├── fd.alias         # fd-Aliase (find-Ersatz)
             ├── fzf.alias        # fzf Tool-Kombinationen (20+ Funktionen)
+            ├── fzf-tab.alias    # fzf-tab Konfiguration (Previews, Keybindings)
             └── btop.alias       # btop-Aliase (top-Ersatz)
 ```
 
@@ -229,6 +233,7 @@ brew "btop"                      # top-Ersatz
 # ZSH-Plugins
 brew "zsh-syntax-highlighting"
 brew "zsh-autosuggestions"
+# Hinweis: fzf-tab wird separat über Git geklont (siehe bootstrap.sh)
 
 # Font
 cask "font-meslo-lg-nerd-font"
@@ -504,10 +509,19 @@ fi
 ### Wichtige Reihenfolge
 
 ```
-compinit → alias-files → fzf → zoxide → gh completion → starship
+compinit → fzf-tab → alias-files → fzf → zoxide → gh completion → starship → zsh-autosuggestions → zsh-syntax-highlighting
 ```
 
-`compinit` muss **vor** `gh completion` geladen werden, da `gh completion -s zsh` die Funktion `compdef` verwendet.
+**Kritische Abhängigkeiten:**
+
+| Plugin/Tool | Muss nach | Grund |
+|-------------|-----------|-------|
+| **fzf-tab** | `compinit` | Benötigt Completion-System |
+| **fzf-tab** | VOR `zsh-autosuggestions` | Verhindert Konflikte bei Tab-Completion |
+| **gh completion** | `compinit` | Verwendet `compdef` Funktion |
+| **zsh-syntax-highlighting** | Am Ende | Muss alle anderen Plugins sehen |
+
+> **Hinweis:** fzf-tab muss zwischen `compinit` und `zsh-autosuggestions` geladen werden. Die Reihenfolge ist in `.zshrc` dokumentiert und wird durch den Bootstrap-Prozess sichergestellt.
 
 ---
 

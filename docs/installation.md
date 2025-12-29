@@ -130,7 +130,7 @@ Nach erfolgreicher Installation sind folgende Symlinks aktiv:
 | `~/.zprofile` | `terminal/.zprofile` | Login Shell (Homebrew Init) |
 | `~/.zshrc` | `terminal/.zshrc` | Interactive Shell Konfiguration |
 | `~/.zlogin` | `terminal/.zlogin` | Post-Login (Background-Optimierungen) |
-| `~/.config/alias/*.alias` | `terminal/.config/alias/*.alias` | 7 Alias-Dateien (homebrew, eza, bat, ripgrep, fd, fzf, btop) |
+| `~/.config/alias/*.alias` | `terminal/.config/alias/*.alias` | 8 Alias-Dateien (homebrew, eza, bat, ripgrep, fd, fzf, fzf-tab, btop) |
 | `~/.config/fzf/config` | `terminal/.config/fzf/config` | fzf globale Optionen |
 | `~/.config/bat/config` | `terminal/.config/bat/config` | bat Theme und Style |
 | `~/.config/ripgrep/config` | `terminal/.config/ripgrep/config` | ripgrep Defaults |
@@ -180,7 +180,7 @@ cd ~/dotfiles
 | **Alias-Symlinks** | Alle `*.alias` Dateien | `terminal/.config/alias/` (dynamisch) |
 | **Tool-Configs** | Alle `config`/`ignore` Dateien | `terminal/.config/*/` (dynamisch) |
 | **CLI-Tools** | Alle Formulae aus Brewfile | `setup/Brewfile` (dynamisch) |
-| **ZSH-Plugins** | zsh-syntax-highlighting, zsh-autosuggestions | Homebrew-Verzeichnis |
+| **ZSH-Plugins** | zsh-syntax-highlighting, zsh-autosuggestions, fzf-tab | Homebrew + ~/.config/zsh/plugins/ |
 | **Nerd Font** | MesloLG Nerd Font | `~/Library/Fonts/` |
 | **Terminal-Profil** | `tshofmann` als Standard | Terminal.app defaults |
 | **Starship** | `~/.config/starship.toml` vorhanden | Dateisystem |

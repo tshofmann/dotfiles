@@ -517,9 +517,9 @@ masl                   # Zeigt ID und Name
 
 | Taste | Funktion | Vorschau |
 |-------|----------|----------|
-| `Ctrl+R` | History durchsuchen | – |
+| `Ctrl+R` | History durchsuchen | bat (ZSH-Syntax), `?` zum Umschalten |
 | `Ctrl+Y` | (in Ctrl+R) Befehl ins Clipboard kopieren | – |
-| `Ctrl+T` | Datei suchen und einfügen | bat (Syntax-Highlighting) |
+| `Ctrl+T` | Datei suchen und einfügen | bat/eza, `Ctrl+/` zum Umschalten |
 | `Alt+C` | Verzeichnis wechseln (cd) | eza (Tree-Ansicht) |
 
 **fd-Integration:**
@@ -553,6 +553,72 @@ cat file.txt | fzf
 ```
 
 > **Hinweis:** Die Vorschau-Funktionen benötigen bat und eza (via Brewfile installiert).
+
+### fzf-tab – Fuzzy Tab-Completion
+
+**Übersicht:**
+
+fzf-tab ersetzt das Standard-ZSH-Completion-Menü durch eine interaktive fzf-Oberfläche mit Previews. Drücke `Tab` nach einem Befehl, um Vorschläge mit Vorschau zu erhalten.
+
+**Tastenkombinationen (in Tab-Completion):**
+
+| Taste | Funktion |
+|-------|----------|
+| `Tab` / `Shift-Tab` | Navigation durch Vorschläge |
+| `<` / `>` | Zwischen Gruppen wechseln |
+| `Enter` | Auswahl bestätigen |
+| `Ctrl-Space` | Mehrfachauswahl aktivieren |
+| `Ctrl-/` | Preview umschalten |
+| `/` | Continuous completion (tiefer navigieren) |
+
+**Kontextabhängige Previews:**
+
+| Kontext | Preview |
+|---------|---------|
+| `cd <Tab>` | Verzeichnisinhalt mit eza |
+| `ls <Tab>` | Dateivorschau mit bat (Syntax-Highlighting) |
+| `kill <Tab>` | Prozess-Details mit ps |
+| `git checkout <Tab>` | Branch-Log oder Diff |
+| `git add <Tab>` | Datei-Diff |
+| `export <Tab>` | Variablenwert |
+| `ssh <Tab>` | Host-Erreichbarkeit |
+| `brew install <Tab>` | Paket-Info |
+
+**Beispiele:**
+
+```zsh
+# Verzeichnis mit Vorschau wählen
+cd <Tab>              # Zeigt Verzeichnisse mit eza-Preview
+
+# Datei mit Syntax-Highlighting wählen
+vim <Tab>             # bat zeigt Dateiinhalt
+
+# Prozess interaktiv beenden
+kill <Tab>            # ps zeigt Prozess-Details
+
+# Git Branch mit Preview wechseln
+git checkout <Tab>    # Zeigt Branch-Log
+
+# Umgebungsvariable mit Wert sehen
+export <Tab>          # Zeigt Variablenwerte
+
+# Homebrew-Paket mit Info installieren
+brew install <Tab>    # Zeigt brew info
+```
+
+**Konfiguration:**
+
+Die fzf-tab-Konfiguration befindet sich in `~/.config/alias/fzf-tab.alias` und wird automatisch geladen.
+
+**Deaktivieren:**
+
+Falls du das Standard-ZSH-Completion-Menü bevorzugst:
+```zsh
+# In ~/.zshrc auskommentieren oder entfernen
+# source "$FZF_TAB_DIR/fzf-tab.plugin.zsh"
+```
+
+> **Hinweis:** fzf-tab wird automatisch bei der Bootstrap-Installation geklont. Lade-Reihenfolge ist kritisch: compinit → fzf-tab → zsh-autosuggestions.
 
 ### gh – GitHub CLI
 
