@@ -17,44 +17,57 @@ fi
 if command -v fzf >/dev/null 2>&1; then
     # Pull Requests interaktiv durchsuchen, auschecken oder im Browser öffnen
     ghpr() {
-        gh pr list --limit 50 | \
+        local pr
+        pr=$(gh pr list --limit 50 | \
             fzf --ansi \
                 --preview 'gh pr view {1}' \
-                --header='Enter: Checkout | Ctrl+O: Im Browser öffnen | Ctrl+D: Diff' \
-                --bind 'enter:execute(gh pr checkout {1})' \
+                --header='Enter: Checkout | Ctrl+O: Browser | Ctrl+D: Diff' \
                 --bind 'ctrl-o:execute-silent(gh pr view {1} --web)' \
-                --bind 'ctrl-d:execute(gh pr diff {1} | bat --color=always -l diff)'
+                --bind 'ctrl-d:execute(gh pr diff {1} | bat --color=always -l diff)' | \
+            awk '{print $1}')
+        
+        [[ -n "$pr" ]] && gh pr checkout "$pr"
     }
     
     # Issues interaktiv durchsuchen, öffnen oder bearbeiten
     ghis() {
-        gh issue list --limit 50 | \
+        local issue
+        issue=$(gh issue list --limit 50 | \
             fzf --ansi \
                 --preview 'gh issue view {1}' \
-                --header='Enter: Im Browser öffnen | Ctrl+E: Bearbeiten' \
-                --bind 'enter:execute-silent(gh issue view {1} --web)' \
-                --bind 'ctrl-e:execute(gh issue edit {1})'
+                --header='Enter: Im Browser | Ctrl+E: Bearbeiten' \
+                --bind 'ctrl-e:execute(gh issue edit {1})' | \
+            awk '{print $1}')
+        
+        [[ -n "$issue" ]] && gh issue view "$issue" --web
     }
     
     # GitHub Actions Workflow-Runs anzeigen, Logs lesen oder wiederholen
     ghrun() {
-        gh run list --limit 20 | \
+        local run
+        run=$(gh run list --limit 20 | \
             fzf --ansi \
-                --preview 'gh run view {1}' \
-                --header='Enter: Logs anzeigen | Ctrl+O: Im Browser | Ctrl+R: Wiederholen' \
-                --bind 'enter:execute(gh run view {1} --log | bat --color=always)' \
-                --bind 'ctrl-o:execute-silent(gh run view {1} --web)' \
-                --bind 'ctrl-r:execute(gh run rerun {1})'
+                --delimiter='\t' \
+                --preview 'gh run view {7}' \
+                --header='Enter: Logs | Ctrl+O: Browser | Ctrl+R: Rerun' \
+                --bind 'ctrl-o:execute-silent(gh run view {7} --web)' \
+                --bind 'ctrl-r:execute(gh run rerun {7})' | \
+            awk -F'\t' '{print $7}')
+        
+        [[ -n "$run" ]] && gh run view "$run" --log | bat --color=always
     }
     
     # Eigene Repositories durchsuchen und schnell klonen
     ghrepo() {
+        local repo
         local query="${1:-}"
-        gh repo list --limit 30 ${query:+--source} | \
+        repo=$(gh repo list --limit 30 ${query:+--source} | \
             fzf --ansi \
                 --preview 'gh repo view {1}' \
-                --header='Enter: Klonen | Ctrl+O: Im Browser öffnen' \
-                --bind 'enter:execute(gh repo clone {1})' \
-                --bind 'ctrl-o:execute-silent(gh repo view {1} --web)'
+                --header='Enter: Klonen | Ctrl+O: Browser' \
+                --bind 'ctrl-o:execute-silent(gh repo view {1} --web)' | \
+            awk '{print $1}')
+        
+        [[ -n "$repo" ]] && gh repo clone "$repo"
     }
 fi

@@ -7,7 +7,7 @@
 # ============================================================
 
 # Layout & Darstellung
---height=50%
+--height=~50%
 --layout=reverse
 --border=rounded
 --margin=0,1

@@ -168,10 +168,10 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | Funktion | Beschreibung |
 |----------|--------------|
 | `cdf [path]` | **Fuzzy CD**: fd + fzf + eza – Verzeichnisnavigation mit Baum-Vorschau |
-| `fe [path]` | **Fuzzy Edit**: Datei suchen → Vorschau mit bat → Editor öffnen |
-| `fo [path]` | **Fuzzy Open**: Datei suchen → `open` (macOS) |
 
-> **Hinweis:** fd respektiert automatisch `.gitignore` und ist deutlich schneller als find. Zusätzlich werden Patterns aus `~/.config/fd/ignore` global ausgeschlossen (z.B. `.git/`, `node_modules/`, `__pycache__/`). Mit `fd -u` (unrestricted) werden alle Ignore-Dateien umgangen. Die interaktiven Funktionen benötigen fzf.
+> **Hinweis:** fd respektiert automatisch `.gitignore` und ist deutlich schneller als find. Zusätzlich werden Patterns aus `~/.config/fd/ignore` global ausgeschlossen (z.B. `.git/`, `node_modules/`, `__pycache__/`). Mit `fd -u` (unrestricted) werden alle Ignore-Dateien umgangen.
+>
+> **Tipp:** Für Dateisuche mit Vorschau nutze `Ctrl+T` (fzf Shell-Integration) – fügt den Pfad direkt ein.
 
 ### btop.alias
 
@@ -228,7 +228,6 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | Alias | Befehl | Beschreibung |
 |-------|--------|--------------|
 | `cat` | `bat -pp` | cat-Ersatz: Plain + kein Pager |
-| `catp` | `bat --paging=never` | Mit Highlighting, ohne Pager |
 | `catn` | `bat --style=numbers --paging=never` | Nur Zeilennummern |
 | `catd` | `bat --diff` | Mit Git-Diff-Markierungen |
 | `bat-themes` | `bat --list-themes` | Verfügbare Themes auflisten |
@@ -310,7 +309,7 @@ fzf ist als "Enhancer" in die jeweiligen Tool-Alias-Dateien integriert. Diese Da
 Die folgenden Funktionen nutzen fzf, sind aber nach ihrem primären Zweck in den jeweiligen Tool-Dateien organisiert:
 
 - **ripgrep.alias**: `rgf`
-- **fd.alias**: `cdf`, `fe`, `fo`
+- **fd.alias**: `cdf`
 - **git.alias**: `glog`, `gbr`, `gst`, `gstash`
 - **homebrew.alias**: `bip`, `bup`, `brp`, `bsp`
 - **gh.alias**: `ghpr`, `ghis`, `ghrun`, `ghrepo`
@@ -381,9 +380,6 @@ lst                # Nach Änderungsdatum (neueste zuerst)
 ```zsh
 # cat-Ersatz (Plain, kein Pager)
 cat README.md          # bat -pp
-
-# Mit Syntax-Highlighting (ohne Pager)
-catp README.md         # bat --paging=never
 
 # Mit Zeilennummern
 catn config.yaml       # bat --style=numbers --paging=never

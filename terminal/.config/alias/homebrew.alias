@@ -76,10 +76,12 @@ if command -v fzf >/dev/null 2>&1; then
     
     # Pakete suchen mit Info-Vorschau und direkter Installation
     bsp() {
-        brew search "${1:-}" | fzf \
+        local pkg
+        pkg=$(brew search "${1:-}" | fzf \
             --preview 'brew info {}' \
             --header='Enter: Installieren | Ctrl+O: Homepage' \
-            --bind 'enter:execute(brew install {})' \
-            --bind 'ctrl-o:execute-silent(brew home {})'
+            --bind 'ctrl-o:execute-silent(brew home {})')
+        
+        [[ -n "$pkg" ]] && brew install "$pkg"
     }
 fi
