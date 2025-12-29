@@ -106,7 +106,7 @@ validate_alias_names() {
         err "Dokumentierte Aliase ohne Code-Definition:"
         for alias_name in "${missing_aliases[@]}"; do
             print "   ${RED}→${NC} $alias_name"
-            ((errors++))
+            (( errors++ )) || true
         done
     else
         ok "Alle dokumentierten Aliase existieren im Code"
@@ -238,7 +238,7 @@ validate_fzf_functions() {
         err "Dokumentierte FZF-Funktionen ohne Implementation:"
         for func in "${missing_funcs[@]}"; do
             print "   ${RED}→${NC} $func"
-            ((errors++))
+            (( errors++ )) || true
         done
     else
         ok "Alle dokumentierten FZF-Funktionen existieren"

@@ -41,6 +41,7 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 | Architektur-Check | Prüft ob arm64 (Apple Silicon) | ❌ Exit |
 | macOS-Version-Check | Prüft ob macOS 14+ (Sonoma) | ❌ Exit |
 | Netzwerk-Check | Prüft Internetverbindung | ❌ Exit |
+| Schreibrechte-Check | Prüft ob `$HOME` schreibbar ist | ❌ Exit |
 | Xcode CLI Tools | Installiert/prüft Developer Tools | ❌ Exit |
 | Homebrew | Installiert/prüft Homebrew unter `/opt/homebrew` | ❌ Exit |
 | Brewfile | Installiert CLI-Tools via `brew bundle` | ❌ Exit |

@@ -50,8 +50,8 @@ fi
 # ------------------------------------------------------------
 # 2. Dokumentations-Konsistenz
 # ------------------------------------------------------------
-# Trigger bei: docs/, Brewfile, terminal/.config/, CONTRIBUTING.md, terminal/.zsh*
-if echo "$changed_files" | grep -qE '^(docs/|setup/Brewfile|terminal/\.config/|CONTRIBUTING\.md|terminal/\.zsh)'; then
+# Trigger bei: docs/, Brewfile, terminal/.config/, CONTRIBUTING.md, terminal/.zsh*, .github/copilot-instructions.md
+if echo "$changed_files" | grep -qE '^(docs/|setup/Brewfile|terminal/\.config/|CONTRIBUTING\.md|terminal/\.zsh|\.github/copilot-instructions\.md)'; then
     echo "📖 Prüfe Dokumentations-Konsistenz..."
     
     if ! "$DOTFILES_DIR/scripts/validate-docs.sh"; then

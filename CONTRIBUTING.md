@@ -168,7 +168,7 @@ warn() { print "⚠ $*"; }
 
 ### Alias-Dateien
 
-- **Guard-Check** am Anfang: `command -v tool &>/dev/null || return`
+- **Guard-Check** am Anfang: `if ! command -v tool >/dev/null 2>&1; then return 0; fi`
 - **Kommentar** über jeder Alias-Gruppe
 - **Konsistente Benennung**: `tool.alias`
 - **Private Funktionen**: Mit `_` Präfix (z.B. `_helper_func()`)
