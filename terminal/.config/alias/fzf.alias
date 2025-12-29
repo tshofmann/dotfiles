@@ -78,9 +78,15 @@ fman() {
             --header='Enter: Man-Page öffnen')
     
     if [[ -n "$selection" ]]; then
-        # Extrahiere Seitenname ohne (1), (3), etc.
+        # Extrahiere Seitenname und Section (z.B. "printf(3)" → "3 printf")
+        local page section
         page=$(echo "$selection" | sed 's/(.*//')
-        man "$page"
+        section=$(echo "$selection" | sed -n 's/.*([^0-9]*\([0-9][a-z]*\)).*/\1/p')
+        if [[ -n "$section" ]]; then
+            man "$section" "$page"
+        else
+            man "$page"
+        fi
     fi
 }
 

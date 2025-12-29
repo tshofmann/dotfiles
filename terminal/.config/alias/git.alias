@@ -70,7 +70,7 @@ if command -v fzf >/dev/null 2>&1; then
                 --preview 'git log --oneline --color=always {1} | head -20' \
                 --header='Enter: Wechseln | Ctrl+D: Löschen' \
                 --bind 'ctrl-d:execute(git branch -d {1})+reload(git branch --all --color=always | grep -v HEAD)' | \
-            sed 's/^[* ]*//' | sed 's|remotes/origin/||')
+            sed 's/^[* ]*//' | sed 's|remotes/[^/]*/||')
         
         [[ -n "$branch" ]] && git checkout "$branch"
     }
@@ -85,7 +85,13 @@ if command -v fzf >/dev/null 2>&1; then
                 --bind 'ctrl-r:execute(git restore {+2})+reload(git -c color.status=always status --short)' | \
             awk '{print $2}')
         
-        [[ -n "$files" ]] && echo "$files" | xargs git add && echo "Staged: $(echo "$files" | wc -l | tr -d ' ') Datei(en)"
+        if [[ -n "$files" ]]; then
+            local count=0
+            while IFS= read -r file; do
+                git add -- "$file" && ((count++))
+            done <<< "$files"
+            echo "Staged: $count Datei(en)"
+        fi
     }
     
     # Stash-Browser
