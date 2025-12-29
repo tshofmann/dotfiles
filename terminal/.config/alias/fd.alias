@@ -65,4 +65,14 @@ if command -v fzf >/dev/null 2>&1; then
         
         [[ -n "$dir" ]] && cd "$dir"
     }
+
+    # Datei mit Standard-App öffnen (fo [pfad])
+    # Ideal für PDFs, Bilder, Office-Dokumente etc.
+    fo() {
+        local file
+        file=$(fd --type f --hidden --follow --exclude .git . "${1:-.}" | \
+            fzf --preview 'bat --style=numbers --color=always {} 2>/dev/null || file {}')
+        
+        [[ -n "$file" ]] && open "$file"
+    }
 fi
