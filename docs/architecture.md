@@ -371,6 +371,7 @@ Die Tools nutzen **native Config-Dateien** für globale Einstellungen und Shell-
 | **fzf** | `~/.config/fzf/config` | `FZF_DEFAULT_OPTS_FILE` |
 | **bat** | `~/.config/bat/config` | (automatisch erkannt) |
 | **ripgrep** | `~/.config/ripgrep/config` | `RIPGREP_CONFIG_PATH` |
+| **fd** | `~/.config/fd/ignore` | (automatisch erkannt) |
 
 **Vorteile:**
 - Globale Defaults zentral verwaltet
@@ -413,6 +414,23 @@ Die Tools nutzen **native Config-Dateien** für globale Einstellungen und Shell-
 --type-add=alias:*.alias
 --type-add=conf:*.conf
 ```
+
+#### fd Global Ignore (`~/.config/fd/ignore`)
+
+Globale Ausschluss-Patterns für fd (auch bei `--hidden`), Auszug:
+
+```
+.git/
+.DS_Store
+._*
+__MACOSX/
+__pycache__/
+node_modules/
+dist/
+build/
+```
+
+> **Tipp:** `fd -u` (unrestricted) ignoriert diese Datei komplett. Vollständige Liste: `cat ~/.config/fd/ignore`
 
 #### bat Config (`~/.config/bat/config`)
 

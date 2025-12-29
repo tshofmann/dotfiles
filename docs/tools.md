@@ -171,7 +171,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `fe [path]` | **Fuzzy Edit**: Datei suchen → Vorschau mit bat → Editor öffnen |
 | `fo [path]` | **Fuzzy Open**: Datei suchen → `open` (macOS) |
 
-> **Hinweis:** fd respektiert automatisch `.gitignore` und ist deutlich schneller als find. Die interaktiven Funktionen benötigen fzf.
+> **Hinweis:** fd respektiert automatisch `.gitignore` und ist deutlich schneller als find. Zusätzlich werden Patterns aus `~/.config/fd/ignore` global ausgeschlossen (z.B. `.git/`, `node_modules/`, `__pycache__/`). Mit `fd -u` (unrestricted) werden alle Ignore-Dateien umgangen. Die interaktiven Funktionen benötigen fzf.
 
 ### btop.alias
 
@@ -202,10 +202,10 @@ Verfügbare Aliase aus `~/.config/alias/`:
 |----------|--------------|
 | `glog` | Commit-History: Vorschau mit bat, Ctrl+Y=SHA kopieren |
 | `gbr` | Branch wechseln: Log-Vorschau, Ctrl+D=Branch löschen |
-| `gst` | Status mit Diff-Vorschau: Enter=Add, Ctrl+R=Restore |
+| `gst` | Status mit Diff-Vorschau (bat): Enter=Add, Ctrl+R=Restore |
 | `gstash` | Stash-Browser: Enter=Apply, Ctrl+D=Drop, Ctrl+P=Pop |
 
-> **Hinweis:** Die interaktiven Funktionen benötigen fzf und werden nur geladen wenn fzf installiert ist.
+> **Hinweis:** Die interaktiven Funktionen benötigen fzf und nutzen bat für Syntax-Highlighting in der Diff-Vorschau.
 
 ### eza.alias
 

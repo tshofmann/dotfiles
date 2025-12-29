@@ -134,6 +134,7 @@ Nach erfolgreicher Installation sind folgende Symlinks aktiv:
 | `~/.config/fzf/config` | `terminal/.config/fzf/config` | fzf globale Optionen |
 | `~/.config/bat/config` | `terminal/.config/bat/config` | bat Theme und Style |
 | `~/.config/ripgrep/config` | `terminal/.config/ripgrep/config` | ripgrep Defaults |
+| `~/.config/fd/ignore` | `terminal/.config/fd/ignore` | fd globale Ignore-Patterns |
 
 ### Symlinks prüfen
 
@@ -142,7 +143,7 @@ Nach erfolgreicher Installation sind folgende Symlinks aktiv:
 ls -la ~/.zshenv ~/.zprofile ~/.zshrc ~/.zlogin
 
 # Alias- und Tool-Konfigurationen
-ls -la ~/.config/alias/ ~/.config/fzf/ ~/.config/bat/ ~/.config/ripgrep/
+ls -la ~/.config/alias/ ~/.config/fzf/ ~/.config/bat/ ~/.config/ripgrep/ ~/.config/fd/
 ```
 
 ---
