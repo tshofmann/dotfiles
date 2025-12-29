@@ -4,6 +4,43 @@ Diese Anleitung erklärt, wie du die dotfiles an deine Bedürfnisse anpassen kan
 
 ---
 
+## Catppuccin Mocha Theme
+
+Das gesamte Setup verwendet [Catppuccin Mocha](https://catppuccin.com/) als einheitliches Farbschema. Dies gewährleistet ein konsistentes Erscheinungsbild über alle Tools hinweg.
+
+### Konfigurierte Tools
+
+| Tool | Theme-Datei | Status |
+|------|-------------|--------|
+| **Terminal.app** | `setup/catppuccin-mocha.terminal` | Via Bootstrap importiert |
+| **Starship** | `catppuccin-powerline` Preset | Via Bootstrap konfiguriert |
+| **bat** | `~/.config/bat/themes/Catppuccin Mocha.tmTheme` | Via Stow verlinkt (+ Cache-Build) |
+| **fzf** | `~/.config/fzf/config` | Farben in Config-Datei (via Stow) |
+| **btop** | `~/.config/btop/themes/catppuccin_mocha.theme` | Via Stow verlinkt |
+| **zsh-syntax-highlighting** | `~/.config/zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh` | Via Stow verlinkt |
+
+### Farbpalette (Referenz)
+
+Die wichtigsten Farben der Catppuccin Mocha Palette:
+
+| Farbe | Hex | Verwendung |
+|-------|-----|------------|
+| Base | `#1E1E2E` | Hintergrund |
+| Text | `#CDD6F4` | Haupttext |
+| Subtext0 | `#A6ADC8` | Beschreibungen |
+| Surface0 | `#313244` | Selection Background |
+| Surface1 | `#45475A` | Selected Background |
+| Overlay0 | `#6C7086` | Borders |
+| Red | `#F38BA8` | Fehler, Highlights |
+| Green | `#A6E3A1` | Erfolg, Befehle |
+| Yellow | `#F9E2AF` | Warnungen |
+| Blue | `#89B4FA` | Info, Links |
+| Mauve | `#CBA6F7` | Akzente, Prompt |
+
+Vollständige Palette: [catppuccin.com/palette](https://catppuccin.com/palette)
+
+---
+
 ## Starship-Prompt
 
 Das Setup konfiguriert automatisch [Starship](https://starship.rs/) mit dem `catppuccin-powerline` Preset.
@@ -48,7 +85,7 @@ Bei einem ungültigen Preset-Namen zeigt das Skript eine Warnung und verwendet `
 
 Das Terminal-Profil, der Nerd Font und das Starship-Preset sind eng gekoppelt. Wenn du die Schriftart ändern möchtest, musst du alle drei Komponenten berücksichtigen.
 
-> **⚠️ Wichtig:** Die Datei `tshofmann.terminal` enthält binäre NSArchiver-Daten. **Niemals direkt editieren** – nur über die Terminal.app GUI ändern und neu exportieren.
+> **⚠️ Wichtig:** Die Datei `catppuccin-mocha.terminal` enthält binäre NSArchiver-Daten. **Niemals direkt editieren** – nur über die Terminal.app GUI ändern und neu exportieren.
 
 ### Voraussetzung
 
@@ -66,21 +103,21 @@ brew install --cask font-jetbrains-mono-nerd-font
 
 ### Schritt 2: Font in Terminal.app ändern
 
-1. Terminal.app → Einstellungen → Profile → `tshofmann`
+1. Terminal.app → Einstellungen → Profile → `catppuccin-mocha`
 2. Tab "Text" → Schrift → "Ändern…"
 3. Neuen Nerd Font auswählen (z.B. "JetBrainsMono Nerd Font")
 4. Größe anpassen falls nötig
 
 ### Schritt 3: Profil exportieren
 
-1. Terminal.app → Einstellungen → Profile → `tshofmann`
+1. Terminal.app → Einstellungen → Profile → `catppuccin-mocha`
 2. Rechtsklick auf das Profil → "Exportieren…"
-3. Speichern als `~/dotfiles/setup/tshofmann.terminal` (überschreiben)
+3. Speichern als `~/dotfiles/setup/catppuccin-mocha.terminal` (überschreiben)
 
 ```zsh
 # Änderung committen
 cd ~/dotfiles
-git add setup/tshofmann.terminal
+git add setup/catppuccin-mocha.terminal
 git commit -m "feat: Terminal-Font auf JetBrains Mono geändert"
 ```
 
