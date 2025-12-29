@@ -168,6 +168,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | Funktion | Beschreibung |
 |----------|--------------|
 | `cdf [path]` | **Fuzzy CD**: fd + fzf + eza – Verzeichnisnavigation mit Baum-Vorschau |
+| `fo [path]` | **Fuzzy Open**: fd + fzf + open – Datei mit Standard-App öffnen (PDFs, Bilder, etc.) |
 
 > **Hinweis:** fd respektiert automatisch `.gitignore` und ist deutlich schneller als find. Zusätzlich werden Patterns aus `~/.config/fd/ignore` global ausgeschlossen (z.B. `.git/`, `node_modules/`, `__pycache__/`). Mit `fd -u` (unrestricted) werden alle Ignore-Dateien umgangen.
 >
@@ -309,7 +310,7 @@ fzf ist als "Enhancer" in die jeweiligen Tool-Alias-Dateien integriert. Diese Da
 Die folgenden Funktionen nutzen fzf, sind aber nach ihrem primären Zweck in den jeweiligen Tool-Dateien organisiert:
 
 - **ripgrep.alias**: `rgf`
-- **fd.alias**: `cdf`
+- **fd.alias**: `cdf`, `fo`
 - **git.alias**: `glog`, `gbr`, `gst`, `gstash`
 - **homebrew.alias**: `bip`, `bup`, `brp`, `bsp`
 - **gh.alias**: `ghpr`, `ghis`, `ghrun`, `ghrepo`
