@@ -11,10 +11,13 @@
 ### Grundprinzip
 **Sehen → Recherchieren → Denken → Verstehen → Handeln**
 
+Gilt für **jede** Änderung – Features, Bugfixes, Refactoring, Dokumentation:
+
 - **Repository-Zustand ist die Wahrheit** – nicht Annahmen oder veraltete Dokumentation
 - **Annahmen explizit validieren** – bevor darauf aufgebaut wird
 - **Beweispflicht** – jede Aussage mit Beleg (Code, Terminal-Output, Doku)
 - **Keine Änderungen ohne vorherige Analyse**
+- **Nach jeder Änderung manuell verifizieren** – nicht nur Tests laufen lassen
 
 ### Bei Unklarheiten
 1. **Offizielle Dokumentation** des Tools konsultieren
