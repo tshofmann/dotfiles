@@ -326,7 +326,7 @@ rm -rf ~/dotfiles
 
 ### Symptom
 
-- Befehle wie `ghpr`, `glog`, `fe` werden nicht erkannt
+- Befehle wie `ghpr`, `glog`, `cdf` werden nicht erkannt
 - Fehlermeldung: `command not found`
 
 ### Ursache
@@ -364,7 +364,7 @@ exec zsh
 | Funktion | Benötigte Tools |
 |----------|-----------------|
 | `rgf` | fzf, ripgrep, bat |
-| `fe`, `fo`, `cdf` | fzf, fd, bat/eza |
+| `cdf` | fzf, fd, eza |
 | `zf` | fzf, zoxide, eza |
 | `ghpr`, `ghis`, `ghrun`, `ghrepo` | fzf, gh |
 | `glog`, `gbr`, `gst`, `gstash` | fzf, git, bat |

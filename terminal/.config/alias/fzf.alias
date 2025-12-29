@@ -5,13 +5,14 @@
 # Pfad    : ~/.config/alias/fzf.alias
 # Docs    : https://github.com/junegunn/fzf
 # ============================================================
-# Hinweis : Globale fzf-Optionen sind in ~/.config/fzf/config
-#           (FZF_DEFAULT_OPTS_FILE) definiert.
+# Hinweis : Shell-Keybindings (in .zshrc): Ctrl+R=History,
+#           Ctrl+T=Dateisuche mit Vorschau, Alt+C=Verzeichnis
 #
-#           Tool-spezifische fzf-Funktionen befinden sich in
-#           den jeweiligen Tool-Alias-Dateien:
-#           - ripgrep.alias → rgf
-#           - fd.alias      → cdf, fe, fo
+#           Globale fzf-Optionen in ~/.config/fzf/config
+#
+#           Tool-spezifische fzf-Funktionen:
+#           - fd.alias      → cdf (Verzeichnis+Vorschau)
+#           - ripgrep.alias → rgf (Live-Grep)
 #           - git.alias     → glog, gbr, gst, gstash
 #           - homebrew.alias→ bip, bup, brp, bsp
 #           - gh.alias      → ghpr, ghis, ghrun, ghrepo
@@ -21,6 +22,13 @@
 if ! command -v fzf >/dev/null 2>&1; then
     return 0
 fi
+
+# ============================================================
+# Shell-Keybindings (in .zshrc konfiguriert)
+# ============================================================
+# Ctrl+T: Datei suchen mit bat-Vorschau, Pfad einfügen
+# Ctrl+R: History durchsuchen mit Vorschau
+# Alt+C:  Verzeichnis wechseln mit eza-Vorschau
 
 # ============================================================
 # ZOXIDE + FZF: Intelligente Directory-Jumps
@@ -63,11 +71,17 @@ fkill() {
 # ============================================================
 # Man-Pages interaktiv durchsuchen mit Syntax-Highlighting
 fman() {
-    man -k . 2>/dev/null | \
+    local selection page
+    selection=$(man -k . 2>/dev/null | \
         fzf --prompt='Man> ' \
-            --preview "echo {} | awk '{print \$1}' | xargs man 2>/dev/null | bat --color=always -l man -p" \
-            --header='Enter: Man-Page öffnen' \
-            --bind 'enter:execute(echo {} | awk "{print \$1}" | xargs man)'
+            --preview "echo {} | sed 's/(.*//' | xargs man 2>/dev/null | bat --color=always -l man -p" \
+            --header='Enter: Man-Page öffnen')
+    
+    if [[ -n "$selection" ]]; then
+        # Extrahiere Seitenname ohne (1), (3), etc.
+        page=$(echo "$selection" | sed 's/(.*//')
+        man "$page"
+    fi
 }
 
 # ============================================================
@@ -75,11 +89,18 @@ fman() {
 # ============================================================
 # Umgebungsvariablen durchsuchen und Wert in Zwischenablage kopieren
 fenv() {
-    printenv | sort | fzf \
+    local selection
+    selection=$(printenv | sort | fzf \
         --preview 'echo {} | cut -d= -f2-' \
         --preview-window='down:3' \
-        --header='Enter: Wert in Zwischenablage kopieren' \
-        --bind 'enter:execute-silent(echo {} | cut -d= -f2- | pbcopy)+abort'
+        --header='Enter: Wert kopieren | Ctrl+Y: Nur kopieren' \
+        --bind 'ctrl-y:execute-silent(echo {} | cut -d= -f2- | pbcopy)+abort')
+    
+    if [[ -n "$selection" ]]; then
+        local value="${selection#*=}"
+        echo "$value" | pbcopy
+        echo "Kopiert: ${selection%%=*}"
+    fi
 }
 
 # ============================================================
@@ -87,12 +108,15 @@ fenv() {
 # ============================================================
 # Befehlshistorie durchsuchen und direkt ausführen (anders als Ctrl+R)
 fhist() {
-    local cmd
-    cmd=$(fc -l 1 | fzf --tac --no-sort \
+    local selection cmd
+    selection=$(fc -l 1 | fzf --tac --no-sort \
         --header='Enter: Ausführen | Ctrl+Y: In Zwischenablage' \
-        --bind 'ctrl-y:execute-silent(echo {2..} | pbcopy)+abort' | \
-        awk '{$1=""; print substr($0,2)}')
+        --bind 'ctrl-y:execute-silent(echo {2..} | pbcopy)+abort')
     
-    [[ -n "$cmd" ]] && eval "$cmd"
+    if [[ -n "$selection" ]]; then
+        cmd=$(echo "$selection" | awk '{$1=""; print substr($0,2)}')
+        print -s "$cmd"  # Zur History hinzufügen
+        eval "$cmd"
+    fi
 }
 

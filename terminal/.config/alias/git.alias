@@ -50,43 +50,55 @@ alias gd='git diff'
 if command -v fzf >/dev/null 2>&1; then
     # Git Log mit Commit-Vorschau
     glog() {
-        git log --oneline --color=always --decorate | \
+        local sha
+        sha=$(git log --oneline --color=always --decorate | \
             fzf --ansi --no-sort --reverse \
                 --preview 'git show --color=always {1} | bat --style=numbers --color=always -l diff' \
                 --header='Enter: Anzeigen | Ctrl+Y: SHA kopieren' \
-                --bind 'enter:execute(git show --color=always {1} | bat --style=numbers --color=always -l diff | less -R)' \
-                --bind 'ctrl-y:execute-silent(echo -n {1} | pbcopy)+abort'
+                --bind 'ctrl-y:execute-silent(echo -n {1} | pbcopy)+abort' | \
+            awk '{print $1}')
+        
+        [[ -n "$sha" ]] && git show --color=always "$sha" | bat --style=numbers --color=always -l diff | less -R
     }
     
     # Git Branch wechseln mit Vorschau
     gbr() {
-        git branch --all --color=always | \
+        local branch
+        branch=$(git branch --all --color=always | \
             grep -v HEAD | \
             fzf --ansi \
                 --preview 'git log --oneline --color=always {1} | head -20' \
                 --header='Enter: Wechseln | Ctrl+D: Löschen' \
-                --bind 'enter:execute(git checkout {1})' \
-                --bind 'ctrl-d:execute(git branch -d {1})'
+                --bind 'ctrl-d:execute(git branch -d {1})+reload(git branch --all --color=always | grep -v HEAD)' | \
+            sed 's/^[* ]*//' | sed 's|remotes/origin/||')
+        
+        [[ -n "$branch" ]] && git checkout "$branch"
     }
     
     # Git Status mit Diff-Vorschau
     gst() {
-        git -c color.status=always status --short | \
+        local files
+        files=$(git -c color.status=always status --short | \
             fzf --ansi --multi \
                 --preview 'git diff --color=always -- {2} | bat --style=numbers --color=always -l diff' \
                 --header='Tab: Auswählen | Enter: Add | Ctrl+R: Reset' \
-                --bind 'enter:execute(git add {+2})' \
-                --bind 'ctrl-r:execute(git restore {+2})'
+                --bind 'ctrl-r:execute(git restore {+2})+reload(git -c color.status=always status --short)' | \
+            awk '{print $2}')
+        
+        [[ -n "$files" ]] && echo "$files" | xargs git add && echo "Staged: $(echo "$files" | wc -l | tr -d ' ') Datei(en)"
     }
     
     # Stash-Browser
     gstash() {
-        git stash list | \
+        local stash
+        stash=$(git stash list | \
             fzf --ansi \
-                --preview 'git stash show -p {1} | bat --style=numbers --color=always -l diff' \
-                --header='Enter: Anwenden | Ctrl+D: Löschen | Ctrl+P: Pop' \
-                --bind 'enter:execute(git stash apply {1})' \
-                --bind 'ctrl-d:execute(git stash drop {1})' \
-                --bind 'ctrl-p:execute(git stash pop {1})'
+                --preview 'echo {} | cut -d: -f1 | xargs git stash show -p | bat --style=numbers --color=always -l diff' \
+                --header='Enter: Apply | Ctrl+D: Drop | Ctrl+P: Pop' \
+                --bind 'ctrl-d:execute(echo {} | cut -d: -f1 | xargs git stash drop)+reload(git stash list)' \
+                --bind 'ctrl-p:execute(echo {} | cut -d: -f1 | xargs git stash pop)+abort' | \
+            cut -d: -f1)
+        
+        [[ -n "$stash" ]] && git stash apply "$stash"
     }
 fi
