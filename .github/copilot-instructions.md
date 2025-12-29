@@ -6,6 +6,22 @@
 - Bei Hook-Fehlern: Problem beheben, dann erneut committen
 - Commit-Messages auf Deutsch, Conventional Commits Format
 
+## Arbeitsweise
+
+### Grundprinzip
+**Sehen → Recherchieren → Denken → Verstehen → Handeln**
+
+- **Repository-Zustand ist die Wahrheit** – nicht Annahmen oder veraltete Dokumentation
+- **Annahmen explizit validieren** – bevor darauf aufgebaut wird
+- **Beweispflicht** – jede Aussage mit Beleg (Code, Terminal-Output, Doku)
+- **Keine Änderungen ohne vorherige Analyse**
+
+### Bei Unklarheiten
+1. **Offizielle Dokumentation** des Tools konsultieren
+2. **Man-Pages** (`man <tool>`)
+3. **Im Terminal verifizieren** – testen statt vermuten
+4. Bei Bedarf: Rückfrage statt Annahme
+
 ## Code-Stil
 
 ### Shell-Dateien (ausschließlich ZSH)
