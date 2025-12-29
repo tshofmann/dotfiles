@@ -15,11 +15,14 @@ check_structure() {
     local errors=0
     
     # Extrahiere terminal/ Einträge aus dem Struktur-Baum in CONTRIBUTING.md
-    # Format: │   ├── .zshenv
+    # Format: │   ├── .zshenv  oder │   ├── .gitconfig          # Kommentar
+    # Entferne alles nach # (Kommentare) und extrahiere nur Dateinamen
     local -a doc_files
     doc_files=($(sed -n '/├── terminal\//,/└── docs\//p' "$contrib" | \
         grep -E '^\│[[:space:]]+[├└]── \.' | \
+        sed 's/#.*//' | \
         sed 's/.*[├└]── //' | \
+        sed 's/[[:space:]]*$//' | \
         grep -v '\.config'))
     
     # Prüfe ob jede tatsächliche Datei in terminal/ dokumentiert ist

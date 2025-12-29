@@ -34,19 +34,23 @@ dotfiles/
 ├── scripts/                # Utility-Scripts (nicht Setup)
 │   ├── health-check.sh     # Installation validieren
 │   ├── validate-docs.sh    # Docs-Code-Synchronisation prüfen
-│   └── validators/         # Modulare Validierungs-Komponenten
-│       ├── lib.sh          # Shared Library
-│       ├── core/           # 8 Kern-Validierungen
-│       └── extended/       # 2 erweiterte Prüfungen
+│   ├── validators/         # Modulare Validierungs-Komponenten
+│   │   ├── lib.sh          # Shared Library
+│   │   ├── core/           # 8 Kern-Validierungen
+│   │   └── extended/       # 3 erweiterte Prüfungen
+│   └── tests/              # Unit-Tests für Validatoren
+│       ├── run-tests.sh    # Test-Runner
+│       ├── test_lib.sh     # Tests für lib.sh
+│       └── test_validators.sh # Integration-Tests
 ├── setup/                  # Bootstrap & Installation
 │   ├── bootstrap.sh        # Hauptskript
 │   ├── Brewfile            # Homebrew-Abhängigkeiten
 │   └── tshofmann.terminal  # Terminal.app Profil
 ├── terminal/               # Dotfiles (werden nach ~ verlinkt)
-│   ├── .zshenv
-│   ├── .zprofile
-│   ├── .zshrc
 │   ├── .zlogin
+│   ├── .zprofile
+│   ├── .zshenv
+│   ├── .zshrc
 │   └── .config/
 └── docs/                   # Dokumentation
 ```
@@ -98,6 +102,23 @@ git commit --no-verify -m "..."
 # Einzelnen Validator ausführen
 ./scripts/validate-docs.sh brewfile
 ```
+
+### Unit-Tests für Validatoren
+
+```zsh
+# Alle Tests ausführen
+./scripts/tests/run-tests.sh
+
+# Mit ausführlicher Ausgabe
+./scripts/tests/run-tests.sh --verbose
+```
+
+Die Test-Suite prüft:
+- Pfad-Konfiguration (DOTFILES_DIR, etc.)
+- Extraktions-Funktionen (Aliase, Funktionen, Docs)
+- Logging und Zähler (ok, warn, err)
+- Validator-Registry (register, run)
+- Alle Validator-Dateien (Syntax, Registrierung)
 
 ### Was wird geprüft?
 

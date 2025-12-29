@@ -287,6 +287,7 @@ _help_category() {
     if [[ $has_aliases -eq 1 ]]; then
         echo "${_HELP_COLOR_HEADER}ALIASE${_HELP_COLOR_RESET}"
         printf "%s" "$alias_output"
+        echo ""
     fi
 
     # Parse and display functions
@@ -301,6 +302,7 @@ _help_category() {
     if [[ $has_functions -eq 1 ]]; then
         echo "${_HELP_COLOR_HEADER}FUNKTIONEN${_HELP_COLOR_RESET}"
         printf "%s" "$func_output"
+        echo ""
     fi
 
     if [[ $has_aliases -eq 0 && $has_functions -eq 0 ]]; then
@@ -367,7 +369,7 @@ _help_search() {
 
         if [[ -n "$category_results" ]]; then
             results+="${_HELP_COLOR_HEADER}${category}${_HELP_COLOR_RESET}"$'\n'
-            results+="$category_results"
+            results+="$category_results"$'\n'
         fi
     done
 
