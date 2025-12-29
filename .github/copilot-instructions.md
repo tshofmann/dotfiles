@@ -82,6 +82,23 @@ Vollständige Palette: [catppuccin.com/palette](https://catppuccin.com/palette)
 - **Modularität**: Ein Tool = Eine Alias-Datei (z.B. `bat.alias`, `fd.alias`)
 - **Symlinks**: Via GNU Stow mit `--no-folding` (keine Verzeichnis-Symlinks)
 - **Design**: Catppuccin Mocha als einheitliches Farbschema
+- **XDG Base Directory**: Alle Configs in `~/.config/` (XDG-konform)
+
+### XDG Base Directory Specification
+
+Alle Tool-Konfigurationen folgen der [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/latest/):
+
+| Variable | Wert | Gesetzt in |
+|----------|------|------------|
+| `XDG_CONFIG_HOME` | `$HOME/.config` | `.zshenv` |
+| `EZA_CONFIG_DIR` | `$XDG_CONFIG_HOME/eza` | `.zshenv` |
+| `RIPGREP_CONFIG_PATH` | `$XDG_CONFIG_HOME/ripgrep/config` | `.zshrc` |
+| `BAT_CONFIG_PATH` | (nutzt XDG automatisch) | – |
+
+**Wichtig für macOS:**
+- `dirs::config_dir()` in Rust gibt `~/Library/Application Support` zurück, **nicht** `~/.config`
+- Tools wie `eza` respektieren `XDG_CONFIG_HOME` nicht – daher explizit `EZA_CONFIG_DIR` setzen
+- Alle Configs liegen in `terminal/.config/` und werden via Stow nach `~/.config/` verlinkt
 
 ### Verzeichnisstruktur
 ```
@@ -94,12 +111,15 @@ dotfiles/
 │   └── catppuccin-mocha.terminal # Terminal.app Profil
 ├── terminal/
 │   ├── .zshrc                   # Shell-Konfiguration
-│   ├── .zshenv                  # Environment (wird zuerst geladen)
+│   ├── .zshenv                  # Environment (XDG_CONFIG_HOME, EZA_CONFIG_DIR)
 │   ├── .zprofile                # Login-Shell (Homebrew-Pfade)
 │   └── .config/
 │       ├── alias/*.alias        # Tool-Aliase (10 Dateien)
 │       ├── bat/config           # bat-Konfiguration
+│       ├── bat/themes/          # bat Catppuccin Theme
+│       ├── btop/btop.conf       # btop-Konfiguration
 │       ├── btop/themes/         # btop Catppuccin Theme
+│       ├── eza/theme.yml        # eza Catppuccin Theme
 │       ├── fd/ignore            # fd-Ignoreliste
 │       ├── fzf/config           # fzf-Optionen + Catppuccin Farben
 │       ├── ripgrep/config       # ripgrep-Optionen

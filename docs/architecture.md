@@ -106,6 +106,27 @@ Das Bootstrap-Skript ist **idempotent** – es kann beliebig oft ausgeführt wer
 - Font-Check prüft Existenz vor Installation
 - Terminal-Profil-Import ist wiederholbar
 
+### XDG Base Directory Specification
+
+Alle Tool-Konfigurationen folgen der [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/latest/):
+
+| Variable | Wert | Gesetzt in |
+|----------|------|------------|
+| `XDG_CONFIG_HOME` | `$HOME/.config` | `.zshenv` |
+| `EZA_CONFIG_DIR` | `$XDG_CONFIG_HOME/eza` | `.zshenv` |
+| `RIPGREP_CONFIG_PATH` | `$XDG_CONFIG_HOME/ripgrep/config` | `.zshrc` |
+| `BAT_CONFIG_PATH` | (nutzt XDG automatisch) | – |
+
+**macOS-Besonderheit:**
+
+Die Rust-Library `dirs` gibt auf macOS `~/Library/Application Support` zurück statt `~/.config`. Tools wie `eza` nutzen diese Library und respektieren `XDG_CONFIG_HOME` nicht direkt. Daher wird `EZA_CONFIG_DIR` explizit in `.zshenv` gesetzt.
+
+**Warum XDG:**
+- Standardisierter Pfad für alle CLI-Tools
+- Configs in `terminal/.config/` werden via Stow nach `~/.config/` verlinkt
+- Keine Konflikte mit macOS-Standard (`~/Library/Application Support`)
+- Einheitliche Struktur für alle Tools (bat, btop, fzf, ripgrep, eza, fd, gh)
+
 ### Stow statt manuelle Symlinks
 
 [GNU Stow](https://www.gnu.org/software/stow/) verwaltet Symlinks deklarativ:
