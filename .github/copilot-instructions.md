@@ -57,6 +57,10 @@
 
 ## Validierung vor Änderungen
 
+**Konsistenz-Prinzip**: Code = Help = Doku = Copilot-Instructions
+- Jede Änderung muss in **allen** betroffenen Stellen reflektiert werden
+- Patterns/Syntax müssen überall identisch dokumentiert sein
+
 1. `zsh -n <datei>` – Syntax-Check
 2. `./scripts/tests/run-tests.sh` – Unit-Tests bei Validator-Änderungen
 3. `./scripts/health-check.sh` – System-Health bei Tool-Änderungen
