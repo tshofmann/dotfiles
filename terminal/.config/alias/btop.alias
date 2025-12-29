@@ -6,7 +6,7 @@
 # Docs    : https://github.com/aristocratos/btop
 # ============================================================
 
-# Guard: Aliase nur aktivieren wenn btop installiert ist
+# Guard   : Nur wenn btop installiert ist
 if ! command -v btop >/dev/null 2>&1; then
     return 0
 fi

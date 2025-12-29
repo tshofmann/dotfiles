@@ -37,7 +37,7 @@ dotfiles/
 │   ├── validators/         # Modulare Validierungs-Komponenten
 │   │   ├── lib.sh          # Shared Library
 │   │   ├── core/           # 8 Kern-Validierungen
-│   │   └── extended/       # 3 erweiterte Prüfungen
+│   │   └── extended/       # 4 erweiterte Prüfungen
 │   └── tests/              # Unit-Tests für Validatoren
 │       ├── run-tests.sh    # Test-Runner
 │       ├── test_lib.sh     # Tests für lib.sh
@@ -140,6 +140,7 @@ Die Test-Suite prüft:
 | **alias-names** | Alias-Namen in Docs existieren im Code |
 | **codeblocks** | Shell-Commands in Code-Blöcken sind gültig |
 | **structure** | terminal/ Dateien in CONTRIBUTING.md Struktur |
+| **style-consistency** | Metadaten-Padding, Guards, Sektions-Trenner |
 
 ### Bei Fehlern
 
@@ -174,6 +175,19 @@ warn() { print "⚠ $*"; }
   - Werden von Validatoren ignoriert
   - Müssen nicht dokumentiert werden
   - Für interne Helper, Parser, etc.
+
+### Stil-Regeln (automatisch geprüft)
+
+Diese Regeln werden durch `style-consistency.sh` automatisch validiert:
+
+| Regel | Format | Beispiel |
+|-------|--------|----------|
+| **Metadaten-Felder** | 8 Zeichen + `:` | `# Docs    :`, `# Guard   :` |
+| **Guard-Kommentar** | Kurze Version | `# Guard   : Nur wenn X installiert ist` |
+| **Sektions-Trenner** | `----` (60 Zeichen) | `# ------------------------------------------------------------` |
+| **Header-Block** | `====` nur oben | Erste Zeilen der Datei |
+| **fzf-Header** | `Enter:` zuerst | `--header='Enter: Aktion \| Key: Aktion'` |
+| **Pipe-Zeichen** | ASCII `\|` | Kein Unicode `│` |
 
 ### Dokumentation
 

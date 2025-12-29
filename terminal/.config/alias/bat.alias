@@ -9,7 +9,7 @@
 #           sind in ~/.config/bat/config definiert.
 # ============================================================
 
-# Guard: Aliase nur aktivieren wenn bat installiert ist
+# Guard   : Nur wenn bat installiert ist
 if ! command -v bat >/dev/null 2>&1; then
     return 0
 fi

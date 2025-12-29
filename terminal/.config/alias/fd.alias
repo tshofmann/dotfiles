@@ -10,7 +10,7 @@
 #           Mit "fd -u" werden alle Ignore-Dateien umgangen.
 # ============================================================
 
-# Guard: Aliase nur aktivieren wenn fd installiert ist
+# Guard   : Nur wenn fd installiert ist
 if ! command -v fd >/dev/null 2>&1; then
     return 0
 fi

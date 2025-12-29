@@ -9,7 +9,7 @@
 #           definiert: glog, gbr, gst, gstash
 # ============================================================
 
-# Guard: Aliase nur aktivieren wenn git installiert ist
+# Guard   : Nur wenn git installiert ist
 if ! command -v git >/dev/null 2>&1; then
     return 0
 fi
@@ -68,7 +68,7 @@ if command -v fzf >/dev/null 2>&1; then
             grep -v HEAD | \
             fzf --ansi \
                 --preview 'git log --oneline --color=always {1} | head -20' \
-                --header='Enter: Wechseln | Ctrl+D: Löschen' \
+                --header='Enter: Checkout | Ctrl+D: Löschen' \
                 --bind 'ctrl-d:execute(git branch -d {1})+reload(git branch --all --color=always | grep -v HEAD)' | \
             sed 's/^[* ]*//' | sed 's|remotes/[^/]*/||')
         
@@ -81,7 +81,7 @@ if command -v fzf >/dev/null 2>&1; then
         files=$(git -c color.status=always status --short | \
             fzf --ansi --multi \
                 --preview 'git diff --color=always -- {2} | bat --style=numbers --color=always -l diff' \
-                --header='Tab: Auswählen | Enter: Add | Ctrl+R: Reset' \
+                --header='Enter: Add | Tab: Mehrfach | Ctrl+R: Reset' \
                 --bind 'ctrl-r:execute(git restore {+2})+reload(git -c color.status=always status --short)' | \
             awk '{print $2}')
         
@@ -100,7 +100,7 @@ if command -v fzf >/dev/null 2>&1; then
         stash=$(git stash list | \
             fzf --ansi \
                 --preview 'echo {} | cut -d: -f1 | xargs git stash show -p | bat --style=numbers --color=always -l diff' \
-                --header='Enter: Apply | Ctrl+D: Drop | Ctrl+P: Pop' \
+                --header='Enter: Apply | Ctrl+P: Pop | Ctrl+D: Drop' \
                 --bind 'ctrl-d:execute(echo {} | cut -d: -f1 | xargs git stash drop)+reload(git stash list)' \
                 --bind 'ctrl-p:execute(echo {} | cut -d: -f1 | xargs git stash pop)+abort' | \
             cut -d: -f1)
