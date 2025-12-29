@@ -5,6 +5,10 @@
 # Pfad    : ~/.config/alias/fd.alias
 # Docs    : https://github.com/sharkdp/fd
 # ============================================================
+# Hinweis : Globale Ignore-Patterns (.git/, node_modules/, etc.)
+#           sind in ~/.config/fd/ignore definiert.
+#           Mit "fd -u" werden alle Ignore-Dateien umgangen.
+# ============================================================
 
 # Guard: Aliase nur aktivieren wenn fd installiert ist
 if ! command -v fd >/dev/null 2>&1; then
