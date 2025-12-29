@@ -18,21 +18,21 @@
 #           - gh.alias      → ghpr, ghis, ghrun, ghrepo
 # ============================================================
 
-# Guard: Nur wenn fzf installiert ist
+# Guard   : Nur wenn fzf installiert ist
 if ! command -v fzf >/dev/null 2>&1; then
     return 0
 fi
 
-# ============================================================
+# ------------------------------------------------------------
 # Shell-Keybindings (in .zshrc konfiguriert)
-# ============================================================
+# ------------------------------------------------------------
 # Ctrl+T: Datei suchen mit bat-Vorschau, Pfad einfügen
 # Ctrl+R: History durchsuchen mit Vorschau
 # Alt+C:  Verzeichnis wechseln mit eza-Vorschau
 
-# ============================================================
+# ------------------------------------------------------------
 # ZOXIDE + FZF: Intelligente Directory-Jumps
-# ============================================================
+# ------------------------------------------------------------
 # zi ist bereits in zoxide eingebaut (zi = zoxide interactive)
 # Erweiterte Version mit eza-Preview
 if command -v zoxide >/dev/null 2>&1; then
@@ -44,20 +44,20 @@ if command -v zoxide >/dev/null 2>&1; then
         dir=$(zoxide query -l | \
             fzf --preview "$preview_cmd" \
                 --bind='ctrl-d:execute-silent(zoxide remove {})+reload(zoxide query -l)' \
-                --header='Ctrl+D: Eintrag löschen')
+                --header='Enter: Wechseln | Ctrl+D: Löschen')
         
         [[ -n "$dir" ]] && cd "$dir"
     }
 fi
 
-# ============================================================
+# ------------------------------------------------------------
 # KILL + FZF: Prozess-Management
-# ============================================================
+# ------------------------------------------------------------
 # Prozesse interaktiv suchen und beenden (Tab für Mehrfachauswahl)
 fkill() {
     local pid
     pid=$(ps -ef | sed 1d | fzf --multi \
-        --header='Tab: Mehrere auswählen | Enter: Beenden | Ctrl+K: Sofort beenden (-9)' \
+        --header='Enter: Beenden | Tab: Mehrfach | Ctrl+K: Kill -9' \
         --preview 'echo {}' \
         --preview-window='down:3' \
         --bind 'ctrl-k:execute(echo {} | awk "{print \$2}" | xargs kill -9)+abort' | \
@@ -66,16 +66,16 @@ fkill() {
     [[ -n "$pid" ]] && echo "$pid" | xargs kill -15
 }
 
-# ============================================================
+# ------------------------------------------------------------
 # MAN + FZF + BAT: Man-Pages Browser
-# ============================================================
+# ------------------------------------------------------------
 # Man-Pages interaktiv durchsuchen mit Syntax-Highlighting
 fman() {
     local selection page
     selection=$(man -k . 2>/dev/null | \
         fzf --prompt='Man> ' \
             --preview "echo {} | sed 's/(.*//' | xargs man 2>/dev/null | bat --color=always -l man -p" \
-            --header='Enter: Man-Page öffnen')
+            --header='Enter: Öffnen')
     
     if [[ -n "$selection" ]]; then
         # Extrahiere Seitenname und Section (z.B. "printf(3)" → "3 printf")
@@ -90,16 +90,16 @@ fman() {
     fi
 }
 
-# ============================================================
+# ------------------------------------------------------------
 # ENV + FZF: Umgebungsvariablen-Browser
-# ============================================================
+# ------------------------------------------------------------
 # Umgebungsvariablen durchsuchen und Wert in Zwischenablage kopieren
 fenv() {
     local selection
     selection=$(printenv | sort | fzf \
         --preview 'echo {} | cut -d= -f2-' \
         --preview-window='down:3' \
-        --header='Enter: Wert kopieren | Ctrl+Y: Nur kopieren' \
+        --header='Enter: Kopieren | Ctrl+Y: Nur Wert' \
         --bind 'ctrl-y:execute-silent(echo {} | cut -d= -f2- | pbcopy)+abort')
     
     if [[ -n "$selection" ]]; then
@@ -109,14 +109,14 @@ fenv() {
     fi
 }
 
-# ============================================================
+# ------------------------------------------------------------
 # HISTORY + FZF: Erweiterte History-Suche
-# ============================================================
+# ------------------------------------------------------------
 # Befehlshistorie durchsuchen und direkt ausführen (anders als Ctrl+R)
 fhist() {
     local selection cmd
     selection=$(fc -l 1 | fzf --tac --no-sort \
-        --header='Enter: Ausführen | Ctrl+Y: In Zwischenablage' \
+        --header='Enter: Ausführen | Ctrl+Y: Kopieren' \
         --bind 'ctrl-y:execute-silent(echo {2..} | pbcopy)+abort')
     
     if [[ -n "$selection" ]]; then

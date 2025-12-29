@@ -20,9 +20,10 @@ brewup() {
 # Mac App Store (mas)
 # ------------------------------------------------------------
 # Voraussetzung: Anmeldung im App Store über App Store.app
-# Hinweis: mas account/signin sind seit macOS 12+ nicht verfügbar
-# Docs: https://github.com/mas-cli/mas
-# Guard: nur wenn mas installiert ist
+# Hinweis : mas account/signin sind seit macOS 12+ nicht verfügbar
+# Docs    : https://github.com/mas-cli/mas
+# ------------------------------------------------------------
+# Guard   : Nur wenn mas installiert ist
 if command -v mas >/dev/null 2>&1; then
     # Zeige veraltete Mac App Store Apps
     alias maso='mas outdated'
@@ -49,7 +50,7 @@ if command -v fzf >/dev/null 2>&1; then
         local pkg
         pkg=$(brew formulae | fzf --multi \
             --preview 'brew info {}' \
-            --header='Tab: Mehrere auswählen | Enter: Installieren')
+            --header='Enter: Installieren | Tab: Mehrfach')
         
         [[ -n "$pkg" ]] && echo "$pkg" | xargs brew install
     }
@@ -59,7 +60,7 @@ if command -v fzf >/dev/null 2>&1; then
         local pkg
         pkg=$(brew outdated | fzf --multi \
             --preview 'brew info {}' \
-            --header='Tab: Mehrere auswählen | Enter: Upgrade')
+            --header='Enter: Upgrade | Tab: Mehrfach')
         
         [[ -n "$pkg" ]] && echo "$pkg" | xargs brew upgrade
     }
@@ -69,7 +70,7 @@ if command -v fzf >/dev/null 2>&1; then
         local pkg
         pkg=$(brew leaves | fzf --multi \
             --preview 'brew info {}' \
-            --header='Tab: Mehrere auswählen | Enter: Deinstallieren')
+            --header='Enter: Entfernen | Tab: Mehrfach')
         
         [[ -n "$pkg" ]] && echo "$pkg" | xargs brew uninstall
     }

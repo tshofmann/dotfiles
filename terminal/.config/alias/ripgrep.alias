@@ -9,7 +9,7 @@
 #           sind in ~/.config/ripgrep/config definiert.
 # ============================================================
 
-# Guard: Aliase nur aktivieren wenn ripgrep installiert ist
+# Guard   : Nur wenn rg installiert ist
 if ! command -v rg >/dev/null 2>&1; then
     return 0
 fi

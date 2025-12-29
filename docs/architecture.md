@@ -34,9 +34,11 @@ dotfiles/
 │       │   ├── aliases.sh       # Alias-Anzahlen
 │       │   ├── config.sh        # Config-Beispiele
 │       │   └── symlinks.sh      # Symlink-Tabelle
-│       └── extended/            # Erweiterte Validierungen
+│       └── extended/            # Erweiterte Validierungen (4 Module)
 │           ├── alias-names.sh   # Alias-Namen vs. Code
-│           └── codeblocks.sh    # Shell-Commands in Docs
+│           ├── codeblocks.sh    # Shell-Commands in Docs
+│           ├── structure.sh     # Verzeichnisstruktur
+│           └── style-consistency.sh # Code-Stil Konsistenz
 ├── setup/
 │   ├── bootstrap.sh             # Automatisiertes Setup-Skript
 │   ├── Brewfile                 # Homebrew-Abhängigkeiten

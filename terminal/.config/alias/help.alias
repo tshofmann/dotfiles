@@ -499,7 +499,7 @@ _help_interactive() {
             --delimiter='│' \
             --preview "$preview_cmd" \
             --preview-window='right:50%:wrap' \
-            --header='Enter: Kopieren │ Esc: Beenden' \
+            --header='Enter: Kopieren | Esc: Schließen' \
             --prompt='Suche> ')
 
     if [[ -n "$selection" ]]; then
