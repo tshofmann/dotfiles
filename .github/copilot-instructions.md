@@ -48,8 +48,30 @@ Gilt für **jede** Änderung – Features, Bugfixes, Refactoring, Dokumentation:
   - Portabilität falls jemand `SHELL=/bin/bash` hat
 - Einfache externe Befehle (`bat`, `eza`, `gh`) brauchen kein Wrapping
 - ZSH Parameter Expansion statt `sed`/`cut` für Performance
-- Catppuccin Mocha Farben (definiert in `help.alias`, Zeile 166+)
+- Catppuccin Mocha Farben (definiert in `fzf/config` und `help.alias`)
 - `--header=` für Keybinding-Hinweise im Format `Key: Aktion | Key: Aktion`
+
+### Catppuccin Mocha – Designrichtlinie
+Catppuccin Mocha ist das **verbindliche Farbschema** für alle Tools:
+- **Terminal.app**: `setup/catppuccin-mocha.terminal`
+- **bat**: Theme in `terminal/.config/bat/themes/` (via Stow, Cache-Build in bootstrap.sh)
+- **fzf**: Farben in `terminal/.config/fzf/config`
+- **btop**: Theme in `terminal/.config/btop/themes/` (via Stow)
+- **zsh-syntax-highlighting**: Theme in `terminal/.config/zsh/` (via Stow)
+- **Starship**: `catppuccin-powerline` Preset
+
+**Hauptfarben** (für eigene Erweiterungen):
+| Konzept | Farbe | Hex |
+|---------|-------|-----|
+| Hintergrund | Base | `#1E1E2E` |
+| Text | Text | `#CDD6F4` |
+| Fehler | Red | `#F38BA8` |
+| Erfolg | Green | `#A6E3A1` |
+| Warnung | Yellow | `#F9E2AF` |
+| Info | Blue | `#89B4FA` |
+| Akzent | Mauve | `#CBA6F7` |
+
+Vollständige Palette: [catppuccin.com/palette](https://catppuccin.com/palette)
 
 ## Architektur-Entscheidungen
 
@@ -58,6 +80,7 @@ Gilt für **jede** Änderung – Features, Bugfixes, Refactoring, Dokumentation:
 - **Designprinzip**: So dynamisch wie möglich, so statisch wie nötig
 - **Modularität**: Ein Tool = Eine Alias-Datei (z.B. `bat.alias`, `fd.alias`)
 - **Symlinks**: Via GNU Stow mit `--no-folding` (keine Verzeichnis-Symlinks)
+- **Design**: Catppuccin Mocha als einheitliches Farbschema
 
 ### Verzeichnisstruktur
 ```
@@ -66,7 +89,8 @@ dotfiles/
 │   └── copilot-instructions.md  # Diese Datei
 ├── setup/
 │   ├── bootstrap.sh             # Installations-Script
-│   └── Brewfile                 # Homebrew-Pakete
+│   ├── Brewfile                 # Homebrew-Pakete
+│   └── catppuccin-mocha.terminal # Terminal.app Profil
 ├── terminal/
 │   ├── .zshrc                   # Shell-Konfiguration
 │   ├── .zshenv                  # Environment (wird zuerst geladen)
@@ -74,9 +98,11 @@ dotfiles/
 │   └── .config/
 │       ├── alias/*.alias        # Tool-Aliase (10 Dateien)
 │       ├── bat/config           # bat-Konfiguration
+│       ├── btop/themes/         # btop Catppuccin Theme
 │       ├── fd/ignore            # fd-Ignoreliste
-│       ├── fzf/config           # fzf-Optionen
-│       └── ripgrep/config       # ripgrep-Optionen
+│       ├── fzf/config           # fzf-Optionen + Catppuccin Farben
+│       ├── ripgrep/config       # ripgrep-Optionen
+│       └── zsh/                 # zsh-syntax-highlighting Theme
 ├── scripts/
 │   ├── health-check.sh          # System-Status prüfen
 │   ├── validate-docs.sh         # Doku-Konsistenz prüfen

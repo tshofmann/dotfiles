@@ -41,8 +41,8 @@ trap cleanup EXIT
 # ------------------------------------------------------------
 readonly SCRIPT_DIR="${0:A:h}"
 readonly DOTFILES_DIR="${SCRIPT_DIR:h}"
-readonly PROFILE_FILE="$SCRIPT_DIR/tshofmann.terminal"
-readonly PROFILE_NAME="tshofmann"
+readonly PROFILE_FILE="$SCRIPT_DIR/catppuccin-mocha.terminal"
+readonly PROFILE_NAME="catppuccin-mocha"
 readonly FONT_GLOB="MesloLG*NerdFont*"
 readonly BREWFILE="$SCRIPT_DIR/Brewfile"
 
@@ -166,6 +166,24 @@ if ! HOMEBREW_NO_AUTO_UPDATE=1 brew bundle --no-upgrade --file="$BREWFILE"; then
   exit 1
 fi
 ok "Abhängigkeiten installiert"
+
+# ------------------------------------------------------------
+# bat Cache aktualisieren (für Catppuccin Mocha Theme)
+# ------------------------------------------------------------
+# Das Theme liegt im Repository unter terminal/.config/bat/themes/
+# und wird via Stow nach ~/.config/bat/themes/ verlinkt.
+# bat benötigt einen Cache-Rebuild um neue Themes zu erkennen.
+CURRENT_STEP="bat-Cache aktualisieren"
+if command -v bat >/dev/null 2>&1; then
+  log "Baue bat-Cache neu (für Catppuccin Theme)"
+  if bat cache --build >/dev/null 2>&1; then
+    ok "bat-Cache aktualisiert"
+  else
+    warn "bat cache --build fehlgeschlagen"
+  fi
+else
+  warn "bat nicht gefunden, überspringe Cache-Build"
+fi
 
 # Font-Installation verifizieren
 font_installed() {

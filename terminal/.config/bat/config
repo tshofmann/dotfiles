@@ -9,8 +9,10 @@
 # ------------------------------------------------------------
 # Farbschema
 # ------------------------------------------------------------
-# Verfügbare Themes anzeigen: bat --list-themes
---theme="Monokai Extended"
+# Catppuccin Mocha Theme
+# Installation: bootstrap.sh lädt das Theme automatisch herunter
+# Verfügbare Themes anzeigen: bat --list-themes | grep -i catppuccin
+--theme="Catppuccin Mocha"
 
 # ------------------------------------------------------------
 # Darstellung

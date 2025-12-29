@@ -114,6 +114,11 @@ fi
 [[ -f "${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \
     source "${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 
+# Catppuccin Mocha Theme für zsh-syntax-highlighting
+# WICHTIG: Muss VOR dem Plugin geladen werden!
+[[ -f "$HOME/.config/zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh" ]] && \
+    source "$HOME/.config/zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh"
+
 # Syntax-Highlighting: Muss als letztes geladen werden
 [[ -f "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
     source "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
