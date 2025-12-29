@@ -5,8 +5,8 @@
 # Pfad    : ~/.config/alias/git.alias
 # Docs    : https://git-scm.com/docs
 # ============================================================
-# Hinweis : Interaktive Git-Funktionen (mit fzf) sind in
-#           fzf.alias definiert: glog, gbr, gst, gstash
+# Hinweis : Interaktive Git-Funktionen (mit fzf) sind unten
+#           definiert: glog, gbr, gst, gstash
 # ============================================================
 
 # Guard: Aliase nur aktivieren wenn git installiert ist
@@ -52,9 +52,9 @@ if command -v fzf >/dev/null 2>&1; then
     glog() {
         git log --oneline --color=always --decorate | \
             fzf --ansi --no-sort --reverse \
-                --preview 'git show --color=always {1} | bat --color=always -l diff' \
+                --preview 'git show --color=always {1} | bat --style=numbers --color=always -l diff' \
                 --header='Enter: Anzeigen | Ctrl+Y: SHA kopieren' \
-                --bind 'enter:execute(git show --color=always {1} | less -R)' \
+                --bind 'enter:execute(git show --color=always {1} | bat --style=numbers --color=always -l diff | less -R)' \
                 --bind 'ctrl-y:execute-silent(echo -n {1} | pbcopy)+abort'
     }
     
@@ -73,7 +73,7 @@ if command -v fzf >/dev/null 2>&1; then
     gst() {
         git -c color.status=always status --short | \
             fzf --ansi --multi \
-                --preview 'git diff --color=always -- {2} | bat --color=always -l diff' \
+                --preview 'git diff --color=always -- {2} | bat --style=numbers --color=always -l diff' \
                 --header='Tab: Auswählen | Enter: Add | Ctrl+R: Reset' \
                 --bind 'enter:execute(git add {+2})' \
                 --bind 'ctrl-r:execute(git restore {+2})'
@@ -83,7 +83,7 @@ if command -v fzf >/dev/null 2>&1; then
     gstash() {
         git stash list | \
             fzf --ansi \
-                --preview 'git stash show -p {1} | bat --color=always -l diff' \
+                --preview 'git stash show -p {1} | bat --style=numbers --color=always -l diff' \
                 --header='Enter: Anwenden | Ctrl+D: Löschen | Ctrl+P: Pop' \
                 --bind 'enter:execute(git stash apply {1})' \
                 --bind 'ctrl-d:execute(git stash drop {1})' \
