@@ -237,6 +237,12 @@ _help_overview() {
     echo "       ${_HELP_COLOR_COMMAND}help git${_HELP_COLOR_RESET}            Zeige Git-Aliase"
     echo "       ${_HELP_COLOR_COMMAND}help search commit${_HELP_COLOR_RESET}  Suche nach 'commit'"
     echo ""
+    echo "${_HELP_COLOR_HEADER}EINSTEIGER-TIPPS${_HELP_COLOR_RESET}"
+    echo "       ${_HELP_COLOR_DESC}•${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}Ctrl+R${_HELP_COLOR_RESET}  Frühere Befehle suchen"
+    echo "       ${_HELP_COLOR_DESC}•${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}Ctrl+T${_HELP_COLOR_RESET}  Datei suchen und einfügen"
+    echo "       ${_HELP_COLOR_DESC}•${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}Alt+C${_HELP_COLOR_RESET}   In Unterverzeichnis wechseln"
+    echo "       ${_HELP_COLOR_DESC}•${_HELP_COLOR_RESET} ${_HELP_COLOR_COMMAND}→${_HELP_COLOR_RESET}       Vorschlag übernehmen (grauer Text)"
+    echo ""
 }
 
 # Show aliases for a specific category
