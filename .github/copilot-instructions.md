@@ -57,6 +57,7 @@ Catppuccin Mocha ist das **verbindliche Farbschema** für alle Tools:
 - **bat**: Theme in `terminal/.config/bat/themes/` (via Stow, Cache-Build in bootstrap.sh)
 - **fzf**: Farben in `terminal/.config/fzf/config`
 - **btop**: Theme in `terminal/.config/btop/themes/` (via Stow)
+- **eza**: Theme in `terminal/.config/eza/theme.yml` (via Stow)
 - **zsh-syntax-highlighting**: Theme in `terminal/.config/zsh/` (via Stow)
 - **Starship**: `catppuccin-powerline` Preset
 
