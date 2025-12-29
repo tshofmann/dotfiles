@@ -105,6 +105,17 @@ if ! curl -sfL --head --connect-timeout 5 --max-time 10 "https://apple.com" >/de
 fi
 ok "Internetverbindung verfügbar"
 
+# Home-Verzeichnis Schreibrechte prüfen (für ~/.config, Starship-Config, etc.)
+# Wichtig bei NFS/SMB-Mounts oder restriktiven Berechtigungen
+CURRENT_STEP="Schreibrechte-Prüfung"
+if ! touch "$HOME/.dotfiles_write_test" 2>/dev/null; then
+  err "Keine Schreibrechte im Home-Verzeichnis: $HOME"
+  err "Das Bootstrap-Skript muss Dateien in ~ erstellen können."
+  exit 1
+fi
+rm -f "$HOME/.dotfiles_write_test"
+ok "Schreibrechte vorhanden"
+
 # Xcode Command Line Tools (git/clang & Header; Voraussetzung für Homebrew)
 if ! xcode-select -p >/dev/null 2>&1; then
   log "Xcode Command Line Tools werden benötigt (für git/Homebrew). Starte Installation..."
