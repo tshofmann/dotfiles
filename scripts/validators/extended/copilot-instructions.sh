@@ -17,16 +17,20 @@ validate_copilot_instructions() {
     info "Prüfe Copilot Instructions Konsistenz..."
     
     # 1. Guard-Check Syntax muss mit Code übereinstimmen
-    local code_guard=$(head -20 "$DOTFILES_DIR/terminal/.config/alias/bat.alias" | grep -A2 "^# Guard" | grep "command -v" | head -1)
+    # Prüfe ob die dokumentierte Syntax im Code vorkommt
     local doc_guard=$(grep "Guard-Check" "$instructions_file" | grep -o '`[^`]*`' | head -1 | tr -d '`')
     
-    if [[ -n "$code_guard" && -n "$doc_guard" ]]; then
-        # Normalisiere für Vergleich (entferne führende Whitespaces)
-        code_guard="${code_guard#"${code_guard%%[![:space:]]*}"}"
-        if [[ "$code_guard" != *"$doc_guard"* && "$doc_guard" != *"command -v"* ]]; then
-            err "Guard-Check in Instructions stimmt nicht mit Code überein"
-            err "  Code: $code_guard"
-            err "  Docs: $doc_guard"
+    if [[ -n "$doc_guard" ]]; then
+        # Extrahiere das Pattern ohne tool-spezifischen Namen
+        # Docs: "if ! command -v tool >/dev/null 2>&1; then return 0; fi"
+        # Code: "if ! command -v bat >/dev/null 2>&1; then"
+        if ! grep -q "if ! command -v .* >/dev/null 2>&1; then" "$DOTFILES_DIR/terminal/.config/alias/bat.alias"; then
+            err "Guard-Check Syntax im Code weicht von Dokumentation ab"
+            (( errors++ )) || true
+        fi
+        # Prüfe ob return 0 auch im Code ist
+        if ! grep -q "return 0" "$DOTFILES_DIR/terminal/.config/alias/bat.alias"; then
+            err "Guard-Check: 'return 0' fehlt im Code"
             (( errors++ )) || true
         fi
     fi
@@ -38,8 +42,14 @@ validate_copilot_instructions() {
     fi
     
     # 3. Prüfe ob fzf-Shell-Verhalten korrekt dokumentiert ist
-    if grep -q '/bin/sh' "$instructions_file" && ! grep -q '\$SHELL' "$instructions_file"; then
-        err "fzf-Shell-Dokumentation falsch: fzf nutzt \$SHELL, nicht /bin/sh"
+    # MUSS $SHELL erwähnen (nicht /bin/sh als Default)
+    if ! grep -q '\$SHELL' "$instructions_file"; then
+        err "fzf-Shell-Dokumentation unvollständig: \$SHELL muss erwähnt werden"
+        (( errors++ )) || true
+    fi
+    # Wenn /bin/sh erwähnt wird, muss es im Kontext von Fallback sein, nicht als Default
+    if grep -q 'fzf.*nutzt.*/bin/sh' "$instructions_file" || grep -q 'fzf.*defaults.*/bin/sh' "$instructions_file"; then
+        err "fzf-Shell-Dokumentation falsch: fzf nutzt \$SHELL -c, nicht /bin/sh"
         (( errors++ )) || true
     fi
     
