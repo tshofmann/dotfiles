@@ -8,6 +8,22 @@
 # ============================================================
 
 # ------------------------------------------------------------
+# XDG Base Directory Specification
+# ------------------------------------------------------------
+# Standard-Pfad für Konfigurationsdateien. Wichtig für:
+# - bat (config)
+# - btop (btop.conf, themes)
+# - fzf (config)
+# - ripgrep (config)
+# - und weitere Tools die XDG_CONFIG_HOME respektieren
+# Docs: https://specifications.freedesktop.org/basedir-spec/latest/
+export XDG_CONFIG_HOME="$HOME/.config"
+
+# eza nutzt dirs::config_dir() was auf macOS ~/Library/Application Support
+# zurückgibt statt XDG_CONFIG_HOME zu respektieren - daher explizit setzen
+export EZA_CONFIG_DIR="$XDG_CONFIG_HOME/eza"
+
+# ------------------------------------------------------------
 # macOS Session-Wiederherstellung deaktivieren
 # ------------------------------------------------------------
 # Deaktiviert separate History pro Tab zugunsten einer zentralen
