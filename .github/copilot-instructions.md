@@ -32,21 +32,22 @@
 
 ### Alias-Dateien (`terminal/.config/alias/*.alias`)
 - **Header-Block** am Dateianfang (siehe fzf.alias als Template)
-- **Guard-Check**: `command -v tool >/dev/null 2>&1 || return 0`
+- **Guard-Check**: `if ! command -v tool >/dev/null 2>&1; then return 0; fi`
 - **Beschreibungskommentar** vor jeder Funktion/Alias für Help-System
 - Lokale Variablen mit `local` deklarieren
 - Private Funktionen mit `_` Prefix (z.B. `_help_format`)
 
 ### fzf-Integration
-- Preview-Commands **müssen** mit `zsh -c '...'` gewrappt werden (fzf nutzt /bin/sh!)
+- Preview-Commands mit **ZSH-Syntax** (z.B. `[[ ]]`, Parameter Expansion) **müssen** mit `zsh -c '...'` gewrappt werden (fzf nutzt /bin/sh!)
+- Einfache externe Befehle (`bat`, `eza`, `gh`) brauchen kein `zsh -c`
 - ZSH Parameter Expansion statt `sed`/`cut` für Performance
-- Catppuccin Mocha Farben (24-bit) für konsistentes Design
+- Catppuccin Mocha Farben (definiert in `help.alias`, Zeile 166+)
 - `--header=` für Keybinding-Hinweise im Format `Key: Aktion | Key: Aktion`
 
 ## Architektur-Entscheidungen
 
 - **Plattform**: macOS mit Apple Silicon (arm64) – Bootstrap blockiert andere Architekturen
-- **Homebrew-Pfade**: Dynamisch erkannt (Apple Silicon → Intel → Linux)
+- **Homebrew-Pfade**: Dynamisch erkannt in `.zprofile` (für potenzielle Zukunft: Intel/Linux)
 - **Designprinzip**: So dynamisch wie möglich, so statisch wie nötig
 - **Modularität**: Ein Tool = Eine Alias-Datei (z.B. `bat.alias`, `fd.alias`)
 - **Symlinks**: Via GNU Stow mit `--no-folding` (keine Verzeichnis-Symlinks)
