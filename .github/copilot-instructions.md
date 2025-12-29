@@ -36,6 +36,7 @@
 - **Beschreibungskommentar** vor jeder Funktion/Alias für Help-System
 - Lokale Variablen mit `local` deklarieren
 - Private Funktionen mit `_` Prefix (z.B. `_help_format`)
+- **Detaillierte Stil-Regeln**: Siehe CONTRIBUTING.md → "Stil-Regeln (automatisch geprüft)"
 
 ### fzf-Integration
 - **Shell-Verhalten**: fzf nutzt `$SHELL -c` für Preview-Commands (also zsh auf macOS)
