@@ -8,6 +8,41 @@ Strukturierter Analyse- und Review-Prompt für dieses dotfiles-Repository.
 
 ---
 
+## ⚠️ KRITISCH: Manuelle Verifikation
+
+> **Validatoren sind Hilfsmittel, nicht Wahrheit.**
+
+Die automatischen Validatoren (`validate-docs.sh`, `health-check.sh`, Unit-Tests) können **selbst fehlerhaft sein**. Sie prüfen nur das, wofür sie programmiert wurden – nicht das Gesamtbild.
+
+### Pflicht bei jedem Review
+
+1. **Validator-Output kritisch hinterfragen**
+   - Grünes Ergebnis ≠ Korrektheit
+   - Prüft der Validator überhaupt das Richtige?
+   - Gibt es Aspekte die kein Validator abdeckt?
+
+2. **Manuelle Gegenproben durchführen**
+   - `grep`, `cat`, `diff` verwenden um Validator-Aussagen zu verifizieren
+   - Stichproben: Nimm 2-3 Aliase und prüfe manuell ob Doku stimmt
+   - Fehlerhafte Eingaben testen: Löst der Validator wirklich Fehler aus?
+
+3. **Tool-Integrationen tatsächlich testen**
+   - Nicht nur Code lesen – im Terminal ausführen
+   - Edge-Cases ausprobieren (leere Eingabe, Sonderzeichen, fehlende Tools)
+
+4. **Konsistenz über Dateigrenzen hinweg**
+   - Gleiche Farben in fzf/config, help.alias, allen Previews?
+   - Gleiche Patterns in allen Alias-Dateien?
+   - XDG-Pfade: Stimmen Variablen mit tatsächlichen Symlinks überein?
+
+### Verboten
+
+- ❌ Validator laufen lassen und Ergebnis ungeprüft übernehmen
+- ❌ "Tests bestanden" als Review-Abschluss melden
+- ❌ Nur Code lesen ohne Terminal-Verifikation
+
+---
+
 ## Rolle
 
 Du agierst als **Systems Engineer und Toolchain-Architekt** für dieses Repository:
@@ -195,24 +230,126 @@ grep -rn "TODO\|FIXME\|HACK\|XXX" --include="*.sh" --include="*.alias" --include
 
 ---
 
-## Phase 5: Synergie- und Redundanz-Analyse
+## Phase 5: Tool-Integrationen gründlich prüfen
 
-> **Ziel:** Tool-Zusammenspiel optimieren.
+> **Ziel:** Jede Integration manuell verifizieren – Code lesen UND ausführen.
 
-### 5.1 Tool-Integrationen prüfen
+### 5.1 fzf-Gesamtintegration
 
-Aus `docs/architecture.md` → Tool-Integrationen:
-
-| Integration | Funktioniert? |
-|-------------|---------------|
-| fzf + fd (Ctrl+T, Alt+C) | |
-| fzf + bat (Preview) | |
-| fzf + eza (Alt+C Preview) | |
-| zoxide + fzf (zi) | |
-| lazygit + git | |
+**1. Backend-Konfiguration verifizieren (.zshrc):**
 
 ```zsh
-# Integration testen
+# Prüfen welche Variablen gesetzt werden
+grep -A2 "FZF_DEFAULT_COMMAND\|FZF_CTRL_T\|FZF_ALT_C" terminal/.zshrc
+```
+
+Manuell verifizieren:
+- [ ] `FZF_DEFAULT_COMMAND` nutzt fd (nicht find)?
+- [ ] `FZF_CTRL_T_COMMAND` identisch zu DEFAULT?
+- [ ] `FZF_ALT_C_COMMAND` nutzt `fd --type d`?
+- [ ] Bei fehlendem fd: Fällt fzf korrekt auf find zurück?
+
+**2. Preview-Commands in ALLEN Dateien:**
+
+```zsh
+# ALLE Preview-Definitionen finden
+grep -rn "preview" terminal/.config/alias/*.alias terminal/.zshrc
+grep -rn "FZF.*OPTS" terminal/.zshrc
+```
+
+Für JEDE gefundene Preview prüfen:
+- [ ] Nutzt externe Befehle (bat, eza, cat)? → OK ohne Wrapper
+- [ ] Nutzt ZSH-Syntax (Parameter Expansion `${var}`, `[[ ]]`)? → MUSS `zsh -c` Wrapper haben
+- [ ] Konsistente Farben (Catppuccin Mocha)?
+- [ ] Fehlerbehandlung (`|| fallback`)?
+
+**3. Keybindings verifizieren:**
+
+```zsh
+# Im Terminal testen:
+# Ctrl+T – Dateisuche mit bat-Preview
+# Ctrl+R – History mit Vorschau
+# Alt+C  – Verzeichniswechsel mit eza-Preview
+```
+
+### 5.2 zoxide-Integration
+
+```zsh
+# Konfiguration prüfen
+grep -A5 "zoxide" terminal/.zshrc
+grep -n "zoxide\|_ZO_" terminal/.config/alias/*.alias
+```
+
+Manuell prüfen:
+- [ ] `_ZO_FZF_OPTS` setzt eza-Preview?
+- [ ] `zf()` Funktion in fzf.alias nutzt zoxide query?
+- [ ] `zi` (built-in) funktioniert?
+- [ ] Preview-Command konsistent mit anderen eza-Previews?
+
+### 5.3 Catppuccin Theme-Konsistenz
+
+**Kritisch:** Gleiche Farben müssen überall verwendet werden.
+
+```zsh
+# Alle Farbdefinitionen finden
+grep -rn "1E1E2E\|CDD6F4\|F38BA8\|A6E3A1\|CBA6F7\|89B4FA" terminal/.config/
+grep -rn "Mauve\|Sky\|Green\|Red\|Yellow" terminal/.config/alias/help.alias
+```
+
+Vergleichen:
+- [ ] `fzf/config` Farben = `help.alias` Preview-Farben?
+- [ ] `bat/themes/` = Catppuccin Mocha?
+- [ ] `btop/themes/` = Catppuccin Mocha?
+- [ ] `eza/theme.yml` = Catppuccin Mocha?
+- [ ] `lazygit/config.yml` = Catppuccin Mocha?
+- [ ] Terminal-Profil = Catppuccin Mocha Hintergrund (#1E1E2E)?
+
+### 5.4 XDG-Pfade tatsächlich verifizieren
+
+**Nicht nur Variablen prüfen – tatsächliche Symlinks:**
+
+```zsh
+# Definierte Variablen
+grep "XDG_CONFIG_HOME\|EZA_CONFIG_DIR\|RIPGREP_CONFIG_PATH\|FZF_DEFAULT_OPTS_FILE" terminal/.zsh*
+
+# Tatsächliche Symlinks
+ls -la ~/.config/fzf/config
+ls -la ~/.config/ripgrep/config
+ls -la ~/.config/eza/
+ls -la ~/.config/bat/config
+```
+
+Manuell prüfen:
+- [ ] Jede Variable zeigt auf existierenden Symlink?
+- [ ] Symlink zeigt in dotfiles-Repo (nicht Kopie)?
+- [ ] Tools laden Config tatsächlich von dort (`bat --config-file`, `rg --version`)?
+
+### 5.5 Alle Alias-Dateien einzeln prüfen
+
+**Für JEDE Datei in `terminal/.config/alias/`:**
+
+| Datei | Guard | Header | Previews | Catppuccin |
+|-------|-------|--------|----------|------------|
+| bat.alias | | | | |
+| btop.alias | | | | |
+| eza.alias | | | | |
+| fd.alias | | | | |
+| fzf.alias | | | | |
+| gh.alias | | | | |
+| git.alias | | | | |
+| help.alias | | | | |
+| homebrew.alias | | | | |
+| ripgrep.alias | | | | |
+
+Prüfpunkte pro Datei:
+- [ ] Guard: `if ! command -v <tool>` vorhanden und korrekt?
+- [ ] Header: Alle Pflichtfelder (Zweck, Pfad, Docs)?
+- [ ] Previews: ZSH-Syntax gewrappt? Fallbacks?
+- [ ] Catppuccin: Verwendete Farben korrekt?
+
+---
+
+## Phase 6: Redundanz- und Synergie-Analyse
 # Ctrl+T, Alt+C, Ctrl+R im Terminal ausprobieren
 zi  # zoxide interaktiv
 ```
