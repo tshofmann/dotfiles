@@ -29,6 +29,7 @@ Die automatischen Validatoren (`validate-docs.sh`, `health-check.sh`, Unit-Tests
 3. **Tool-Integrationen tatsächlich testen**
    - Nicht nur Code lesen – im Terminal ausführen
    - Edge-Cases ausprobieren (leere Eingabe, Sonderzeichen, fehlende Tools)
+   - Alle Tools
 
 4. **Konsistenz über Dateigrenzen hinweg**
    - Gleiche Farben in fzf/config, help.alias, allen Previews?
@@ -163,18 +164,34 @@ Für jede Datei in `terminal/.config/alias/`:
 ./scripts/validate-docs.sh --extended
 ```
 
-### 3.2 fzf-Integration prüfen
+### 3.2 Tool-Integrationen prüfen
 
-Besondere Aufmerksamkeit auf Preview-Commands:
+Jedes Tool hat Abhängigkeiten zu anderen Tools. Diese müssen funktionieren:
 
 ```zsh
-# fzf-Previews mit ZSH-Syntax finden
-grep -n "preview=" terminal/.config/alias/*.alias
+# Alle Tool-Referenzen in Alias-Dateien finden
+grep -rn "command -v\|fzf\|bat\|eza\|fd\|zoxide\|gh\|lazygit" terminal/.config/alias/*.alias | head -30
 ```
 
-**Prüfen:**
-- [ ] ZSH-Syntax in Previews mit `zsh -c '...'` gewrappt?
-- [ ] Catppuccin-Farben aus `fzf/config` verwendet?
+**Tool-Matrix – jede Zeile manuell verifizieren:**
+
+| Tool | Integriert mit | Prüfbefehl |
+|------|----------------|------------|
+| fzf | fd (Backend), bat (Preview), eza (Preview) | `Ctrl+T`, `Alt+C`, `Ctrl+R` |
+| zoxide | fzf (zi), eza (Preview) | `z dotfiles`, `zi` |
+| bat | fzf (Previews), man (MANPAGER) | `cat ~/.zshrc`, `man ls` |
+| eza | fzf (Alt+C Preview), zoxide (Preview) | `ls`, `ll`, `Alt+C` |
+| fd | fzf (FZF_DEFAULT_COMMAND) | `Ctrl+T` |
+| ripgrep | fzf (rgf Funktion), bat (Highlighting) | `rgf TODO` |
+| gh | fzf (ghpr, ghis, ghrun, ghrepo) | `ghpr` |
+| git | fzf (glog, gbr, gst, gstash), lazygit | `glog`, `lg` |
+| lazygit | git | `lg` |
+| btop | – (standalone) | `top` |
+
+**Für jede Integration prüfen:**
+- [ ] Fallback wenn Abhängigkeit fehlt?
+- [ ] Preview-Commands: ZSH-Syntax mit `zsh -c` gewrappt? (siehe copilot-instructions.md)
+- [ ] Catppuccin-Farben konsistent?
 - [ ] Keybinding-Header im Format `Key: Aktion | Key: Aktion`?
 
 ### 3.3 XDG-Konformität
