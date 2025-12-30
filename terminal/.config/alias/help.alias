@@ -3,7 +3,11 @@
 # ============================================================
 # Zweck   : Zeigt Aliase, Funktionen und Tool-Informationen
 # Pfad    : ~/.config/alias/help.alias
-# Nutzung : help [command] [args]
+# Aufruf  : help [command] [args]
+# ============================================================
+# Hinweis : Durchsucht alle *.alias Dateien nach Beschreibungs-
+#           kommentaren. Private Funktionen (_prefix) werden
+#           ignoriert. Nutzt fzf für interaktive Auswahl.
 # ============================================================
 
 # ------------------------------------------------------------

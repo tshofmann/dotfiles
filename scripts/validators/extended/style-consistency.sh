@@ -189,6 +189,55 @@ check_fzf_headers() {
 }
 
 # ------------------------------------------------------------
+# Prüfung: Header-Block Vollständigkeit
+# ------------------------------------------------------------
+# Pflichtfelder für Alias-Dateien: Zweck, Pfad, Docs
+check_header_block() {
+    local file="$1"
+    local errors=0
+    local has_zweck=false
+    local has_pfad=false
+    local has_docs=false
+    local line_num=0
+    local in_header=true
+    
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        (( line_num++ )) || true
+        
+        # Header endet nach dem letzten ==== Block
+        if (( line_num > 15 )) || [[ -z "$line" && $line_num -gt 5 ]]; then
+            in_header=false
+        fi
+        
+        if $in_header; then
+            [[ "$line" =~ ^#\ Zweck ]] && has_zweck=true
+            [[ "$line" =~ ^#\ Pfad ]] && has_pfad=true
+            [[ "$line" =~ ^#\ Docs ]] && has_docs=true
+        fi
+    done < "$file"
+    
+    local basename_file="$(basename "$file")"
+    
+    if ! $has_zweck; then
+        err "$basename_file: Fehlendes Pflichtfeld '# Zweck   :'"
+        (( errors++ )) || true
+    fi
+    if ! $has_pfad; then
+        err "$basename_file: Fehlendes Pflichtfeld '# Pfad    :'"
+        (( errors++ )) || true
+    fi
+    if ! $has_docs; then
+        # Docs ist optional für help.alias (hat keinen externen Link)
+        if [[ "$basename_file" != "help.alias" ]]; then
+            err "$basename_file: Fehlendes Pflichtfeld '# Docs    :'"
+            (( errors++ )) || true
+        fi
+    fi
+    
+    return $errors
+}
+
+# ------------------------------------------------------------
 # Hauptvalidierung
 # ------------------------------------------------------------
 validate_style_consistency() {
@@ -203,6 +252,9 @@ validate_style_consistency() {
     for alias_file in "$alias_dir"/*.alias(N); do
         [[ -f "$alias_file" ]] || continue
         file_errors=0
+        
+        check_header_block "$alias_file"
+        (( file_errors += $? )) || true
         
         check_metadata_padding "$alias_file"
         (( file_errors += $? )) || true

@@ -5,6 +5,9 @@
 # Pfad    : ~/.config/alias/homebrew.alias
 # Docs    : https://docs.brew.sh/Manpage
 # ============================================================
+# Hinweis : Kein Guard für brew – ohne Homebrew ist dieses
+#           dotfiles-Repository ohnehin nicht nutzbar.
+# ============================================================
 
 # ------------------------------------------------------------
 # Update & Wartung
