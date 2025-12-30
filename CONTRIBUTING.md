@@ -214,6 +214,18 @@ fman() {
 
 **Private Funktionen** (mit `_` Präfix) sind von dieser Regel ausgenommen.
 
+### Ausnahmen vom Header-Format
+
+Einige Dateien folgen **nicht** dem Standard-Header-Format:
+
+| Datei | Grund |
+|-------|-------|
+| `eza/theme.yml` | Reines YAML-Datenformat – kein Kommentar-Header möglich |
+| `btop/btop.conf` | Natives btop-Format mit `#?`-Kommentaren |
+| `zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh` | Third-Party Theme – nicht modifizieren |
+
+Diese Dateien werden vom `style-consistency` Validator ignoriert.
+
 ---
 
 ## Code-Konventionen
