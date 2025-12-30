@@ -1,12 +1,17 @@
-# lazygit Configuration
-# https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md
-#
-# Config location: ~/Library/Application Support/lazygit/config.yml (macOS)
-# This file is symlinked via Stow from ~/.config/lazygit/config.yml
-#
-# Theme: Catppuccin Mocha (Mauve Accent)
-# https://github.com/catppuccin/lazygit
+# ============================================================
+# lazygit Config - Terminal-UI für Git
+# ============================================================
+# Zweck   : lazygit Konfiguration mit Catppuccin Mocha Theme
+# Pfad    : ~/.config/lazygit/config.yml
+# Docs    : https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md
+# ============================================================
+# Theme   : Catppuccin Mocha (Mauve Akzent)
+#           https://github.com/catppuccin/lazygit
+# ============================================================
 
+# ------------------------------------------------------------
+# GUI Theme
+# ------------------------------------------------------------
 gui:
   # Catppuccin Mocha Theme mit Mauve Akzent
   theme:
@@ -29,7 +34,10 @@ gui:
       - '#cdd6f4' # Text
     searchingActiveBorderColor:
       - '#f9e2af' # Yellow
+
+  # ------------------------------------------------------------
   # UI-Einstellungen
+  # ------------------------------------------------------------
   showIcons: true
   nerdFontsVersion: "3"
   showFileTree: true
@@ -40,10 +48,16 @@ gui:
   border: rounded
   # Sprache
   language: auto
-# Author colors für commit log
+
+# ------------------------------------------------------------
+# Author Colors
+# ------------------------------------------------------------
 authorColors:
   '*': '#b4befe' # Lavender
+
+# ------------------------------------------------------------
 # Git-Einstellungen
+# ------------------------------------------------------------
 git:
   pagers:
     - colorArg: always
@@ -55,12 +69,21 @@ git:
   log:
     showGraph: always
     showWholeGraph: false
-# Bestätigungen
+
+# ------------------------------------------------------------
+# Verhalten
+# ------------------------------------------------------------
 confirmOnQuit: false
+
+# ------------------------------------------------------------
 # OS-spezifisch
+# ------------------------------------------------------------
 os:
   editPreset: nvim
-# Keybindings (Standard + Anpassungen)
+
+# ------------------------------------------------------------
+# Keybindings
+# ------------------------------------------------------------
 keybinding:
   universal:
     quit: q
