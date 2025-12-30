@@ -35,11 +35,15 @@ dotfiles/
 │       │   ├── aliases.sh       # Alias-Anzahlen
 │       │   ├── config.sh        # Config-Beispiele
 │       │   └── symlinks.sh      # Symlink-Tabelle
-│       └── extended/            # Erweiterte Validierungen (4 Module)
+│       └── extended/            # Erweiterte Validierungen (8 Module)
 │           ├── alias-names.sh   # Alias-Namen vs. Code
 │           ├── codeblocks.sh    # Shell-Commands in Docs
+│           ├── copilot-instructions.sh # Copilot Instructions
+│           ├── readme.sh        # README Konsistenz
 │           ├── structure.sh     # Verzeichnisstruktur
-│           └── style-consistency.sh # Code-Stil Konsistenz
+│           ├── style-consistency.sh # Code-Stil Konsistenz
+│           ├── terminal-profile.sh  # Terminal-Profil
+│           └── validator-count.sh   # Validator-Anzahl Konsistenz
 ├── setup/
 │   ├── bootstrap.sh             # Automatisiertes Setup-Skript
 │   ├── Brewfile                 # Homebrew-Abhängigkeiten
