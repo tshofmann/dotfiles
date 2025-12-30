@@ -266,6 +266,11 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 ### gh.alias
 
+| Alias | Befehl | Beschreibung |
+|-------|--------|--------------|
+| `gho` | `gh browse` | Repository im Browser öffnen |
+| `ghst` | `gh status` | GitHub Status: Zugewiesene Issues, PRs, Mentions |
+
 **Interaktive Funktionen (mit fzf):**
 
 | Funktion | Beschreibung |
@@ -274,8 +279,9 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `ghis` | Issues durchsuchen: Enter=Browser, Ctrl+E=Bearbeiten |
 | `ghrun` | Actions Runs: Enter=Logs, Ctrl+O=Browser, Ctrl+R=Rerun |
 | `ghrepo` | Repositories: Enter=Klonen, Ctrl+O=Browser |
+| `ghgist` | Gists durchsuchen: Enter=Anzeigen, Ctrl+E=Bearbeiten, Ctrl+O=Browser |
 
-> **Hinweis:** Alle gh-Funktionen benötigen sowohl gh CLI als auch fzf.
+> **Hinweis:** Alle interaktiven gh-Funktionen benötigen sowohl gh CLI als auch fzf. Die Aliase `gho` und `ghst` funktionieren auch ohne fzf.
 
 ### fzf.alias – Generische Utilities
 
@@ -315,7 +321,7 @@ Die folgenden Funktionen nutzen fzf, sind aber nach ihrem primären Zweck in den
 - **fd.alias**: `cdf`, `fo`
 - **git.alias**: `glog`, `gbr`, `gst`, `gstash`
 - **homebrew.alias**: `bip`, `bup`, `brp`, `bsp`
-- **gh.alias**: `ghpr`, `ghis`, `ghrun`, `ghrepo`
+- **gh.alias**: `ghpr`, `ghis`, `ghrun`, `ghrepo`, `ghgist`
 
 > **Design-Prinzip:** Aliase werden nach ihrem primären Zweck organisiert, nicht nach den verwendeten Tools. `rgf` nutzt fzf+bat, ist aber primär eine Suche – daher in `ripgrep.alias`.
 
