@@ -19,11 +19,11 @@ Die automatischen Validatoren (`validate-docs.sh`, `health-check.sh`, Unit-Tests
 1. **Validator-Output kritisch hinterfragen**
    - Grünes Ergebnis ≠ Korrektheit
    - Prüft der Validator überhaupt das Richtige?
-   - Gibt es Aspekte die kein Validator abdeckt?
+   - Gibt es Aspekte, die kein Validator abdeckt?
 
 2. **Manuelle Gegenproben durchführen**
-   - `grep`, `cat`, `diff` verwenden um Validator-Aussagen zu verifizieren
-   - Stichproben: Nimm 2-3 Aliase und prüfe manuell ob Doku stimmt
+   - `grep`, `cat`, `diff` verwenden, um Validator-Aussagen zu verifizieren
+   - Stichproben: Nimm 2-3 Aliase und prüfe manuell, ob Doku stimmt
    - Fehlerhafte Eingaben testen: Löst der Validator wirklich Fehler aus?
 
 3. **Tool-Integrationen tatsächlich testen**
@@ -259,7 +259,7 @@ grep -rn "FZF.*OPTS" terminal/.zshrc
 
 Für JEDE gefundene Preview prüfen:
 - [ ] Nutzt externe Befehle (bat, eza, cat)? → OK ohne Wrapper
-- [ ] Nutzt ZSH-Syntax (Parameter Expansion `${var}`, `[[ ]]`)? → MUSS `zsh -c` Wrapper haben
+- [ ] Nutzt ZSH-Syntax (Parameter Expansion `${var}`, `[[ ]]`)? → Sollte `zsh -c` Wrapper haben (siehe copilot-instructions.md)
 - [ ] Konsistente Farben (Catppuccin Mocha)?
 - [ ] Fehlerbehandlung (`|| fallback`)?
 
@@ -346,30 +346,6 @@ Prüfpunkte pro Datei:
 - [ ] Header: Alle Pflichtfelder (Zweck, Pfad, Docs)?
 - [ ] Previews: ZSH-Syntax gewrappt? Fallbacks?
 - [ ] Catppuccin: Verwendete Farben korrekt?
-
----
-
-## Phase 6: Redundanz- und Synergie-Analyse
-# Ctrl+T, Alt+C, Ctrl+R im Terminal ausprobieren
-zi  # zoxide interaktiv
-```
-
-### 5.2 Ungenutzte Synergien erkennen
-
-Fragen:
-- Könnten Tools besser zusammenarbeiten?
-- Gibt es Konfigurationen die nicht genutzt werden?
-- Sind alle Catppuccin-Themes konsistent?
-
-### 5.3 Redundanzen identifizieren
-
-**Sinnvoll (beibehalten):**
-- Fallback-Mechanismen (fd → find)
-- Alias-Alternativen für verschiedene Use-Cases
-
-**Problematisch (adressieren):**
-- Doppelte Definitionen
-- Divergierende Konfigurationen
 
 ---
 
