@@ -210,9 +210,9 @@ check_header_block() {
         fi
         
         if $in_header; then
-            [[ "$line" =~ "^# Zweck" ]] && has_zweck=true
-            [[ "$line" =~ "^# Pfad" ]] && has_pfad=true
-            [[ "$line" =~ "^# Docs" ]] && has_docs=true
+            [[ "$line" =~ ^#\ Zweck ]] && has_zweck=true
+            [[ "$line" =~ ^#\ Pfad ]] && has_pfad=true
+            [[ "$line" =~ ^#\ Docs ]] && has_docs=true
         fi
     done < "$file"
     
@@ -229,7 +229,8 @@ check_header_block() {
     if ! $has_docs; then
         # Docs ist optional für help.alias (hat keinen externen Link)
         if [[ "$basename_file" != "help.alias" ]]; then
-            warn "$basename_file: Fehlendes Feld '# Docs    :' (empfohlen)"
+            err "$basename_file: Fehlendes Pflichtfeld '# Docs    :'"
+            (( errors++ )) || true
         fi
     fi
     
