@@ -202,7 +202,7 @@ for tool in $(grep '^brew "' setup/Brewfile | sed 's/brew "\([^"]*\)".*/\1/'); d
   echo "  Referenziert in: ${refs:--}"
   # Welche anderen Tools referenziert es (falls Alias-Datei existiert)?
   if [[ -f "terminal/.config/alias/${tool}.alias" ]]; then
-    deps=$(grep -oE "command -v [a-z]+" "terminal/.config/alias/${tool}.alias" 2>/dev/null | sed 's/command -v //' | sort -u | tr '\n' ', ' | sed 's/, $//')
+    deps=$(grep -oE "command -v [a-z_-]+" "terminal/.config/alias/${tool}.alias" 2>/dev/null | sed 's/command -v //' | sort -u | tr '\n' ', ' | sed 's/, $//')
     echo "  Nutzt: ${deps:--}"
   fi
 done
@@ -223,7 +223,7 @@ done
 echo "=== Bestehende Integrationen ==="
 for file in terminal/.config/alias/*.alias; do
   tool=$(basename "$file" .alias)
-  deps=$(grep -oE "command -v [a-z]+" "$file" 2>/dev/null | sed 's/command -v //' | sort -u | tr '\n' ', ' | sed 's/, $//')
+  deps=$(grep -oE "command -v [a-z_-]+" "$file" 2>/dev/null | sed 's/command -v //' | sort -u | tr '\n' ', ' | sed 's/, $//')
   [[ -n "$deps" ]] && echo "$tool → $deps"
 done
 
@@ -419,7 +419,7 @@ for file in terminal/.config/alias/*.alias; do
   
   # 1. Welche Abhängigkeiten hat dieses Tool?
   echo "  Abhängigkeiten:"
-  grep -oE "command -v [a-z]+" "$file" 2>/dev/null | sed 's/command -v /    /'
+  grep -oE "command -v [a-z_-]+" "$file" 2>/dev/null | sed 's/command -v /    /'
   
   # 2. Wo wird es in .zshrc integriert?
   echo "  .zshrc-Integration:"
@@ -427,7 +427,7 @@ for file in terminal/.config/alias/*.alias; do
   
   # 3. Welche Umgebungsvariablen?
   echo "  Umgebungsvariablen:"
-  grep -E "^export.*${tool^^}" terminal/.zshenv terminal/.zshrc 2>/dev/null | sed 's/^/    /'
+  grep -E "^export.*${(U)tool}" terminal/.zshenv terminal/.zshrc 2>/dev/null | sed 's/^/    /'
   
   # 4. Hat es Previews?
   echo "  Previews:"
@@ -451,7 +451,7 @@ grep -rn "1E1E2E\|CDD6F4\|F38BA8\|A6E3A1\|CBA6F7\|89B4FA" terminal/.config/
 grep -rn "Mauve\|Sky\|Green\|Red\|Yellow" terminal/.config/alias/help.alias
 
 # Alle Theme-Konfigurationen auflisten
-find terminal/.config -name "*theme*" -o -name "*catppuccin*" 2>/dev/null
+find terminal/.config \( -name "*theme*" -o -name "*catppuccin*" \) 2>/dev/null
 ```
 
 **Tools mit Theme-Support dynamisch finden:**
@@ -495,7 +495,9 @@ for dir in terminal/.config/*/; do
   target="$HOME/.config/$tool"
   echo -n "$tool: "
   if [[ -L "$target" ]]; then
-    echo "✓ Symlink → $(readlink "$target")"
+    local link_target
+    link_target=$(readlink "$target" 2>/dev/null)
+    [[ -n "$link_target" ]] && echo "✓ Symlink → $link_target" || echo "⚠ Defekter Symlink"
   elif [[ -d "$target" ]]; then
     echo "⚠ Verzeichnis (kein Symlink)"
   else
