@@ -462,7 +462,7 @@ build/
 #### bat Config (`~/.config/bat/config`)
 
 ```
---theme="Monokai Extended"
+--theme="Catppuccin Mocha"
 --style="numbers,changes"
 --paging=auto
 --pager="less --RAW-CONTROL-CHARS --quit-if-one-screen"
@@ -470,6 +470,8 @@ build/
 --map-syntax ".zshrc:Bash"
 --map-syntax "Brewfile:Ruby"
 ```
+
+> **Hinweis:** Das Catppuccin Mocha Theme liegt in `terminal/.config/bat/themes/` und wird via Stow verlinkt. Nach dem Stow-Befehl muss `bat cache --build` ausgeführt werden, um das Theme zu registrieren.
 
 #### zoxide (Smarter cd)
 

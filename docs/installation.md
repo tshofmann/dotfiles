@@ -81,6 +81,14 @@ Nach Abschluss des Bootstrap-Skripts:
 cd ~/dotfiles && stow --adopt -R terminal && git reset --hard HEAD
 ```
 
+3. **bat-Cache für Catppuccin Theme bauen:**
+
+```zsh
+bat cache --build
+```
+
+> **💡 Warum dieser Schritt?** Das Catppuccin Mocha Theme für bat liegt in `~/.config/bat/themes/` (via Stow verlinkt). bat erkennt neue Themes erst nach einem Cache-Rebuild.
+
 ### Was diese Befehle machen
 
 | Flag | Bedeutung |

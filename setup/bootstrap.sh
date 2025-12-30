@@ -167,24 +167,6 @@ if ! HOMEBREW_NO_AUTO_UPDATE=1 brew bundle --no-upgrade --file="$BREWFILE"; then
 fi
 ok "Abhängigkeiten installiert"
 
-# ------------------------------------------------------------
-# bat Cache aktualisieren (für Catppuccin Mocha Theme)
-# ------------------------------------------------------------
-# Das Theme liegt im Repository unter terminal/.config/bat/themes/
-# und wird via Stow nach ~/.config/bat/themes/ verlinkt.
-# bat benötigt einen Cache-Rebuild um neue Themes zu erkennen.
-CURRENT_STEP="bat-Cache aktualisieren"
-if command -v bat >/dev/null 2>&1; then
-  log "Baue bat-Cache neu (für Catppuccin Theme)"
-  if bat cache --build >/dev/null 2>&1; then
-    ok "bat-Cache aktualisiert"
-  else
-    warn "bat cache --build fehlgeschlagen"
-  fi
-else
-  warn "bat nicht gefunden, überspringe Cache-Build"
-fi
-
 # Font-Installation verifizieren
 font_installed() {
   # Prüfe User- und System-Font-Verzeichnisse (Homebrew installiert nach ~/Library/Fonts)
