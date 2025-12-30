@@ -81,19 +81,16 @@ validate_copilot_instructions() {
         fi
     fi
     
-    # 7. Prüfe ob alle Brewfile-Tools erwähnt sind (Kern-CLI-Tools)
-    local brewfile="$DOTFILES_DIR/setup/Brewfile"
-    if [[ -f "$brewfile" ]]; then
-        local missing_tools=()
-        for tool in bat btop eza fd fzf gh ripgrep starship stow zoxide; do
-            if grep -q "^brew \"$tool\"" "$brewfile" && ! grep -q "$tool" "$instructions_file"; then
-                missing_tools+=("$tool")
-            fi
-        done
-        if (( ${#missing_tools[@]} > 0 )); then
-            err "Brewfile-Tools nicht in Instructions: ${missing_tools[*]}"
-            (( errors++ )) || true
-        fi
+    # 7. Prüfe ob Verweis auf Brewfile existiert (statt alle Tools zu listen)
+    if ! grep -q "Brewfile" "$instructions_file"; then
+        err "Kein Verweis auf Brewfile in Instructions"
+        (( errors++ )) || true
+    fi
+    
+    # 8. Prüfe ob Verweis auf architecture.md existiert
+    if ! grep -q "architecture.md" "$instructions_file"; then
+        err "Kein Verweis auf architecture.md in Instructions"
+        (( errors++ )) || true
     fi
     
     if (( errors > 0 )); then
