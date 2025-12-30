@@ -10,7 +10,8 @@
 # Farbschema
 # ------------------------------------------------------------
 # Catppuccin Mocha Theme
-# Installation: bootstrap.sh lädt das Theme automatisch herunter
+# Das Theme liegt in terminal/.config/bat/themes/ und wird via Stow verlinkt.
+# Nach dem Stow-Befehl: bat cache --build (registriert das Theme)
 # Verfügbare Themes anzeigen: bat --list-themes | grep -i catppuccin
 --theme="Catppuccin Mocha"
 
