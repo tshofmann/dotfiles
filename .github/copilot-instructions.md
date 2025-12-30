@@ -20,6 +20,121 @@
 - Bei Hook-Fehlern: Problem beheben, dann erneut committen
 - Commit-Messages auf Deutsch, Conventional Commits Format
 
+## GitHub Issues
+
+### Grundprinzip
+**Gründlich recherchieren, sorgfältig strukturieren, dynamisch formulieren**
+
+Jedes Issue erfordert **vor dem Schreiben**:
+1. **Repository-Analyse**: Was existiert bereits? Welche Patterns werden verwendet?
+2. **Offizielle Dokumentation**: Tool-Manuals, API-Docs, Best Practices
+3. **Community-Patterns**: Wie lösen andere das Problem? (GitHub, StackOverflow)
+4. **Gap-Analyse**: Was fehlt konkret? Warum ist es relevant?
+
+### Issue-Typen und Symbole
+
+| Symbol | Typ | Beschreibung | Labels |
+|--------|-----|--------------|--------|
+| 💡 | Idee | Zur Diskussion, nicht entschieden | `idea`, `enhancement` |
+| ✨ | Feature | Konkrete Erweiterung, umsetzungsreif | `enhancement` |
+| 🐛 | Bug | Fehler im bestehenden Code | `bug` |
+| 📝 | Doku | Dokumentations-Verbesserung | `documentation` |
+| 🔧 | Chore | Refactoring, Maintenance | `enhancement` |
+| 🌿 | Theming | Catppuccin/Design-bezogen | `theming`, `enhancement` |
+
+**Titel-Format**: `Symbol Typ: Kurzname` (z.B. `💡 Idee: uninstall.sh`)
+
+### Struktur nach Typ
+
+#### Ideen (`💡`)
+```markdown
+> 💡 **Dies ist eine Idee zur Diskussion** – [kurzer Kontext]
+
+## Kontext
+[Warum ist das relevant? Was ist der Auslöser?]
+
+## Recherche
+[Offizielle Doku, Community-Patterns, Quellen mit Links]
+
+## Vorgeschlagenes Design
+[Konkrete Vorschläge, Code-Beispiele, Diagramme]
+
+## Scope
+[Tabelle mit Bewertung – siehe unten]
+
+## Offene Fragen
+[Nummerierte Liste der zu klärenden Punkte]
+
+## Verwandte Issues
+[Cross-Links]
+```
+
+#### Features/Bugs/Chores (`✨`, `🐛`, `🔧`, `🌿`)
+```markdown
+## Problemstellung
+[Was ist das Problem? Gap-Analyse, ggf. Tabelle]
+
+## Recherche
+[Offizielle Doku, Community-Patterns, Quellen]
+
+## Umsetzung
+[Konkreter Plan, Code-Beispiele, Empfehlung]
+
+## Scope
+[Tabelle mit Bewertung]
+
+## Aufgaben
+- [ ] Checkbox-Liste der konkreten Schritte
+
+## Verwandte Issues
+[Cross-Links]
+```
+
+### Scope-Tabelle (immer erforderlich)
+
+```markdown
+| Kriterium | Bewertung |
+|-----------|-----------|
+| Komplexität | 🟢 Gering / 🟡 Mittel / 🔴 Hoch |
+| Wartungsaufwand | 🟢 Minimal / 🟡 Regelmäßig / 🔴 Aufwändig |
+| Testbarkeit | 🟢 Automatisiert / 🟡 Manuell / 🔴 Schwierig |
+| Abhängigkeiten | 🟢 Keine / 🟡 Wenige / 🔴 Viele |
+| Breaking Risk | 🟢 Keins / 🟡 Minor / 🔴 Major |
+```
+
+### Dynamische Formulierungen
+
+**NIEMALS statische Angaben die veralten:**
+- ❌ "123 Sterne", "Letztes Update: Dezember 2025"
+- ❌ "Version 1.2.3 ist aktuell"
+
+**STATTDESSEN relative/prüfbare Aussagen:**
+- ✅ "Aktiv gepflegt" (Link zum Repo)
+- ✅ "MIT-lizenziert"
+- ✅ "Verfügbar via Homebrew" (prüfbar mit `brew info`)
+
+### Labels
+
+| Label | Verwendung |
+|-------|------------|
+| `idea` | Ideen zur Diskussion (mit `💡`) |
+| `enhancement` | Features und Verbesserungen |
+| `bug` | Fehler |
+| `documentation` | Doku-Änderungen |
+| `theming` | Catppuccin/Design |
+| `low-priority` | Nice-to-have, nicht dringend |
+
+### Qualitäts-Checkliste vor Submit
+
+- [ ] Titel hat korrektes Symbol und Format
+- [ ] Recherche mit verlinkten Quellen
+- [ ] Scope-Tabelle vorhanden
+- [ ] Keine statischen Angaben die veralten können
+- [ ] Labels gesetzt
+- [ ] Verwandte Issues verlinkt
+- [ ] Bei Ideen: Offene Fragen formuliert
+- [ ] Bei Features: Aufgaben-Checkboxen
+
 ## Arbeitsweise
 
 ### Grundprinzip

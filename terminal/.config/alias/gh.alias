@@ -15,6 +15,16 @@ if ! command -v gh >/dev/null 2>&1; then
 fi
 
 # ------------------------------------------------------------
+# Schnellzugriffe (ohne fzf)
+# ------------------------------------------------------------
+
+# Repository im Browser öffnen
+alias gho='gh browse'
+
+# GitHub Status: Zugewiesene Issues, PRs, Mentions
+alias ghst='gh status'
+
+# ------------------------------------------------------------
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
@@ -72,5 +82,19 @@ if command -v fzf >/dev/null 2>&1; then
             awk '{print $1}')
         
         [[ -n "$repo" ]] && gh repo clone "$repo"
+    }
+    
+    # Gists durchsuchen und anzeigen oder bearbeiten
+    ghgist() {
+        local gist
+        gist=$(gh gist list --limit 30 | \
+            fzf --ansi \
+                --preview 'gh gist view {1}' \
+                --header='Enter: Anzeigen | Ctrl+E: Bearbeiten | Ctrl+O: Browser' \
+                --bind 'ctrl-e:execute(gh gist edit {1})' \
+                --bind 'ctrl-o:execute-silent(gh gist view {1} --web)' | \
+            awk '{print $1}')
+        
+        [[ -n "$gist" ]] && gh gist view "$gist"
     }
 fi
