@@ -139,11 +139,15 @@ Nach erfolgreicher Installation sind folgende Symlinks aktiv:
 | `~/.zprofile` | `terminal/.zprofile` | Login Shell (Homebrew Init) |
 | `~/.zshrc` | `terminal/.zshrc` | Interactive Shell Konfiguration |
 | `~/.zlogin` | `terminal/.zlogin` | Post-Login (Background-Optimierungen) |
-| `~/.config/alias/*.alias` | `terminal/.config/alias/*.alias` | 7 Alias-Dateien (homebrew, eza, bat, ripgrep, fd, fzf, btop) |
-| `~/.config/fzf/config` | `terminal/.config/fzf/config` | fzf globale Optionen |
-| `~/.config/bat/config` | `terminal/.config/bat/config` | bat Theme und Style |
-| `~/.config/ripgrep/config` | `terminal/.config/ripgrep/config` | ripgrep Defaults |
-| `~/.config/fd/ignore` | `terminal/.config/fd/ignore` | fd globale Ignore-Patterns |
+| `~/.config/alias/` | `terminal/.config/alias/` | 10 Alias-Dateien (bat, btop, eza, fd, fzf, gh, git, help, homebrew, ripgrep) |
+| `~/.config/bat/` | `terminal/.config/bat/` | bat Config + Catppuccin Mocha Theme |
+| `~/.config/btop/` | `terminal/.config/btop/` | btop Config + Catppuccin Mocha Theme |
+| `~/.config/eza/` | `terminal/.config/eza/` | eza Catppuccin Theme |
+| `~/.config/fd/` | `terminal/.config/fd/` | fd globale Ignore-Patterns |
+| `~/.config/fzf/` | `terminal/.config/fzf/` | fzf globale Optionen |
+| `~/.config/lazygit/` | `terminal/.config/lazygit/` | lazygit mit Catppuccin Theme |
+| `~/.config/ripgrep/` | `terminal/.config/ripgrep/` | ripgrep Defaults |
+| `~/.config/zsh/` | `terminal/.config/zsh/` | zsh-syntax-highlighting Theme |
 
 ### Symlinks prüfen
 

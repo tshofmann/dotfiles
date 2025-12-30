@@ -21,12 +21,16 @@ check_symlinks() {
     [[ -f "$terminal_dir/.zprofile" ]] && ((code_count++)) || true
     [[ -f "$terminal_dir/.zlogin" ]] && ((code_count++)) || true
     
-    # Config-Verzeichnisse
+    # Config-Verzeichnisse (alle in terminal/.config/)
     [[ -d "$terminal_dir/.config/alias" ]] && ((code_count++)) || true
-    [[ -d "$terminal_dir/.config/fzf" ]] && ((code_count++)) || true
     [[ -d "$terminal_dir/.config/bat" ]] && ((code_count++)) || true
-    [[ -d "$terminal_dir/.config/ripgrep" ]] && ((code_count++)) || true
+    [[ -d "$terminal_dir/.config/btop" ]] && ((code_count++)) || true
+    [[ -d "$terminal_dir/.config/eza" ]] && ((code_count++)) || true
     [[ -d "$terminal_dir/.config/fd" ]] && ((code_count++)) || true
+    [[ -d "$terminal_dir/.config/fzf" ]] && ((code_count++)) || true
+    [[ -d "$terminal_dir/.config/lazygit" ]] && ((code_count++)) || true
+    [[ -d "$terminal_dir/.config/ripgrep" ]] && ((code_count++)) || true
+    [[ -d "$terminal_dir/.config/zsh" ]] && ((code_count++)) || true
     
     local docs_count
     docs_count=$(sed -n '/## Ergebnis: Symlink/,/^### /p' "$install_doc" | grep -cE "^\| \`~/" 2>/dev/null || echo 0)

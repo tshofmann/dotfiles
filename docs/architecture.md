@@ -49,23 +49,35 @@ dotfiles/
     ├── .zshrc                   # Interactive Shell Konfiguration
     ├── .zlogin                  # Post-Login (Background-Optimierungen)
     └── .config/
+        ├── alias/               # Tool-Aliase (10 Dateien)
+        │   ├── bat.alias        # bat-Aliase (cat-Ersatz)
+        │   ├── btop.alias       # btop-Aliase (top-Ersatz)
+        │   ├── eza.alias        # eza-Aliase (ls-Ersatz)
+        │   ├── fd.alias         # fd-Aliase (find-Ersatz)
+        │   ├── fzf.alias        # fzf Tool-Kombinationen
+        │   ├── gh.alias         # GitHub CLI Funktionen
+        │   ├── git.alias        # Git-Aliase + lazygit
+        │   ├── help.alias       # Help-System
+        │   ├── homebrew.alias   # Homebrew + mas Aliase
+        │   └── ripgrep.alias    # ripgrep-Aliase (grep-Ersatz)
+        ├── bat/
+        │   ├── config           # bat native Config
+        │   └── themes/          # Catppuccin Mocha Theme
+        ├── btop/
+        │   ├── btop.conf        # btop Konfiguration
+        │   └── themes/          # Catppuccin Mocha Theme
+        ├── eza/
+        │   └── theme.yml        # eza Catppuccin Theme
+        ├── fd/
+        │   └── ignore           # fd globale Ignore-Patterns
         ├── fzf/
         │   └── config           # fzf globale Optionen (FZF_DEFAULT_OPTS_FILE)
-        ├── bat/
-        │   └── config           # bat native Config
         ├── lazygit/
         │   └── config.yml       # lazygit Config mit Catppuccin Mocha
         ├── ripgrep/
         │   └── config           # ripgrep native Config (RIPGREP_CONFIG_PATH)
-        └── alias/
-            ├── homebrew.alias   # Homebrew + mas Aliase
-            ├── eza.alias        # eza-Aliase (ls-Ersatz)
-            ├── bat.alias        # bat-Aliase (cat-Ersatz)
-            ├── ripgrep.alias    # ripgrep-Aliase (grep-Ersatz)
-            ├── fd.alias         # fd-Aliase (find-Ersatz)
-            ├── fzf.alias        # fzf Tool-Kombinationen (20+ Funktionen)
-            ├── git.alias        # Git-Aliase + lazygit
-            └── btop.alias       # btop-Aliase (top-Ersatz)
+        └── zsh/
+            └── catppuccin_mocha-zsh-syntax-highlighting.zsh  # Syntax-Highlighting Theme
 ```
 
 > **Wichtig:** Das Bootstrap-Skript erwartet exakt diese Struktur. Es befindet sich in `setup/` und referenziert das übergeordnete Verzeichnis (`..`) als `DOTFILES_DIR`. Ein Verschieben oder Umbenennen der Ordner führt zu Fehlern.
