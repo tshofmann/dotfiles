@@ -79,7 +79,7 @@ confirmOnQuit: false
 # OS-spezifisch
 # ------------------------------------------------------------
 os:
-  editPreset: nvim
+  editPreset: vim
 
 # ------------------------------------------------------------
 # Keybindings
