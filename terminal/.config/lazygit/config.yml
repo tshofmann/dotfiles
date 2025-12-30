@@ -11,25 +11,24 @@ gui:
   # Catppuccin Mocha Theme mit Mauve Akzent
   theme:
     activeBorderColor:
-      - '#cba6f7'  # Mauve
+      - '#cba6f7' # Mauve
       - bold
     inactiveBorderColor:
-      - '#a6adc8'  # Overlay0
+      - '#a6adc8' # Overlay0
     optionsTextColor:
-      - '#89b4fa'  # Blue
+      - '#89b4fa' # Blue
     selectedLineBgColor:
-      - '#313244'  # Surface0
+      - '#313244' # Surface0
     cherryPickedCommitBgColor:
-      - '#45475a'  # Surface1
+      - '#45475a' # Surface1
     cherryPickedCommitFgColor:
-      - '#cba6f7'  # Mauve
+      - '#cba6f7' # Mauve
     unstagedChangesColor:
-      - '#f38ba8'  # Red
+      - '#f38ba8' # Red
     defaultFgColor:
-      - '#cdd6f4'  # Text
+      - '#cdd6f4' # Text
     searchingActiveBorderColor:
-      - '#f9e2af'  # Yellow
-
+      - '#f9e2af' # Yellow
   # UI-Einstellungen
   showIcons: true
   nerdFontsVersion: "3"
@@ -39,19 +38,15 @@ gui:
   showBottomLine: true
   showPanelJumps: true
   border: rounded
-
   # Sprache
   language: auto
-
 # Author colors für commit log
 authorColors:
-  '*': '#b4befe'  # Lavender
-
+  '*': '#b4befe' # Lavender
 # Git-Einstellungen
 git:
-  paging:
-    colorArg: always
-    pager: delta --dark --paging=never
+  pagers:
+    - colorArg: always
   commit:
     signOff: false
   merging:
@@ -60,14 +55,11 @@ git:
   log:
     showGraph: always
     showWholeGraph: false
-
 # Bestätigungen
 confirmOnQuit: false
-
 # OS-spezifisch
 os:
   editPreset: nvim
-
 # Keybindings (Standard + Anpassungen)
 keybinding:
   universal:
