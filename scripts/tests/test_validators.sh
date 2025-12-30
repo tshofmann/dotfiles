@@ -52,7 +52,7 @@ for name in "${expected_core[@]}"; do
 done
 
 # Erwartete Extended-Validatoren
-local -a expected_extended=(alias-names codeblocks structure)
+local -a expected_extended=(alias-names codeblocks copilot-instructions structure style-consistency terminal-profile)
 for name in "${expected_extended[@]}"; do
     assert_contains "$name" EXTENDED_VALIDATORS "Extended-Validator '$name' registriert"
 done

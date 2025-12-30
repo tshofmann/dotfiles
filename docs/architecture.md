@@ -42,7 +42,7 @@ dotfiles/
 ├── setup/
 │   ├── bootstrap.sh             # Automatisiertes Setup-Skript
 │   ├── Brewfile                 # Homebrew-Abhängigkeiten
-│   └── tshofmann.terminal       # Terminal.app Profil
+│   └── catppuccin-mocha.terminal  # Terminal.app Profil
 └── terminal/
     ├── .zshenv                  # Umgebungsvariablen (wird zuerst geladen)
     ├── .zprofile                # Login-Shell Konfiguration
@@ -53,6 +53,8 @@ dotfiles/
         │   └── config           # fzf globale Optionen (FZF_DEFAULT_OPTS_FILE)
         ├── bat/
         │   └── config           # bat native Config
+        ├── lazygit/
+        │   └── config.yml       # lazygit Config mit Catppuccin Mocha
         ├── ripgrep/
         │   └── config           # ripgrep native Config (RIPGREP_CONFIG_PATH)
         └── alias/
@@ -62,6 +64,7 @@ dotfiles/
             ├── ripgrep.alias    # ripgrep-Aliase (grep-Ersatz)
             ├── fd.alias         # fd-Aliase (find-Ersatz)
             ├── fzf.alias        # fzf Tool-Kombinationen (20+ Funktionen)
+            ├── git.alias        # Git-Aliase + lazygit
             └── btop.alias       # btop-Aliase (top-Ersatz)
 ```
 
@@ -162,7 +165,7 @@ Die visuelle Terminal-Darstellung basiert auf drei eng gekoppelten Komponenten:
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    Terminal.app Profil                      │
-│                   (tshofmann.terminal)                      │
+│                (catppuccin-mocha.terminal)                  │
 │         Font: MesloLGLDZNerdFont (binär kodiert)            │
 └────────────────────────┬────────────────────────────────────┘
                          │ referenziert
@@ -221,7 +224,7 @@ Die visuelle Terminal-Darstellung basiert auf drei eng gekoppelten Komponenten:
 
 ### Technische Details
 
-> **Wichtig:** Die Datei `tshofmann.terminal` enthält Base64-kodierte NSArchiver-Daten (Apple plist-Format). Font-Einstellungen können **nicht** durch direktes Editieren geändert werden – nur über die Terminal.app GUI mit anschließendem Export.
+> **Wichtig:** Die Datei `catppuccin-mocha.terminal` enthält Base64-kodierte NSArchiver-Daten (Apple plist-Format). Font-Einstellungen können **nicht** durch direktes Editieren geändert werden – nur über die Terminal.app GUI mit anschließendem Export.
 
 Siehe [Konfiguration → Schriftart wechseln](configuration.md#schriftart-wechseln) für den vollständigen Workflow.
 
@@ -237,6 +240,7 @@ Das Setup verwendet `brew bundle` für deklaratives Package-Management:
 # CLI-Tools
 brew "fzf"                       # Fuzzy Finder
 brew "gh"                        # GitHub CLI
+brew "lazygit"                   # Terminal-UI für Git
 brew "stow"                      # Symlink-Manager
 brew "starship"                  # Shell-Prompt
 brew "zoxide"                    # Smartes cd
@@ -559,6 +563,51 @@ STARSHIP_PRESET="tokyo-night" ./setup/bootstrap.sh
 - Preset wird dynamisch generiert
 - Erlaubt lokale Anpassungen ohne Git-Konflikte
 - Kann bei Bedarf versioniert werden (siehe [Konfiguration](configuration.md))
+
+---
+
+## Nicht-versionierte Konfigurationen
+
+Einige Konfigurationen enthalten sensitive Daten oder werden dynamisch generiert und sind daher **nicht** im Repository enthalten:
+
+### Sensitive Dateien (`~/.config/gh/`)
+
+Die GitHub CLI speichert OAuth-Tokens und Session-Daten:
+
+```
+~/.config/gh/
+├── config.yml      # Einstellungen (git_protocol, editor, aliases)
+└── hosts.yml       # OAuth-Tokens für github.com (SENSITIVE!)
+```
+
+| Datei | Inhalt | Sensitivität |
+|-------|--------|--------------|
+| `config.yml` | Allgemeine Einstellungen | ⚠️ Kann versioniert werden |
+| `hosts.yml` | OAuth-Tokens | 🔴 **Niemals versionieren!** |
+
+**Wiederherstellung:** Nach `gh auth login` werden beide Dateien automatisch erstellt.
+
+### Dynamisch generierte Dateien
+
+| Datei | Generiert durch | Funktion |
+|-------|-----------------|----------|
+| `~/.config/starship.toml` | `starship preset catppuccin-powerline -o ~/.config/starship.toml` | Shell-Prompt Konfiguration |
+| `~/.zoxide.db` | zoxide automatisch | Verzeichnis-History für `z` |
+| `~/Library/Application Support/lazygit/config.yml` | Stow (symlinked von `~/.config/lazygit/`) | lazygit Theme + Einstellungen |
+
+> **Hinweis:** `starship.toml` wird beim Bootstrap generiert. Lokale Anpassungen bleiben bei Updates erhalten, solange das Preset nicht erneut ausgeführt wird.
+
+### Backup-Empfehlung
+
+Für Rechner-Migration diese Dateien sichern (ohne OAuth-Tokens):
+
+```zsh
+# Sichere nicht-sensitive gh-Config
+cp ~/.config/gh/config.yml ~/backup/
+
+# hosts.yml NICHT sichern – neu authentifizieren mit:
+# gh auth login
+```
 
 ---
 

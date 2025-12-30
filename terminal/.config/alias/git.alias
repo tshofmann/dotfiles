@@ -108,3 +108,11 @@ if command -v fzf >/dev/null 2>&1; then
         [[ -n "$stash" ]] && git stash apply "$stash"
     }
 fi
+
+# ------------------------------------------------------------
+# lazygit Integration
+# ------------------------------------------------------------
+if command -v lazygit >/dev/null 2>&1; then
+    # Terminal-UI für Git (lazygit)
+    alias lg='lazygit'
+fi

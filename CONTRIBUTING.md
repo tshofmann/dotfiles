@@ -45,7 +45,7 @@ dotfiles/
 ├── setup/                  # Bootstrap & Installation
 │   ├── bootstrap.sh        # Hauptskript
 │   ├── Brewfile            # Homebrew-Abhängigkeiten
-│   └── tshofmann.terminal  # Terminal.app Profil
+│   └── catppuccin-mocha.terminal  # Terminal.app Profil
 ├── terminal/               # Dotfiles (werden nach ~ verlinkt)
 │   ├── .zlogin
 │   ├── .zprofile
@@ -265,7 +265,7 @@ gh pr create
 
 1. Terminal.app → Einstellungen → Profil anpassen
 2. Rechtsklick → "Exportieren…"
-3. Als `setup/tshofmann.terminal` speichern (überschreiben)
+3. Als `setup/catppuccin-mocha.terminal` speichern (überschreiben)
 
 > ⚠️ **Niemals** die `.terminal`-Datei direkt editieren – enthält binäre Daten.
 

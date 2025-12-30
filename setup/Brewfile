@@ -20,6 +20,7 @@ brew "bat"                                  # cat mit Syntax-Highlighting
 brew "ripgrep"                              # Ultraschneller grep-Ersatz
 brew "fd"                                   # Schneller find-Ersatz
 brew "btop"                                 # Ressourcen-Monitor (top-Ersatz)
+brew "lazygit"                              # Terminal-UI für Git
 
 # ZSH-Plugins
 brew "zsh-syntax-highlighting"              # Syntax-Highlighting für Kommandos

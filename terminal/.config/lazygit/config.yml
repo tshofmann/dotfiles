@@ -1,0 +1,80 @@
+# lazygit Configuration
+# https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md
+#
+# Config location: ~/Library/Application Support/lazygit/config.yml (macOS)
+# This file is symlinked via Stow from ~/.config/lazygit/config.yml
+#
+# Theme: Catppuccin Mocha (Mauve Accent)
+# https://github.com/catppuccin/lazygit
+
+gui:
+  # Catppuccin Mocha Theme mit Mauve Akzent
+  theme:
+    activeBorderColor:
+      - '#cba6f7'  # Mauve
+      - bold
+    inactiveBorderColor:
+      - '#a6adc8'  # Overlay0
+    optionsTextColor:
+      - '#89b4fa'  # Blue
+    selectedLineBgColor:
+      - '#313244'  # Surface0
+    cherryPickedCommitBgColor:
+      - '#45475a'  # Surface1
+    cherryPickedCommitFgColor:
+      - '#cba6f7'  # Mauve
+    unstagedChangesColor:
+      - '#f38ba8'  # Red
+    defaultFgColor:
+      - '#cdd6f4'  # Text
+    searchingActiveBorderColor:
+      - '#f9e2af'  # Yellow
+
+  # UI-Einstellungen
+  showIcons: true
+  nerdFontsVersion: "3"
+  showFileTree: true
+  showRandomTip: false
+  showCommandLog: true
+  showBottomLine: true
+  showPanelJumps: true
+  border: rounded
+
+  # Sprache
+  language: auto
+
+# Author colors für commit log
+authorColors:
+  '*': '#b4befe'  # Lavender
+
+# Git-Einstellungen
+git:
+  paging:
+    colorArg: always
+    pager: delta --dark --paging=never
+  commit:
+    signOff: false
+  merging:
+    manualCommit: false
+    args: ""
+  log:
+    showGraph: always
+    showWholeGraph: false
+
+# Bestätigungen
+confirmOnQuit: false
+
+# OS-spezifisch
+os:
+  editPreset: nvim
+
+# Keybindings (Standard + Anpassungen)
+keybinding:
+  universal:
+    quit: q
+    return: <esc>
+    togglePanel: <tab>
+    prevBlock: <left>
+    nextBlock: <right>
+    scrollUpMain: <pgup>
+    scrollDownMain: <pgdown>

@@ -92,6 +92,7 @@ Diese Tools werden via Brewfile installiert:
 | **fd** | Schneller `find`-Ersatz (respektiert `.gitignore`) | [github.com/sharkdp/fd](https://github.com/sharkdp/fd) |
 | **fzf** | Fuzzy Finder für Kommandozeile und Dateien | [github.com/junegunn/fzf](https://github.com/junegunn/fzf) |
 | **gh** | GitHub CLI – Issues, PRs, Repos von der Kommandozeile | [cli.github.com](https://cli.github.com/) |
+| **lazygit** | Terminal-UI für Git – interaktives Staging, Commits, Branches | [github.com/jesseduffield/lazygit](https://github.com/jesseduffield/lazygit) |
 | **mas** | Mac App Store CLI – Apps installieren und updaten | [github.com/mas-cli/mas](https://github.com/mas-cli/mas) |
 | **ripgrep** | Ultraschneller `grep`-Ersatz (respektiert `.gitignore`) | [github.com/BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep) |
 | **starship** | Schneller, anpassbarer Shell-Prompt | [starship.rs](https://starship.rs/) |
@@ -205,8 +206,9 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `gbr` | Branch wechseln: Log-Vorschau, Ctrl+D=Branch löschen |
 | `gst` | Status mit Diff-Vorschau (bat): Enter=Add, Ctrl+R=Restore |
 | `gstash` | Stash-Browser: Enter=Apply, Ctrl+D=Drop, Ctrl+P=Pop |
+| `lg` | **lazygit**: Vollständige Terminal-UI für Git |
 
-> **Hinweis:** Die interaktiven Funktionen benötigen fzf und nutzen bat für Syntax-Highlighting in der Diff-Vorschau.
+> **Hinweis:** Die interaktiven Funktionen benötigen fzf und nutzen bat für Syntax-Highlighting in der Diff-Vorschau. `lg` startet lazygit mit Catppuccin Mocha Theme.
 
 ### eza.alias
 
