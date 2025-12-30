@@ -19,7 +19,8 @@ dotfiles/
 │   ├── configuration.md         # Anpassungen
 │   ├── troubleshooting.md       # Fehlerbehebung
 │   ├── architecture.md          # Diese Datei
-│   └── tools.md                 # Tool-Übersicht
+│   ├── tools.md                 # Tool-Übersicht
+│   └── review-checklist.md      # Review-Prompt für Copilot
 ├── scripts/                     # Utility-Scripts
 │   ├── health-check.sh          # Validierung der Installation
 │   ├── validate-docs.sh         # Docs-Code-Synchronisation prüfen
