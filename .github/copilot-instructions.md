@@ -52,15 +52,9 @@ Gilt für **jede** Änderung – Features, Bugfixes, Refactoring, Dokumentation:
 - `--header=` für Keybinding-Hinweise im Format `Key: Aktion | Key: Aktion`
 
 ### Catppuccin Mocha – Designrichtlinie
-Catppuccin Mocha ist das **verbindliche Farbschema** für alle Tools:
-- **Terminal.app**: `setup/catppuccin-mocha.terminal`
-- **bat**: Theme in `terminal/.config/bat/themes/` (via Stow, `bat cache --build` nach Stow)
-- **fzf**: Farben in `terminal/.config/fzf/config`
-- **btop**: Theme in `terminal/.config/btop/themes/` (via Stow)
-- **eza**: Theme in `terminal/.config/eza/theme.yml` (via Stow)
-- **lazygit**: Theme in `terminal/.config/lazygit/config.yml` (via Stow)
-- **zsh-syntax-highlighting**: Theme in `terminal/.config/zsh/` (via Stow)
-- **Starship**: `catppuccin-powerline` Preset
+Catppuccin Mocha ist das **verbindliche Farbschema** für alle Tools.
+
+**Theme-Konfigurationen:** Siehe `docs/architecture.md` → "Verzeichnisstruktur"
 
 **Hauptfarben** (für eigene Erweiterungen):
 | Konzept | Farbe | Hex |
@@ -87,56 +81,19 @@ Vollständige Palette: [catppuccin.com/palette](https://catppuccin.com/palette)
 
 ### XDG Base Directory Specification
 
-Alle Tool-Konfigurationen folgen der [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/latest/):
-
-| Variable | Wert | Gesetzt in |
-|----------|------|------------|
-| `XDG_CONFIG_HOME` | `$HOME/.config` | `.zshenv` |
-| `EZA_CONFIG_DIR` | `$XDG_CONFIG_HOME/eza` | `.zshenv` |
-| `RIPGREP_CONFIG_PATH` | `$XDG_CONFIG_HOME/ripgrep/config` | `.zshrc` |
-| `BAT_CONFIG_PATH` | (nutzt XDG automatisch) | – |
+Alle Tool-Konfigurationen folgen der [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/latest/).
 
 **Wichtig für macOS:**
 - `dirs::config_dir()` in Rust gibt `~/Library/Application Support` zurück, **nicht** `~/.config`
 - Tools wie `eza` respektieren `XDG_CONFIG_HOME` nicht – daher explizit `EZA_CONFIG_DIR` setzen
-- Alle Configs liegen in `terminal/.config/` und werden via Stow nach `~/.config/` verlinkt
+- XDG-Variablen sind in `.zshenv` definiert
 
-### Verzeichnisstruktur
-```
-dotfiles/
-├── .github/
-│   └── copilot-instructions.md  # Diese Datei
-├── setup/
-│   ├── bootstrap.sh             # Installations-Script
-│   ├── Brewfile                 # Homebrew-Pakete
-│   └── catppuccin-mocha.terminal # Terminal.app Profil
-├── terminal/
-│   ├── .zshrc                   # Shell-Konfiguration
-│   ├── .zshenv                  # Environment (XDG_CONFIG_HOME, EZA_CONFIG_DIR)
-│   ├── .zprofile                # Login-Shell (Homebrew-Pfade)
-│   └── .config/
-│       ├── alias/*.alias        # Tool-Aliase (10 Dateien)
-│       ├── bat/config           # bat-Konfiguration
-│       ├── bat/themes/          # bat Catppuccin Theme
-│       ├── btop/btop.conf       # btop-Konfiguration
-│       ├── btop/themes/         # btop Catppuccin Theme
-│       ├── eza/theme.yml        # eza Catppuccin Theme
-│       ├── fd/ignore            # fd-Ignoreliste
-│       ├── fzf/config           # fzf-Optionen + Catppuccin Farben
-│       ├── lazygit/config.yml   # lazygit Config + Catppuccin Theme
-│       ├── ripgrep/config       # ripgrep-Optionen
-│       └── zsh/                 # zsh-syntax-highlighting Theme
-├── scripts/
-│   ├── health-check.sh          # System-Status prüfen
-│   ├── validate-docs.sh         # Doku-Konsistenz prüfen
-│   └── validators/              # Validierungs-Module
-└── docs/                        # Benutzer-Dokumentation
-```
+Details: Siehe `docs/architecture.md` → "XDG Base Directory Specification"
 
-### Installierte Tools (Brewfile)
-`bat`, `btop`, `eza`, `fd`, `fzf`, `gh`, `lazygit`, `ripgrep`, `starship`, `stow`, `zoxide`
+### Verzeichnisstruktur & Tools
 
-Plus: `mas` (Mac App Store), `zsh-syntax-highlighting`, `zsh-autosuggestions`
+**Aktuelle Struktur:** Siehe `docs/architecture.md` → "Verzeichnisstruktur"  
+**Installierte Tools:** Siehe `setup/Brewfile`
 
 ### Help-System
 - `help` – Interaktive Suche aller Aliase/Funktionen mit fzf
