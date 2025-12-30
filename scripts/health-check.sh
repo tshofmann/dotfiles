@@ -196,7 +196,7 @@ fi
 # --- Terminal-Profil ---
 section "Terminal.app Profil"
 
-profile_name="tshofmann"
+profile_name="catppuccin-mocha"
 default_profile=$(defaults read com.apple.Terminal "Default Window Settings" 2>/dev/null || echo "")
 startup_profile=$(defaults read com.apple.Terminal "Startup Window Settings" 2>/dev/null || echo "")
 

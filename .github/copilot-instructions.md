@@ -122,6 +122,7 @@ dotfiles/
 │       ├── eza/theme.yml        # eza Catppuccin Theme
 │       ├── fd/ignore            # fd-Ignoreliste
 │       ├── fzf/config           # fzf-Optionen + Catppuccin Farben
+│       ├── lazygit/config.yml   # lazygit Config + Catppuccin Theme
 │       ├── ripgrep/config       # ripgrep-Optionen
 │       └── zsh/                 # zsh-syntax-highlighting Theme
 ├── scripts/
@@ -132,7 +133,7 @@ dotfiles/
 ```
 
 ### Installierte Tools (Brewfile)
-`bat`, `btop`, `eza`, `fd`, `fzf`, `gh`, `ripgrep`, `starship`, `stow`, `zoxide`
+`bat`, `btop`, `eza`, `fd`, `fzf`, `gh`, `lazygit`, `ripgrep`, `starship`, `stow`, `zoxide`
 
 Plus: `mas` (Mac App Store), `zsh-syntax-highlighting`, `zsh-autosuggestions`
 

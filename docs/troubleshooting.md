@@ -44,7 +44,7 @@ brew reinstall font-meslo-lg-nerd-font
 
 Falls das Problem weiterhin besteht:
 
-1. Terminal.app → Einstellungen → Profile → `tshofmann`
+1. Terminal.app → Einstellungen → Profile → `catppuccin-mocha`
 2. Tab "Text" → Schrift ändern → "MesloLGLDZ Nerd Font" auswählen (oder andere installierte Nerd Font-Variante)
 
 ---
@@ -53,7 +53,7 @@ Falls das Problem weiterhin besteht:
 
 ### Symptom
 
-- Profil `tshofmann` erscheint nicht in Terminal.app
+- Profil `catppuccin-mocha` erscheint nicht in Terminal.app
 - Terminal hat weiterhin Standard-Erscheinung
 
 ### Diagnose
@@ -71,13 +71,13 @@ osascript -e 'quit app "Terminal"'
 **Schritt 2:** Profil manuell importieren
 
 ```zsh
-open ~/dotfiles/setup/tshofmann.terminal
+open ~/dotfiles/setup/catppuccin-mocha.terminal
 ```
 
 **Schritt 3:** Als Standard setzen
 
 1. Terminal.app → Einstellungen → Profile
-2. `tshofmann` auswählen
+2. `catppuccin-mocha` auswählen
 3. "Standard" Button klicken
 
 ---

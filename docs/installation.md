@@ -46,7 +46,7 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 | Homebrew | Installiert/prüft Homebrew unter `/opt/homebrew` | ❌ Exit |
 | Brewfile | Installiert CLI-Tools via `brew bundle` | ❌ Exit |
 | Font-Verifikation | Prüft MesloLG Nerd Font Installation | ❌ Exit |
-| Terminal-Profil | Importiert `tshofmann.terminal` als Standard | ⚠️ Warnung |
+| Terminal-Profil | Importiert `catppuccin-mocha.terminal` als Standard | ⚠️ Warnung |
 | Starship-Theme | Generiert `~/.config/starship.toml` | ⚠️ Warnung |
 | ZSH-Sessions | Prüft SHELL_SESSIONS_DISABLE in ~/.zshenv | ⚠️ Warnung |
 
@@ -183,7 +183,7 @@ cd ~/dotfiles
 | **CLI-Tools** | Alle Formulae aus Brewfile | `setup/Brewfile` (dynamisch) |
 | **ZSH-Plugins** | zsh-syntax-highlighting, zsh-autosuggestions | Homebrew-Verzeichnis |
 | **Nerd Font** | MesloLG Nerd Font | `~/Library/Fonts/` |
-| **Terminal-Profil** | `tshofmann` als Standard | Terminal.app defaults |
+| **Terminal-Profil** | `catppuccin-mocha` als Standard | Terminal.app defaults |
 | **Starship** | `~/.config/starship.toml` vorhanden | Dateisystem |
 | **ZSH-Sessions** | `SHELL_SESSIONS_DISABLE=1` | `~/.zshenv` |
 | **Brewfile** | Alle Abhängigkeiten erfüllt | `brew bundle check` |
