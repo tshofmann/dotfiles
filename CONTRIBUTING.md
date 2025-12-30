@@ -53,6 +53,7 @@ dotfiles/
 │   ├── .zshrc
 │   └── .config/
 └── docs/                           # Dokumentation
+    └── review-checklist.md         # Review-Prompt für Copilot
 ```
 
 ---
