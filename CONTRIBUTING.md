@@ -151,6 +151,71 @@ Die Test-Suite prüft:
 
 ---
 
+## Sprach- und Kommentar-Richtlinie
+
+### Sprache: Deutsch als erste Wahl
+
+**Deutsch** ist die bevorzugte Sprache für alle Inhalte in diesem Repository:
+
+| Bereich | Sprache | Beispiel |
+|---------|---------|----------|
+| **Kommentare im Code** | Deutsch | `# Nur wenn bat installiert ist` |
+| **Header-Beschreibungen** | Deutsch | `# Zweck   : Aliase für bat` |
+| **Dokumentation** | Deutsch | README, CONTRIBUTING, docs/ |
+| **Commit-Messages** | Deutsch | `feat: fzf-Preview für git log` |
+| **Issue-Beschreibungen** | Deutsch | GitHub Issues & PRs |
+
+**Ausnahmen** (Englisch erlaubt):
+- **Technische Begriffe** ohne gängige Übersetzung: `Guard`, `Symlink`, `Config`
+- **Code-Bezeichner**: Funktionsnamen (`brewup`), Variablen (`DOTFILES_DIR`)
+- **Tool-Namen und Referenzen**: `fzf`, `bat`, `ripgrep`
+- **URLs und Pfade**: `~/.config/alias/`
+
+### Header-Block Format
+
+Alle Shell-Dateien (`.alias`, `.sh`, `.zsh*`) beginnen mit einem standardisierten Header-Block:
+
+```zsh
+# ============================================================
+# dateiname.alias - Kurzbeschreibung (max. 50 Zeichen)
+# ============================================================
+# Zweck   : Ausführliche Beschreibung des Datei-Zwecks
+# Pfad    : ~/.config/alias/dateiname.alias
+# Docs    : https://github.com/tool/tool (offizielle Doku)
+# ============================================================
+# Hinweis : Optionale Zusatzinformationen (mehrzeilig erlaubt)
+#           z.B. Abhängigkeiten, Config-Pfade, Besonderheiten
+# ============================================================
+```
+
+**Metadaten-Felder** (8 Zeichen breit, linksbündig):
+
+| Feld | Pflicht | Beschreibung |
+|------|---------|--------------|
+| `Zweck` | ✅ | Was macht diese Datei? |
+| `Pfad` | ✅ | Wo liegt die Datei nach Stow? |
+| `Docs` | ✅ | Link zur offiziellen Dokumentation |
+| `Hinweis` | ⚪ | Optionale Zusatzinfos |
+| `Aufruf` | ⚪ | Für Skripte: Wie wird es aufgerufen? |
+
+### Funktions- und Alias-Kommentare
+
+**Jede Funktion und jeder Alias** benötigt einen Beschreibungskommentar direkt darüber:
+
+```zsh
+# Verzeichnisse zuerst anzeigen mit Icons
+alias ls='eza --group-directories-first'
+
+# Man-Pages interaktiv durchsuchen mit Syntax-Highlighting
+fman() {
+    # ... Implementation
+}
+```
+
+**Private Funktionen** (mit `_` Präfix) sind von dieser Regel ausgenommen.
+
+---
+
 ## Code-Konventionen
 
 ### Shell-Scripts

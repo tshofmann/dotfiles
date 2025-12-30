@@ -5,6 +5,9 @@
 # Pfad    : ~/.config/alias/gh.alias
 # Docs    : https://cli.github.com/manual/
 # ============================================================
+# Hinweis : Erfordert gh auth login für Authentifizierung.
+#           Alle Funktionen nutzen fzf für interaktive Auswahl.
+# ============================================================
 
 # Guard   : Nur wenn gh installiert ist
 if ! command -v gh >/dev/null 2>&1; then

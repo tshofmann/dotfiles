@@ -1,8 +1,10 @@
+#!/usr/bin/env zsh
 # ============================================================
 # copilot-instructions.sh - Validator für Copilot Instructions
 # ============================================================
-# Prüft Konsistenz zwischen .github/copilot-instructions.md
-# und dem tatsächlichen Code/Dokumentation
+# Zweck   : Prüft Konsistenz zwischen copilot-instructions.md
+#           und dem tatsächlichen Code/Dokumentation
+# Aufruf  : source validators/lib.sh && validate_copilot_instructions
 # ============================================================
 
 validate_copilot_instructions() {

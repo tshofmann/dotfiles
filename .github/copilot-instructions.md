@@ -1,5 +1,19 @@
 # Copilot Instructions für dotfiles
 
+## Sprache
+
+**Deutsch ist die erste Wahl** für alle Inhalte in diesem Repository:
+- Kommentare im Code
+- Header-Beschreibungen (`# Zweck   :`, `# Hinweis :`)
+- Dokumentation (README, CONTRIBUTING, docs/)
+- Commit-Messages (Conventional Commits Format)
+- Issue-Beschreibungen und PR-Texte
+
+**Ausnahmen** (Englisch erlaubt):
+- Technische Begriffe ohne gängige Übersetzung: `Guard`, `Symlink`, `Config`
+- Code-Bezeichner: Funktionsnamen (`brewup`), Variablen (`DOTFILES_DIR`)
+- Tool-Namen und Referenzen: `fzf`, `bat`, `ripgrep`
+
 ## Git Commits
 
 - **Niemals `--no-verify` verwenden** – Pre-Commit Hooks müssen durchlaufen
