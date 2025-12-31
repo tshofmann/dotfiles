@@ -11,6 +11,7 @@ Diese Regeln gelten **immer** – keine Ausnahmen:
 | **Niemals `--no-verify`** | Pre-Commit Hooks müssen durchlaufen |
 | **Niemals Annahmen treffen** | Im Terminal verifizieren, nicht vermuten |
 | **Niemals statische Zahlen in Docs** | Veralten sofort – dynamische Verweise nutzen |
+| **Niemals persönliche Daten in Issues/PRs** | Öffentlich sichtbar – `~` oder `$HOME` statt `/Users/<name>` |
 
 ### Arbeitsweise (Grundprinzip)
 
