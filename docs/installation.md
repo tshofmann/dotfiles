@@ -139,7 +139,7 @@ Nach erfolgreicher Installation sind folgende Symlinks aktiv:
 | `~/.zprofile` | `terminal/.zprofile` | Login Shell (Homebrew Init) |
 | `~/.zshrc` | `terminal/.zshrc` | Interactive Shell Konfiguration |
 | `~/.zlogin` | `terminal/.zlogin` | Post-Login (Background-Optimierungen) |
-| `~/.config/alias/` | `terminal/.config/alias/` | 10 Alias-Dateien (bat, btop, eza, fd, fzf, gh, git, help, homebrew, ripgrep) |
+| `~/.config/alias/` | `terminal/.config/alias/` | Alias-Dateien (siehe `terminal/.config/alias/`) |
 | `~/.config/bat/` | `terminal/.config/bat/` | bat Config + Catppuccin Mocha Theme |
 | `~/.config/btop/` | `terminal/.config/btop/` | btop Config + Catppuccin Mocha Theme |
 | `~/.config/eza/` | `terminal/.config/eza/` | eza Catppuccin Theme |

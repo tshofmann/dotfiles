@@ -27,34 +27,17 @@ Nach Schritt 3 wird bei jedem Commit automatisch geprüft, ob Dokumentation und 
 
 ## Repository-Struktur
 
-```
-dotfiles/
-├── .githooks/                      # Git Hooks (versioniert)
-│   └── pre-commit                  # Syntax + Docs-Validierung vor Commit
-├── scripts/                        # Utility-Scripts (nicht Setup)
-│   ├── health-check.sh             # Installation validieren
-│   ├── validate-docs.sh            # Docs-Code-Synchronisation prüfen
-│   ├── validators/                 # Modulare Validierungs-Komponenten
-│   │   ├── lib.sh                  # Shared Library
-│   │   ├── core/                   # 8 Kern-Validierungen
-│   │   └── extended/               # 4 erweiterte Prüfungen
-│   └── tests/                      # Unit-Tests für Validatoren
-│       ├── run-tests.sh            # Test-Runner
-│       ├── test_lib.sh             # Tests für lib.sh
-│       └── test_validators.sh      # Integration-Tests
-├── setup/                          # Bootstrap & Installation
-│   ├── bootstrap.sh                # Hauptskript
-│   ├── Brewfile                    # Homebrew-Abhängigkeiten
-│   └── catppuccin-mocha.terminal   # Terminal.app Profil
-├── terminal/                       # Dotfiles (werden nach ~ verlinkt)
-│   ├── .zlogin
-│   ├── .zprofile
-│   ├── .zshenv
-│   ├── .zshrc
-│   └── .config/
-└── docs/                           # Dokumentation
-    └── review-checklist.md         # Review-Prompt für Copilot
-```
+Siehe [architecture.md → Verzeichnisstruktur](docs/architecture.md#verzeichnisstruktur) für die vollständige Struktur.
+
+**Kurzübersicht der wichtigsten Pfade:**
+
+| Pfad | Zweck |
+|------|-------|
+| `scripts/validators/` | Modulare Validierungs-Komponenten (`core/`, `extended/`) |
+| `scripts/tests/` | Unit-Tests für Validatoren |
+| `setup/` | Bootstrap, Brewfile, Terminal-Profil |
+| `terminal/` | Dotfiles (werden nach `~` verlinkt) |
+| `docs/` | Dokumentation für Endnutzer |
 
 ---
 
@@ -123,7 +106,7 @@ Die Test-Suite prüft:
 
 ### Was wird geprüft?
 
-**Kern-Validierungen (--core):**
+**Kern-Validierungen (--core):** (siehe `validators/core/`)
 | Prüfung | Details |
 |---------|---------|
 | **Brewfile** | brew/cask/mas Anzahl in `architecture.md` |
@@ -135,7 +118,7 @@ Die Test-Suite prüft:
 | **Health-Check** | Tool-Liste synchron |
 | **Starship** | Starship-Prompt konfiguriert |
 
-**Erweiterte Validierungen (--extended):**
+**Erweiterte Validierungen (--extended):** (siehe `validators/extended/`)
 | Prüfung | Details |
 |---------|---------|
 | **alias-names** | Alias-Namen in Docs existieren im Code |

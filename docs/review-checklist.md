@@ -3,53 +3,34 @@
 Strukturierter Analyse- und Review-Prompt für dieses dotfiles-Repository.
 
 > **Trigger:** Dieses Dokument an Copilot senden, um ein vollständiges Review zu starten.
-> 
-> **Grundregeln:** Siehe [copilot-instructions.md](../.github/copilot-instructions.md) für Arbeitsweise, Sprache und Code-Stil.
 
 ---
 
-## ⚠️ KRITISCH: Manuelle Verifikation
+## ⛔ Grundprinzipien
 
-> **Validatoren sind Hilfsmittel, nicht Wahrheit.**
+> **Vollständige Richtlinien:** Siehe [copilot-instructions.md](../.github/copilot-instructions.md)
 
-Die automatischen Validatoren (`validate-docs.sh`, `health-check.sh`, Unit-Tests) können **selbst fehlerhaft sein**. Sie prüfen nur das, wofür sie programmiert wurden – nicht das Gesamtbild.
+```
+Sehen → Recherchieren → Denken → Verstehen → Handeln
+```
 
-### Pflicht bei jedem Review
-
-1. **Validator-Output kritisch hinterfragen**
-   - Grünes Ergebnis ≠ Korrektheit
-   - Prüft der Validator überhaupt das Richtige?
-   - Gibt es Aspekte, die kein Validator abdeckt?
-
-2. **Manuelle Gegenproben durchführen**
-   - `grep`, `cat`, `diff` verwenden, um Validator-Aussagen zu verifizieren
-   - Stichproben: Nimm 2-3 Aliase und prüfe manuell, ob Doku stimmt
-   - Fehlerhafte Eingaben testen: Löst der Validator wirklich Fehler aus?
-
-3. **Tool-Integrationen tatsächlich testen**
-   - Nicht nur Code lesen – im Terminal ausführen
-   - Edge-Cases ausprobieren (leere Eingabe, Sonderzeichen, fehlende Tools)
-   - Alle Tools
-
-4. **Konsistenz über Dateigrenzen hinweg**
-   - Gleiche Farben in fzf/config, help.alias, allen Previews?
-   - Gleiche Patterns in allen Alias-Dateien?
-   - XDG-Pfade: Stimmen Variablen mit tatsächlichen Symlinks überein?
-
-### Verboten
-
-- ❌ Validator laufen lassen und Ergebnis ungeprüft übernehmen
-- ❌ "Tests bestanden" als Review-Abschluss melden
-- ❌ Nur Code lesen ohne Terminal-Verifikation
+- **Repository-Zustand ist die Wahrheit** – nicht Annahmen oder veraltete Dokumentation
+- **Validatoren sind Hilfsmittel, nicht Wahrheit** – kritisch hinterfragen
+- **Beweispflicht** – jede Aussage mit Beleg (Code, Terminal-Output, Doku)
+- **Bei Unklarheiten**: Rückfrage statt Annahme
 
 ---
 
-## Rolle
+## Rolle & Kontext
 
-Du agierst als **Systems Engineer und Toolchain-Architekt** für dieses Repository:
-- **Plattform:** macOS mit Apple Silicon (arm64)
-- **Shell:** zsh (Login- und interaktive Shell)
-- **Kontext:** Dotfiles mit Bootstrap-Mechanismus und Catppuccin Mocha Theme
+| Aspekt | Wert |
+|--------|------|
+| **Rolle** | Systems Engineer und Toolchain-Architekt |
+| **Plattform** | macOS mit Apple Silicon (arm64) |
+| **Shell** | zsh (Login- und interaktive Shell) |
+| **Design** | Catppuccin Mocha Theme |
+
+> **Stil-Regeln:** Siehe [CONTRIBUTING.md](../CONTRIBUTING.md) → "Stil-Regeln (automatisch geprüft)"
 
 ---
 
@@ -164,13 +145,13 @@ grep -n "\$HOME" setup/bootstrap.sh | head -10
 
 Für jede Datei in `terminal/.config/alias/`:
 
-**Struktur-Checks:**
-- [ ] Header-Block mit Metadaten (Zweck, Pfad, Docs, Hinweis)?
+**Struktur-Checks (siehe CONTRIBUTING.md → "Header-Block Format"):**
+- [ ] Header-Block mit Metadaten (Zweck, Pfad, Docs)?
 - [ ] Guard-Check vorhanden (`command -v tool >/dev/null`)?
 - [ ] Beschreibungskommentare für Help-System?
 - [ ] Private Funktionen mit `_` Prefix?
 
-**Stil-Checks (aus CONTRIBUTING.md):**
+**Stil-Checks (siehe CONTRIBUTING.md → "Stil-Regeln"):**
 - [ ] Metadaten 8 Zeichen breit, linksbündig?
 - [ ] Sektions-Trenner 60 Zeichen?
 - [ ] Lokale Variablen mit `local`?
@@ -210,8 +191,8 @@ done
 
 **Für jede Integration prüfen:**
 - [ ] Fallback wenn Abhängigkeit fehlt?
-- [ ] Preview-Commands: ZSH-Syntax mit `zsh -c` gewrappt? (siehe copilot-instructions.md)
-- [ ] Catppuccin-Farben konsistent?
+- [ ] Preview-Commands: ZSH-Syntax gewrappt? (siehe copilot-instructions.md → "Bekannte Patterns")
+- [ ] Catppuccin-Farben konsistent? (siehe copilot-instructions.md → "Catppuccin Mocha Farben")
 - [ ] Keybinding-Header im Format `Key: Aktion | Key: Aktion`?
 
 **Synergie-Potenzial ermitteln:**
@@ -445,6 +426,8 @@ done
 
 **Kritisch:** Gleiche Farben müssen überall verwendet werden.
 
+> **Farbpalette:** Siehe [copilot-instructions.md](../.github/copilot-instructions.md) → "Catppuccin Mocha Farben"
+
 ```zsh
 # Alle Farbdefinitionen finden
 grep -rn "1E1E2E\|CDD6F4\|F38BA8\|A6E3A1\|CBA6F7\|89B4FA" terminal/.config/
@@ -627,14 +610,17 @@ Welche Maßnahmen soll ich umsetzen?
 
 ---
 
-## Checkliste: Review abgeschlossen
+## Review-Abschluss
 
-- [ ] Repository-Struktur mit Dokumentation abgeglichen
-- [ ] Bootstrap idempotent und robust
-- [ ] Alias-Dateien entsprechen Stil-Regeln
-- [ ] fzf-Integration korrekt (ZSH-Wrapping, Catppuccin)
-- [ ] XDG-Konformität gegeben
-- [ ] Dokumentation synchron (validate-docs.sh grün)
-- [ ] Health-Check und Tests bestanden
-- [ ] Review-Zusammenfassung erstellt
-- [ ] Maßnahmen priorisiert und zur Freigabe vorgelegt
+Ein Review ist abgeschlossen wenn:
+
+1. **Verstanden** – Repository-Zustand ist klar, nicht nur oberflächlich geprüft
+2. **Verifiziert** – Aussagen sind belegt (Terminal-Output, Code-Referenzen)
+3. **Dokumentiert** – Erkenntnisse und Empfehlungen sind strukturiert festgehalten
+4. **Freigabe eingeholt** – keine Umsetzung ohne explizite Bestätigung
+
+Welche Validierungen und Prüfungen dafür nötig sind, ergibt sich aus dem Review-Kontext. Tools in `scripts/` können helfen – aber kritisch einsetzen, nicht blind vertrauen.
+
+> **Verweise:**
+> - [copilot-instructions.md](../.github/copilot-instructions.md) – Arbeitsweise, Code-Stil
+> - [CONTRIBUTING.md](../CONTRIBUTING.md) – Header-Format, Stil-Regeln

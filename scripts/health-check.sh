@@ -235,9 +235,20 @@ fi
 section "Brewfile Status"
 
 if [[ -n "${HOMEBREW_BUNDLE_FILE:-}" ]] && [[ -f "$HOMEBREW_BUNDLE_FILE" ]]; then
-  if brew bundle check --file="$HOMEBREW_BUNDLE_FILE" >/dev/null 2>&1; then
+  local check_output
+  check_output=$(brew bundle check --file="$HOMEBREW_BUNDLE_FILE" --verbose 2>&1)
+  local check_exit=$?
+  
+  if (( check_exit == 0 )); then
     pass "Alle Brewfile-Abhängigkeiten erfüllt"
+  elif echo "$check_output" | grep -qE "needs to be installed or updated"; then
+    # Pakete fehlen oder sind veraltet (Formulas und Casks)
+    local outdated
+    outdated=$(echo "$check_output" | grep -oE "(Formula|Cask) [^ ]+ needs" | sed -E 's/(Formula|Cask) ([^ ]+) needs/\2/' | tr '\n' ' ')
+    warn "Brewfile-Pakete fehlen oder sind veraltet:${outdated:+ $outdated}"
+    warn "  → brew bundle --file=$HOMEBREW_BUNDLE_FILE"
   else
+    # Echte fehlende Pakete
     warn "Nicht alle Brewfile-Abhängigkeiten installiert"
     warn "  → brew bundle --file=$HOMEBREW_BUNDLE_FILE"
   fi
