@@ -16,6 +16,16 @@ compact = false
 # Pager für lange Ausgaben verwenden
 use_pager = false
 
+# Befehlsname oben anzeigen
+show_title = true
+
+# ------------------------------------------------------------
+# Suche
+# ------------------------------------------------------------
+[search]
+# Deutsche Seiten priorisieren, Fallback auf Englisch
+languages = ["de", "en"]
+
 # ------------------------------------------------------------
 # Catppuccin Mocha Theme
 # ------------------------------------------------------------
@@ -50,3 +60,9 @@ italic = true
 [updates]
 # Cache automatisch aktualisieren wenn veraltet
 auto_update = true
+
+# Update-Intervall: wöchentlich (Default: 720h = 30 Tage)
+auto_update_interval_hours = 168
+
+# Gleiche Sprachen wie bei Suche herunterladen
+download_languages = ["de", "en"]
