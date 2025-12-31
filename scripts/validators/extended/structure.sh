@@ -15,7 +15,7 @@ check_structure() {
     local errors=0
     
     # Extrahiere terminal/ Einträge aus dem Struktur-Baum in architecture.md
-    # Format: │   ├── .zshenv  oder │   ├── .gitconfig          # Kommentar
+    # Format:     ├── .zshenv  oder     ├── .gitconfig          # Kommentar
     # Entferne alles nach # (Kommentare) und extrahiere nur Dateinamen
     local -a doc_files
     doc_files=($(sed -n '/└── terminal\//,/^```$/p' "$arch_doc" | \
