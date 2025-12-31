@@ -55,6 +55,14 @@ foreground = { rgb = { r = 203, g = 166, b = 247 } }  # #CBA6F7 Mauve
 italic = true
 
 # ------------------------------------------------------------
+# Verzeichnisse
+# ------------------------------------------------------------
+[directories]
+# Custom Pages relativ zur Config-Datei
+# Siehe: https://github.com/tealdeer-rs/tealdeer/pull/395
+custom_pages_dir = "./pages"
+
+# ------------------------------------------------------------
 # Updates
 # ------------------------------------------------------------
 [updates]
