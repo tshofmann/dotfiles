@@ -22,7 +22,7 @@ use_pager = false
 # Farben: https://catppuccin.com/palette
 # tealdeer unterstützt RGB-Werte seit v1.5.0
 
-# Beschreibungstext (Subtext1 für subtilen Look)
+# Beschreibungstext (Subtext0 für subtilen Look)
 [style.description]
 foreground = { rgb = { r = 166, g = 173, b = 200 } }  # #A6ADC8 Subtext0
 

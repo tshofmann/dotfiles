@@ -419,7 +419,7 @@ Die Tools nutzen **native Config-Dateien** für globale Einstellungen und Shell-
 | **bat** | `~/.config/bat/config` | (automatisch erkannt) |
 | **ripgrep** | `~/.config/ripgrep/config` | `RIPGREP_CONFIG_PATH` |
 | **fd** | `~/.config/fd/ignore` | (automatisch erkannt) |
-| **tealdeer** | `~/.config/tealdeer/config.toml` | (automatisch erkannt) |
+| **tealdeer** | `~/.config/tealdeer/config.toml` | `TEALDEER_CONFIG_DIR` |
 
 **Vorteile:**
 - Globale Defaults zentral verwaltet
