@@ -1,0 +1,52 @@
+# ============================================================
+# tealdeer Config - tldr-Client Konfiguration
+# ============================================================
+# Zweck   : Vereinfachte Man-Pages mit Beispielen (tldr)
+# Pfad    : ~/.config/tealdeer/config.toml
+# Docs    : https://tealdeer-rs.github.io/tealdeer/config.html
+# ============================================================
+
+# ------------------------------------------------------------
+# Darstellung
+# ------------------------------------------------------------
+[display]
+# Kompakte Ausgabe ohne Leerzeilen zwischen Beispielen
+compact = false
+
+# Pager für lange Ausgaben verwenden
+use_pager = false
+
+# ------------------------------------------------------------
+# Catppuccin Mocha Theme
+# ------------------------------------------------------------
+# Farben: https://catppuccin.com/palette
+# tealdeer unterstützt RGB-Werte seit v1.5.0
+
+# Beschreibungstext (Subtext1 für subtilen Look)
+[style.description]
+foreground = { rgb = { r = 166, g = 173, b = 200 } }  # #A6ADC8 Subtext0
+
+# Befehlsname im Beispiel (Blue für Konsistenz mit fzf)
+[style.command_name]
+foreground = { rgb = { r = 137, g = 180, b = 250 } }  # #89B4FA Blue
+bold = true
+
+# Beispiel-Beschreibung (Text für gute Lesbarkeit)
+[style.example_text]
+foreground = { rgb = { r = 205, g = 214, b = 244 } }  # #CDD6F4 Text
+
+# Beispiel-Code (Green für Aktionen/Befehle)
+[style.example_code]
+foreground = { rgb = { r = 166, g = 227, b = 161 } }  # #A6E3A1 Green
+
+# Variablen im Beispiel (Mauve als Akzent, wie in fzf prompt)
+[style.example_variable]
+foreground = { rgb = { r = 203, g = 166, b = 247 } }  # #CBA6F7 Mauve
+italic = true
+
+# ------------------------------------------------------------
+# Updates
+# ------------------------------------------------------------
+[updates]
+# Cache automatisch aktualisieren wenn veraltet
+auto_update = true

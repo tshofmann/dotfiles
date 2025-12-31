@@ -11,6 +11,7 @@ brew "fzf"                                  # Fuzzy Finder
 brew "gh"                                   # GitHub CLI
 brew "stow"                                 # Symlink-Manager
 brew "starship"                             # Shell-Prompt
+brew "tealdeer"                             # tldr-Client für vereinfachte Man-Pages
 brew "zoxide"                               # Smartes cd
 brew "mas"                                  # Mac App Store CLI
 

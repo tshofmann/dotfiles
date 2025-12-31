@@ -89,6 +89,14 @@ bat cache --build
 
 > **💡 Warum dieser Schritt?** Das Catppuccin Mocha Theme für bat liegt in `~/.config/bat/themes/` (via Stow verlinkt). bat erkennt neue Themes erst nach einem Cache-Rebuild.
 
+4. **tealdeer-Cache herunterladen (einmalig):**
+
+```zsh
+tldr --update
+```
+
+> **💡 Warum dieser Schritt?** tealdeer benötigt einen initialen Download der tldr-Pages. Danach aktualisiert sich der Cache automatisch (`auto_update = true` in Config).
+
 ### Was diese Befehle machen
 
 | Flag | Bedeutung |

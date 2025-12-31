@@ -29,6 +29,7 @@ check_readme_consistency() {
         [[ "$readme_cmd" != *"stow --adopt -R terminal"* ]] && missing+=("stow --adopt -R terminal")
         [[ "$readme_cmd" != *"git reset --hard HEAD"* ]] && missing+=("git reset --hard HEAD")
         [[ "$readme_cmd" != *"bat cache --build"* ]] && missing+=("bat cache --build")
+        [[ "$readme_cmd" != *"tldr --update"* ]] && missing+=("tldr --update")
         
         if (( ${#missing[@]} > 0 )); then
             err "README Quickstart fehlt: ${missing[*]}"
@@ -44,6 +45,10 @@ check_readme_consistency() {
         fi
         if ! grep -q "bat cache --build" "$installation"; then
             err "installation.md: bat cache --build fehlt"
+            (( errors++ )) || true
+        fi
+        if ! grep -q "tldr --update" "$installation"; then
+            err "installation.md: tldr --update fehlt"
             (( errors++ )) || true
         fi
         
