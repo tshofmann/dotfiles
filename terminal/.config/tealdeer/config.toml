@@ -30,7 +30,7 @@ languages = ["de", "en"]
 # Catppuccin Mocha Theme
 # ------------------------------------------------------------
 # Farben: https://catppuccin.com/palette
-# tealdeer unterstützt RGB-Werte seit v1.5.0
+# RGB-Werte via TOML-Syntax (r, g, b)
 
 # Beschreibungstext (Subtext0 für subtilen Look)
 [style.description]

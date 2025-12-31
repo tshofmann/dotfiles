@@ -105,7 +105,7 @@ if command -v fzf >/dev/null 2>&1; then
         local stash
         stash=$(git stash list | \
             fzf --ansi \
-                --preview 'echo {} | cut -d: -f1 | xargs git stash show -p | bat --style=numbers --color=always -l diff 2>/dev/null || echo {} | cut -d: -f1 | xargs git stash show -p' \
+                --preview 'echo {} | cut -d: -f1 | xargs git stash show -p | { bat --style=numbers --color=always -l diff 2>/dev/null || cat; }' \
                 --header='Enter: Apply | Ctrl+P: Pop | Ctrl+D: Drop' \
                 --bind 'ctrl-d:execute(echo {} | cut -d: -f1 | xargs git stash drop)+reload(git stash list)' \
                 --bind 'ctrl-p:execute(echo {} | cut -d: -f1 | xargs git stash pop)+abort' | \
