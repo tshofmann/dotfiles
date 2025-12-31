@@ -23,6 +23,10 @@ export XDG_CONFIG_HOME="$HOME/.config"
 # zurückgibt statt XDG_CONFIG_HOME zu respektieren - daher explizit setzen
 export EZA_CONFIG_DIR="$XDG_CONFIG_HOME/eza"
 
+# tealdeer nutzt auf macOS ebenfalls ~/Library/Application Support
+# statt XDG_CONFIG_HOME - daher explizit setzen
+export TEALDEER_CONFIG_DIR="$XDG_CONFIG_HOME/tealdeer"
+
 # ------------------------------------------------------------
 # macOS Session-Wiederherstellung deaktivieren
 # ------------------------------------------------------------

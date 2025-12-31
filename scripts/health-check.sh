@@ -90,6 +90,7 @@ get_tools_from_brewfile() {
   # Mapping: Formula-Name → Binary-Name (falls unterschiedlich)
   typeset -A tool_mapping=(
     [ripgrep]=rg
+    [tealdeer]=tldr
   )
   
   # Formulae die kein eigenständiges Binary haben (werden separat geprüft)

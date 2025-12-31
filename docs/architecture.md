@@ -81,6 +81,8 @@ dotfiles/
         │   └── config.yml       # lazygit Config mit Catppuccin Mocha
         ├── ripgrep/
         │   └── config           # ripgrep native Config (RIPGREP_CONFIG_PATH)
+        ├── tealdeer/
+        │   └── config.toml      # tealdeer (tldr) Config mit Catppuccin Mocha
         └── zsh/
             └── catppuccin_mocha-zsh-syntax-highlighting.zsh  # Syntax-Highlighting Theme
 ```
@@ -260,6 +262,7 @@ brew "gh"                        # GitHub CLI
 brew "lazygit"                   # Terminal-UI für Git
 brew "stow"                      # Symlink-Manager
 brew "starship"                  # Shell-Prompt
+brew "tealdeer"                  # tldr-Client
 brew "zoxide"                    # Smartes cd
 brew "mas"                       # Mac App Store CLI
 
@@ -416,6 +419,7 @@ Die Tools nutzen **native Config-Dateien** für globale Einstellungen und Shell-
 | **bat** | `~/.config/bat/config` | (automatisch erkannt) |
 | **ripgrep** | `~/.config/ripgrep/config` | `RIPGREP_CONFIG_PATH` |
 | **fd** | `~/.config/fd/ignore` | (automatisch erkannt) |
+| **tealdeer** | `~/.config/tealdeer/config.toml` | `TEALDEER_CONFIG_DIR` |
 
 **Vorteile:**
 - Globale Defaults zentral verwaltet

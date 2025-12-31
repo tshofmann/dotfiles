@@ -97,6 +97,7 @@ Diese Tools werden via Brewfile installiert:
 | **ripgrep** | Ultraschneller `grep`-Ersatz (respektiert `.gitignore`) | [github.com/BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep) |
 | **starship** | Schneller, anpassbarer Shell-Prompt | [starship.rs](https://starship.rs/) |
 | **stow** | GNU Stow – Symlink-Manager für Dotfiles | [gnu.org/software/stow](https://www.gnu.org/software/stow/) |
+| **tealdeer** | Schneller tldr-Client – vereinfachte Man-Pages mit Beispielen | [github.com/tealdeer-rs/tealdeer](https://github.com/tealdeer-rs/tealdeer) |
 | **zoxide** | Smarter `cd`-Ersatz – merkt sich häufige Verzeichnisse | [github.com/ajeetdsouza/zoxide](https://github.com/ajeetdsouza/zoxide) |
 
 ### ZSH-Plugins
