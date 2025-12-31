@@ -53,12 +53,18 @@ if command -v fzf >/dev/null 2>&1; then
         local sha
         sha=$(git log --oneline --color=always --decorate | \
             fzf --ansi --no-sort --reverse \
-                --preview 'git show --color=always {1} | bat --style=numbers --color=always -l diff' \
+                --preview 'git show --color=always {1} | bat --style=numbers --color=always -l diff 2>/dev/null || git show --color=always {1}' \
                 --header='Enter: Anzeigen | Ctrl+Y: SHA kopieren' \
                 --bind 'ctrl-y:execute-silent(echo -n {1} | pbcopy)+abort' | \
             awk '{print $1}')
         
-        [[ -n "$sha" ]] && git show --color=always "$sha" | bat --style=numbers --color=always -l diff | less -R
+        if [[ -n "$sha" ]]; then
+            if command -v bat >/dev/null 2>&1; then
+                git show --color=always "$sha" | bat --style=numbers --color=always -l diff | less -R
+            else
+                git show --color=always "$sha" | less -R
+            fi
+        fi
     }
     
     # Git Branch wechseln mit Vorschau
@@ -80,7 +86,7 @@ if command -v fzf >/dev/null 2>&1; then
         local files
         files=$(git -c color.status=always status --short | \
             fzf --ansi --multi \
-                --preview 'git diff --color=always -- {2} | bat --style=numbers --color=always -l diff' \
+                --preview 'git diff --color=always -- {2} | bat --style=numbers --color=always -l diff 2>/dev/null || git diff --color=always -- {2}' \
                 --header='Enter: Add | Tab: Mehrfach | Ctrl+R: Reset' \
                 --bind 'ctrl-r:execute(git restore {+2})+reload(git -c color.status=always status --short)' | \
             awk '{print $2}')
@@ -99,7 +105,7 @@ if command -v fzf >/dev/null 2>&1; then
         local stash
         stash=$(git stash list | \
             fzf --ansi \
-                --preview 'echo {} | cut -d: -f1 | xargs git stash show -p | bat --style=numbers --color=always -l diff' \
+                --preview 'echo {} | cut -d: -f1 | xargs git stash show -p | bat --style=numbers --color=always -l diff 2>/dev/null || echo {} | cut -d: -f1 | xargs git stash show -p' \
                 --header='Enter: Apply | Ctrl+P: Pop | Ctrl+D: Drop' \
                 --bind 'ctrl-d:execute(echo {} | cut -d: -f1 | xargs git stash drop)+reload(git stash list)' \
                 --bind 'ctrl-p:execute(echo {} | cut -d: -f1 | xargs git stash pop)+abort' | \
