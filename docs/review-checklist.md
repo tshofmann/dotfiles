@@ -225,7 +225,8 @@ for file in terminal/.config/alias/*.alias; do
 done
 
 # 2. Tools OHNE fzf-Integration (Potenzial?):
-echo "\n=== Potenzielle fzf-Integrationen ==="
+echo
+echo "=== Potenzielle fzf-Integrationen ==="
 for tool in $(grep '^brew "' setup/Brewfile | sed 's/brew "\([^"]*\)".*/\1/'); do
   # Prüfen ob in fzf.alias ODER als fzf-Funktion woanders
   if ! grep -rq "$tool" terminal/.config/alias/fzf.alias 2>/dev/null; then
@@ -236,7 +237,8 @@ for tool in $(grep '^brew "' setup/Brewfile | sed 's/brew "\([^"]*\)".*/\1/'); d
 done
 
 # 3. Alias-Dateien OHNE bat-Preview (cat statt bat?):
-echo "\n=== Alias-Dateien ohne bat-Preview ==="
+echo
+echo "=== Alias-Dateien ohne bat-Preview ==="
 for file in terminal/.config/alias/*.alias; do
   if grep -q "preview" "$file" 2>/dev/null; then
     if ! grep -q "bat" "$file" 2>/dev/null; then
@@ -247,7 +249,8 @@ done
 grep -rn "cat " terminal/.config/alias/*.alias | grep -v "# " | head -5 && echo "  ↑ cat statt bat?"
 
 # 4. Tools OHNE Catppuccin-Theme:
-echo "\n=== Config-Verzeichnisse ohne Theme ==="
+echo
+echo "=== Config-Verzeichnisse ohne Theme ==="
 for dir in terminal/.config/*/; do
   if ! grep -rqi "catppuccin\|theme\|color\|#[0-9A-Fa-f]\{6\}" "$dir" 2>/dev/null; then
     echo "$(basename "$dir") – kein Theme gefunden"
@@ -255,12 +258,14 @@ for dir in terminal/.config/*/; do
 done
 
 # 5. Doppelte Funktionalität finden:
-echo "\n=== Mögliche Duplikate ==="
+echo
+echo "=== Mögliche Duplikate ==="
 # Aliase die auf dasselbe Kommando zeigen
 grep -h "^alias" terminal/.config/alias/*.alias | sed 's/alias \([^=]*\)=.*/\1/' | sort | uniq -d
 
 # 6. Häufige Workflows ohne Keybinding/Alias:
-echo "\n=== Häufige Patterns ohne Alias ==="
+echo
+echo "=== Häufige Patterns ohne Alias ==="
 # Git-Operationen die häufig sind aber evtl. keinen Alias haben
 for cmd in "git stash" "git rebase" "git cherry-pick" "git bisect"; do
   grep -rq "${cmd##* }" terminal/.config/alias/git.alias 2>/dev/null || echo "$cmd – kein Alias?"
@@ -426,7 +431,8 @@ for file in terminal/.config/alias/*.alias; do
   
   # 3. Welche Umgebungsvariablen? (${(U)tool} = uppercase in ZSH)
   echo "  Umgebungsvariablen:"
-  grep -E "^export.*${(U)tool}" terminal/.zshenv terminal/.zshrc 2>/dev/null | sed 's/^/    /'
+  tool_upper="${(U)tool}"
+  grep -E "^export.*${tool_upper}" terminal/.zshenv terminal/.zshrc 2>/dev/null | sed 's/^/    /'
   
   # 4. Hat es Previews?
   echo "  Previews:"
@@ -469,7 +475,8 @@ echo "=== Catppuccin-Referenzen ==="
 grep -rln -i "catppuccin\|mocha\|1E1E2E" terminal/.config/ setup/*.terminal 2>/dev/null
 
 # Tools MIT Config aber OHNE Theme:
-echo "\n=== Config ohne Theme-Referenz ==="
+echo
+echo "=== Config ohne Theme-Referenz ==="
 for dir in terminal/.config/*/; do
   tool=$(basename "$dir")
   if ! grep -rqi "catppuccin\|theme\|color" "$dir" 2>/dev/null; then
@@ -496,7 +503,8 @@ for dir in terminal/.config/*/; do
   target="$HOME/.config/$tool"
   echo -n "$tool: "
   if [[ -L "$target" ]]; then
-    local link_target=$(readlink "$target" 2>/dev/null)
+    local link_target
+    link_target=$(readlink "$target" 2>/dev/null || true)
     [[ -n "$link_target" ]] && echo "✓ Symlink → $link_target" || echo "⚠ Defekter Symlink"
   elif [[ -d "$target" ]]; then
     echo "⚠ Verzeichnis (kein Symlink)"
