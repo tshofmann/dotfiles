@@ -8,13 +8,22 @@
 # HINWEIS : Dieser Check prüft die INSTALLATION auf dem System.
 #           Für Konsistenz Doku↔Code: ./scripts/validate-docs.sh
 #
-# Design  : DYNAMISCH – erkennt automatisch neue Dateien in:
-#           - terminal/.zsh* (Shell-Konfiguration)
-#           - terminal/.config/alias/*.alias (Alias-Dateien)
-#           - terminal/.config/*/{config,ignore} (Tool-Configs)
-#           - terminal/.config/*/*.zsh (ZSH-Module wie fzf/init.zsh)
-#           - terminal/.config/* (Direkte Dateien wie shell-colors)
-#           - setup/Brewfile (CLI-Tools via brew)
+# Design  : SOLL-IST-VERGLEICH – vollständig dynamisch!
+#
+#           SOLL (was sein sollte):
+#           - Alle Dateien in terminal/ → Symlinks in ~/
+#           - Alle brew-Formulae in Brewfile → installierte Tools
+#           - Alle zsh-* in Brewfile → ZSH-Plugins
+#           - Alle font-* in Brewfile → Fonts
+#
+#           IST (was tatsächlich existiert):
+#           - Symlinks im Home-Verzeichnis
+#           - Installierte Binaries (command -v)
+#           - Plugin-Verzeichnisse in $(brew --prefix)/share/
+#           - Font-Dateien in ~/Library/Fonts/
+#
+#           → Neue Dateien werden AUTOMATISCH erkannt!
+#           → Keine manuellen Updates bei neuen Configs nötig!
 #
 # Aufruf  : ./scripts/health-check.sh
 # Docs    : https://github.com/tshofmann/dotfiles#readme
@@ -119,61 +128,56 @@ get_tools_from_brewfile() {
 # ------------------------------------------------------------
 print "🔍 dotfiles Health Check (Systemprüfung)"
 print "   Prüft ob alle Komponenten korrekt installiert sind"
-print "   ℹ Dynamische Erkennung aus terminal/ und Brewfile"
+print "   ℹ SOLL-IST-Vergleich: Alle Dateien in terminal/ werden geprüft"
 
-# --- Symlinks: ZSH-Dotfiles ---
-section "Symlinks (ZSH-Konfiguration)"
+# --- Symlinks: SOLL-IST-Vergleich ---
+section "Symlinks (SOLL-IST-Vergleich)"
 
-# DYNAMISCH: Alle ZSH-Konfigurationsdateien im terminal/ Verzeichnis
-# Matcht: .zshenv, .zshrc, .zprofile, .zlogin (alle Standard-ZSH-Dateien)
-for dotfile in "$TERMINAL_DIR"/.z(shenv|shrc|profile|login)(N); do
-  [[ -f "$dotfile" ]] || continue
-  local filename="${dotfile:t}"
-  check_symlink "$HOME/$filename" "dotfiles/terminal/$filename" "~/$filename"
-done
+# VOLLSTÄNDIG DYNAMISCH: Scannt ALLE Dateien in terminal/
+# und prüft ob entsprechende Symlinks im Home-Verzeichnis existieren
+#
+# SOLL = Alle Dateien in terminal/ (außer .DS_Store, *.patch.md)
+# IST  = Entsprechende Symlinks in ~/ bzw. ~/.config/
+#
+# Bei neuen Dateien in terminal/ wird der Check automatisch erweitert!
 
-# --- Symlinks: Alias-Dateien ---
-section "Symlinks (Alias-Dateien)"
+typeset -i symlink_count=0
+typeset -a missing_symlinks=()
 
-# DYNAMISCH: Alle .alias Dateien
-for alias_file in "$TERMINAL_DIR/.config/alias"/*.alias(N); do
-  [[ -f "$alias_file" ]] || continue
-  local filename="${alias_file:t}"
-  check_symlink "$HOME/.config/alias/$filename" \
-                "dotfiles/terminal/.config/alias/$filename" \
-                "~/.config/alias/$filename"
-done
-
-# --- Symlinks: Tool-Konfigurationen ---
-section "Symlinks (Tool-Konfigurationen)"
-
-# DYNAMISCH: Alle config/ignore Dateien in .config/*/
-for config_file in "$TERMINAL_DIR/.config"/*/(config|ignore)(N); do
-  [[ -f "$config_file" ]] || continue
-  # Extrahiere relativen Pfad ab .config/
-  local rel_path="${config_file#$TERMINAL_DIR/}"
-  local display_path="~/${rel_path}"
-  check_symlink "$HOME/$rel_path" "dotfiles/terminal/$rel_path" "$display_path"
-done
-
-# DYNAMISCH: Alle .zsh Dateien in .config/*/ (z.B. fzf/init.zsh)
-for zsh_file in "$TERMINAL_DIR/.config"/*/*.zsh(N); do
-  [[ -f "$zsh_file" ]] || continue
-  local rel_path="${zsh_file#$TERMINAL_DIR/}"
-  local display_path="~/${rel_path}"
-  check_symlink "$HOME/$rel_path" "dotfiles/terminal/$rel_path" "$display_path"
-done
-
-# DYNAMISCH: Direkte Dateien in .config/ (z.B. shell-colors)
-for direct_file in "$TERMINAL_DIR/.config"/*(N-.); do
-  [[ -f "$direct_file" ]] || continue
-  local filename="${direct_file:t}"
-  # Überspringe versteckte Dateien
-  [[ "$filename" == .* ]] && continue
-  local rel_path=".config/$filename"
+while IFS= read -r source_file; do
+  [[ -z "$source_file" ]] && continue
+  
+  # Relativen Pfad berechnen (ab terminal/)
+  local rel_path="${source_file#$TERMINAL_DIR/}"
+  
+  # Ziel-Pfad im Home-Verzeichnis
+  local target_path="$HOME/$rel_path"
   local display_path="~/$rel_path"
-  check_symlink "$HOME/$rel_path" "dotfiles/terminal/$rel_path" "$display_path"
-done
+  
+  (( symlink_count++ )) || true
+  
+  if [[ -L "$target_path" ]]; then
+    # readlink direkt in Vergleich verwenden (vermeidet typeset output)
+    if [[ "$(readlink "$target_path")" == *"dotfiles/terminal/$rel_path"* ]]; then
+      pass "$display_path"
+    else
+      fail "$display_path → falsches Ziel: $(readlink "$target_path")"
+    fi
+  elif [[ -e "$target_path" ]]; then
+    fail "$display_path → existiert, ist aber kein Symlink"
+  else
+    fail "$display_path → fehlt"
+    missing_symlinks+=("$rel_path")
+  fi
+done < <(find "$TERMINAL_DIR" -type f ! -name '.DS_Store' ! -name '*.patch.md' 2>/dev/null | sort)
+
+# Hinweis bei fehlenden Symlinks
+if (( ${#missing_symlinks[@]} > 0 )); then
+  print "\n  💡 Fehlende Symlinks erstellen mit:"
+  print "     cd $DOTFILES_DIR && stow -R terminal"
+fi
+
+print "\n  📊 Geprüft: $symlink_count Dateien aus terminal/"
 
 # --- Homebrew & Tools ---
 section "Homebrew & CLI-Tools"
@@ -194,25 +198,55 @@ else
   fail "Homebrew nicht installiert"
 fi
 
-# ZSH-Plugins (aus Brewfile, aber spezielle Prüfung da kein Binary)
+# ZSH-Plugins (DYNAMISCH aus Brewfile extrahiert)
 section "ZSH-Plugins"
 
-for plugin in zsh-syntax-highlighting zsh-autosuggestions; do
-  if [[ -d "$(brew --prefix)/share/$plugin" ]]; then
-    pass "$plugin"
-  else
-    warn "$plugin nicht installiert"
-  fi
-done
+# DYNAMISCH: Extrahiere zsh-* Formulae aus Brewfile
+typeset -a zsh_plugins=($(grep -E '^brew "zsh-' "$BREWFILE" 2>/dev/null | sed 's/brew "\([^"]*\)".*/\1/'))
 
-# --- Font ---
+if (( ${#zsh_plugins[@]} > 0 )); then
+  for plugin in "${zsh_plugins[@]}"; do
+    if [[ -d "$(brew --prefix)/share/$plugin" ]]; then
+      pass "$plugin"
+    else
+      warn "$plugin nicht installiert (brew install $plugin)"
+    fi
+  done
+else
+  warn "Keine ZSH-Plugins in Brewfile gefunden"
+fi
+
+# --- Font (DYNAMISCH aus Brewfile) ---
 section "Nerd Font"
 
-font_files=(~/Library/Fonts/MesloLG*NerdFont*(N) /Library/Fonts/MesloLG*NerdFont*(N))
-if (( ${#font_files} > 0 )); then
-  pass "MesloLG Nerd Font installiert (${#font_files} Dateien)"
+# DYNAMISCH: Extrahiere Font-Casks aus Brewfile
+typeset -a font_casks=($(grep -E '^cask "font-' "$BREWFILE" 2>/dev/null | sed 's/cask "\([^"]*\)".*/\1/'))
+
+if (( ${#font_casks[@]} > 0 )); then
+  for font_cask in "${font_casks[@]}"; do
+    # Konvertiere cask-name zu Font-Dateiname-Pattern
+    # z.B. font-meslo-lg-nerd-font → MesloLG*NerdFont*
+    local font_pattern
+    case "$font_cask" in
+      font-meslo-lg-nerd-font)
+        font_pattern="MesloLG*NerdFont*"
+        ;;
+      font-*)
+        # Generischer Fallback: Entferne font- Prefix, CamelCase
+        font_pattern="${font_cask#font-}"
+        font_pattern="${font_pattern//-/}*"
+        ;;
+    esac
+    
+    local -a font_files=(~/Library/Fonts/${~font_pattern}(N) /Library/Fonts/${~font_pattern}(N))
+    if (( ${#font_files} > 0 )); then
+      pass "$font_cask installiert (${#font_files} Dateien)"
+    else
+      fail "$font_cask nicht gefunden"
+    fi
+  done
 else
-  fail "MesloLG Nerd Font nicht gefunden"
+  warn "Keine Font-Casks in Brewfile gefunden"
 fi
 
 # --- Terminal-Profil ---
