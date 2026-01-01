@@ -27,8 +27,9 @@ brew "lazygit"                              # Terminal-UI für Git
 brew "zsh-syntax-highlighting"              # Syntax-Highlighting für Kommandos
 brew "zsh-autosuggestions"                  # History-basierte Vorschläge
 
-# Fonts (seit Homebrew 4.0 in homebrew/cask integriert)
-cask "font-meslo-lg-nerd-font"
+# Casks (Fonts & Tools)
+cask "font-meslo-lg-nerd-font"              # Nerd Font für Terminal-Icons
+cask "claude-code"                          # Terminal-basierter KI-Coding-Assistent
 
 # Mac App Store Apps (via mas)
 # Hinweis: Benutzer muss im App Store angemeldet sein

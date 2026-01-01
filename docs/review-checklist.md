@@ -431,10 +431,12 @@ done
 ```zsh
 # Alle Farbdefinitionen finden
 grep -rn "1E1E2E\|CDD6F4\|F38BA8\|A6E3A1\|CBA6F7\|89B4FA" terminal/.config/
-grep -rn "Mauve\|Sky\|Green\|Red\|Yellow" terminal/.config/alias/help.alias
+
+# Zentrale Shell-Farben prüfen
+cat terminal/.config/shell-colors
 
 # Alle Theme-Konfigurationen auflisten
-find terminal/.config \( -name "*theme*" -o -name "*catppuccin*" \) 2>/dev/null
+find terminal/.config \( -name "*theme*" -o -name "*catppuccin*" -o -name "shell-colors" \) 2>/dev/null
 ```
 
 **Tools mit Theme-Support dynamisch finden:**
@@ -541,8 +543,8 @@ Prüfpunkte pro Datei:
 # Alle definierten Aliase aufrufen
 alias | head -20
 
-# Help-System testen
-help
+# Alias-/Funktionssuche testen
+fa
 ```
 
 ### 6.3 Unit-Tests

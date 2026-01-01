@@ -1,0 +1,17 @@
+# ============================================================
+# shell-colors - Shell-Farbdefinitionen (Catppuccin Mocha)
+# ============================================================
+# Zweck   : Zentrale ANSI-Farbvariablen für Shell-Funktionen
+# Pfad    : ~/.config/shell-colors
+# Palette : https://catppuccin.com/palette
+# ============================================================
+
+# True Color (24-bit) – Format: \033[38;2;R;G;Bm
+typeset -g C_RESET=$'\033[0m'
+typeset -g C_MAUVE=$'\033[38;2;203;166;247m'   # Akzent, Header
+typeset -g C_GREEN=$'\033[38;2;166;227;161m'   # Erfolg
+typeset -g C_BLUE=$'\033[38;2;137;180;250m'    # Info
+typeset -g C_YELLOW=$'\033[38;2;249;226;175m'  # Warnung
+typeset -g C_RED=$'\033[38;2;243;139;168m'     # Fehler
+typeset -g C_TEXT=$'\033[38;2;205;214;244m'    # Normaler Text
+typeset -g C_DIM=$'\033[38;2;108;112;134m'     # Gedimmt

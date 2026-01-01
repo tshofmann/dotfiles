@@ -227,11 +227,8 @@ check_header_block() {
         (( errors++ )) || true
     fi
     if ! $has_docs; then
-        # Docs ist optional für help.alias (hat keinen externen Link)
-        if [[ "$basename_file" != "help.alias" ]]; then
-            err "$basename_file: Fehlendes Pflichtfeld '# Docs    :'"
-            (( errors++ )) || true
-        fi
+        err "$basename_file: Fehlendes Pflichtfeld '# Docs    :'"
+        (( errors++ )) || true
     fi
     
     return $errors
