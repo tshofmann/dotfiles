@@ -35,13 +35,14 @@ dotfiles/
 │       │   ├── aliases.sh       # Alias-Anzahlen
 │       │   ├── config.sh        # Config-Beispiele
 │       │   └── symlinks.sh      # Symlink-Tabelle
-│       └── extended/            # Erweiterte Validierungen (8 Module)
+│       └── extended/            # Erweiterte Validierungen (9 Module)
 │           ├── alias-names.sh   # Alias-Namen vs. Code
 │           ├── codeblocks.sh    # Shell-Commands in Docs
 │           ├── copilot-instructions.sh # Copilot Instructions
 │           ├── readme.sh        # README Konsistenz
 │           ├── structure.sh     # Verzeichnisstruktur
 │           ├── style-consistency.sh # Code-Stil Konsistenz
+│           ├── tealdeer-patches.sh  # Tealdeer-Patches vs. Aliase
 │           ├── terminal-profile.sh  # Terminal-Profil
 │           └── validator-count.sh   # Validator-Anzahl Konsistenz
 ├── setup/
@@ -54,17 +55,17 @@ dotfiles/
     ├── .zshrc                   # Interactive Shell Konfiguration
     ├── .zlogin                  # Post-Login (Background-Optimierungen)
     └── .config/
-        ├── alias/               # Tool-Aliase (10 Dateien)
+        ├── alias/               # Tool-Aliase (9 Dateien)
         │   ├── bat.alias        # bat-Aliase (cat-Ersatz)
         │   ├── btop.alias       # btop-Aliase (top-Ersatz)
         │   ├── eza.alias        # eza-Aliase (ls-Ersatz)
         │   ├── fd.alias         # fd-Aliase (find-Ersatz)
-        │   ├── fzf.alias        # fzf Tool-Kombinationen
+        │   ├── fzf.alias        # fzf Tool-Kombinationen + fa()
         │   ├── gh.alias         # GitHub CLI Funktionen
         │   ├── git.alias        # Git-Aliase + lazygit
-        │   ├── help.alias       # Help-System
-        │   ├── homebrew.alias   # Homebrew + mas Aliase
+        │   ├── homebrew.alias   # Homebrew + mas Aliase + brewv()
         │   └── ripgrep.alias    # ripgrep-Aliase (grep-Ersatz)
+        ├── shell-colors         # Catppuccin Mocha ANSI-Farbvariablen
         ├── bat/
         │   ├── config           # bat native Config
         │   └── themes/          # Catppuccin Mocha Theme
@@ -76,13 +77,15 @@ dotfiles/
         ├── fd/
         │   └── ignore           # fd globale Ignore-Patterns
         ├── fzf/
-        │   └── config           # fzf globale Optionen (FZF_DEFAULT_OPTS_FILE)
+        │   ├── config           # fzf globale Optionen (FZF_DEFAULT_OPTS_FILE)
+        │   └── init.zsh         # fzf Shell-Integration (Keybindings, fd-Backend)
         ├── lazygit/
         │   └── config.yml       # lazygit Config mit Catppuccin Mocha
         ├── ripgrep/
         │   └── config           # ripgrep native Config (RIPGREP_CONFIG_PATH)
         ├── tealdeer/
-        │   └── config.toml      # tealdeer (tldr) Config mit Catppuccin Mocha
+        │   ├── config.toml      # tealdeer (tldr) Config mit Catppuccin Mocha
+        │   └── pages/           # Custom tldr-Patches (9 Dateien, 1:1 zu .alias)
         └── zsh/
             └── catppuccin_mocha-zsh-syntax-highlighting.zsh  # Syntax-Highlighting Theme
 ```
@@ -277,8 +280,9 @@ brew "btop"                      # top-Ersatz
 brew "zsh-syntax-highlighting"
 brew "zsh-autosuggestions"
 
-# Font
+# Casks (Fonts & Tools)
 cask "font-meslo-lg-nerd-font"
+cask "claude-code"
 
 # Mac App Store Apps (via mas)
 mas "Xcode", id: 497799835

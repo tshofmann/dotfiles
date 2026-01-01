@@ -50,33 +50,44 @@ z dotfiles
 
 ---
 
-## Integriertes Help-System
+## Alias-Suche und Dokumentation
 
-Die `help`-Funktion bietet eine interaktive Übersicht aller Aliase und Funktionen:
+### fa – Interaktive Alias-Suche
+
+Die `fa`-Funktion (fzf alias) durchsucht alle Aliase und Funktionen:
 
 ```zsh
-help                  # Übersicht aller Kategorien
-help <kategorie>      # Details zu einer Kategorie (z.B. help git)
-help search <text>    # Suche in allen Aliasen
-help tools            # Installierte Tools mit Versionen
-help --fzf            # Interaktive Auswahl mit fzf
+fa              # Alle Aliase/Funktionen durchsuchen
+fa commit       # Nach "commit" filtern
 ```
 
-**Beispiel-Ausgabe:**
+| Keybinding | Aktion |
+|------------|--------|
+| `Enter` | Definition anzeigen |
+| `Ctrl+Y` | Name kopieren |
+| `Ctrl+T` | `tldr <tool>` öffnen |
 
-```
-╭─────────────────────────────────────────────────────────────────╮
-│ 🚀 Dotfiles Help                                                │
-╰─────────────────────────────────────────────────────────────────╯
+### brewv – Versionsübersicht
 
-📁 Alias-Kategorien:
-  bat          Aliase für bat mit verschiedenen Ausgabe-Stilen
-  eza          Aliase für eza mit Icons und Git-Integration
-  git          Aliase für häufige Git-Operationen
-  ...
+```zsh
+brewv           # Alle Formulae, Casks und MAS-Apps mit Versionen
 ```
 
-> 💡 Die Help-Funktion parst automatisch alle `.alias`-Dateien und extrahiert Beschreibungen aus den Kommentaren.
+---
+
+## tldr mit dotfiles-Erweiterungen
+
+Die `tldr`-Befehle zeigen neben der offiziellen Dokumentation auch **dotfiles-spezifische Aliase und Funktionen**:
+
+```zsh
+tldr git      # + Aliase (ga, gc, gp) + Funktionen (glog, gbr, gst)
+tldr fzf      # + Tastenkürzel + Funktionen (zf, fkill, fman, ...)
+tldr brew     # + brewup, mas-Aliase, fzf-Funktionen
+tldr bat      # + cat, catn, catd Aliase
+tldr rg       # + rgc, rgi, rga + rgf Funktion
+```
+
+Die Erweiterungen sind als Patches implementiert – sie werden automatisch an die offizielle Dokumentation angehängt und beginnen mit `# dotfiles:`.
 
 ---
 
@@ -147,6 +158,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `bup` | **Brew Update**: Veraltete Pakete → Upgrade |
 | `brp` | **Brew Remove**: Installierte Pakete → Deinstallieren |
 | `bsp [query]` | **Brew Search**: Suchen mit Info-Vorschau |
+| `brewv` | **Brew Versions**: Alle Formulae, Casks und MAS-Apps mit Versionen |
 
 > **Hinweis:** Die mas-Aliase sind nur verfügbar wenn mas installiert ist. `brewup` enthält automatisch `mas upgrade` wenn mas vorhanden ist. Die interaktiven Funktionen benötigen fzf.
 
@@ -309,6 +321,7 @@ fzf ist als "Enhancer" in die jeweiligen Tool-Alias-Dateien integriert. Diese Da
 
 | Funktion | Beschreibung |
 |----------|--------------|
+| `fa` | **Fuzzy Alias**: Aliase/Funktionen durchsuchen, Enter=Definition, Ctrl+Y=Kopieren, Ctrl+T=tldr |
 | `fkill` | **Fuzzy Kill**: Prozesse auswählen und beenden |
 | `fman` | **Fuzzy Man**: Man-Pages durchsuchen mit bat-Vorschau |
 | `fenv` | **Fuzzy Env**: Umgebungsvariablen durchsuchen, Enter=Kopieren |
@@ -321,28 +334,10 @@ Die folgenden Funktionen nutzen fzf, sind aber nach ihrem primären Zweck in den
 - **ripgrep.alias**: `rgf`
 - **fd.alias**: `cdf`, `fo`
 - **git.alias**: `glog`, `gbr`, `gst`, `gstash`
-- **homebrew.alias**: `bip`, `bup`, `brp`, `bsp`
+- **homebrew.alias**: `bip`, `bup`, `brp`, `bsp`, `brewv`
 - **gh.alias**: `ghpr`, `ghis`, `ghrun`, `ghrepo`, `ghgist`
 
 > **Design-Prinzip:** Aliase werden nach ihrem primären Zweck organisiert, nicht nach den verwendeten Tools. `rgf` nutzt fzf+bat, ist aber primär eine Suche – daher in `ripgrep.alias`.
-
-### help.alias – Integriertes Help-System
-
-| Funktion | Beschreibung |
-|----------|--------------|
-| `help` | Übersicht aller Alias-Kategorien und Funktionen |
-
-**Unterbefehle:**
-
-```
-help                  # Übersicht aller Kategorien
-help <kategorie>      # Details zu einer Kategorie (z.B. help git)
-help search <text>    # Suche in allen Aliasen und Funktionen
-help tools            # Installierte Tools mit Versionsnummern
-help --fzf            # Interaktive Auswahl mit fzf
-```
-
-> **Hinweis:** Die Help-Funktion parst automatisch alle `.alias`-Dateien und extrahiert Beschreibungen aus den Kommentaren. Siehe [Integriertes Help-System](#integriertes-help-system) für Beispiele.
 
 ### Verwendung
 

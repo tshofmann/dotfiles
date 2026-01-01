@@ -91,6 +91,83 @@ fman() {
 }
 
 # ------------------------------------------------------------
+# ALIAS + FZF: Alias-/Funktions-Browser
+# ------------------------------------------------------------
+# Alle Aliase und Funktionen durchsuchen mit Beschreibung
+# Zeigt: Name, Typ (alias/function), Beschreibungskommentar
+fa() {
+    local alias_dir="${XDG_CONFIG_HOME:-$HOME/.config}/alias"
+    local query="${1:-}"
+    local selection name
+    
+    # Aliase und Funktionen aus allen .alias-Dateien extrahieren
+    # Format für fzf: name|typ|kategorie|beschreibung
+    local entries=$(
+        for file in "$alias_dir"/*.alias; do
+            [[ -f "$file" ]] || continue
+            local category="${${file##*/}%.alias}"
+            local prev_comment=""
+            
+            while IFS= read -r line; do
+                # Kommentar merken
+                if [[ "$line" =~ ^[[:space:]]*#[[:space:]]*(.*) ]]; then
+                    prev_comment="${match[1]}"
+                    continue
+                fi
+                
+                # Alias: "alias name='..." oder 'alias name="...'
+                if [[ "$line" =~ ^[[:space:]]*alias[[:space:]]+([a-zA-Z_][a-zA-Z0-9_-]*)= ]]; then
+                    echo "${match[1]}|alias|${category}|${prev_comment}"
+                    prev_comment=""
+                    continue
+                fi
+                
+                # Funktion: "name() {" (keine privaten mit _)
+                if [[ "$line" =~ ^([a-zA-Z][a-zA-Z0-9_-]*)\(\) ]]; then
+                    echo "${match[1]}|func|${category}|${prev_comment}"
+                    prev_comment=""
+                    continue
+                fi
+                
+                # Andere Zeile = Kommentar zurücksetzen
+                prev_comment=""
+            done < "$file"
+        done | sort -t'|' -k1,1 -u
+    )
+    
+    # Formatierte Ausgabe für fzf (Farben aus shell-colors)
+    selection=$(echo "$entries" | awk -F'|' \
+        -v mauve="$C_MAUVE" -v green="$C_GREEN" -v blue="$C_BLUE" \
+        -v text="$C_TEXT" -v reset="$C_RESET" '
+        NF >= 3 {
+            name = $1
+            typ = ($2 == "alias") ? "alias" : "func "
+            cat = $3
+            desc = $4
+            typcolor = ($2 == "alias") ? green : blue
+            printf "%s%-12s%s %s%-5s%s %s%-10s%s %s%s%s\n", 
+                mauve, name, reset,
+                typcolor, typ, reset,
+                text, cat, reset,
+                text, desc, reset
+        }
+    ' | fzf --ansi --query="$query" \
+        --header='Enter: Definition | Ctrl+Y: Kopieren | Ctrl+T: tldr' \
+        --preview 'name=$(echo {} | awk "{print \$1}"); 
+            type -a "$name" 2>/dev/null || alias "$name" 2>/dev/null' \
+        --preview-window='right:50%' \
+        --bind 'ctrl-y:execute-silent(echo {} | awk "{print \$1}" | pbcopy)+abort' \
+        --bind 'ctrl-t:execute(cat=$(echo {} | awk "{print \$3}"); tldr "$cat" 2>/dev/null | less)')
+    
+    # Bei Enter: Definition anzeigen
+    if [[ -n "$selection" ]]; then
+        name=$(echo "$selection" | awk '{print $1}')
+        echo "\n${C_MAUVE}━━━ $name ━━━${C_RESET}\n"
+        type -a "$name" 2>/dev/null || alias "$name" 2>/dev/null
+    fi
+}
+
+# ------------------------------------------------------------
 # ENV + FZF: Umgebungsvariablen-Browser
 # ------------------------------------------------------------
 # Umgebungsvariablen durchsuchen und Wert in Zwischenablage kopieren

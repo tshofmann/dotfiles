@@ -58,9 +58,9 @@ Validierungs-Tools liegen in `scripts/` – selbst erkunden was zur Änderung pa
 ### Alias-Dateien (`terminal/.config/alias/*.alias`)
 - **Header-Block** am Dateianfang (siehe CONTRIBUTING.md → "Header-Block Format")
 - **Guard-Check**: `if ! command -v tool >/dev/null 2>&1; then return 0; fi`
-- **Beschreibungskommentar** vor jeder Funktion/Alias für Help-System
+- **Beschreibungskommentar** vor jeder Funktion/Alias für `fa` und tldr-Patches
 - Lokale Variablen mit `local` deklarieren
-- Private Funktionen mit `_` Prefix (z.B. `_help_format`)
+- Private Funktionen mit `_` Prefix (z.B. `_my_helper`)
 - **Detaillierte Stil-Regeln**: Siehe CONTRIBUTING.md → "Stil-Regeln (automatisch geprüft)"
 
 ### fzf-Integration
@@ -68,7 +68,7 @@ Validierungs-Tools liegen in `scripts/` – selbst erkunden was zur Änderung pa
 - Preview-Commands mit **ZSH-Syntax** sollten mit `zsh -c '...'` gewrappt werden
 - Einfache externe Befehle (`bat`, `eza`, `gh`) brauchen kein Wrapping
 - ZSH Parameter Expansion statt `sed`/`cut` für Performance
-- Catppuccin Mocha Farben (definiert in `fzf/config` und `help.alias`)
+- Catppuccin Mocha Farben (definiert in `fzf/config` und `shell-colors`)
 - `--header=` für Keybinding-Hinweise im Format `Key: Aktion | Key: Aktion`
 
 ### Bekannte Patterns
@@ -222,17 +222,54 @@ Jedes Issue erfordert **vor dem Schreiben**:
 
 ### Catppuccin Mocha Farben
 
-| Konzept | Farbe | Hex |
-|---------|-------|-----|
-| Hintergrund | Base | `#1E1E2E` |
-| Text | Text | `#CDD6F4` |
-| Fehler | Red | `#F38BA8` |
-| Erfolg | Green | `#A6E3A1` |
-| Warnung | Yellow | `#F9E2AF` |
-| Info | Blue | `#89B4FA` |
-| Akzent | Mauve | `#CBA6F7` |
+**Vollständige Palette**: [catppuccin.com/palette](https://catppuccin.com/palette)
 
-Vollständige Palette: [catppuccin.com/palette](https://catppuccin.com/palette)
+#### Semantische Verwendung
+
+| Konzept | Farbe | Hex | RGB |
+|---------|-------|-----|-----|
+| Hintergrund | Base | `#1E1E2E` | `30, 30, 46` |
+| Auswahl-Hintergrund | Surface0 | `#313244` | `49, 50, 68` |
+| Rahmen | Overlay0 | `#6C7086` | `108, 112, 134` |
+| Gedimmt | Overlay0 | `#6C7086` | `108, 112, 134` |
+| Text | Text | `#CDD6F4` | `205, 214, 244` |
+| Fehler | Red | `#F38BA8` | `243, 139, 168` |
+| Erfolg | Green | `#A6E3A1` | `166, 227, 161` |
+| Warnung | Yellow | `#F9E2AF` | `249, 226, 175` |
+| Info | Blue | `#89B4FA` | `137, 180, 250` |
+| Akzent/Header | Mauve | `#CBA6F7` | `203, 166, 247` |
+
+#### Shell-Escape-Codes (ZSH)
+
+Für farbige Terminal-Ausgaben in Shell-Funktionen:
+
+```zsh
+# Catppuccin Mocha – ANSI 24-bit True Color
+# Format: \033[38;2;R;G;Bm (Vordergrund) oder \e[38;2;R;G;Bm
+C_RESET='\033[0m'
+C_MAUVE='\033[38;2;203;166;247m'   # Akzent, Header
+C_GREEN='\033[38;2;166;227;161m'   # Erfolg, Aliase
+C_BLUE='\033[38;2;137;180;250m'    # Info, Funktionen
+C_YELLOW='\033[38;2;249;226;175m'  # Warnung, Hervorhebung
+C_RED='\033[38;2;243;139;168m'     # Fehler
+C_TEXT='\033[38;2;205;214;244m'    # Normaler Text
+C_DIM='\033[38;2;108;112;134m'     # Gedimmter Text
+```
+
+#### Platzierung im Repository
+
+| Kontext | Datei | Format |
+|---------|-------|--------|
+| **Shell-Variablen (zentral)** | `terminal/.config/shell-colors` | `$C_MAUVE` etc. |
+| fzf globale Optionen | `terminal/.config/fzf/config` | `--color=name:#RRGGBB` |
+| eza Dateitypen | `terminal/.config/eza/theme.yml` | `foreground: "#rrggbb"` |
+| tealdeer Syntax | `terminal/.config/tealdeer/config.toml` | `rgb = { r, g, b }` |
+| lazygit UI | `terminal/.config/lazygit/config.yml` | `'#RRGGBB'` |
+| btop Monitoring | `terminal/.config/btop/themes/` | Theme-Datei |
+| bat Syntax | `terminal/.config/bat/themes/` | tmTheme XML |
+| zsh-syntax-highlighting | `terminal/.config/zsh/` | ZSH-Variablen |
+
+> **Shell-Funktionen**: Nutze die globalen `$C_*` Variablen aus `shell-colors` statt lokaler Definitionen.
 
 ### Verweise
 

@@ -312,9 +312,10 @@ gh pr create
 
 1. **Brewfile** erweitern: `setup/Brewfile`
 2. **Alias-Datei** erstellen: `terminal/.config/alias/tool.alias`
-3. **tools.md** aktualisieren: Tabelle + Alias-Sektion
-4. **architecture.md** aktualisieren: Brewfile-Beispiel
-5. `./scripts/validate-docs.sh` ausführen
+3. **Tealdeer-Patch** erstellen: `terminal/.config/tealdeer/pages/tool.patch.md`
+4. **tools.md** aktualisieren: Tabelle + Alias-Sektion
+5. **architecture.md** aktualisieren: Brewfile-Beispiel
+6. `./scripts/validate-docs.sh` ausführen
 
 ### Dokumentation ändern
 
@@ -329,6 +330,68 @@ gh pr create
 3. Als `setup/catppuccin-mocha.terminal` speichern (überschreiben)
 
 > ⚠️ **Niemals** die `.terminal`-Datei direkt editieren – enthält binäre Daten.
+
+### Tealdeer-Patch erstellen
+
+Patches erweitern die offizielle `tldr` Dokumentation mit dotfiles-spezifischen Aliasen und Funktionen.
+
+**1. Neue Patch-Datei anlegen:**
+
+```zsh
+# Dateiname = Tool-Name (nicht Alias-Name!)
+touch ~/.config/tealdeer/pages/tool.patch.md
+```
+
+**2. Format:**
+
+```markdown
+# dotfiles: Beschreibung der Kategorie
+
+- dotfiles: Was macht dieser Befehl:
+
+`befehlsname`
+
+- dotfiles: Mit Argument:
+
+`befehlsname {{argument}}`
+
+- dotfiles: Interaktiv mit fzf (`<Tab>` Mehrfach, `<Ctrl />` Vorschau):
+
+`funktionsname`
+```
+
+**3. Namenskonventionen:**
+
+| Alias-Datei | Patch-Datei | Grund |
+|-------------|-------------|-------|
+| `homebrew.alias` | `brew.patch.md` | tldr-Befehl ist `brew` |
+| `ripgrep.alias` | `rg.patch.md` | tldr-Befehl ist `rg` |
+| `*.alias` | `*.patch.md` | Sonst identisch |
+
+**4. Tastenkürzel-Syntax:**
+
+| Taste | Syntax |
+|-------|--------|
+| Modifier + Taste | `<Ctrl c>`, `<Alt x>` |
+| Einzelne Taste | `<Tab>`, `<Enter>`, `<Esc>` |
+
+> **Wichtig**: Leerzeichen zwischen Modifier und Taste: `<Ctrl c>` (nicht `<Ctrl-c>`)
+
+**5. Validieren:**
+
+```zsh
+./scripts/validate-docs.sh tealdeer-patches
+```
+
+**6. Was wird validiert?**
+
+| Kategorie | Automatisch geprüft | Hinweis |
+|-----------|---------------------|---------|
+| Aliase | ✅ Ja | `alias name=...` aus `.alias` |
+| Funktionen | ✅ Ja | `name() {` aus `.alias` |
+| Tastenkürzel | ❌ Nein | Manuell pflegen in `fzf.patch.md` |
+
+> ⚠️ **Tastenkürzel-Einschränkung**: Globale fzf-Keybindings (`--bind` Optionen) werden nicht automatisch validiert. Die Dokumentation in `fzf.patch.md` muss manuell synchron gehalten werden. Das Parsen verschachtelter Shell-Strings in `--bind` ist fehleranfällig und der Aufwand übersteigt den Nutzen.
 
 ---
 

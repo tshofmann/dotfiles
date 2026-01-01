@@ -40,6 +40,9 @@ fi
 # ------------------------------------------------------------
 # Aliase laden
 # ------------------------------------------------------------
+# Catppuccin Mocha ANSI-Farben für Shell-Funktionen
+[[ -f "$HOME/.config/shell-colors" ]] && source "$HOME/.config/shell-colors"
+
 # Lädt alle .alias-Dateien aus ~/.config/alias/
 for alias_file in "$HOME/.config/alias"/*.alias(N-.on); do
     source "$alias_file"
@@ -59,31 +62,9 @@ export EZA_ICONS_AUTO=1
 # ------------------------------------------------------------
 # Tools initialisieren
 # ------------------------------------------------------------
+# fzf: Shell-Integration (Ctrl+R, Ctrl+T, Alt+C)
 if command -v fzf >/dev/null 2>&1; then
-    # Ctrl+R = History, Ctrl+T = Datei suchen, Alt+C = Verzeichnis wechseln
-    source <(fzf --zsh)
-
-    # fd als Backend (schneller als find, ignoriert .git)
-    if command -v fd >/dev/null 2>&1; then
-        export FZF_DEFAULT_COMMAND='fd --type f --strip-cwd-prefix --hidden --follow --exclude .git'
-        export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-        export FZF_ALT_C_COMMAND='fd --type d --strip-cwd-prefix --hidden --follow --exclude .git'
-    fi
-
-    # Ctrl+Y in History-Suche kopiert Befehl ins Clipboard
-    export FZF_CTRL_R_OPTS="
-        --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
-        --header 'Ctrl+Y: Kopieren'"
-
-    # Dateivorschau mit Syntax-Highlighting
-    if command -v bat >/dev/null 2>&1; then
-        export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always --line-range=:500 {}'"
-    fi
-
-    # Verzeichnisvorschau als Baum
-    if command -v eza >/dev/null 2>&1; then
-        export FZF_ALT_C_OPTS="--preview 'eza --tree --level=1 --icons --color=always {}'"
-    fi
+    [[ -f "$HOME/.config/fzf/init.zsh" ]] && source "$HOME/.config/fzf/init.zsh"
 fi
 
 # Man-Pages mit Syntax-Highlighting
