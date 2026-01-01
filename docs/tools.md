@@ -118,6 +118,15 @@ Diese Tools werden via Brewfile installiert:
 | **zsh-autosuggestions** | History-basierte Befehlsvorschläge beim Tippen | [github.com/zsh-users/zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) |
 | **zsh-syntax-highlighting** | Echtzeit Syntax-Highlighting für Kommandos | [github.com/zsh-users/zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) |
 
+### Casks (Fonts & Tools)
+
+Diese Pakete werden via `brew install --cask` installiert:
+
+| App | Beschreibung | Dokumentation |
+|-----|--------------|---------------|
+| **claude-code** | Terminal-basierter KI-Coding-Assistent von Anthropic | [github.com/anthropics/claude-code](https://github.com/anthropics/claude-code) |
+| **font-meslo-lg-nerd-font** | Nerd Font für Terminal-Icons und Powerline-Symbole | [github.com/ryanoasis/nerd-fonts](https://github.com/ryanoasis/nerd-fonts) |
+
 ### Mac App Store Apps
 
 Diese Apps werden via `mas` installiert (Benutzer muss im App Store angemeldet sein):

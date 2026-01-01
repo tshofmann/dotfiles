@@ -3,9 +3,17 @@
 # brewfile.sh - Brewfile Validierung
 # ============================================================
 # Prüft: Brewfile Einträge vs architecture.md + tools.md
+# Dynamisch: Extrahiert alle Einträge aus Brewfile
 # ============================================================
 
 [[ -z "${VALIDATOR_LIB_LOADED:-}" ]] && source "${0:A:h:h}/lib.sh"
+
+# Extrahiert Namen aus Brewfile-Zeilen (brew "name", cask "name", mas "name")
+_extract_brewfile_names() {
+    local type="$1"
+    local file="$2"
+    grep "^${type} \"" "$file" 2>/dev/null | sed -E 's/^'"${type}"' "([^"]+)".*/\1/'
+}
 
 check_brewfile() {
     log "Prüfe Brewfile-Dokumentation..."
@@ -30,21 +38,39 @@ check_brewfile() {
     [[ "$cask_count" -eq "$docs_cask" ]] && ok "cask Formulae: $cask_count" || err "cask Formulae: Code=$cask_count, Docs=$docs_cask"
     [[ "$mas_count" -eq "$docs_mas" ]] && ok "mas Apps: $mas_count" || err "mas Apps: Code=$mas_count, Docs=$docs_mas"
     
-    # Prüfe Tool-Namen gegen tools.md
-    log "Prüfe CLI-Tool Namen in tools.md..."
-    local -a required_tools=(fzf stow starship zoxide eza bat ripgrep fd btop gh)
-    local missing_tools=()
+    # Dynamisch: Prüfe ALLE Brewfile-Einträge gegen tools.md
+    log "Prüfe Brewfile-Einträge in tools.md..."
+    local -a missing_tools=()
+    local name
     
-    for tool in "${required_tools[@]}"; do
-        if ! grep -qE "^\| \*\*$tool\*\*" "$tools_doc" 2>/dev/null; then
-            missing_tools+=("$tool")
+    # brew Formulae (CLI-Tools + ZSH-Plugins)
+    while IFS= read -r name; do
+        [[ -z "$name" ]] && continue
+        if ! grep -qE "^\| \*\*${name}\*\*" "$tools_doc" 2>/dev/null; then
+            missing_tools+=("brew:$name")
         fi
-    done
+    done < <(_extract_brewfile_names "brew" "$brewfile")
+    
+    # cask Formulae (Desktop Apps + Fonts)
+    while IFS= read -r name; do
+        [[ -z "$name" ]] && continue
+        if ! grep -qE "^\| \*\*${name}\*\*" "$tools_doc" 2>/dev/null; then
+            missing_tools+=("cask:$name")
+        fi
+    done < <(_extract_brewfile_names "cask" "$brewfile")
+    
+    # mas Apps (Mac App Store)
+    while IFS= read -r name; do
+        [[ -z "$name" ]] && continue
+        if ! grep -qE "^\| \*\*${name}\*\*" "$tools_doc" 2>/dev/null; then
+            missing_tools+=("mas:$name")
+        fi
+    done < <(_extract_brewfile_names "mas" "$brewfile")
     
     if (( ${#missing_tools[@]} == 0 )); then
-        ok "Alle kritischen Tools in tools.md dokumentiert"
+        ok "Alle Brewfile-Einträge in tools.md dokumentiert"
     else
-        err "Tools fehlen in tools.md: ${missing_tools[*]}"
+        err "Einträge fehlen in tools.md: ${missing_tools[*]}"
     fi
 }
 
