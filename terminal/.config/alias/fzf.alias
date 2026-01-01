@@ -162,7 +162,7 @@ fa() {
     # Bei Enter: Definition anzeigen
     if [[ -n "$selection" ]]; then
         name=$(echo "$selection" | awk '{print $1}')
-        echo "\n${C_MAUVE}━━━ $name ━━━${C_RESET}\n"
+        print "\n${C_MAUVE}━━━ $name ━━━${C_RESET}\n"
         type -a "$name" 2>/dev/null || alias "$name" 2>/dev/null
     fi
 }

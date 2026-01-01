@@ -60,7 +60,7 @@ brewv() {
     local formula_count=0 cask_count=0 mas_count=0
     
     # Formulae aus Brewfile
-    echo "${C_MAUVE}━━━ Homebrew Formulae ━━━${C_RESET}"
+    print "${C_MAUVE}━━━ Homebrew Formulae ━━━${C_RESET}"
     grep '^brew "' "$brewfile" | sed 's/brew "\([^"]*\)".*/\1/' | while read -r pkg; do
         local version=$(brew list --versions "$pkg" 2>/dev/null | cut -d' ' -f2-)
         if [[ -n "$version" ]]; then
@@ -72,7 +72,7 @@ brewv() {
     formula_count=$(grep -c '^brew "' "$brewfile")
     
     # Casks aus Brewfile
-    echo "\n${C_MAUVE}━━━ Homebrew Casks ━━━${C_RESET}"
+    print "\n${C_MAUVE}━━━ Homebrew Casks ━━━${C_RESET}"
     grep '^cask "' "$brewfile" | sed 's/cask "\([^"]*\)".*/\1/' | while read -r pkg; do
         local version=$(brew list --cask --versions "$pkg" 2>/dev/null | cut -d' ' -f2-)
         if [[ -n "$version" ]]; then
@@ -85,7 +85,7 @@ brewv() {
     
     # MAS Apps aus Brewfile
     if command -v mas >/dev/null 2>&1; then
-        echo "\n${C_MAUVE}━━━ Mac App Store ━━━${C_RESET}"
+        print "\n${C_MAUVE}━━━ Mac App Store ━━━${C_RESET}"
         grep '^mas "' "$brewfile" | while read -r line; do
             # Format: mas "Name", id: 123456
             local name=$(echo "$line" | sed 's/mas "\([^"]*\)".*/\1/')
@@ -101,7 +101,7 @@ brewv() {
         mas_count=$(grep -c '^mas "' "$brewfile")
     fi
     
-    echo "\n${C_DIM}Brewfile: $formula_count Formulae | $cask_count Casks | $mas_count MAS${C_RESET}"
+    print "\n${C_DIM}Brewfile: $formula_count Formulae | $cask_count Casks | $mas_count MAS${C_RESET}"
 }
 
 # ------------------------------------------------------------
