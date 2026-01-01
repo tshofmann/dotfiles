@@ -19,6 +19,22 @@ Sehen → Recherchieren → Denken → Verstehen → Handeln
 - **Beweispflicht** – jede Aussage mit Beleg (Code, Terminal-Output, Doku)
 - **Bei Unklarheiten**: Rückfrage statt Annahme
 
+### ⚠️ Grenzen der automatischen Validierung
+
+Validatoren prüfen **syntaktische Konsistenz**, nicht **semantische Korrektheit**:
+
+| Validator prüft ✓ | Validator prüft NICHT ✗ |
+|-------------------|-------------------------|
+| Anzahl Aliase in Doku = Anzahl im Code | Ob Alias-Beschreibungen stimmen |
+| Brewfile-Zahlen in architecture.md | Ob Tool-Beschreibungen aktuell sind |
+| Header-Format (Felder vorhanden) | Ob Header-Inhalte sinnvoll sind |
+| Symlink-Tabelle existiert | Ob Symlinks tatsächlich funktionieren |
+| Code-Blöcke syntaktisch korrekt | Ob Befehle das tun was dokumentiert ist |
+
+**Konsequenz:** Ein grüner Validator-Lauf bedeutet nicht, dass alles stimmt. Er bedeutet nur, dass die geprüften Patterns übereinstimmen.
+
+> 💡 **Faustregel:** Validatoren finden ~60% der Probleme automatisch. Die restlichen 40% erfordern menschliches Urteilsvermögen.
+
 ---
 
 ## Rolle & Kontext
@@ -44,7 +60,7 @@ Sehen → Recherchieren → Denken → Verstehen → Handeln
 # Aktuelle Struktur erfassen
 tree -L 3 -a -I ".git"
 find . -type f -name "*.alias" | wc -l
-find . -type f -name "*.sh" | head -20
+find . -type f -name "*.sh" | head -20  # Erste 20 zur Übersicht
 ```
 
 **Prüfen (Code → Doku, nicht umgekehrt!):**
@@ -147,7 +163,7 @@ Für jede Datei in `terminal/.config/alias/`:
 
 **Struktur-Checks (siehe CONTRIBUTING.md → "Header-Block Format"):**
 - [ ] Header-Block mit Metadaten (Zweck, Pfad, Docs)?
-- [ ] Guard-Check vorhanden (`command -v tool >/dev/null`)?
+- [ ] Guard-Check vorhanden (`command -v tool >/dev/null 2>&1`)?
 - [ ] Beschreibungskommentare für Help-System?
 - [ ] Private Funktionen mit `_` Prefix?
 
@@ -209,7 +225,7 @@ for file in terminal/.config/alias/*.alias; do
 done
 
 # 2. Tools OHNE fzf-Integration (Potenzial?):
-echo ""
+echo
 echo "=== Potenzielle fzf-Integrationen ==="
 for tool in $(grep '^brew "' setup/Brewfile | sed 's/brew "\([^"]*\)".*/\1/'); do
   # Prüfen ob in fzf.alias ODER als fzf-Funktion woanders
@@ -221,7 +237,7 @@ for tool in $(grep '^brew "' setup/Brewfile | sed 's/brew "\([^"]*\)".*/\1/'); d
 done
 
 # 3. Alias-Dateien OHNE bat-Preview (cat statt bat?):
-echo ""
+echo
 echo "=== Alias-Dateien ohne bat-Preview ==="
 for file in terminal/.config/alias/*.alias; do
   if grep -q "preview" "$file" 2>/dev/null; then
@@ -233,7 +249,7 @@ done
 grep -rn "cat " terminal/.config/alias/*.alias | grep -v "# " | head -5 && echo "  ↑ cat statt bat?"
 
 # 4. Tools OHNE Catppuccin-Theme:
-echo ""
+echo
 echo "=== Config-Verzeichnisse ohne Theme ==="
 for dir in terminal/.config/*/; do
   if ! grep -rqi "catppuccin\|theme\|color\|#[0-9A-Fa-f]\{6\}" "$dir" 2>/dev/null; then
@@ -242,13 +258,13 @@ for dir in terminal/.config/*/; do
 done
 
 # 5. Doppelte Funktionalität finden:
-echo ""
+echo
 echo "=== Mögliche Duplikate ==="
 # Aliase die auf dasselbe Kommando zeigen
 grep -h "^alias" terminal/.config/alias/*.alias | sed 's/alias \([^=]*\)=.*/\1/' | sort | uniq -d
 
 # 6. Häufige Workflows ohne Keybinding/Alias:
-echo ""
+echo
 echo "=== Häufige Patterns ohne Alias ==="
 # Git-Operationen die häufig sind aber evtl. keinen Alias haben
 for cmd in "git stash" "git rebase" "git cherry-pick" "git bisect"; do
@@ -291,6 +307,8 @@ done
 
 ### 4.1 Automatische Validierung
 
+> ⚠️ **Achtung:** Diese Skripte prüfen nur strukturelle Übereinstimmung. Sie können nicht beurteilen, ob Beschreibungen inhaltlich korrekt sind oder ob dokumentierte Workflows noch funktionieren.
+
 ```zsh
 # Vollständige Validierung
 ./scripts/validate-docs.sh
@@ -301,6 +319,11 @@ done
 # Erweiterte Prüfungen
 ./scripts/validate-docs.sh --extended
 ```
+
+**Nach jedem Validator-Lauf fragen:**
+- Sind die gemeldeten Warnungen tatsächlich Probleme oder False Positives?
+- Was prüft dieser Validator NICHT, das trotzdem kaputt sein könnte?
+- Haben sich Tool-Versionen geändert, die die Doku betreffen?
 
 ### 4.2 Code → Doku Abgleich (manuell)
 
@@ -406,9 +429,10 @@ for file in terminal/.config/alias/*.alias; do
   echo "  .zshrc-Integration:"
   grep -n "$tool" terminal/.zshrc 2>/dev/null | sed 's/^/    /' | head -3
   
-  # 3. Welche Umgebungsvariablen?
+  # 3. Welche Umgebungsvariablen? (${(U)tool} = uppercase in ZSH)
   echo "  Umgebungsvariablen:"
-  grep -E "^export.*${(U)tool}" terminal/.zshenv terminal/.zshrc 2>/dev/null | sed 's/^/    /'
+  tool_upper="${(U)tool}"
+  grep -E "^export.*${tool_upper}" terminal/.zshenv terminal/.zshrc 2>/dev/null | sed 's/^/    /'
   
   # 4. Hat es Previews?
   echo "  Previews:"
@@ -447,12 +471,11 @@ echo "=== Theme-Dateien ==="
 find terminal/.config -type f \( -name "*theme*" -o -name "*color*" -o -name "*.yml" -o -name "*.toml" \) 2>/dev/null
 
 # Catppuccin-Referenzen prüfen:
-echo ""
 echo "=== Catppuccin-Referenzen ==="
 grep -rln -i "catppuccin\|mocha\|1E1E2E" terminal/.config/ setup/*.terminal 2>/dev/null
 
 # Tools MIT Config aber OHNE Theme:
-echo ""
+echo
 echo "=== Config ohne Theme-Referenz ==="
 for dir in terminal/.config/*/; do
   tool=$(basename "$dir")
@@ -481,7 +504,7 @@ for dir in terminal/.config/*/; do
   echo -n "$tool: "
   if [[ -L "$target" ]]; then
     local link_target
-    link_target=$(readlink "$target" 2>/dev/null)
+    link_target=$(readlink "$target" 2>/dev/null || true)
     [[ -n "$link_target" ]] && echo "✓ Symlink → $link_target" || echo "⚠ Defekter Symlink"
   elif [[ -d "$target" ]]; then
     echo "⚠ Verzeichnis (kein Symlink)"
@@ -554,6 +577,8 @@ fa
 ./scripts/tests/run-tests.sh --verbose
 ```
 
+> ⚠️ **Tests prüfen die Validatoren, nicht das Repository.** Ein erfolgreicher Test-Lauf bestätigt nur, dass die Test-Logik funktioniert – nicht, dass die Alias-Dateien korrekt sind oder die Dokumentation stimmt.
+
 ### 6.4 Edge-Cases
 
 | Test | Erwartung |
@@ -561,6 +586,20 @@ fa
 | Tool nicht installiert | Guard verhindert Fehler |
 | Leeres Verzeichnis | Graceful handling |
 | Spezialzeichen in Pfaden | Korrekte Quotierung |
+
+### 6.5 Validator-Blindspots (manuell prüfen)
+
+Diese Aspekte werden von **keinem Validator** geprüft:
+
+| Aspekt | Manuelle Prüfung |
+|--------|------------------|
+| **fzf-Keybindings funktionieren** | Jeden Shortcut einmal testen |
+| **Preview-Commands zeigen korrekten Output** | Visuell verifizieren |
+| **Aliase tun was die Beschreibung sagt** | Stichproben ausführen |
+| **Tool-Versionen kompatibel** | `brew outdated` + Changelog prüfen |
+| **Symlinks zeigen auf richtige Targets** | `ls -la ~/.config/` |
+| **Guard-Logik ist korrekt** | Tool deinstallieren und Shell neu laden |
+| **Catppuccin-Farben visuell korrekt** | Screenshots vergleichen |
 
 ---
 
@@ -618,10 +657,13 @@ Ein Review ist abgeschlossen wenn:
 
 1. **Verstanden** – Repository-Zustand ist klar, nicht nur oberflächlich geprüft
 2. **Verifiziert** – Aussagen sind belegt (Terminal-Output, Code-Referenzen)
-3. **Dokumentiert** – Erkenntnisse und Empfehlungen sind strukturiert festgehalten
-4. **Freigabe eingeholt** – keine Umsetzung ohne explizite Bestätigung
+3. **Manuell getestet** – Kritische Funktionen wurden ausgeführt, nicht nur Validatoren
+4. **Dokumentiert** – Erkenntnisse und Empfehlungen sind strukturiert festgehalten
+5. **Freigabe eingeholt** – keine Umsetzung ohne explizite Bestätigung
 
 Welche Validierungen und Prüfungen dafür nötig sind, ergibt sich aus dem Review-Kontext. Tools in `scripts/` können helfen – aber kritisch einsetzen, nicht blind vertrauen.
+
+> ⚠️ **Abschließende Erinnerung:** Ein Review das nur `./scripts/validate-docs.sh` ausführt und "alles grün" meldet, ist **kein vollständiges Review**. Die Validatoren prüfen Syntax und Struktur – ob das Repository tatsächlich funktioniert, muss manuell verifiziert werden.
 
 > **Verweise:**
 > - [copilot-instructions.md](../.github/copilot-instructions.md) – Arbeitsweise, Code-Stil
