@@ -12,6 +12,8 @@
 #           - terminal/.zsh* (Shell-Konfiguration)
 #           - terminal/.config/alias/*.alias (Alias-Dateien)
 #           - terminal/.config/*/{config,ignore} (Tool-Configs)
+#           - terminal/.config/*/*.zsh (ZSH-Module wie fzf/init.zsh)
+#           - terminal/.config/* (Direkte Dateien wie shell-colors)
 #           - setup/Brewfile (CLI-Tools via brew)
 #
 # Aufruf  : ./scripts/health-check.sh
@@ -151,6 +153,25 @@ for config_file in "$TERMINAL_DIR/.config"/*/(config|ignore)(N); do
   # Extrahiere relativen Pfad ab .config/
   local rel_path="${config_file#$TERMINAL_DIR/}"
   local display_path="~/${rel_path}"
+  check_symlink "$HOME/$rel_path" "dotfiles/terminal/$rel_path" "$display_path"
+done
+
+# DYNAMISCH: Alle .zsh Dateien in .config/*/ (z.B. fzf/init.zsh)
+for zsh_file in "$TERMINAL_DIR/.config"/*/*.zsh(N); do
+  [[ -f "$zsh_file" ]] || continue
+  local rel_path="${zsh_file#$TERMINAL_DIR/}"
+  local display_path="~/${rel_path}"
+  check_symlink "$HOME/$rel_path" "dotfiles/terminal/$rel_path" "$display_path"
+done
+
+# DYNAMISCH: Direkte Dateien in .config/ (z.B. shell-colors)
+for direct_file in "$TERMINAL_DIR/.config"/*(N-.); do
+  [[ -f "$direct_file" ]] || continue
+  local filename="${direct_file:t}"
+  # Überspringe versteckte Dateien
+  [[ "$filename" == .* ]] && continue
+  local rel_path=".config/$filename"
+  local display_path="~/$rel_path"
   check_symlink "$HOME/$rel_path" "dotfiles/terminal/$rel_path" "$display_path"
 done
 
