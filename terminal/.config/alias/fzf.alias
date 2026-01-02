@@ -84,6 +84,9 @@ fman() {
     mode_file=$(mktemp)
     echo "man" > "$mode_file"
     
+    # Cleanup bei Abbruch oder Funktionsende
+    trap 'rm -f "$mode_file" 2>/dev/null' EXIT INT TERM
+    
     selection=$(man -k . 2>/dev/null | \
         fzf --prompt='Man> ' \
             --preview "$man_preview" \
@@ -193,7 +196,7 @@ fa() {
             if [[ -f "$file" ]]; then
                 # Suche Definition in der Datei
                 awk -v name="$name" '\''
-                    BEGIN { found=0; buffer="" }
+                    BEGIN { found=0; buffer=""; printing=0 }
                     /^[[:space:]]*#/ { 
                         if (!found) buffer = $0 "\n"
                         next 
@@ -248,7 +251,7 @@ fenv() {
         --header='Enter: Kopieren | Ctrl+Y: Nur Wert' \
         --preview='n=$(echo {} | cut -d"│" -f1 | xargs)
             v=$(printenv "$n" 2>/dev/null)
-            printf "\033[38;2;203;166;247m%s\033[0m\n\n" "$n"
+            printf "${C_MAUVE}%s${C_RESET}\n\n" "$n"
             if [[ "$v" == *:* ]] && [[ "$n" == *PATH* || "$n" == *DIRS* ]]; then
                 echo "$v" | tr ":" "\n" | nl -ba
             else

@@ -129,8 +129,8 @@ validate_keybindings() {
         local -a functions=($(extract_functions_from_file "$alias_file" | grep -v "^_"))
         
         for func in "${functions[@]}"; do
-            # Extrahiere Funktionsblock
-            local func_block=$(awk "/[[:space:]]*${func}\(\)[[:space:]]*\{/,/^[[:space:]]*\}/" "$alias_file" 2>/dev/null)
+            # Extrahiere Funktionsblock (awk -v für sichere Variablen-Übergabe)
+            local func_block=$(awk -v fn="$func" '$0 ~ fn"\\(\\)[[:space:]]*\\{",/^[[:space:]]*\}/' "$alias_file" 2>/dev/null)
             
             # Prüfe ob Funktion fzf verwendet
             local uses_fzf=false
@@ -157,7 +157,7 @@ validate_keybindings() {
             local -a code_keys=($(__extract_all_keys "$header"))
             
             # Extrahiere Keys aus tools.md (suche | `func` | oder | `func [args]` |)
-            local docs_line=$(grep -E "^\|[^|]*\`${func}(\`| |\[)" "$DOCS_DIR/tools.md" 2>/dev/null | head -1)
+            local docs_line=$(grep -F "\`${func}" "$DOCS_DIR/tools.md" 2>/dev/null | grep -E '^\|' | head -1)
             local -a docs_keys=()
             [[ -n "$docs_line" ]] && docs_keys=($(__extract_all_keys "$docs_line"))
             
@@ -165,7 +165,7 @@ validate_keybindings() {
             local patch_line=""
             local -a patch_keys=()
             if [[ -f "$patch_file" ]]; then
-                patch_line=$(grep -B2 "^\`${func}" "$patch_file" 2>/dev/null | head -1)
+                patch_line=$(grep -F "\`${func}" "$patch_file" 2>/dev/null | head -n1 | xargs -I{} grep -B2 -F "{}" "$patch_file" | head -1)
                 [[ -n "$patch_line" ]] && patch_keys=($(__extract_patch_keys "$patch_line"))
             fi
             
