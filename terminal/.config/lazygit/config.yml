@@ -1,11 +1,11 @@
 # ============================================================
-# lazygit Config - Terminal-UI für Git
+# config.yml - lazygit Terminal-UI für Git
 # ============================================================
 # Zweck   : lazygit Konfiguration mit Catppuccin Mocha Theme
 # Pfad    : ~/.config/lazygit/config.yml
 # Docs    : https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md
 # ============================================================
-# Theme   : Catppuccin Mocha (Mauve Akzent)
+# Hinweis : Theme: Catppuccin Mocha (Mauve Akzent)
 #           https://github.com/catppuccin/lazygit
 # ============================================================
 

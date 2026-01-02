@@ -204,9 +204,11 @@ Einige Dateien folgen **nicht** dem Standard-Header-Format:
 
 | Datei | Grund |
 |-------|-------|
-| `eza/theme.yml` | Reines YAML-Datenformat – kein Kommentar-Header möglich |
-| `btop/btop.conf` | Natives btop-Format mit `#?`-Kommentaren |
-| `zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh` | Third-Party Theme – nicht modifizieren |
+| `btop/btop.conf` | Wird von btop generiert – `btop --write-config` überschreibt Änderungen |
+| `btop/themes/*.theme` | Third-Party Theme (Catppuccin) – bei Updates überschrieben |
+| `bat/themes/*.tmTheme` | Third-Party Theme (Catppuccin) – bei Updates überschrieben |
+| `zsh/catppuccin_*.zsh` | Third-Party Theme (Catppuccin) – bei Updates überschrieben |
+| `tealdeer/pages/*.patch.md` | Markdown-Format für tldr-Patches – eigenes Schema |
 
 Diese Dateien werden vom `style-consistency` Validator ignoriert.
 

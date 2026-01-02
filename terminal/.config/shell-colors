@@ -3,7 +3,7 @@
 # ============================================================
 # Zweck   : Zentrale ANSI-Farbvariablen für Shell-Funktionen
 # Pfad    : ~/.config/shell-colors
-# Palette : https://catppuccin.com/palette
+# Docs    : https://catppuccin.com/palette
 # ============================================================
 
 # True Color (24-bit) – Format: \033[38;2;R;G;Bm
