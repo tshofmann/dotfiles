@@ -79,9 +79,13 @@
             "type": "memory"
         },
         {
-            "key": "│ {#36}󰩟 network {#keys}│",
+            "key": "│ {#36}󰩟 localip {#keys}│",
             "type": "localip",
             "format": "{ipv4} ({ifname})"
+        },
+        {
+            "key": "│ {#37}󰖟 pubip   {#keys}│",
+            "type": "publicip"
         },
         {
             "key": "│ {#31}󰁹 battery {#keys}│",
