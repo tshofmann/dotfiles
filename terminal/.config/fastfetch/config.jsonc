@@ -73,6 +73,10 @@
             "format": "{ipv4} ({ifname})"
         },
         {
+            "key": "│ {#31}󰁹 battery {#keys}│",
+            "type": "battery"
+        },
+        {
             "key": "├───────────┤",
             "type": "custom"
         },
