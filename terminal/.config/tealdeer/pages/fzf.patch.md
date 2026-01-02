@@ -18,7 +18,7 @@
 
 `fa {{suche}}`
 
-- dotfiles: Verzeichniswechsel mit zoxide-Daten (`<Ctrl d>` Löschen, `<Ctrl y>` Kopieren):
+- dotfiles: Verzeichniswechsel mit zoxide-Daten (`<Enter>` Wechseln, `<Ctrl d>` Löschen, `<Ctrl y>` Kopieren):
 
 `zf`
 
@@ -26,7 +26,7 @@
 
 `fkill`
 
-- dotfiles: Man-Pages durchsuchen (`<Ctrl l>` tldr, `<Ctrl b>` man):
+- dotfiles: Man-Pages durchsuchen (`<Enter>` Öffnen, `<Ctrl l>` tldr, `<Ctrl b>` man):
 
 `fman`
 

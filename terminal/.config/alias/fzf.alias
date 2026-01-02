@@ -96,6 +96,7 @@ fman() {
     
     local mode=$(cat "$mode_file")
     rm -f "$mode_file"
+    trap - EXIT INT TERM
     
     if [[ -n "$selection" ]]; then
         page=$(echo "$selection" | sed 's/(.*//' | xargs)
