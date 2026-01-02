@@ -56,14 +56,12 @@ fi
 # Prozesse interaktiv suchen und beenden (Tab für Mehrfachauswahl)
 fkill() {
     local pid
-    pid=$(ps -ef | sed 1d | fzf --multi \
+    pid=$(ps -ef | sed 1d | fzf -m \
         --header='Enter: Beenden | Tab: Mehrfach | Ctrl+K: Kill -9' \
-        --preview 'echo {}' \
-        --preview-window='down:3' \
         --bind 'ctrl-k:execute(echo {} | awk "{print \$2}" | xargs kill -9)+abort' | \
         awk '{print $2}')
     
-    [[ -n "$pid" ]] && echo "$pid" | xargs kill -15
+    [[ -n "$pid" ]] && echo "$pid" | xargs kill -${1:-15}
 }
 
 # ------------------------------------------------------------
