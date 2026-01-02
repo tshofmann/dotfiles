@@ -68,22 +68,38 @@ fkill() {
 # MAN + FZF + BAT: Man-Pages Browser
 # ------------------------------------------------------------
 # Man-Pages interaktiv durchsuchen mit Syntax-Highlighting
+# Ctrl+L wechselt zu tldr-Preview, Ctrl+B zurück zu man
+# Enter öffnet je nach Modus man oder tldr
 fman() {
-    local selection page
+    local selection page section mode_file
+    local man_preview="echo {} | sed 's/(.*//' | xargs man 2>/dev/null | col -bx | bat --color=always -l man -p"
+    local tldr_preview="echo {} | sed 's/(.*//' | xargs tldr --color=always 2>/dev/null || echo 'Keine tldr-Seite verfügbar'"
+    
+    mode_file=$(mktemp)
+    echo "man" > "$mode_file"
+    
     selection=$(man -k . 2>/dev/null | \
         fzf --prompt='Man> ' \
-            --preview "echo {} | sed 's/(.*//' | xargs man 2>/dev/null | bat --color=always -l man -p" \
-            --header='Enter: Öffnen')
+            --preview "$man_preview" \
+            --header='Enter: Öffnen | Ctrl+L: tldr | Ctrl+B: man' \
+            --bind "ctrl-l:change-preview($tldr_preview)+change-prompt(tldr> )+execute-silent(echo tldr > $mode_file)" \
+            --bind "ctrl-b:change-preview($man_preview)+change-prompt(Man> )+execute-silent(echo man > $mode_file)")
+    
+    local mode=$(cat "$mode_file")
+    rm -f "$mode_file"
     
     if [[ -n "$selection" ]]; then
-        # Extrahiere Seitenname und Section (z.B. "printf(3)" → "3 printf")
-        local page section
-        page=$(echo "$selection" | sed 's/(.*//')
-        section=$(echo "$selection" | sed -n 's/.*([^0-9]*\([0-9][a-z]*\)).*/\1/p')
-        if [[ -n "$section" ]]; then
-            man "$section" "$page"
+        page=$(echo "$selection" | sed 's/(.*//' | xargs)
+        
+        if [[ "$mode" == "tldr" ]]; then
+            tldr "$page"
         else
-            man "$page"
+            section=$(echo "$selection" | sed -n 's/.*([^0-9]*\([0-9][a-z]*\)).*/\1/p')
+            if [[ -n "$section" ]]; then
+                man "$section" "$page"
+            else
+                man "$page"
+            fi
         fi
     fi
 }
