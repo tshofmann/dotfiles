@@ -156,10 +156,10 @@ fa() {
             fi
             
             # Funktion: "name() {" (keine privaten mit _)
-            # [[:space:]]# = null oder mehr Leerzeichen (ZSH extended glob)
-            if [[ "$line" == [[:space:]]#[a-zA-Z]*"() {"* && "$line" != *_* ]]; then
-                local func_name="${line##[[:space:]]#}"  # Führende Leerzeichen entfernen
-                func_name="${func_name%%\(\)*}"          # Ab ( abschneiden
+            # Erst trimmen, dann Pattern prüfen (ohne EXTENDED_GLOB)
+            local trimmed="${line#"${line%%[![:space:]]*}"}"
+            if [[ "$trimmed" == [a-zA-Z]*"() {"* && "$trimmed" != _* ]]; then
+                local func_name="${trimmed%%\(*}"        # Ab ( abschneiden
                 if [[ -n "$func_name" && "$func_name" != *" "* ]]; then
                     entries+="${func_name}|func|${category}|${prev_comment}"$'\n'
                 fi
@@ -254,7 +254,7 @@ fenv() {
         --header='Enter: Kopieren | Ctrl+Y: Nur Wert' \
         --preview='n=$(echo {} | cut -d"│" -f1 | xargs)
             v=$(printenv "$n" 2>/dev/null)
-            printf "\033[38;2;203;166;247m%s\033[0m\n\n" "$n"
+            printf "%s%s%s\n\n" "$C_MAUVE" "$n" "$C_RESET"
             if [[ "$v" == *:* ]] && [[ "$n" == *PATH* || "$n" == *DIRS* ]]; then
                 echo "$v" | tr ":" "\n" | nl -ba
             else
