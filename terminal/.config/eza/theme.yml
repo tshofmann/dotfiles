@@ -1,3 +1,14 @@
+# ============================================================
+# theme.yml - eza Farbschema (Catppuccin Mocha)
+# ============================================================
+# Zweck   : Dateityp-Farben für eza (ls-Ersatz)
+# Pfad    : ~/.config/eza/theme.yml
+# Docs    : https://github.com/eza-community/eza/blob/main/man/eza_colors.5.md
+# ============================================================
+# Hinweis : EZA_CONFIG_DIR wird in .zshenv gesetzt.
+#           Farben basieren auf Catppuccin Mocha Palette.
+# ============================================================
+
 colourful: true
 
 filekinds:

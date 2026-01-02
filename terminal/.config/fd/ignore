@@ -1,10 +1,11 @@
 # ============================================================
-# fd Global Ignore Patterns
+# ignore - fd Global Ignore Patterns
 # ============================================================
 # Zweck   : Globale Ausschlüsse für fd (auch bei --hidden)
 # Pfad    : ~/.config/fd/ignore
 # Docs    : https://github.com/sharkdp/fd#excluding-specific-files-or-directories
-# Tipp    : "fd -u" ignoriert diese Datei (unrestricted mode)
+# ============================================================
+# Hinweis : "fd -u" ignoriert diese Datei (unrestricted mode)
 # ============================================================
 
 # Git internals (bei --hidden nicht durchsuchen)

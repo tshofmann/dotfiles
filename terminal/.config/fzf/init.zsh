@@ -1,14 +1,12 @@
 # ============================================================
-# fzf - Shell-Integration
+# init.zsh - fzf Shell-Integration
 # ============================================================
 # Zweck   : fzf Keybindings und fd-Backend aktivieren
-# Laden   : Via .zshrc
+# Pfad    : ~/.config/fzf/init.zsh
 # Docs    : https://github.com/junegunn/fzf#usage
 # ============================================================
-# Keybindings:
-#   Ctrl+R = History durchsuchen (Ctrl+Y kopiert)
-#   Ctrl+T = Datei suchen
-#   Alt+C  = Verzeichnis wechseln
+# Hinweis : Wird via .zshrc geladen. Keybindings:
+#           Ctrl+R = History, Ctrl+T = Datei, Alt+C = Verzeichnis
 # ============================================================
 
 # Shell-Integration aktivieren
