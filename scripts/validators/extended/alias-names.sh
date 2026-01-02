@@ -56,7 +56,7 @@ validate_alias_names() {
         # Navigation
         z zi zoxide  # zoxide Basis-Befehle
         # CLI-Tools (aus Brewfile)
-        rg fd bat eza btop fzf gh stow
+        rg fd bat eza btop fzf gh stow fastfetch lazygit tldr starship
         # Editoren
         nvim vim vi code nano
         # macOS-spezifisch

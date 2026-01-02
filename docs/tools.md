@@ -100,6 +100,7 @@ Diese Tools werden via Brewfile installiert:
 | **bat** | `cat` mit Syntax-Highlighting und Git-Integration | [github.com/sharkdp/bat](https://github.com/sharkdp/bat) |
 | **btop** | Moderner Ressourcen-Monitor (`top`/`htop`-Ersatz) | [github.com/aristocratos/btop](https://github.com/aristocratos/btop) |
 | **eza** | Moderner `ls`-Ersatz mit Icons und Git-Status | [github.com/eza-community/eza](https://github.com/eza-community/eza) |
+| **fastfetch** | Schnelle System-Info (`neofetch`-Ersatz in C) | [github.com/fastfetch-cli/fastfetch](https://github.com/fastfetch-cli/fastfetch) |
 | **fd** | Schneller `find`-Ersatz (respektiert `.gitignore`) | [github.com/sharkdp/fd](https://github.com/sharkdp/fd) |
 | **fzf** | Fuzzy Finder für Kommandozeile und Dateien | [github.com/junegunn/fzf](https://github.com/junegunn/fzf) |
 | **gh** | GitHub CLI – Issues, PRs, Repos von der Kommandozeile | [cli.github.com](https://cli.github.com/) |
@@ -205,6 +206,16 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `htop` | `btop` | htop durch btop ersetzen |
 
 > **Hinweis:** btop bietet CPU, RAM, Disk, Netzwerk und Prozess-Überwachung in einer ansprechenden TUI. Für einfache Terminals: `btop --low-color`.
+
+### fastfetch.alias
+
+| Alias | Befehl | Beschreibung |
+|-------|--------|--------------|
+| `ff` | `fastfetch` | Schnelle System-Info (Standardanzeige) |
+| `neofetch` | `fastfetch` | neofetch-Kompatibilität |
+| `sysinfo` | `fastfetch --logo none` | System-Info ohne Logo |
+
+> **Hinweis:** fastfetch ist in C geschrieben und deutlich schneller als neofetch. Die Konfiguration liegt in `~/.config/fastfetch/config.jsonc` mit Catppuccin-Farben und Nerd-Font-Icons.
 
 ### git.alias
 

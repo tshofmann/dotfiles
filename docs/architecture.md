@@ -275,6 +275,7 @@ brew "bat"                       # cat mit Syntax-Highlighting
 brew "ripgrep"                   # grep-Ersatz
 brew "fd"                        # find-Ersatz
 brew "btop"                      # top-Ersatz
+brew "fastfetch"                 # neofetch-Ersatz
 
 # ZSH-Plugins
 brew "zsh-syntax-highlighting"

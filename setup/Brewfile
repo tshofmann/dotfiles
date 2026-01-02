@@ -21,6 +21,7 @@ brew "bat"                                  # cat mit Syntax-Highlighting
 brew "ripgrep"                              # Ultraschneller grep-Ersatz
 brew "fd"                                   # Schneller find-Ersatz
 brew "btop"                                 # Ressourcen-Monitor (top-Ersatz)
+brew "fastfetch"                            # Schnelle System-Info (neofetch-Ersatz)
 brew "lazygit"                              # Terminal-UI für Git
 
 # ZSH-Plugins
