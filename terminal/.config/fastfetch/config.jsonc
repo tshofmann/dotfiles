@@ -71,10 +71,12 @@
             "key": "│ {#32} shell   {#keys}│",
             "type": "shell"
         },
-        {            "key": "├───────────┤",
+        {
+            "key": "├───────────┤",
             "type": "custom"
         },
-        {            "key": "│ {#33}󰍛 cpu     {#keys}│",
+        {
+            "key": "│ {#33}󰍛 cpu     {#keys}│",
             "type": "cpu",
             "showPeCoreCount": true
         },
@@ -91,10 +93,12 @@
             "key": "│ {#35} memory  {#keys}│",
             "type": "memory"
         },
-        {            "key": "├───────────┤",
+        {
+            "key": "├───────────┤",
             "type": "custom"
         },
-        {            "key": "│ {#36}󰩟 localip {#keys}│",
+        {
+            "key": "│ {#36}󰩟 localip {#keys}│",
             "type": "localip",
             "format": "{ipv4} ({ifname})"
         },
