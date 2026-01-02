@@ -14,7 +14,7 @@
 
 # dotfiles: Funktionen (aus fzf.alias)
 
-- dotfiles: Aliase und Funktionen durchsuchen (`<Ctrl y>` Kopieren, `<Ctrl t>` tldr):
+- dotfiles: Aliase und Funktionen durchsuchen (`<Enter>` Definition, `<Ctrl y>` Kopieren, `<Ctrl t>` tldr):
 
 `fa {{suche}}`
 
@@ -22,7 +22,7 @@
 
 `zf`
 
-- dotfiles: Prozesse beenden (`<Tab>` Mehrfach, `<Ctrl k>` SIGKILL):
+- dotfiles: Prozesse beenden (`<Enter>` Beenden, `<Tab>` Mehrfach, `<Ctrl k>` SIGKILL):
 
 `fkill`
 
@@ -30,11 +30,11 @@
 
 `fman`
 
-- dotfiles: Umgebungsvariablen durchsuchen (`<Ctrl y>` Nur Wert):
+- dotfiles: Umgebungsvariablen durchsuchen (`<Enter>` Kopieren, `<Ctrl y>` Nur Wert):
 
 `fenv`
 
-- dotfiles: Historie durchsuchen, ins Edit-Buffer laden (`<Ctrl y>` Kopieren):
+- dotfiles: Historie durchsuchen, ins Edit-Buffer laden (`<Enter>` Ins Edit-Buffer, `<Ctrl y>` Kopieren):
 
 `fhist`
 
