@@ -254,7 +254,7 @@ fenv() {
         --header='Enter: Kopieren | Ctrl+Y: Nur Wert' \
         --preview='n=$(echo {} | cut -d"│" -f1 | xargs)
             v=$(printenv "$n" 2>/dev/null)
-            printf "${C_MAUVE}%s${C_RESET}\n\n" "$n"
+            printf "\033[38;2;203;166;247m%s\033[0m\n\n" "$n"
             if [[ "$v" == *:* ]] && [[ "$n" == *PATH* || "$n" == *DIRS* ]]; then
                 echo "$v" | tr ":" "\n" | nl -ba
             else

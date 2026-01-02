@@ -129,8 +129,11 @@ validate_keybindings() {
         local -a functions=($(extract_functions_from_file "$alias_file" | grep -v "^_"))
         
         for func in "${functions[@]}"; do
-            # Extrahiere Funktionsblock (awk -v für sichere Variablen-Übergabe)
-            local func_block=$(awk -v fn="$func" '$0 ~ fn"\\(\\)[[:space:]]*\\{",/^[[:space:]]*\}/' "$alias_file" 2>/dev/null)
+            # Extrahiere Funktionsblock (awk mit Regex-Escaping für Funktionsnamen)
+            local func_block=$(awk -v fn="$func" '
+                BEGIN { gsub(/[.^$*+?(){}|]/, "\\\\&", fn) }
+                $0 ~ fn"\\(\\)[[:space:]]*\\{", /^[[:space:]]*\}/
+            ' "$alias_file" 2>/dev/null)
             
             # Prüfe ob Funktion fzf verwendet
             local uses_fzf=false
@@ -144,7 +147,7 @@ validate_keybindings() {
             # PRÜFUNG 1: fzf-Funktion ohne --header
             if $uses_fzf && [[ -z "$header" ]]; then
                 # Prüfe ob es --bind Aktionen gibt (dann sollte Header existieren)
-                if echo "$func_block" | grep -qE -- "--bind '(enter|ctrl|alt)"; then
+                if echo "$func_block" | grep -qE -- "--bind '[[:space:]]*(enter|ctrl|alt)"; then
                     err "$func: fzf-Funktion mit Keybindings aber ohne --header"
                     (( errors++ )) || true
                 fi
