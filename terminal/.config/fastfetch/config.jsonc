@@ -39,6 +39,10 @@
             "type": "uptime"
         },
         {
+            "key": "├───────────┤",
+            "type": "custom"
+        },
+        {
             "key": "│ {#34}{icon} distro  {#keys}│",
             "type": "os"
         },
@@ -78,8 +82,10 @@
             "key": "│ {#35} memory  {#keys}│",
             "type": "memory"
         },
-        {
-            "key": "│ {#36}󰩟 localip {#keys}│",
+        {            "key": "├───────────┤",
+            "type": "custom"
+        },
+        {            "key": "│ {#36}󰩟 localip {#keys}│",
             "type": "localip",
             "format": "{ipv4} ({ifname})"
         },
