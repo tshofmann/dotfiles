@@ -26,6 +26,6 @@
 
 `ghrepo`
 
-- dotfiles: Gists durchsuchen (`<Enter>` Anzeigen, `<Ctrl e>` Bearbeiten):
+- dotfiles: Gists durchsuchen (`<Ctrl e>` Bearbeiten, `<Ctrl o>` Browser):
 
 `ghgist`
