@@ -268,17 +268,16 @@ fenv() {
 # ------------------------------------------------------------
 # HISTORY + FZF: Erweiterte History-Suche
 # ------------------------------------------------------------
-# Befehlshistorie durchsuchen und direkt ausführen (anders als Ctrl+R)
+# Befehlshistorie durchsuchen und ins Edit-Buffer laden
+# Community-Pattern: print -z statt eval → Befehl editierbar vor Ausführung
 fhist() {
-    local selection cmd
-    selection=$(fc -l 1 | fzf --tac --no-sort \
-        --header='Enter: Ausführen | Ctrl+Y: Kopieren' \
-        --bind 'ctrl-y:execute-silent(echo {2..} | pbcopy)+abort')
+    local cmd
+    cmd=$(fc -l 1 | fzf --tac --no-sort -n2.. \
+        --header='Enter: Ins Edit-Buffer | Ctrl+Y: Kopieren' \
+        --bind 'ctrl-y:execute-silent(echo {2..} | pbcopy)+abort' | \
+        awk '{$1=""; print substr($0,2)}')
     
-    if [[ -n "$selection" ]]; then
-        cmd=$(echo "$selection" | awk '{$1=""; print substr($0,2)}')
-        print -s "$cmd"  # Zur History hinzufügen
-        eval "$cmd"
-    fi
+    # print -z: Befehl erscheint in Kommandozeile, editierbar vor Enter
+    [[ -n "$cmd" ]] && print -z "$cmd"
 }
 
