@@ -18,7 +18,7 @@
 
 `fa {{suche}}`
 
-- dotfiles: Verzeichniswechsel mit zoxide-Daten (`<Ctrl d>` Löschen):
+- dotfiles: Verzeichniswechsel mit zoxide-Daten (`<Ctrl d>` Löschen, `<Ctrl y>` Kopieren):
 
 `zf`
 
@@ -26,7 +26,7 @@
 
 `fkill`
 
-- dotfiles: Man-Pages durchsuchen mit bat-Vorschau:
+- dotfiles: Man-Pages durchsuchen (`<Ctrl l>` tldr, `<Ctrl b>` man):
 
 `fman`
 
@@ -34,7 +34,7 @@
 
 `fenv`
 
-- dotfiles: Historie durchsuchen und ausführen (`<Ctrl y>` Kopieren):
+- dotfiles: Historie durchsuchen, ins Edit-Buffer laden (`<Ctrl y>` Kopieren):
 
 `fhist`
 

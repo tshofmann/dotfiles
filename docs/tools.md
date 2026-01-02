@@ -324,7 +324,7 @@ fzf ist als "Enhancer" in die jeweiligen Tool-Alias-Dateien integriert. Diese Da
 
 | Funktion | Beschreibung |
 |----------|--------------|
-| `zf` | zoxide + fzf mit eza-Vorschau, Ctrl+D zum Löschen |
+| `zf` | zoxide + fzf mit eza-Vorschau, Ctrl+D=Löschen, Ctrl+Y=Kopieren |
 
 > **`zi` vs `zf` – Wann welches verwenden?**
 >
@@ -342,10 +342,10 @@ fzf ist als "Enhancer" in die jeweiligen Tool-Alias-Dateien integriert. Diese Da
 | Funktion | Beschreibung |
 |----------|--------------|
 | `fa` | **Fuzzy Alias**: Aliase/Funktionen durchsuchen, Enter=Definition, Ctrl+Y=Kopieren, Ctrl+T=tldr |
-| `fkill` | **Fuzzy Kill**: Prozesse auswählen und beenden |
-| `fman` | **Fuzzy Man**: Man-Pages durchsuchen mit bat-Vorschau |
-| `fenv` | **Fuzzy Env**: Umgebungsvariablen durchsuchen, Enter=Kopieren |
-| `fhist` | **Fuzzy History**: Shell-History, Ctrl+Y=Kopieren, Enter=Ausführen |
+| `fkill` | **Fuzzy Kill**: Prozesse auswählen und beenden, Tab=Mehrfach, Ctrl+K=Kill -9 |
+| `fman` | **Fuzzy Man**: Man-Pages mit bat-Vorschau, Ctrl+L=tldr, Ctrl+B=man |
+| `fenv` | **Fuzzy Env**: Umgebungsvariablen durchsuchen, Enter=Kopieren, Ctrl+Y=Nur Wert |
+| `fhist` | **Fuzzy History**: Shell-History, Enter=Edit-Buffer (editierbar), Ctrl+Y=Kopieren |
 
 **Tool-spezifische fzf-Funktionen:**
 
