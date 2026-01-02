@@ -208,19 +208,40 @@ fa() {
 # ------------------------------------------------------------
 # ENV + FZF: Umgebungsvariablen-Browser
 # ------------------------------------------------------------
-# Umgebungsvariablen durchsuchen und Wert in Zwischenablage kopieren
+# Umgebungsvariablen durchsuchen mit formatierter Anzeige
+# PATH-artige Werte werden in der Preview aufgesplittet
 fenv() {
-    local selection
-    selection=$(printenv | sort | fzf \
-        --preview 'echo {} | cut -d= -f2-' \
-        --preview-window='down:3' \
+    local selection name value
+    
+    # Nur gültige Variablen (NAME=wert Format, Name beginnt mit Buchstabe/_)
+    selection=$(printenv | grep -E '^[a-zA-Z_][a-zA-Z0-9_]*=' | sort | \
+        awk -F= '{
+            name = $1
+            value = substr($0, length($1) + 2)
+            # Ersetze Newlines im Wert durch Leerzeichen für die Anzeige
+            gsub(/\n/, " ", value)
+            if (length(value) > 45) {
+                value = substr(value, 1, 42) "..."
+            }
+            printf "%-28s │ %s\n", name, value
+        }' | fzf \
         --header='Enter: Kopieren | Ctrl+Y: Nur Wert' \
-        --bind 'ctrl-y:execute-silent(echo {} | cut -d= -f2- | pbcopy)+abort')
+        --preview='n=$(echo {} | cut -d"│" -f1 | xargs)
+            v=$(printenv "$n" 2>/dev/null)
+            printf "\033[38;2;203;166;247m%s\033[0m\n\n" "$n"
+            if [[ "$v" == *:* ]] && [[ "$n" == *PATH* || "$n" == *DIRS* ]]; then
+                echo "$v" | tr ":" "\n" | nl -ba
+            else
+                echo "$v"
+            fi' \
+        --preview-window='right:50%,wrap' \
+        --bind='ctrl-y:execute-silent(n=$(echo {} | cut -d"│" -f1 | xargs); printenv "$n" | pbcopy)+abort')
     
     if [[ -n "$selection" ]]; then
-        local value="${selection#*=}"
+        name=$(echo "$selection" | cut -d'│' -f1 | xargs)
+        value=$(printenv "$name")
         echo "$value" | pbcopy
-        echo "Kopiert: ${selection%%=*}"
+        echo "${C_GREEN}Kopiert:${C_RESET} $name"
     fi
 }
 
