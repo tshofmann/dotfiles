@@ -90,9 +90,9 @@ __extract_patch_keys() {
     local mode="${2:-special}"
     local -a keys=()
     
-    # Ctrl+X und Alt+X (immer)
-    local ctrl_keys=$(echo "$text" | grep -oE '<Ctrl [a-z]>' | tr '[:upper:]' '[:lower:]' | sed 's/<ctrl /ctrl-/;s/>//' | sort -u)
-    local alt_keys=$(echo "$text" | grep -oE '<Alt [a-z]>' | tr '[:upper:]' '[:lower:]' | sed 's/<alt /alt-/;s/>//' | sort -u)
+    # Ctrl+X und Alt+X (immer) – [A-Za-z] für Groß- und Kleinbuchstaben
+    local ctrl_keys=$(echo "$text" | grep -oE '<Ctrl [A-Za-z]>' | tr '[:upper:]' '[:lower:]' | sed 's/<ctrl /ctrl-/;s/>//' | sort -u)
+    local alt_keys=$(echo "$text" | grep -oE '<Alt [A-Za-z]>' | tr '[:upper:]' '[:lower:]' | sed 's/<alt /alt-/;s/>//' | sort -u)
     
     for k in ${(f)ctrl_keys} ${(f)alt_keys}; do
         [[ -n "$k" ]] && keys+=("$k")

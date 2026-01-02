@@ -156,8 +156,10 @@ fa() {
             fi
             
             # Funktion: "name() {" (keine privaten mit _)
-            if [[ "$line" == [a-zA-Z]*"()"* && "$line" != _* ]]; then
-                local func_name="${line%%\(\)*}"
+            # [[:space:]]# = null oder mehr Leerzeichen (ZSH extended glob)
+            if [[ "$line" == [[:space:]]#[a-zA-Z]*"() {"* && "$line" != *_* ]]; then
+                local func_name="${line##[[:space:]]#}"  # Führende Leerzeichen entfernen
+                func_name="${func_name%%\(\)*}"          # Ab ( abschneiden
                 if [[ -n "$func_name" && "$func_name" != *" "* ]]; then
                     entries+="${func_name}|func|${category}|${prev_comment}"$'\n'
                 fi
