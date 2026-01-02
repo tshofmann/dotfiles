@@ -58,8 +58,10 @@
             "key": "│ {#32} shell   {#keys}│",
             "type": "shell"
         },
-        {
-            "key": "│ {#33}󰍛 cpu     {#keys}│",
+        {            "key": "├───────────┤",
+            "type": "custom"
+        },
+        {            "key": "│ {#33}󰍛 cpu     {#keys}│",
             "type": "cpu",
             "showPeCoreCount": true
         },
