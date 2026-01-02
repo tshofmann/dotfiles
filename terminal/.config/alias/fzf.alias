@@ -98,42 +98,56 @@ fman() {
 fa() {
     local alias_dir="${XDG_CONFIG_HOME:-$HOME/.config}/alias"
     local query="${1:-}"
-    local selection name
+    local selection name entries
+    local file category prev_comment line
     
     # Aliase und Funktionen aus allen .alias-Dateien extrahieren
-    # Format für fzf: name|typ|kategorie|beschreibung
-    local entries=$(
-        for file in "$alias_dir"/*.alias; do
-            [[ -f "$file" ]] || continue
-            local category="${${file##*/}%.alias}"
-            local prev_comment=""
+    # Format: name|typ|kategorie|beschreibung
+    entries=""
+    for file in "$alias_dir"/*.alias; do
+        [[ -f "$file" ]] || continue
+        category="${${file##*/}%.alias}"
+        prev_comment=""
+        
+        while IFS= read -r line; do
+            # Kommentar merken (Zeile beginnt mit #)
+            if [[ "$line" == \#* ]]; then
+                prev_comment="${line#\#}"
+                prev_comment="${prev_comment## }"  # Führendes Leerzeichen entfernen
+                continue
+            fi
             
-            while IFS= read -r line; do
-                # Kommentar merken
-                if [[ "$line" =~ ^[[:space:]]*#[[:space:]]*(.*) ]]; then
-                    prev_comment="${match[1]}"
-                    continue
+            # Alias: "alias name='..." oder 'alias name="...'
+            if [[ "$line" == alias\ * ]]; then
+                # Extrahiere Namen zwischen "alias " und "="
+                local alias_part="${line#alias }"
+                local alias_name="${alias_part%%=*}"
+                alias_name="${alias_name## }"  # Trim
+                alias_name="${alias_name%% }"
+                if [[ -n "$alias_name" && "$alias_name" != *" "* ]]; then
+                    entries+="${alias_name}|alias|${category}|${prev_comment}"$'\n'
                 fi
-                
-                # Alias: "alias name='..." oder 'alias name="...'
-                if [[ "$line" =~ ^[[:space:]]*alias[[:space:]]+([a-zA-Z_][a-zA-Z0-9_-]*)= ]]; then
-                    echo "${match[1]}|alias|${category}|${prev_comment}"
-                    prev_comment=""
-                    continue
-                fi
-                
-                # Funktion: "name() {" (keine privaten mit _)
-                if [[ "$line" =~ ^([a-zA-Z][a-zA-Z0-9_-]*)\(\) ]]; then
-                    echo "${match[1]}|func|${category}|${prev_comment}"
-                    prev_comment=""
-                    continue
-                fi
-                
-                # Andere Zeile = Kommentar zurücksetzen
                 prev_comment=""
-            done < "$file"
-        done | sort -t'|' -k1,1 -u
-    )
+                continue
+            fi
+            
+            # Funktion: "name() {" (keine privaten mit _)
+            if [[ "$line" == [a-zA-Z]*"()"* && "$line" != _* ]]; then
+                local func_name="${line%%\(\)*}"
+                if [[ -n "$func_name" && "$func_name" != *" "* ]]; then
+                    entries+="${func_name}|func|${category}|${prev_comment}"$'\n'
+                fi
+                prev_comment=""
+                continue
+            fi
+            
+            # Andere Zeile = Kommentar zurücksetzen
+            prev_comment=""
+        done < "$file"
+    done
+    
+    # Sortieren und Duplikate entfernen
+    entries=$(echo "$entries" | sort -t'|' -k1,1 -u)
     
     # Formatierte Ausgabe für fzf (Farben aus shell-colors)
     selection=$(echo "$entries" | awk -F'|' \
@@ -153,9 +167,33 @@ fa() {
         }
     ' | fzf --ansi --query="$query" \
         --header='Enter: Definition | Ctrl+Y: Kopieren | Ctrl+T: tldr' \
-        --preview 'name=$(echo {} | awk "{print \$1}"); 
-            type -a "$name" 2>/dev/null || alias "$name" 2>/dev/null' \
-        --preview-window='right:50%' \
+        --preview 'name=$(echo {} | awk "{print \$1}")
+            cat=$(echo {} | awk "{print \$3}")
+            file="${XDG_CONFIG_HOME:-$HOME/.config}/alias/${cat}.alias"
+            if [[ -f "$file" ]]; then
+                # Suche Definition in der Datei
+                awk -v name="$name" '\''
+                    BEGIN { found=0; buffer="" }
+                    /^[[:space:]]*#/ { 
+                        if (!found) buffer = $0 "\n"
+                        next 
+                    }
+                    $0 ~ "^alias[[:space:]]+" name "=" { 
+                        printf "%s%s\n", buffer, $0
+                        found=1; buffer=""
+                        next
+                    }
+                    $0 ~ "^" name "\\(\\)" {
+                        printf "%s", buffer
+                        found=1; buffer=""
+                        printing=1
+                    }
+                    printing { print }
+                    printing && /^}/ { printing=0 }
+                    !found { buffer="" }
+                '\'' "$file"
+            fi' \
+        --preview-window='right:50%:wrap' \
         --bind 'ctrl-y:execute-silent(echo {} | awk "{print \$1}" | pbcopy)+abort' \
         --bind 'ctrl-t:execute(cat=$(echo {} | awk "{print \$3}"); tldr "$cat" 2>/dev/null | less)')
     
