@@ -34,23 +34,25 @@ fi
 # ZOXIDE + FZF: Intelligente Directory-Jumps
 # ------------------------------------------------------------
 # zi ist bereits in zoxide eingebaut (zi = zoxide interactive)
-# Erweiterte Version mit eza-Preview und Score-Anzeige
+# Erweiterte Version mit Score-Anzeige, Lösch- und Kopier-Option
+# Community-Pattern: -n2.. für Pfade mit Leerzeichen
 if command -v zoxide >/dev/null 2>&1; then
     # Schneller Verzeichniswechsel mit Score, Vorschau und Lösch-Option
     zf() {
         local selection dir
-        local preview_cmd="echo {} | awk '{print \$2}' | xargs -I{} eza --tree --level=2 --icons --color=always {} 2>/dev/null || echo {} | awk '{print \$2}' | xargs ls -la"
+        local preview_cmd="eza --tree --level=2 --icons --color=always {2..} 2>/dev/null || ls -la {2..}"
         
         # Mit Score anzeigen (Format: "1234.5 /path/to/dir")
+        # -n2.. durchsucht nur den Pfad (nicht den Score), unterstützt Leerzeichen
         selection=$(zoxide query -l -s | \
-            fzf --preview "$preview_cmd" \
-                --bind 'ctrl-d:execute-silent(echo {} | awk "{print \$2}" | xargs zoxide remove)+reload(zoxide query -l -s)' \
-                --bind 'ctrl-y:execute-silent(echo {} | awk "{print \$2}" | pbcopy)' \
+            fzf -n2.. \
+                --preview "$preview_cmd" \
+                --bind 'ctrl-d:execute-silent(zoxide remove {2..})+reload(zoxide query -l -s)' \
+                --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)' \
                 --header='Enter: Wechseln | Ctrl+D: Löschen | Ctrl+Y: Kopieren')
         
-        # Pfad aus zweiter Spalte extrahieren
-        dir=$(echo "$selection" | awk '{print $2}')
-        [[ -n "$dir" ]] && cd "$dir"
+        # Pfad extrahieren (alles nach dem Score)
+        [[ -n "$selection" ]] && dir="${selection#* }" && cd "$dir"
     }
 fi
 
