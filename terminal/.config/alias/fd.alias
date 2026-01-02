@@ -61,7 +61,8 @@ if command -v fzf >/dev/null 2>&1; then
         local preview_cmd="eza --tree --level=1 --icons --color=always {} 2>/dev/null || ls -la {}"
         
         dir=$(fd --type d --hidden --follow --exclude .git . "${1:-.}" | \
-            fzf --preview "$preview_cmd")
+            fzf --preview "$preview_cmd" \
+                --header='Enter: Wechseln')
         
         [[ -n "$dir" ]] && cd "$dir"
     }
@@ -71,7 +72,8 @@ if command -v fzf >/dev/null 2>&1; then
     fo() {
         local file
         file=$(fd --type f --hidden --follow --exclude .git . "${1:-.}" | \
-            fzf --preview 'bat --style=numbers --color=always {} 2>/dev/null || file {}')
+            fzf --preview 'bat --style=numbers --color=always {} 2>/dev/null || file {}' \
+                --header='Enter: Öffnen')
         
         [[ -n "$file" ]] && open "$file"
     }

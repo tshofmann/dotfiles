@@ -164,10 +164,10 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 | Funktion | Beschreibung |
 |----------|--------------|
-| `bip` | **Brew Install**: Interaktive Paketsuche → Installieren |
-| `bup` | **Brew Update**: Veraltete Pakete → Upgrade |
-| `brp` | **Brew Remove**: Installierte Pakete → Deinstallieren |
-| `bsp [query]` | **Brew Search**: Suchen mit Info-Vorschau |
+| `bip` | **Brew Install**: Interaktive Paketsuche, Tab=Mehrfach |
+| `bup` | **Brew Update**: Veraltete Pakete upgraden, Tab=Mehrfach |
+| `brp` | **Brew Remove**: Installierte Pakete entfernen, Tab=Mehrfach |
+| `bsp [query]` | **Brew Search**: Suchen mit Info-Vorschau, Ctrl+O=Homepage |
 | `brewv` | **Brew Versions**: Alle Formulae, Casks und MAS-Apps mit Versionen |
 
 > **Hinweis:** Die mas-Aliase sind nur verfügbar wenn mas installiert ist. `brewup` enthält automatisch `mas upgrade` wenn mas vorhanden ist. Die interaktiven Funktionen benötigen fzf.
@@ -192,7 +192,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | Funktion | Beschreibung |
 |----------|--------------|
 | `cdf [path]` | **Fuzzy CD**: fd + fzf + eza – Verzeichnisnavigation mit Baum-Vorschau |
-| `fo [path]` | **Fuzzy Open**: fd + fzf + open – Datei mit Standard-App öffnen (PDFs, Bilder, etc.) |
+| `fo [path]` | **Fuzzy Open**: fd + fzf + open – Datei mit Standard-App öffnen |
 
 > **Hinweis:** fd respektiert automatisch `.gitignore` und ist deutlich schneller als find. Zusätzlich werden Patterns aus `~/.config/fd/ignore` global ausgeschlossen (z.B. `.git/`, `node_modules/`, `__pycache__/`). Mit `fd -u` (unrestricted) werden alle Ignore-Dateien umgangen.
 >
@@ -293,7 +293,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 | Funktion | Beschreibung |
 |----------|--------------|
-| `rgf [query]` | **Live-Grep**: ripgrep + fzf + bat – Echtzeit-Suche während der Eingabe |
+| `rgf [query]` | **Live-Grep**: ripgrep + fzf + bat – Echtzeit-Suche während der Eingabe, Enter=Datei öffnen |
 
 > **Hinweis:** `--smart-case` ist global in `~/.config/ripgrep/config` konfiguriert – alle Aliase erben diese Einstellung automatisch. Die interaktive Funktion `rgf` benötigt fzf.
 
