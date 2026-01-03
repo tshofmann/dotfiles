@@ -239,14 +239,13 @@ fa() {
 # Ctrl+S togglet Systemvariablen (_, __CF*, TERM_SESSION*)
 fenv() {
     local selection name value
-    local show_system="${FENV_SHOW_SYSTEM:-0}"
     # Temporäre Datei für Toggle-Status (mit Fehlerbehandlung)
     local tmpfile
     tmpfile=$(mktemp 2>/dev/null) || {
         echo "fenv: Konnte temporäre Datei nicht erstellen." >&2
         return 1
     }
-    echo "$show_system" > "$tmpfile"
+    echo "${FENV_SHOW_SYSTEM:-0}" > "$tmpfile"
     
     # Cleanup bei Abbruch oder Funktionsende
     trap 'rm -f "$tmpfile" 2>/dev/null' EXIT INT TERM
@@ -266,7 +265,7 @@ fenv() {
     # Farbkodierung basierend auf Variablentyp
     _fenv_colorize() {
         awk -F= -v mauve="$C_MAUVE" -v green="$C_GREEN" -v blue="$C_BLUE" \
-            -v text="$C_TEXT" -v dim="$C_DIM" -v reset="$C_RESET" '{
+            -v text="$C_TEXT" -v reset="$C_RESET" '{
             name = $1
             value = substr($0, length($1) + 2)
             gsub(/\n/, " ", value)
@@ -289,11 +288,11 @@ fenv() {
         }'
     }
     
-    # Helper-Skript für Ctrl+S Toggle prüfen
+    # Helper-Skript für Ctrl+S Toggle (zsh-Aufruf, kein chmod +x erforderlich)
     local reload_helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fenv-reload"
     local reload_cmd=""
-    if [[ -x "$reload_helper" ]]; then
-        reload_cmd="$reload_helper $tmpfile"
+    if [[ -f "$reload_helper" ]]; then
+        reload_cmd="zsh $reload_helper $tmpfile"
     fi
     
     selection=$(_fenv_filter | _fenv_colorize | fzf --ansi \
