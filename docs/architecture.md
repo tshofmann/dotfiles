@@ -80,6 +80,7 @@ dotfiles/
         │   └── ignore           # fd globale Ignore-Patterns
         ├── fzf/
         │   ├── config           # fzf globale Optionen (FZF_DEFAULT_OPTS_FILE)
+        │   ├── fenv-reload      # Helper-Skript für fenv() Ctrl+S Toggle
         │   └── init.zsh         # fzf Shell-Integration (Keybindings, fd-Backend)
         ├── lazygit/
         │   └── config.yml       # lazygit Config mit Catppuccin Mocha
