@@ -20,6 +20,6 @@
 
 `bat-langs`
 
-- dotfiles: Themes interaktiv mit fzf vorschauen:
+- dotfiles: Themes interaktiv mit fzf vorschauen (`<Enter>` Auswählen, `<Ctrl y>` Name kopieren):
 
 `bat-preview`

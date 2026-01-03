@@ -191,8 +191,8 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 | Funktion | Beschreibung |
 |----------|--------------|
-| `cdf [path]` | **Fuzzy CD**: fd + fzf + eza – Verzeichnisnavigation mit Baum-Vorschau |
-| `fo [path]` | **Fuzzy Open**: fd + fzf + open – Datei mit Standard-App öffnen |
+| `cdf [path]` | **Fuzzy CD**: fd + fzf + eza – Verzeichnisnavigation mit Baum-Vorschau. Enter=Wechseln, Ctrl+Y=Pfad kopieren |
+| `fo [path]` | **Fuzzy Open**: fd + fzf + open – Datei mit Standard-App öffnen. Enter=Öffnen, Ctrl+Y=Pfad kopieren |
 
 > **Hinweis:** fd respektiert automatisch `.gitignore` und ist deutlich schneller als find. Zusätzlich werden Patterns aus `~/.config/fd/ignore` global ausgeschlossen (z.B. `.git/`, `node_modules/`, `__pycache__/`). Mit `fd -u` (unrestricted) werden alle Ignore-Dateien umgangen.
 >
@@ -268,7 +268,12 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `catd` | `bat --diff` | Mit Git-Diff-Markierungen |
 | `bat-themes` | `bat --list-themes` | Verfügbare Themes auflisten |
 | `bat-langs` | `bat --list-languages` | Verfügbare Sprachen auflisten |
-| `bat-preview` | `bat --list-themes \| fzf ...` | Theme-Vorschau (benötigt fzf) |
+
+**Interaktive Funktionen (mit fzf):**
+
+| Funktion | Beschreibung |
+|----------|--------------|
+| `bat-preview` | **Theme-Vorschau**: Themes interaktiv durchsuchen. Enter=Auswählen, Ctrl+Y=Name kopieren |
 
 > **Hinweis:** `-pp` ist die Kurzform für `--style=plain --paging=never` – verhält sich wie das echte `cat`.
 
@@ -293,7 +298,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 | Funktion | Beschreibung |
 |----------|--------------|
-| `rgf [query]` | **Live-Grep**: ripgrep + fzf + bat – Echtzeit-Suche während der Eingabe, Enter=Datei öffnen |
+| `rgf [query]` | **Live-Grep**: ripgrep + fzf + bat – Echtzeit-Suche während der Eingabe. Enter=Datei öffnen, Ctrl+Y=Pfad kopieren |
 
 > **Hinweis:** `--smart-case` ist global in `~/.config/ripgrep/config` konfiguriert – alle Aliase erben diese Einstellung automatisch. Die interaktive Funktion `rgf` benötigt fzf.
 
@@ -344,7 +349,7 @@ fzf ist als "Enhancer" in die jeweiligen Tool-Alias-Dateien integriert. Diese Da
 | `fa` | **Fuzzy Alias**: Aliase/Funktionen durchsuchen, Enter=Definition, Ctrl+Y=Kopieren, Ctrl+T=tldr |
 | `fkill` | **Fuzzy Kill**: Prozesse auswählen und beenden, Enter=Beenden, Tab=Mehrfach, Ctrl+K=Kill -9 |
 | `fman` | **Fuzzy Man**: Man-Pages mit bat-Vorschau, Enter=Öffnen, Ctrl+L=tldr, Ctrl+B=man |
-| `fenv` | **Fuzzy Env**: Umgebungsvariablen durchsuchen, Enter=Kopieren, Ctrl+Y=Nur Wert |
+| `fenv` | **Fuzzy Env**: Umgebungsvariablen durchsuchen mit Farbkodierung. Enter=Kopieren, Ctrl+Y=Nur Wert, Ctrl+S=System-Variablen togglen |
 | `fhist` | **Fuzzy History**: Shell-History, Enter=Edit-Buffer (editierbar), Ctrl+Y=Kopieren |
 
 **Tool-spezifische fzf-Funktionen:**
