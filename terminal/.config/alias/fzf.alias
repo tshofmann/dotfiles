@@ -34,19 +34,25 @@ fi
 # ZOXIDE + FZF: Intelligente Directory-Jumps
 # ------------------------------------------------------------
 # zi ist bereits in zoxide eingebaut (zi = zoxide interactive)
-# Erweiterte Version mit eza-Preview
+# Erweiterte Version mit Score-Anzeige, Lösch- und Kopier-Option
+# Community-Pattern: -n2.. für Pfade mit Leerzeichen
 if command -v zoxide >/dev/null 2>&1; then
-    # Schneller Verzeichniswechsel mit Vorschau und Lösch-Option
+    # Schneller Verzeichniswechsel mit Score, Vorschau und Lösch-Option
     zf() {
-        local dir
-        local preview_cmd="eza --tree --level=2 --icons --color=always {} 2>/dev/null || ls -la {}"
+        local selection dir
+        local preview_cmd="eza --tree --level=2 --icons --color=always {2..} 2>/dev/null || ls -la {2..}"
         
-        dir=$(zoxide query -l | \
-            fzf --preview "$preview_cmd" \
-                --bind='ctrl-d:execute-silent(zoxide remove {})+reload(zoxide query -l)' \
-                --header='Enter: Wechseln | Ctrl+D: Löschen')
+        # Mit Score anzeigen (Format: "1234.5 /path/to/dir")
+        # -n2.. durchsucht nur den Pfad (nicht den Score), unterstützt Leerzeichen
+        selection=$(zoxide query -l -s | \
+            fzf -n2.. \
+                --preview "$preview_cmd" \
+                --bind 'ctrl-d:execute-silent(zoxide remove {2..})+reload(zoxide query -l -s)' \
+                --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)' \
+                --header='Enter: Wechseln | Ctrl+D: Löschen | Ctrl+Y: Kopieren')
         
-        [[ -n "$dir" ]] && cd "$dir"
+        # Pfad extrahieren (alles nach dem Score)
+        [[ -n "$selection" ]] && dir="${selection#* }" && cd "$dir"
     }
 fi
 
@@ -56,36 +62,54 @@ fi
 # Prozesse interaktiv suchen und beenden (Tab für Mehrfachauswahl)
 fkill() {
     local pid
-    pid=$(ps -ef | sed 1d | fzf --multi \
+    pid=$(ps -ef | sed 1d | fzf -m \
         --header='Enter: Beenden | Tab: Mehrfach | Ctrl+K: Kill -9' \
-        --preview 'echo {}' \
-        --preview-window='down:3' \
         --bind 'ctrl-k:execute(echo {} | awk "{print \$2}" | xargs kill -9)+abort' | \
         awk '{print $2}')
     
-    [[ -n "$pid" ]] && echo "$pid" | xargs kill -15
+    [[ -n "$pid" ]] && echo "$pid" | xargs kill -${1:-15}
 }
 
 # ------------------------------------------------------------
 # MAN + FZF + BAT: Man-Pages Browser
 # ------------------------------------------------------------
 # Man-Pages interaktiv durchsuchen mit Syntax-Highlighting
+# Ctrl+L wechselt zu tldr-Preview, Ctrl+B zurück zu man
+# Enter öffnet je nach Modus man oder tldr
 fman() {
-    local selection page
+    local selection page section mode_file
+    local man_preview="echo {} | sed 's/(.*//' | xargs man 2>/dev/null | col -bx | bat --color=always -l man -p"
+    local tldr_preview="echo {} | sed 's/(.*//' | xargs tldr --color=always 2>/dev/null || echo 'Keine tldr-Seite verfügbar'"
+    
+    mode_file=$(mktemp)
+    echo "man" > "$mode_file"
+    
+    # Cleanup bei Abbruch oder Funktionsende
+    trap 'rm -f "$mode_file" 2>/dev/null' EXIT INT TERM
+    
     selection=$(man -k . 2>/dev/null | \
         fzf --prompt='Man> ' \
-            --preview "echo {} | sed 's/(.*//' | xargs man 2>/dev/null | bat --color=always -l man -p" \
-            --header='Enter: Öffnen')
+            --preview "$man_preview" \
+            --header='Enter: Öffnen | Ctrl+L: tldr | Ctrl+B: man' \
+            --bind "ctrl-l:change-preview($tldr_preview)+change-prompt(tldr> )+execute-silent(echo tldr > $mode_file)" \
+            --bind "ctrl-b:change-preview($man_preview)+change-prompt(Man> )+execute-silent(echo man > $mode_file)")
+    
+    local mode=$(cat "$mode_file")
+    rm -f "$mode_file"
+    trap - EXIT INT TERM
     
     if [[ -n "$selection" ]]; then
-        # Extrahiere Seitenname und Section (z.B. "printf(3)" → "3 printf")
-        local page section
-        page=$(echo "$selection" | sed 's/(.*//')
-        section=$(echo "$selection" | sed -n 's/.*([^0-9]*\([0-9][a-z]*\)).*/\1/p')
-        if [[ -n "$section" ]]; then
-            man "$section" "$page"
+        page=$(echo "$selection" | sed 's/(.*//' | xargs)
+        
+        if [[ "$mode" == "tldr" ]]; then
+            tldr "$page"
         else
-            man "$page"
+            section=$(echo "$selection" | sed -n 's/.*([^0-9]*\([0-9][a-z]*\)).*/\1/p')
+            if [[ -n "$section" ]]; then
+                man "$section" "$page"
+            else
+                man "$page"
+            fi
         fi
     fi
 }
@@ -98,42 +122,58 @@ fman() {
 fa() {
     local alias_dir="${XDG_CONFIG_HOME:-$HOME/.config}/alias"
     local query="${1:-}"
-    local selection name
+    local selection name entries
+    local file category prev_comment line
     
     # Aliase und Funktionen aus allen .alias-Dateien extrahieren
-    # Format für fzf: name|typ|kategorie|beschreibung
-    local entries=$(
-        for file in "$alias_dir"/*.alias; do
-            [[ -f "$file" ]] || continue
-            local category="${${file##*/}%.alias}"
-            local prev_comment=""
+    # Format: name|typ|kategorie|beschreibung
+    entries=""
+    for file in "$alias_dir"/*.alias; do
+        [[ -f "$file" ]] || continue
+        category="${${file##*/}%.alias}"
+        prev_comment=""
+        
+        while IFS= read -r line; do
+            # Kommentar merken (Zeile beginnt mit #)
+            if [[ "$line" == \#* ]]; then
+                prev_comment="${line#\#}"
+                prev_comment="${prev_comment## }"  # Führendes Leerzeichen entfernen
+                continue
+            fi
             
-            while IFS= read -r line; do
-                # Kommentar merken
-                if [[ "$line" =~ ^[[:space:]]*#[[:space:]]*(.*) ]]; then
-                    prev_comment="${match[1]}"
-                    continue
+            # Alias: "alias name='..." oder 'alias name="...'
+            if [[ "$line" == alias\ * ]]; then
+                # Extrahiere Namen zwischen "alias " und "="
+                local alias_part="${line#alias }"
+                local alias_name="${alias_part%%=*}"
+                alias_name="${alias_name## }"  # Trim
+                alias_name="${alias_name%% }"
+                if [[ -n "$alias_name" && "$alias_name" != *" "* ]]; then
+                    entries+="${alias_name}|alias|${category}|${prev_comment}"$'\n'
                 fi
-                
-                # Alias: "alias name='..." oder 'alias name="...'
-                if [[ "$line" =~ ^[[:space:]]*alias[[:space:]]+([a-zA-Z_][a-zA-Z0-9_-]*)= ]]; then
-                    echo "${match[1]}|alias|${category}|${prev_comment}"
-                    prev_comment=""
-                    continue
-                fi
-                
-                # Funktion: "name() {" (keine privaten mit _)
-                if [[ "$line" =~ ^([a-zA-Z][a-zA-Z0-9_-]*)\(\) ]]; then
-                    echo "${match[1]}|func|${category}|${prev_comment}"
-                    prev_comment=""
-                    continue
-                fi
-                
-                # Andere Zeile = Kommentar zurücksetzen
                 prev_comment=""
-            done < "$file"
-        done | sort -t'|' -k1,1 -u
-    )
+                continue
+            fi
+            
+            # Funktion: "name() {" (keine privaten mit _)
+            # Erst trimmen, dann Pattern prüfen (ohne EXTENDED_GLOB)
+            local trimmed="${line#"${line%%[![:space:]]*}"}"
+            if [[ "$trimmed" == [a-zA-Z]*"() {"* && "$trimmed" != _* ]]; then
+                local func_name="${trimmed%%\(*}"        # Ab ( abschneiden
+                if [[ -n "$func_name" && "$func_name" != *" "* ]]; then
+                    entries+="${func_name}|func|${category}|${prev_comment}"$'\n'
+                fi
+                prev_comment=""
+                continue
+            fi
+            
+            # Andere Zeile = Kommentar zurücksetzen
+            prev_comment=""
+        done < "$file"
+    done
+    
+    # Sortieren und Duplikate entfernen
+    entries=$(echo "$entries" | sort -t'|' -k1,1 -u)
     
     # Formatierte Ausgabe für fzf (Farben aus shell-colors)
     selection=$(echo "$entries" | awk -F'|' \
@@ -153,9 +193,33 @@ fa() {
         }
     ' | fzf --ansi --query="$query" \
         --header='Enter: Definition | Ctrl+Y: Kopieren | Ctrl+T: tldr' \
-        --preview 'name=$(echo {} | awk "{print \$1}"); 
-            type -a "$name" 2>/dev/null || alias "$name" 2>/dev/null' \
-        --preview-window='right:50%' \
+        --preview 'name=$(echo {} | awk "{print \$1}")
+            cat=$(echo {} | awk "{print \$3}")
+            file="${XDG_CONFIG_HOME:-$HOME/.config}/alias/${cat}.alias"
+            if [[ -f "$file" ]]; then
+                # Suche Definition in der Datei
+                awk -v name="$name" '\''
+                    BEGIN { found=0; buffer=""; printing=0 }
+                    /^[[:space:]]*#/ { 
+                        if (!found) buffer = $0 "\n"
+                        next 
+                    }
+                    $0 ~ "^alias[[:space:]]+" name "=" { 
+                        printf "%s%s\n", buffer, $0
+                        found=1; buffer=""
+                        next
+                    }
+                    $0 ~ "^" name "\\(\\)" {
+                        printf "%s", buffer
+                        found=1; buffer=""
+                        printing=1
+                    }
+                    printing { print }
+                    printing && /^}/ { printing=0 }
+                    !found { buffer="" }
+                '\'' "$file"
+            fi' \
+        --preview-window='right:50%:wrap' \
         --bind 'ctrl-y:execute-silent(echo {} | awk "{print \$1}" | pbcopy)+abort' \
         --bind 'ctrl-t:execute(cat=$(echo {} | awk "{print \$3}"); tldr "$cat" 2>/dev/null | less)')
     
@@ -170,36 +234,56 @@ fa() {
 # ------------------------------------------------------------
 # ENV + FZF: Umgebungsvariablen-Browser
 # ------------------------------------------------------------
-# Umgebungsvariablen durchsuchen und Wert in Zwischenablage kopieren
+# Umgebungsvariablen durchsuchen mit formatierter Anzeige
+# PATH-artige Werte werden in der Preview aufgesplittet
 fenv() {
-    local selection
-    selection=$(printenv | sort | fzf \
-        --preview 'echo {} | cut -d= -f2-' \
-        --preview-window='down:3' \
+    local selection name value
+    
+    # Nur gültige Variablen (NAME=wert Format, Name beginnt mit Buchstabe/_)
+    selection=$(printenv | grep -E '^[a-zA-Z_][a-zA-Z0-9_]*=' | sort | \
+        awk -F= '{
+            name = $1
+            value = substr($0, length($1) + 2)
+            # Ersetze Newlines im Wert durch Leerzeichen für die Anzeige
+            gsub(/\n/, " ", value)
+            if (length(value) > 45) {
+                value = substr(value, 1, 42) "..."
+            }
+            printf "%-28s │ %s\n", name, value
+        }' | fzf \
         --header='Enter: Kopieren | Ctrl+Y: Nur Wert' \
-        --bind 'ctrl-y:execute-silent(echo {} | cut -d= -f2- | pbcopy)+abort')
+        --preview='n=$(echo {} | cut -d"│" -f1 | xargs)
+            v=$(printenv "$n" 2>/dev/null)
+            printf "%s%s%s\n\n" "$C_MAUVE" "$n" "$C_RESET"
+            if [[ "$v" == *:* ]] && [[ "$n" == *PATH* || "$n" == *DIRS* ]]; then
+                echo "$v" | tr ":" "\n" | nl -ba
+            else
+                echo "$v"
+            fi' \
+        --preview-window='right:50%,wrap' \
+        --bind='ctrl-y:execute-silent(n=$(echo {} | cut -d"│" -f1 | xargs); printenv "$n" | pbcopy)+abort')
     
     if [[ -n "$selection" ]]; then
-        local value="${selection#*=}"
+        name=$(echo "$selection" | cut -d'│' -f1 | xargs)
+        value=$(printenv "$name")
         echo "$value" | pbcopy
-        echo "Kopiert: ${selection%%=*}"
+        echo "${C_GREEN}Kopiert:${C_RESET} $name"
     fi
 }
 
 # ------------------------------------------------------------
 # HISTORY + FZF: Erweiterte History-Suche
 # ------------------------------------------------------------
-# Befehlshistorie durchsuchen und direkt ausführen (anders als Ctrl+R)
+# Befehlshistorie durchsuchen und ins Edit-Buffer laden
+# Community-Pattern: print -z statt eval → Befehl editierbar vor Ausführung
 fhist() {
-    local selection cmd
-    selection=$(fc -l 1 | fzf --tac --no-sort \
-        --header='Enter: Ausführen | Ctrl+Y: Kopieren' \
-        --bind 'ctrl-y:execute-silent(echo {2..} | pbcopy)+abort')
+    local cmd
+    cmd=$(fc -l 1 | fzf --tac --no-sort -n2.. \
+        --header='Enter: Ins Edit-Buffer | Ctrl+Y: Kopieren' \
+        --bind 'ctrl-y:execute-silent(echo {2..} | pbcopy)+abort' | \
+        awk '{$1=""; print substr($0,2)}')
     
-    if [[ -n "$selection" ]]; then
-        cmd=$(echo "$selection" | awk '{$1=""; print substr($0,2)}')
-        print -s "$cmd"  # Zur History hinzufügen
-        eval "$cmd"
-    fi
+    # print -z: Befehl erscheint in Kommandozeile, editierbar vor Enter
+    [[ -n "$cmd" ]] && print -z "$cmd"
 }
 

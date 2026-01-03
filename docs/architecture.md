@@ -35,10 +35,11 @@ dotfiles/
 │       │   ├── aliases.sh       # Alias-Anzahlen
 │       │   ├── config.sh        # Config-Beispiele
 │       │   └── symlinks.sh      # Symlink-Tabelle
-│       └── extended/            # Erweiterte Validierungen (9 Module)
+│       └── extended/            # Erweiterte Validierungen (10 Module)
 │           ├── alias-names.sh   # Alias-Namen vs. Code
 │           ├── codeblocks.sh    # Shell-Commands in Docs
 │           ├── copilot-instructions.sh # Copilot Instructions
+│           ├── keybindings.sh   # Keybinding-Konsistenz
 │           ├── readme.sh        # README Konsistenz
 │           ├── structure.sh     # Verzeichnisstruktur
 │           ├── style-consistency.sh # Code-Stil Konsistenz

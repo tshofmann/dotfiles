@@ -75,6 +75,7 @@ if command -v fzf >/dev/null 2>&1; then
             --delimiter : \
             --preview "$preview_cmd" \
             --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' \
+            --header='Enter: Datei öffnen' \
             --bind 'enter:become(${EDITOR:-vim} {1} +{2})'
     }
 fi

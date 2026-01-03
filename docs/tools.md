@@ -164,10 +164,10 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 | Funktion | Beschreibung |
 |----------|--------------|
-| `bip` | **Brew Install**: Interaktive Paketsuche → Installieren |
-| `bup` | **Brew Update**: Veraltete Pakete → Upgrade |
-| `brp` | **Brew Remove**: Installierte Pakete → Deinstallieren |
-| `bsp [query]` | **Brew Search**: Suchen mit Info-Vorschau |
+| `bip` | **Brew Install**: Interaktive Paketsuche, Tab=Mehrfach |
+| `bup` | **Brew Update**: Veraltete Pakete upgraden, Tab=Mehrfach |
+| `brp` | **Brew Remove**: Installierte Pakete entfernen, Tab=Mehrfach |
+| `bsp [query]` | **Brew Search**: Suchen mit Info-Vorschau, Ctrl+O=Homepage |
 | `brewv` | **Brew Versions**: Alle Formulae, Casks und MAS-Apps mit Versionen |
 
 > **Hinweis:** Die mas-Aliase sind nur verfügbar wenn mas installiert ist. `brewup` enthält automatisch `mas upgrade` wenn mas vorhanden ist. Die interaktiven Funktionen benötigen fzf.
@@ -192,7 +192,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | Funktion | Beschreibung |
 |----------|--------------|
 | `cdf [path]` | **Fuzzy CD**: fd + fzf + eza – Verzeichnisnavigation mit Baum-Vorschau |
-| `fo [path]` | **Fuzzy Open**: fd + fzf + open – Datei mit Standard-App öffnen (PDFs, Bilder, etc.) |
+| `fo [path]` | **Fuzzy Open**: fd + fzf + open – Datei mit Standard-App öffnen |
 
 > **Hinweis:** fd respektiert automatisch `.gitignore` und ist deutlich schneller als find. Zusätzlich werden Patterns aus `~/.config/fd/ignore` global ausgeschlossen (z.B. `.git/`, `node_modules/`, `__pycache__/`). Mit `fd -u` (unrestricted) werden alle Ignore-Dateien umgangen.
 >
@@ -293,7 +293,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 | Funktion | Beschreibung |
 |----------|--------------|
-| `rgf [query]` | **Live-Grep**: ripgrep + fzf + bat – Echtzeit-Suche während der Eingabe |
+| `rgf [query]` | **Live-Grep**: ripgrep + fzf + bat – Echtzeit-Suche während der Eingabe, Enter=Datei öffnen |
 
 > **Hinweis:** `--smart-case` ist global in `~/.config/ripgrep/config` konfiguriert – alle Aliase erben diese Einstellung automatisch. Die interaktive Funktion `rgf` benötigt fzf.
 
@@ -324,7 +324,7 @@ fzf ist als "Enhancer" in die jeweiligen Tool-Alias-Dateien integriert. Diese Da
 
 | Funktion | Beschreibung |
 |----------|--------------|
-| `zf` | zoxide + fzf mit eza-Vorschau, Ctrl+D zum Löschen |
+| `zf` | zoxide + fzf mit eza-Vorschau, Enter=Wechseln, Ctrl+D=Löschen, Ctrl+Y=Kopieren |
 
 > **`zi` vs `zf` – Wann welches verwenden?**
 >
@@ -342,10 +342,10 @@ fzf ist als "Enhancer" in die jeweiligen Tool-Alias-Dateien integriert. Diese Da
 | Funktion | Beschreibung |
 |----------|--------------|
 | `fa` | **Fuzzy Alias**: Aliase/Funktionen durchsuchen, Enter=Definition, Ctrl+Y=Kopieren, Ctrl+T=tldr |
-| `fkill` | **Fuzzy Kill**: Prozesse auswählen und beenden |
-| `fman` | **Fuzzy Man**: Man-Pages durchsuchen mit bat-Vorschau |
-| `fenv` | **Fuzzy Env**: Umgebungsvariablen durchsuchen, Enter=Kopieren |
-| `fhist` | **Fuzzy History**: Shell-History, Ctrl+Y=Kopieren, Enter=Ausführen |
+| `fkill` | **Fuzzy Kill**: Prozesse auswählen und beenden, Enter=Beenden, Tab=Mehrfach, Ctrl+K=Kill -9 |
+| `fman` | **Fuzzy Man**: Man-Pages mit bat-Vorschau, Enter=Öffnen, Ctrl+L=tldr, Ctrl+B=man |
+| `fenv` | **Fuzzy Env**: Umgebungsvariablen durchsuchen, Enter=Kopieren, Ctrl+Y=Nur Wert |
+| `fhist` | **Fuzzy History**: Shell-History, Enter=Edit-Buffer (editierbar), Ctrl+Y=Kopieren |
 
 **Tool-spezifische fzf-Funktionen:**
 
