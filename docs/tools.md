@@ -164,10 +164,10 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 | Funktion | Beschreibung |
 |----------|--------------|
-| `bip` | **Brew Install**: Interaktive Paketsuche, Tab=Mehrfach |
-| `bup` | **Brew Update**: Veraltete Pakete upgraden, Tab=Mehrfach |
-| `brp` | **Brew Remove**: Installierte Pakete entfernen, Tab=Mehrfach |
-| `bsp [query]` | **Brew Search**: Suchen mit Info-Vorschau, Ctrl+O=Homepage |
+| `bip` | **Brew Install**: Interaktive Paketsuche, Enter=Installieren, Tab=Mehrfach |
+| `bup` | **Brew Update**: Veraltete Pakete upgraden, Enter=Upgrade, Tab=Mehrfach |
+| `brp` | **Brew Remove**: Installierte Pakete entfernen, Enter=Entfernen, Tab=Mehrfach |
+| `bsp [query]` | **Brew Search**: Suchen mit Info-Vorschau, Enter=Installieren, Ctrl+O=Homepage |
 | `brewv` | **Brew Versions**: Alle Formulae, Casks und MAS-Apps mit Versionen |
 
 > **Hinweis:** Die mas-Aliase sind nur verfügbar wenn mas installiert ist. `brewup` enthält automatisch `mas upgrade` wenn mas vorhanden ist. Die interaktiven Funktionen benötigen fzf.
@@ -235,13 +235,20 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 | Funktion | Beschreibung |
 |----------|--------------|
-| `glog` | Commit-History: Vorschau mit bat, Ctrl+Y=SHA kopieren |
-| `gbr` | Branch wechseln: Log-Vorschau, Ctrl+D=Branch löschen |
-| `gst` | Status mit Diff-Vorschau (bat): Enter=Add, Ctrl+R=Restore |
-| `gstash` | Stash-Browser: Enter=Apply, Ctrl+D=Drop, Ctrl+P=Pop |
-| `lg` | **lazygit**: Vollständige Terminal-UI für Git |
+| `glog` | Commit-History: Vorschau mit bat, Enter=Anzeigen, Ctrl+Y=SHA kopieren |
+| `gbr` | Branch wechseln: Log-Vorschau, Enter=Checkout, Ctrl+D=Löschen |
+| `gst` | Status mit Diff-Vorschau (bat): Enter=Add, Tab=Mehrfach, Ctrl+R=Reset |
+| `gstash` | Stash-Browser: Enter=Apply, Ctrl+P=Pop, Ctrl+D=Drop |
 
-> **Hinweis:** Die interaktiven Funktionen benötigen fzf und nutzen bat für Syntax-Highlighting in der Diff-Vorschau. `lg` startet lazygit mit Catppuccin Mocha Theme.
+> **Hinweis:** Die interaktiven Funktionen benötigen fzf und nutzen bat für Syntax-Highlighting in der Diff-Vorschau.
+
+**lazygit Integration:**
+
+| Alias | Beschreibung |
+|-------|--------------|
+| `lg` | **lazygit**: Vollständige Terminal-UI für Git (Catppuccin Mocha Theme) |
+
+> **Hinweis:** `lg` ist ein Alias für lazygit und benötigt nicht fzf.
 
 ### eza.alias
 
@@ -313,9 +320,9 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 | Funktion | Beschreibung |
 |----------|--------------|
-| `ghpr` | PRs durchsuchen: Enter=Checkout, Ctrl+O=Browser, Ctrl+D=Diff |
+| `ghpr` | PRs durchsuchen: Enter=Checkout, Ctrl+D=Diff, Ctrl+O=Browser |
 | `ghis` | Issues durchsuchen: Enter=Browser, Ctrl+E=Bearbeiten |
-| `ghrun` | Actions Runs: Enter=Logs, Ctrl+O=Browser, Ctrl+R=Rerun |
+| `ghrun` | Actions Runs: Enter=Logs, Ctrl+R=Rerun, Ctrl+O=Browser |
 | `ghrepo` | Repositories: Enter=Klonen, Ctrl+O=Browser |
 | `ghgist` | Gists durchsuchen: Enter=Anzeigen, Ctrl+E=Bearbeiten, Ctrl+O=Browser |
 

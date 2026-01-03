@@ -56,10 +56,11 @@ dotfiles/
     ├── .zshrc                   # Interactive Shell Konfiguration
     ├── .zlogin                  # Post-Login (Background-Optimierungen)
     └── .config/
-        ├── alias/               # Tool-Aliase (9 Dateien)
+        ├── alias/               # Tool-Aliase (10 Dateien)
         │   ├── bat.alias        # bat-Aliase (cat-Ersatz)
         │   ├── btop.alias       # btop-Aliase (top-Ersatz)
         │   ├── eza.alias        # eza-Aliase (ls-Ersatz)
+        │   ├── fastfetch.alias  # fastfetch-Aliase (neofetch-Ersatz)
         │   ├── fd.alias         # fd-Aliase (find-Ersatz)
         │   ├── fzf.alias        # fzf Tool-Kombinationen + fa()
         │   ├── gh.alias         # GitHub CLI Funktionen
@@ -86,7 +87,7 @@ dotfiles/
         │   └── config           # ripgrep native Config (RIPGREP_CONFIG_PATH)
         ├── tealdeer/
         │   ├── config.toml      # tealdeer (tldr) Config mit Catppuccin Mocha
-        │   └── pages/           # Custom tldr-Patches (9 Dateien, 1:1 zu .alias)
+        │   └── pages/           # Custom tldr-Patches (10 Dateien, je Tool)
         └── zsh/
             └── catppuccin_mocha-zsh-syntax-highlighting.zsh  # Syntax-Highlighting Theme
 ```
@@ -140,6 +141,7 @@ Alle Tool-Konfigurationen folgen der [XDG Base Directory Specification](https://
 |----------|------|------------|
 | `XDG_CONFIG_HOME` | `$HOME/.config` | `.zshenv` |
 | `EZA_CONFIG_DIR` | `$XDG_CONFIG_HOME/eza` | `.zshenv` |
+| `TEALDEER_CONFIG_DIR` | `$XDG_CONFIG_HOME/tealdeer` | `.zshenv` |
 | `RIPGREP_CONFIG_PATH` | `$XDG_CONFIG_HOME/ripgrep/config` | `.zshrc` |
 | `BAT_CONFIG_PATH` | (nutzt XDG automatisch) | – |
 
@@ -435,7 +437,7 @@ Die Tools nutzen **native Config-Dateien** für globale Einstellungen und Shell-
 #### fzf Globale Config (`~/.config/fzf/config`)
 
 ```
---height=50%
+--height=~50%
 --layout=reverse
 --border=rounded
 --margin=0,1
@@ -465,8 +467,11 @@ Die Tools nutzen **native Config-Dateien** für globale Einstellungen und Shell-
 --type-add=zsh:*.zsh
 --type-add=zsh:*.zshrc
 --type-add=zsh:*.zprofile
+--type-add=zsh:*.zshenv
 --type-add=alias:*.alias
 --type-add=conf:*.conf
+--type-add=conf:*.config
+--type-add=conf:*rc
 ```
 
 #### fd Global Ignore (`~/.config/fd/ignore`)

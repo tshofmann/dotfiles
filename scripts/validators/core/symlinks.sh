@@ -26,10 +26,13 @@ check_symlinks() {
     [[ -d "$terminal_dir/.config/bat" ]] && ((code_count++)) || true
     [[ -d "$terminal_dir/.config/btop" ]] && ((code_count++)) || true
     [[ -d "$terminal_dir/.config/eza" ]] && ((code_count++)) || true
+    [[ -d "$terminal_dir/.config/fastfetch" ]] && ((code_count++)) || true
     [[ -d "$terminal_dir/.config/fd" ]] && ((code_count++)) || true
     [[ -d "$terminal_dir/.config/fzf" ]] && ((code_count++)) || true
     [[ -d "$terminal_dir/.config/lazygit" ]] && ((code_count++)) || true
     [[ -d "$terminal_dir/.config/ripgrep" ]] && ((code_count++)) || true
+    [[ -f "$terminal_dir/.config/shell-colors" ]] && ((code_count++)) || true
+    [[ -d "$terminal_dir/.config/tealdeer" ]] && ((code_count++)) || true
     [[ -d "$terminal_dir/.config/zsh" ]] && ((code_count++)) || true
     
     local docs_count

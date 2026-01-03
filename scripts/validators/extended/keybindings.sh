@@ -223,9 +223,3 @@ validate_keybindings() {
 
 # Registrierung
 register_validator "keybindings" "validate_keybindings" "Keybinding-Konsistenz" "extended"
-
-# Direkter Aufruf wenn als Script ausgeführt
-if [[ "${(%):-%x}" == "${0}" ]]; then
-    validate_keybindings
-    exit $?
-fi

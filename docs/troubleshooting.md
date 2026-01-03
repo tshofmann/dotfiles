@@ -308,8 +308,8 @@ Nach dem Entfernen der Symlinks existieren `~/.zshrc` und `~/.zprofile` nicht me
 ### Schritt 3: Homebrew-Pakete entfernen (optional)
 
 ```zsh
-brew uninstall fzf gh starship zoxide stow mas eza bat ripgrep fd btop zsh-autosuggestions zsh-syntax-highlighting
-brew uninstall --cask font-meslo-lg-nerd-font
+brew uninstall fzf gh starship zoxide stow mas eza bat ripgrep fd btop fastfetch lazygit tealdeer zsh-autosuggestions zsh-syntax-highlighting
+brew uninstall --cask font-meslo-lg-nerd-font claude-code
 ```
 
 ### Schritt 4: Repository löschen (optional)
