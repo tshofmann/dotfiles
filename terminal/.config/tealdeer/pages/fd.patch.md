@@ -42,10 +42,10 @@
 
 # dotfiles: Funktionen
 
-- dotfiles: Verzeichnis interaktiv wechseln (`<Enter>` Wechseln):
+- dotfiles: Verzeichnis interaktiv wechseln (`<Enter>` Wechseln, `<Ctrl y>` Pfad kopieren):
 
 `cdf {{pfad}}`
 
-- dotfiles: Datei mit Standard-App öffnen (`<Enter>` Öffnen):
+- dotfiles: Datei mit Standard-App öffnen (`<Enter>` Öffnen, `<Ctrl y>` Pfad kopieren):
 
 `fo {{pfad}}`

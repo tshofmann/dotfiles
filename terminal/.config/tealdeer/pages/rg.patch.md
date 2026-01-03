@@ -50,6 +50,6 @@
 
 # dotfiles: Funktionen
 
-- dotfiles: Live-Grep mit fzf (`<Enter>` Datei öffnen):
+- dotfiles: Live-Grep mit fzf (`<Enter>` Datei öffnen, `<Ctrl y>` Pfad kopieren):
 
 `rgf {{initiale-suche}}`

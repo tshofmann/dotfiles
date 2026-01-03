@@ -36,6 +36,14 @@ alias bat-themes='bat --list-themes'
 alias bat-langs='bat --list-languages'
 
 if command -v fzf >/dev/null 2>&1; then
-    # Theme-Vorschau mit fzf
-    alias bat-preview='bat --list-themes | fzf --preview="bat --theme={} --color=always ~/.zshrc"'
+    # Theme-Vorschau mit fzf – interaktiv Themes durchsuchen
+    bat-preview() {
+        local theme
+        theme=$(bat --list-themes | fzf \
+            --preview='bat --theme={} --color=always ~/.zshrc' \
+            --header='Enter: Auswählen | Ctrl+Y: Name kopieren' \
+            --bind='ctrl-y:execute-silent(echo -n {} | pbcopy)+abort')
+        
+        [[ -n "$theme" ]] && echo "Theme: $theme"
+    }
 fi

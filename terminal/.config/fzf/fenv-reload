@@ -1,0 +1,83 @@
+#!/usr/bin/env zsh
+# ============================================================
+# fenv-reload - Helper für fenv Ctrl+S Toggle
+# ============================================================
+# Zweck   : Reload-Befehl für fzf, togglet Systemvariablen-Filter
+# Pfad    : ~/.config/fzf/fenv-reload
+# Quelle  : fzf.alias → fenv()
+# ============================================================
+# Hinweis : Ausgelagert wegen komplexem Shell-Escaping in fzf --bind
+#           Filter- und Farblogik hier zentral (DRY)
+# ============================================================
+
+# Lade Shell-Farben (mit Fallback wenn Datei fehlt)
+colors_file="${XDG_CONFIG_HOME:-$HOME/.config}/shell-colors"
+if [[ -f "$colors_file" ]]; then
+    source "$colors_file"
+fi
+# Fallback: leere Werte wenn shell-colors nicht verfügbar (Ausgabe ohne Farben)
+: "${C_MAUVE:=}"
+: "${C_GREEN:=}"
+: "${C_BLUE:=}"
+: "${C_TEXT:=}"
+: "${C_RESET:=}"
+
+# Argument: Pfad zur Statusdatei (Pflicht, um Session-Kollisionen zu vermeiden)
+if [[ -z "${1:-}" ]]; then
+    echo "Fehler: fenv-reload erwartet Pfad zur Statusdatei als Argument." >&2
+    exit 1
+fi
+tmpfile="$1"
+
+# Aktuellen Modus lesen (0 = gefiltert, 1 = alle)
+show_sys=$(cat "$tmpfile" 2>/dev/null || echo "0")
+
+# Toggle: Modus umschalten
+if [[ "$show_sys" == "0" ]]; then
+    echo "1" > "$tmpfile"
+    show_sys=1
+else
+    echo "0" > "$tmpfile"
+    show_sys=0
+fi
+
+# Rendert Umgebungsvariablen für fzf: Filterung + Farbkodierung in einem AWK-Schritt
+# Architektur-Hinweis: Diese Logik ist bewusst dupliziert (nicht DRY), da fzf reload()
+# in separatem Prozess läuft und keine Shell-Funktionen des Parent aufrufen kann.
+# Bei Änderungen hier auch _fenv_colorize in fzf.alias synchronisieren!
+render_vars() {
+    printenv | grep -E '^[a-zA-Z_][a-zA-Z0-9_]*=' | sort | \
+        awk -F= \
+            -v show_sys="$show_sys" \
+            -v mauve="$C_MAUVE" -v green="$C_GREEN" -v blue="$C_BLUE" \
+            -v text="$C_TEXT" -v reset="$C_RESET" '{
+            name = $1
+
+            # System-Variablen im gefilterten Modus ausblenden
+            if (show_sys == "0" && (name ~ /^_/ || name ~ /^__CF/ || name ~ /^TERM_SESSION/)) {
+                next
+            }
+
+            value = substr($0, length($1) + 2)
+            gsub(/\n/, " ", value)
+
+            # Farbauswahl nach Kategorie
+            if (name ~ /^(DOTFILES|XDG|CONFIG)/) {
+                color = mauve  # Dotfiles-Variablen
+            } else if (name ~ /PATH|DIRS/) {
+                color = green  # PATH-artige Variablen
+            } else if (name ~ /^(FZF|BAT|EZA|RG|FD)/) {
+                color = blue   # Tool-Variablen
+            } else {
+                color = text   # Andere
+            }
+
+            if (length(value) > 45) {
+                value = substr(value, 1, 42) "..."
+            }
+            printf "%s%-28s%s │ %s%s%s\n", color, name, reset, text, value, reset
+        }'
+}
+
+# Hauptausgabe: render_vars() aufrufen für fzf reload
+render_vars
