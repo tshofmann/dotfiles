@@ -236,22 +236,59 @@ fa() {
 # ------------------------------------------------------------
 # Umgebungsvariablen durchsuchen mit formatierter Anzeige
 # PATH-artige Werte werden in der Preview aufgesplittet
+# Ctrl+S togglet Systemvariablen (_, __CF*, TERM_SESSION*)
 fenv() {
     local selection name value
+    local show_system="${FENV_SHOW_SYSTEM:-0}"
+    local tmpfile=$(mktemp)
+    echo "$show_system" > "$tmpfile"
     
-    # Nur gültige Variablen (NAME=wert Format, Name beginnt mit Buchstabe/_)
-    selection=$(printenv | grep -E '^[a-zA-Z_][a-zA-Z0-9_]*=' | sort | \
-        awk -F= '{
+    # Cleanup bei Abbruch oder Funktionsende
+    trap 'rm -f "$tmpfile" 2>/dev/null' EXIT INT TERM
+    
+    # Filtere Variablen basierend auf Modus
+    _fenv_filter() {
+        local show_sys=$(cat "$tmpfile" 2>/dev/null || echo "0")
+        printenv | grep -E '^[a-zA-Z_][a-zA-Z0-9_]*=' | sort | \
+        if [[ "$show_sys" == "0" ]]; then
+            # Systemvariablen ausblenden
+            grep -v -E '^(_[^=]|__CF[^=]|TERM_SESSION[^=])'
+        else
+            cat
+        fi
+    }
+    
+    # Farbkodierung basierend auf Variablentyp
+    _fenv_colorize() {
+        awk -F= -v mauve="$C_MAUVE" -v green="$C_GREEN" -v blue="$C_BLUE" \
+            -v text="$C_TEXT" -v dim="$C_DIM" -v reset="$C_RESET" '{
             name = $1
             value = substr($0, length($1) + 2)
-            # Ersetze Newlines im Wert durch Leerzeichen für die Anzeige
             gsub(/\n/, " ", value)
+            
+            # Farbauswahl nach Kategorie
+            if (name ~ /^(DOTFILES|XDG|CONFIG)/) {
+                color = mauve  # Dotfiles-Variablen
+            } else if (name ~ /PATH|DIRS/) {
+                color = green  # PATH-artige Variablen
+            } else if (name ~ /^(FZF|BAT|EZA|RG|FD)/) {
+                color = blue   # Tool-Variablen
+            } else {
+                color = text   # Andere
+            }
+            
             if (length(value) > 45) {
                 value = substr(value, 1, 42) "..."
             }
-            printf "%-28s │ %s\n", name, value
-        }' | fzf \
-        --header='Enter: Kopieren | Ctrl+Y: Nur Wert' \
+            printf "%s%-28s%s │ %s%s%s\n", color, name, reset, text, value, reset
+        }'
+    }
+    
+    # Reload-Funktion für Ctrl+S Toggle
+    local reload_cmd="zsh -c 'show_sys=\$(cat $tmpfile); if [[ \"\$show_sys\" == \"0\" ]]; then echo 1 > $tmpfile; else echo 0 > $tmpfile; fi; source ${XDG_CONFIG_HOME:-$HOME/.config}/shell-colors; printenv | grep -E \"^[a-zA-Z_][a-zA-Z0-9_]*=\" | sort | if [[ \$(cat $tmpfile) == \"0\" ]]; then grep -v -E \"^(_[^=]|__CF[^=]|TERM_SESSION[^=])\"; else cat; fi | awk -F= -v mauve=\"\$C_MAUVE\" -v green=\"\$C_GREEN\" -v blue=\"\$C_BLUE\" -v text=\"\$C_TEXT\" -v dim=\"\$C_DIM\" -v reset=\"\$C_RESET\" '\''{name=\$1; value=substr(\$0,length(\$1)+2); gsub(/\n/,\" \",value); if(name~/^(DOTFILES|XDG|CONFIG)/) color=mauve; else if(name~/PATH|DIRS/) color=green; else if(name~/^(FZF|BAT|EZA|RG|FD)/) color=blue; else color=text; if(length(value)>45) value=substr(value,1,42)\"...\"; printf \"%s%-28s%s │ %s%s%s\n\",color,name,reset,text,value,reset}'\''; '"
+    
+    selection=$(_fenv_filter | _fenv_colorize | fzf --ansi \
+        --header='Enter: Kopieren | Ctrl+Y: Nur Wert | Ctrl+S: System-Variablen' \
         --preview='n=$(echo {} | cut -d"│" -f1 | xargs)
             v=$(printenv "$n" 2>/dev/null)
             printf "%s%s%s\n\n" "$C_MAUVE" "$n" "$C_RESET"
@@ -261,7 +298,11 @@ fenv() {
                 echo "$v"
             fi' \
         --preview-window='right:50%,wrap' \
+        --bind="ctrl-s:reload($reload_cmd)" \
         --bind='ctrl-y:execute-silent(n=$(echo {} | cut -d"│" -f1 | xargs); printenv "$n" | pbcopy)+abort')
+    
+    rm -f "$tmpfile"
+    trap - EXIT INT TERM
     
     if [[ -n "$selection" ]]; then
         name=$(echo "$selection" | cut -d'│' -f1 | xargs)
