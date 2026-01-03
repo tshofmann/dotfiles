@@ -151,10 +151,13 @@ Nach erfolgreicher Installation sind folgende Symlinks aktiv:
 | `~/.config/bat/` | `terminal/.config/bat/` | bat Config + Catppuccin Mocha Theme |
 | `~/.config/btop/` | `terminal/.config/btop/` | btop Config + Catppuccin Mocha Theme |
 | `~/.config/eza/` | `terminal/.config/eza/` | eza Catppuccin Theme |
+| `~/.config/fastfetch/` | `terminal/.config/fastfetch/` | fastfetch System-Info Config |
 | `~/.config/fd/` | `terminal/.config/fd/` | fd globale Ignore-Patterns |
 | `~/.config/fzf/` | `terminal/.config/fzf/` | fzf globale Optionen |
 | `~/.config/lazygit/` | `terminal/.config/lazygit/` | lazygit mit Catppuccin Theme |
 | `~/.config/ripgrep/` | `terminal/.config/ripgrep/` | ripgrep Defaults |
+| `~/.config/shell-colors` | `terminal/.config/shell-colors` | Catppuccin Mocha Shell-Variablen |
+| `~/.config/tealdeer/` | `terminal/.config/tealdeer/` | tealdeer Config + lokale Patches |
 | `~/.config/zsh/` | `terminal/.config/zsh/` | zsh-syntax-highlighting Theme |
 
 ### Symlinks prüfen

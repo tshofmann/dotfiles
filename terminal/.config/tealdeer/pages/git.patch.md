@@ -42,18 +42,18 @@
 
 # dotfiles: Funktionen
 
-- dotfiles: Git-Log mit Vorschau (`<Ctrl y>` SHA kopieren):
+- dotfiles: Git-Log mit Vorschau (`<Enter>` Anzeigen, `<Ctrl y>` SHA kopieren):
 
 `glog`
 
-- dotfiles: Branch wechseln (`<Ctrl d>` Löschen):
+- dotfiles: Branch wechseln (`<Enter>` Checkout, `<Ctrl d>` Löschen):
 
 `gbr`
 
-- dotfiles: Status mit Diff-Vorschau (`<Tab>` Mehrfach, `<Ctrl r>` Reset):
+- dotfiles: Status mit Diff-Vorschau (`<Enter>` Add, `<Tab>` Mehrfach, `<Ctrl r>` Reset):
 
 `gst`
 
-- dotfiles: Stash-Browser (`<Ctrl p>` Pop, `<Ctrl d>` Drop):
+- dotfiles: Stash-Browser (`<Enter>` Apply, `<Ctrl p>` Pop, `<Ctrl d>` Drop):
 
 `gstash`

@@ -217,7 +217,7 @@ $EDITOR ~/dotfiles/terminal/.config/fzf/config
 | `bat.alias` | cat mit Syntax-Highlighting | [Tools → Aliase](tools.md#batalias) |
 | `ripgrep.alias` | Schnelle Textsuche | [Tools → Aliase](tools.md#ripgrepalias) |
 | `fd.alias` | Dateisuche | [Tools → Aliase](tools.md#fdalias) |
-| `fzf.alias` | Tool-Kombinationen (20+ Funktionen) | [Tools → Aliase](tools.md#fzfalias--tool-kombinationen) |
+| `fzf.alias` | Tool-Kombinationen (20+ Funktionen) | [Tools → Aliase](tools.md#fzfalias--generische-utilities) |
 | `btop.alias` | Prozess-Monitor | [Tools → Aliase](tools.md#btopalias) |
 
 ### Neue Alias-Datei erstellen
