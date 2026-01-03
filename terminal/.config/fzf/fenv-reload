@@ -7,8 +7,12 @@
 [[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell-colors" ]] && \
     source "${XDG_CONFIG_HOME:-$HOME/.config}/shell-colors"
 
-# Argument: Pfad zur Statusdatei
-tmpfile="${1:-/tmp/fenv-show-sys}"
+# Argument: Pfad zur Statusdatei (Pflicht, um Session-Kollisionen zu vermeiden)
+if [[ -z "${1:-}" ]]; then
+    echo "Fehler: fenv-reload erwartet Pfad zur Statusdatei als Argument." >&2
+    exit 1
+fi
+tmpfile="$1"
 
 # Aktuellen Modus lesen (0 = gefiltert, 1 = alle)
 show_sys=$(cat "$tmpfile" 2>/dev/null || echo "0")
@@ -22,7 +26,7 @@ else
     show_sys=0
 fi
 
-# Variablen filtern
+# Variablen filtern (identisch zu _fenv_filter in fzf.alias)
 filter_vars() {
     printenv | grep -E '^[a-zA-Z_][a-zA-Z0-9_]*=' | sort | \
     if [[ "$show_sys" == "0" ]]; then
@@ -32,19 +36,30 @@ filter_vars() {
     fi
 }
 
-# Farbkodierung (identisch zu _fenv_colorize in fzf.alias)
+# Farbkodierung (IDENTISCH zu _fenv_colorize in fzf.alias)
+# Bei Änderungen hier auch fzf.alias anpassen!
 colorize_vars() {
     awk -F= -v mauve="$C_MAUVE" -v green="$C_GREEN" -v blue="$C_BLUE" \
         -v text="$C_TEXT" -v dim="$C_DIM" -v reset="$C_RESET" '{
         name = $1
-        value = substr($0, index($0, "=") + 1)
-        if (length(value) > 60) value = substr(value, 1, 57) "..."
-        if (name ~ /^(PATH|FPATH|MANPATH|INFOPATH|.*_PATH|.*DIRS)$/)
-            printf "%s%-20s%s │ %s%s%s\n", mauve, name, reset, dim, value, reset
-        else if (name ~ /^(HOME|USER|SHELL|TERM|LANG|LC_)/)
-            printf "%s%-20s%s │ %s%s%s\n", green, name, reset, text, value, reset
-        else
-            printf "%s%-20s%s │ %s%s%s\n", blue, name, reset, text, value, reset
+        value = substr($0, length($1) + 2)
+        gsub(/\n/, " ", value)
+        
+        # Farbauswahl nach Kategorie
+        if (name ~ /^(DOTFILES|XDG|CONFIG)/) {
+            color = mauve  # Dotfiles-Variablen
+        } else if (name ~ /PATH|DIRS/) {
+            color = green  # PATH-artige Variablen
+        } else if (name ~ /^(FZF|BAT|EZA|RG|FD)/) {
+            color = blue   # Tool-Variablen
+        } else {
+            color = text   # Andere
+        }
+        
+        if (length(value) > 45) {
+            value = substr(value, 1, 42) "..."
+        }
+        printf "%s%-28s%s │ %s%s%s\n", color, name, reset, text, value, reset
     }'
 }
 

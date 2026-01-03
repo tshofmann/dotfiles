@@ -240,7 +240,12 @@ fa() {
 fenv() {
     local selection name value
     local show_system="${FENV_SHOW_SYSTEM:-0}"
-    local tmpfile=$(mktemp)
+    # Temporäre Datei für Toggle-Status (mit Fehlerbehandlung)
+    local tmpfile
+    tmpfile=$(mktemp 2>/dev/null) || {
+        echo "fenv: Konnte temporäre Datei nicht erstellen." >&2
+        return 1
+    }
     echo "$show_system" > "$tmpfile"
     
     # Cleanup bei Abbruch oder Funktionsende
@@ -284,9 +289,12 @@ fenv() {
         }'
     }
     
-    # Reload-Befehl: Nutzt Helper-Skript (vermeidet komplexes Shell-Escaping)
+    # Helper-Skript für Ctrl+S Toggle prüfen
     local reload_helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fenv-reload"
-    local reload_cmd="$reload_helper $tmpfile"
+    local reload_cmd=""
+    if [[ -x "$reload_helper" ]]; then
+        reload_cmd="$reload_helper $tmpfile"
+    fi
     
     selection=$(_fenv_filter | _fenv_colorize | fzf --ansi \
         --header='Enter: Kopieren | Ctrl+Y: Nur Wert | Ctrl+S: System-Variablen' \
@@ -299,7 +307,7 @@ fenv() {
                 echo "$v"
             fi' \
         --preview-window='right:50%,wrap' \
-        --bind="ctrl-s:reload($reload_cmd)" \
+        ${reload_cmd:+--bind="ctrl-s:reload($reload_cmd)"} \
         --bind='ctrl-y:execute-silent(n=$(echo {} | cut -d"│" -f1 | xargs); printenv "$n" | pbcopy)+abort')
     
     # Cleanup: Trap zuerst zurücksetzen, dann Datei löschen
