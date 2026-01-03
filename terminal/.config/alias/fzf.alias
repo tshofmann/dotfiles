@@ -95,9 +95,8 @@ fman() {
             --bind "ctrl-b:change-preview($man_preview)+change-prompt(Man> )+execute-silent(echo man > $mode_file)")
     
     local mode=$(cat "$mode_file")
-    rm -f "$mode_file"
     trap - EXIT INT TERM
-    
+    rm -f "$mode_file"
     if [[ -n "$selection" ]]; then
         page=$(echo "$selection" | sed 's/(.*//' | xargs)
         
