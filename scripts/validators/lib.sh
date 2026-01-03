@@ -67,7 +67,7 @@ extract_aliases_from_file() {
 # Extrahiere Funktionsnamen aus einer Datei
 extract_functions_from_file() {
     local file="$1"
-    grep -oE "^[[:space:]]*[a-z][a-z0-9_]*\(\)[[:space:]]*\{" "$file" 2>/dev/null | \
+    grep -oE "^[[:space:]]*[a-z][a-z0-9_-]*\(\)[[:space:]]*\{" "$file" 2>/dev/null | \
         sed 's/().*//' | sed 's/^[[:space:]]*//' | sort -u
 }
 
