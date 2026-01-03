@@ -10,9 +10,17 @@
 #           Filter- und Farblogik hier zentral (DRY)
 # ============================================================
 
-# Lade Shell-Farben
-[[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell-colors" ]] && \
-    source "${XDG_CONFIG_HOME:-$HOME/.config}/shell-colors"
+# Lade Shell-Farben (mit Fallback wenn Datei fehlt)
+colors_file="${XDG_CONFIG_HOME:-$HOME/.config}/shell-colors"
+if [[ -f "$colors_file" ]]; then
+    source "$colors_file"
+fi
+# Fallback: leere Werte wenn shell-colors nicht verfügbar (Ausgabe ohne Farben)
+: "${C_MAUVE:=}"
+: "${C_GREEN:=}"
+: "${C_BLUE:=}"
+: "${C_TEXT:=}"
+: "${C_RESET:=}"
 
 # Argument: Pfad zur Statusdatei (Pflicht, um Session-Kollisionen zu vermeiden)
 if [[ -z "${1:-}" ]]; then
@@ -33,8 +41,10 @@ else
     show_sys=0
 fi
 
-# Umgebung ausgeben: Filtern & Farbkodierung in einem AWK-Schritt (DRY)
-# Bei Änderungen hier auch _fenv_colorize in fzf.alias prüfen!
+# Rendert Umgebungsvariablen für fzf: Filterung + Farbkodierung in einem AWK-Schritt
+# Architektur-Hinweis: Diese Logik ist bewusst dupliziert (nicht DRY), da fzf reload()
+# in separatem Prozess läuft und keine Shell-Funktionen des Parent aufrufen kann.
+# Bei Änderungen hier auch _fenv_colorize in fzf.alias synchronisieren!
 render_vars() {
     printenv | grep -E '^[a-zA-Z_][a-zA-Z0-9_]*=' | sort | \
         awk -F= \
@@ -69,5 +79,5 @@ render_vars() {
         }'
 }
 
-# Ausgabe für fzf reload
+# Hauptausgabe: render_vars() aufrufen für fzf reload
 render_vars
