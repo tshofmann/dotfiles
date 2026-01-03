@@ -30,7 +30,7 @@
 
 `fman`
 
-- dotfiles: Umgebungsvariablen durchsuchen (`<Enter>` Kopieren, `<Ctrl y>` Nur Wert):
+- dotfiles: Umgebungsvariablen durchsuchen (`<Enter>` Kopieren, `<Ctrl y>` Nur Wert, `<Ctrl s>` System-Variablen):
 
 `fenv`
 
