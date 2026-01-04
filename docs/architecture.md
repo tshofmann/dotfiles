@@ -24,6 +24,10 @@ dotfiles/
 ├── scripts/                     # Utility-Scripts
 │   ├── health-check.sh          # Validierung der Installation
 │   ├── validate-docs.sh         # Docs-Code-Synchronisation prüfen
+│   ├── tests/                   # Unit-Tests für Validatoren
+│   │   ├── run-tests.sh         # Test-Runner
+│   │   ├── test_lib.sh          # lib.sh Tests
+│   │   └── test_validators.sh   # Validator-Modul Tests
 │   └── validators/              # Modulare Validierungs-Komponenten
 │       ├── lib.sh               # Shared Library (Logging, Registry)
 │       ├── core/                # Kern-Validierungen (8 Module)
@@ -78,6 +82,8 @@ dotfiles/
         │   └── theme.yml        # eza Catppuccin Theme
         ├── fd/
         │   └── ignore           # fd globale Ignore-Patterns
+        ├── fastfetch/
+        │   └── config.jsonc     # fastfetch System-Info Konfiguration
         ├── fzf/
         │   ├── config           # fzf globale Optionen (FZF_DEFAULT_OPTS_FILE)
         │   ├── fa-preview       # Helper-Skript für fa() Preview-Wechsel

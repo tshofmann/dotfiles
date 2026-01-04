@@ -2,90 +2,133 @@
 # ============================================================
 # structure.sh - Verzeichnisstruktur Validierung
 # ============================================================
-# Prüft: Alle Dateien in terminal/ gegen architecture.md
+# Zweck   : Prüft ob Dateisystem und architecture.md synchron sind
+# Pfad    : scripts/validators/extended/structure.sh
 # ============================================================
-# Dynamisch: Scannt tatsächliche Dateien und vergleicht mit Doku
+# Prüft bidirektional:
+#   1. Dokumentierte Dateien → müssen im Filesystem existieren
+#   2. Existierende Dateien → müssen in architecture.md sein
 # ============================================================
 
 [[ -z "${VALIDATOR_LIB_LOADED:-}" ]] && source "${0:A:h:h}/lib.sh"
 
+# Deaktiviere errexit lokal (grep gibt Exit 1 bei no-match)
+setopt localoptions noerrexit
+
+# ------------------------------------------------------------
+# Hauptvalidierung
+# ------------------------------------------------------------
 check_structure() {
-    log "Prüfe Verzeichnisstruktur in architecture.md..."
+    log "Prüfe Verzeichnisstruktur gegen architecture.md..."
     
     local arch_doc="$DOTFILES_DIR/docs/architecture.md"
-    local terminal_dir="$TERMINAL_DIR"
     local errors=0
     
-    # ----------------------------------------------------
-    # Extrahiere alle Dateinamen aus dem terminal/ Baum in architecture.md
-    # Strategie: Suche alle Zeilen mit ├── oder └── die Dateien enthalten
-    # ----------------------------------------------------
+    # Konfiguration: Ignorierte Patterns und Aggregate-Verzeichnisse
+    local -a ignored_patterns=(
+        "*.theme"           # Theme-Dateien (btop, bat)
+        "*.tmTheme"         # TextMate Themes
+        "*.patch.md"        # Tealdeer Patches (eigener Validator)
+    )
+    local -a aggregate_dirs=(
+        "terminal/.config/tealdeer/pages"
+        "terminal/.config/btop/themes"
+        "terminal/.config/bat/themes"
+    )
+    
+    # Hilfsfunktion: Prüft ob ein Pfad ignoriert werden soll
+    _should_ignore() {
+        local path="$1"
+        local filename="${path##*/}"
+        
+        for pattern in "${ignored_patterns[@]}"; do
+            [[ "$filename" == ${~pattern} ]] && return 0
+        done
+        
+        for agg_dir in "${aggregate_dirs[@]}"; do
+            [[ "$path" == "$DOTFILES_DIR/$agg_dir/"* ]] && return 0
+        done
+        
+        return 1
+    }
+    
+    # ========================================================
+    # PRÜFUNG 1: Dokumentierte Dateien müssen existieren
+    # ========================================================
+    # Extrahiere nur den Haupt-Baumblock (der mit "dotfiles/" beginnt)
+    # bis zum Ende des Codeblocks (```)
+    local tree_block=$(sed -n '/^dotfiles\/$/,/^```$/p' "$arch_doc")
+    
+    # Extrahiere Dateien aus der Baumstruktur
+    # Format: "├── dateiname" oder "└── dateiname" (mit alphanumerischen Zeichen)
     local -a doc_files=()
+    doc_files=($(echo "$tree_block" | grep -E '[├└]── [a-zA-Z0-9]' | \
+        sed 's/#.*//' | \
+        sed 's/.*[├└]── //' | \
+        sed 's/[[:space:]]*$//' | \
+        grep -v '/$' | \
+        grep -v '^$' | \
+        grep -v '(' ))
     
-    # Extrahiere den terminal/ Block
-    local terminal_block=$(sed -n '/└── terminal\//,/^```$/p' "$arch_doc")
-    
-    # Parse jede Zeile und extrahiere Dateinamen
-    echo "$terminal_block" | while IFS= read -r line; do
-        # Nur Zeilen mit ├── oder └── 
-        [[ "$line" != *[├└]──* ]] && continue
-        
-        # Extrahiere den Eintrag (entferne Kommentare und Baum-Zeichen)
-        local entry=$(echo "$line" | sed 's/#.*//' | sed 's/.*[├└]── //' | sed 's/[[:space:]]*$//')
-        
-        # Überspringe leere und Verzeichnis-Einträge
-        [[ -z "$entry" ]] && continue
-        [[ "$entry" == */ ]] && continue
-        
-        # Speichere nur den Dateinamen (nicht den vollen Pfad)
-        doc_files+=("$entry")
-    done
-    
-    # Array aus Subshell zurückholen
-    doc_files=($(echo "$terminal_block" | grep -E '[├└]──' | \
-        sed 's/#.*//' | sed 's/.*[├└]── //' | sed 's/[[:space:]]*$//' | \
-        grep -v '/$' | grep -v '^$'))
-    
-    # ----------------------------------------------------
-    # Prüfung 1: Dokumentierte Dateien müssen irgendwo in terminal/ existieren
-    # ----------------------------------------------------
     for doc_file in "${doc_files[@]}"; do
-        # Überspringe Platzhalter-Kommentare wie "(10 Dateien)"
-        [[ "$doc_file" == *"("* ]] && continue
-        
-        # Suche die Datei rekursiv in terminal/
-        local found=$(find "$terminal_dir" -name "$doc_file" -type f 2>/dev/null | head -1)
+        # Suche die Datei im gesamten Repository
+        local found=$(find "$DOTFILES_DIR" -name "$doc_file" -type f 2>/dev/null | head -1)
         
         if [[ -z "$found" ]]; then
-            err "architecture.md listet '$doc_file' aber existiert nicht in terminal/"
+            err "architecture.md listet '$doc_file' aber existiert nicht"
             (( errors++ )) || true
         fi
     done
     
-    # ----------------------------------------------------
-    # Prüfung 2: Wichtige Config-Dateien müssen dokumentiert sein
-    # Scanne .config/fzf/ und .config/alias/ dynamisch
-    # ----------------------------------------------------
-    local -a critical_dirs=(".config/fzf" ".config/alias")
+    # ========================================================
+    # PRÜFUNG 2: Existierende Dateien müssen dokumentiert sein
+    # ========================================================
+    # Scanne alle relevanten Verzeichnisse vom Root aus
+    local -a scan_dirs=(
+        "$DOTFILES_DIR/setup"
+        "$DOTFILES_DIR/scripts"
+        "$DOTFILES_DIR/terminal"
+        "$DOTFILES_DIR/docs"
+    )
     
-    for check_dir in "${critical_dirs[@]}"; do
-        local dir_path="$terminal_dir/$check_dir"
-        [[ ! -d "$dir_path" ]] && continue
+    for scan_dir in "${scan_dirs[@]}"; do
+        [[ ! -d "$scan_dir" ]] && continue
         
-        # Alle Dateien in diesem Verzeichnis (nicht rekursiv)
-        for f in "$dir_path"/*(.N); do
-            local filename=$(basename "$f")
+        # Finde alle Dateien rekursiv
+        while IFS= read -r filepath; do
+            [[ -z "$filepath" ]] && continue
             
-            # Prüfe ob Dateiname in der Doku erwähnt wird
-            if ! grep -q "$filename" "$arch_doc" 2>/dev/null; then
-                err "Datei '$check_dir/$filename' existiert aber fehlt in architecture.md"
+            # Prüfe ob ignoriert
+            _should_ignore "$filepath" && continue
+            
+            local filename="${filepath##*/}"  # basename via Parameter Expansion
+            local rel_path="${filepath#$DOTFILES_DIR/}"
+            
+            # Prüfe ob Dateiname in architecture.md erwähnt wird
+            if ! grep -qF "$filename" "$arch_doc" 2>/dev/null; then
+                err "Datei '$rel_path' existiert aber fehlt in architecture.md"
                 (( errors++ )) || true
             fi
-        done
+        done < <(find "$scan_dir" -type f 2>/dev/null)
+    done
+    
+    # ========================================================
+    # PRÜFUNG 3: Root-Dateien (README, LICENSE, etc.)
+    # ========================================================
+    for root_file in "$DOTFILES_DIR"/*(.N); do
+        local filename="${root_file##*/}"  # basename via Parameter Expansion
+        
+        # Ignoriere versteckte Dateien
+        [[ "$filename" == .* ]] && continue
+        
+        if ! grep -qF "$filename" "$arch_doc" 2>/dev/null; then
+            err "Root-Datei '$filename' fehlt in architecture.md"
+            (( errors++ )) || true
+        fi
     done
     
     if ((errors == 0)); then
-        ok "terminal/ Struktur in architecture.md korrekt"
+        ok "Verzeichnisstruktur und architecture.md synchron"
     fi
     
     return $errors
