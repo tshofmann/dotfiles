@@ -32,18 +32,10 @@
 
 # dotfiles: Funktionen (fzf)
 
-- dotfiles: Pakete interaktiv installieren (`<Enter>` Installieren, `<Tab>` Mehrfach):
+- dotfiles: Formulae [F] und Casks [C] interaktiv installieren (`<Enter>` Installieren, `<Tab>` Mehrfach):
 
 `bip`
-
-- dotfiles: Veraltete Pakete aktualisieren (`<Enter>` Upgrade, `<Tab>` Mehrfach):
-
-`bup`
 
 - dotfiles: Ungenutzte Pakete entfernen (`<Enter>` Entfernen, `<Tab>` Mehrfach):
 
 `brp`
-
-- dotfiles: Pakete suchen und installieren (`<Enter>` Installieren, `<Ctrl o>` Homepage):
-
-`bsp {{suche}}`

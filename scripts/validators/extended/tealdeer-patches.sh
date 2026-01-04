@@ -201,7 +201,53 @@ validate_tealdeer_patches() {
     fi
     
     # ----------------------------------------------------
-    # 3. Prüfung: Format (# dotfiles: Header)
+    # 3. Prüfung: Verwaiste Befehle (im Patch, aber nicht im Code)
+    # ----------------------------------------------------
+    log "Prüfe auf verwaiste Befehle in Patches..."
+    
+    local -a orphan_commands=()
+    
+    for alias_file in "$ALIAS_DIR"/*.alias(N); do
+        local base=$(basename "$alias_file" .alias)
+        
+        # Überspringe ausgeschlossene Dateien
+        [[ " ${EXCLUDED_ALIAS_FILES[*]} " =~ " ${base} " ]] && continue
+        
+        local patch_name=$(get_patch_name "$base")
+        local patch_file="$TEALDEER_DIR/${patch_name}.patch.md"
+        
+        # Überspringe wenn Patch nicht existiert
+        [[ ! -f "$patch_file" ]] && continue
+        
+        # Extrahiere alle Befehle aus dem Patch
+        local -a patch_commands=($(extract_commands_from_patch "$patch_file"))
+        
+        # Extrahiere Aliase und Funktionen aus Code
+        local -a code_aliases=($(extract_aliases_from_file "$alias_file"))
+        local -a code_functions=($(extract_functions_from_file "$alias_file"))
+        local -a all_code_commands=("${code_aliases[@]}" "${code_functions[@]}")
+        
+        # Prüfe jeden Patch-Befehl gegen Code
+        for cmd in "${patch_commands[@]}"; do
+            if [[ ! " ${all_code_commands[*]} " =~ " ${cmd} " ]]; then
+                orphan_commands+=("$cmd (${patch_name}.patch.md → nicht in ${base}.alias)")
+            fi
+        done
+    done
+    
+    if (( ${#orphan_commands[@]} > 0 )); then
+        err "Verwaiste Befehle in Patches (nicht mehr im Code):"
+        for item in "${orphan_commands[@]}"; do
+            print "   ${RED}→${NC} $item"
+        done
+        (( errors += ${#orphan_commands[@]} )) || true
+    else
+        ok "Keine verwaisten Befehle in Patches"
+    fi
+    
+    # ----------------------------------------------------
+    # 4. Prüfung: Format (# dotfiles: Header)
+    # ----------------------------------------------------
     # ----------------------------------------------------
     log "Prüfe Patch-Format..."
     

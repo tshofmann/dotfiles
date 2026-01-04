@@ -29,10 +29,10 @@ alias la='eza -la --group-directories-first --header'
 # Mit Git-Integration (nur in Git-Repos sinnvoll)
 # ------------------------------------------------------------
 # Lange Liste mit Git-Status
-alias lsg='eza -l --git --header'
+alias llg='eza -l --git --group-directories-first --header'
 
 # Alle Dateien mit Git-Status
-alias lag='eza -la --git --header'
+alias lag='eza -la --git --group-directories-first --header'
 
 # ------------------------------------------------------------
 # Baumansicht

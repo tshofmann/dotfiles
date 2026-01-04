@@ -12,14 +12,6 @@
 
 `catd {{pfad/zur/datei}}`
 
-- dotfiles: Verfügbare Themes auflisten:
+- dotfiles: Theme interaktiv auswählen und aktivieren:
 
-`bat-themes`
-
-- dotfiles: Unterstützte Sprachen auflisten:
-
-`bat-langs`
-
-- dotfiles: Themes interaktiv mit fzf vorschauen (`<Enter>` Auswählen, `<Ctrl y>` Name kopieren):
-
-`bat-preview`
+`bat-theme`

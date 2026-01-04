@@ -164,10 +164,8 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 | Funktion | Beschreibung |
 |----------|--------------|
-| `bip` | **Brew Install**: Interaktive Paketsuche, Enter=Installieren, Tab=Mehrfach |
-| `bup` | **Brew Update**: Veraltete Pakete upgraden, Enter=Upgrade, Tab=Mehrfach |
-| `brp` | **Brew Remove**: Installierte Pakete entfernen, Enter=Entfernen, Tab=Mehrfach |
-| `bsp [query]` | **Brew Search**: Suchen mit Info-Vorschau, Enter=Installieren, Ctrl+O=Homepage |
+| `bip` | **Brew Install**: Formulae [F] und Casks [C] durchsuchen, Enter=Installieren, Tab=Mehrfach |
+| `brp` | **Brew Remove**: Ungenutzte Pakete entfernen (nur Leaves), Enter=Entfernen, Tab=Mehrfach |
 | `brewv` | **Brew Versions**: Alle Formulae, Casks und MAS-Apps mit Versionen |
 
 > **Hinweis:** Die mas-Aliase sind nur verfügbar wenn mas installiert ist. `brewup` enthält automatisch `mas upgrade` wenn mas vorhanden ist. Die interaktiven Funktionen benötigen fzf.
@@ -213,7 +211,6 @@ Verfügbare Aliase aus `~/.config/alias/`:
 |-------|--------|--------------|
 | `ff` | `fastfetch` | Schnelle System-Info (Standardanzeige) |
 | `neofetch` | `fastfetch` | neofetch-Kompatibilität |
-| `sysinfo` | `fastfetch --logo none` | System-Info ohne Logo |
 
 > **Hinweis:** fastfetch ist in C geschrieben und deutlich schneller als neofetch. Die Konfiguration liegt in `~/.config/fastfetch/config.jsonc` mit Catppuccin-Farben und Nerd-Font-Icons.
 
@@ -257,8 +254,8 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `ls` | `eza --group-directories-first` | ls-Ersatz mit Icons |
 | `ll` | `eza -l --group-directories-first --header` | Ausführliche Auflistung |
 | `la` | `eza -la --group-directories-first --header` | Alle Dateien inkl. versteckter |
-| `lsg` | `eza -l --git --header` | Long-Format mit Git-Status |
-| `lag` | `eza -la --git --header` | Alle Dateien mit Git-Status |
+| `llg` | `eza -l --git --group-directories-first --header` | Long-Format mit Git-Status |
+| `lag` | `eza -la --git --group-directories-first --header` | Alle Dateien mit Git-Status |
 | `lt` | `eza --tree --level=2` | Baumansicht (2 Ebenen) |
 | `lt3` | `eza --tree --level=3` | Baumansicht (3 Ebenen) |
 | `lss` | `eza -l --sort=size --reverse --header` | Sortiert nach Größe |
@@ -273,14 +270,12 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `cat` | `bat -pp` | cat-Ersatz: Plain + kein Pager |
 | `catn` | `bat --style=numbers --paging=never` | Nur Zeilennummern |
 | `catd` | `bat --diff` | Mit Git-Diff-Markierungen |
-| `bat-themes` | `bat --list-themes` | Verfügbare Themes auflisten |
-| `bat-langs` | `bat --list-languages` | Verfügbare Sprachen auflisten |
 
 **Interaktive Funktionen (mit fzf):**
 
 | Funktion | Beschreibung |
 |----------|--------------|
-| `bat-preview` | **Theme-Vorschau**: Themes interaktiv durchsuchen. Enter=Auswählen, Ctrl+Y=Name kopieren |
+| `bat-theme` | **Theme-Auswahl**: Theme interaktiv auswählen und aktivieren |
 
 > **Hinweis:** `-pp` ist die Kurzform für `--style=plain --paging=never` – verhält sich wie das echte `cat`.
 
@@ -366,7 +361,7 @@ Die folgenden Funktionen nutzen fzf, sind aber nach ihrem primären Zweck in den
 - **ripgrep.alias**: `rgf`
 - **fd.alias**: `cdf`, `fo`
 - **git.alias**: `glog`, `gbr`, `gst`, `gstash`
-- **homebrew.alias**: `bip`, `bup`, `brp`, `bsp`, `brewv`
+- **homebrew.alias**: `bip`, `brp`, `brewv`
 - **gh.alias**: `ghpr`, `ghis`, `ghrun`, `ghrepo`, `ghgist`
 
 > **Design-Prinzip:** Aliase werden nach ihrem primären Zweck organisiert, nicht nach den verwendeten Tools. `rgf` nutzt fzf+bat, ist aber primär eine Suche – daher in `ripgrep.alias`.
@@ -396,7 +391,7 @@ ll                 # Long-Format mit Header
 la                 # Alle Dateien inkl. versteckter
 
 # Mit Git-Integration (in Git-Repos)
-lsg                # Long-Format mit Git-Status
+llg                # Long-Format mit Git-Status
 lag                # Alle Dateien mit Git-Status
 
 # Baumansicht
@@ -430,8 +425,8 @@ man ls                 # Automatisch via MANPAGER
 # Theme temporär wechseln
 bat --theme="Dracula" file.py
 
-# Theme-Vorschau mit fzf
-bat-preview
+# Theme interaktiv auswählen
+bat-theme
 ```
 
 > **Hinweis:** `-pp` = `--style=plain --paging=never` – verhält sich wie echtes `cat`. bat ist automatisch als `MANPAGER` konfiguriert für Syntax-Highlighting in Man-Pages.

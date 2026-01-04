@@ -108,24 +108,27 @@ brewv() {
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # Pakete interaktiv suchen und installieren (Tab für Mehrfachauswahl)
+    # Formulae und Casks interaktiv suchen und installieren (Tab für Mehrfachauswahl)
     bip() {
-        local pkg
-        pkg=$(brew formulae | fzf --multi \
-            --preview 'brew info {}' \
-            --header='Enter: Installieren | Tab: Mehrfach')
+        local selection type pkg
+        selection=$({
+            brew formulae | sed 's/^/[F] /'
+            brew casks | sed 's/^/[C] /'
+        } | fzf --multi \
+            --preview 'brew info {2}' \
+            --header='[F]=Formula [C]=Cask | Enter: Installieren | Tab: Mehrfach')
         
-        [[ -n "$pkg" ]] && echo "$pkg" | xargs brew install
-    }
-    
-    # Veraltete Pakete interaktiv aktualisieren (Tab für Mehrfachauswahl)
-    bup() {
-        local pkg
-        pkg=$(brew outdated | fzf --multi \
-            --preview 'brew info {}' \
-            --header='Enter: Upgrade | Tab: Mehrfach')
+        [[ -z "$selection" ]] && return 0
         
-        [[ -n "$pkg" ]] && echo "$pkg" | xargs brew upgrade
+        echo "$selection" | while read -r line; do
+            type="${line:1:1}"
+            pkg="${line:4}"
+            if [[ "$type" == "C" ]]; then
+                brew install --cask "$pkg"
+            else
+                brew install "$pkg"
+            fi
+        done
     }
     
     # Ungenutzte Pakete interaktiv entfernen (nur Leaves)
@@ -136,16 +139,5 @@ if command -v fzf >/dev/null 2>&1; then
             --header='Enter: Entfernen | Tab: Mehrfach')
         
         [[ -n "$pkg" ]] && echo "$pkg" | xargs brew uninstall
-    }
-    
-    # Pakete suchen mit Info-Vorschau und direkter Installation
-    bsp() {
-        local pkg
-        pkg=$(brew search "${1:-}" | fzf \
-            --preview 'brew info {}' \
-            --header='Enter: Installieren | Ctrl+O: Homepage' \
-            --bind 'ctrl-o:execute-silent(brew home {})')
-        
-        [[ -n "$pkg" ]] && brew install "$pkg"
     }
 fi
