@@ -79,39 +79,25 @@ fkill() {
 # MAN + FZF + BAT: Man-Pages Browser
 # ------------------------------------------------------------
 # Man-Pages interaktiv durchsuchen mit Syntax-Highlighting
-# Ctrl+T togglet zwischen man und tldr Preview
-# Enter öffnet je nach Modus man oder tldr
+# Ctrl+S togglet zwischen man und tldr Preview
+# Enter öffnet immer die volle man-Page
 fman() {
-    local selection page section mode_file
+    local selection page section
     local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fman-preview"
     
-    mode_file=$(mktemp)
-    echo "man" > "$mode_file"
-    
-    # Cleanup bei Abbruch oder Funktionsende
-    trap 'rm -f "$mode_file" 2>/dev/null' EXIT INT TERM
-    
     selection=$(man -k . 2>/dev/null | \
-        fzf --prompt='Man> ' \
-            --preview "$helper man {}" \
-            --header='Enter: Öffnen | Ctrl+T: man ↔ tldr' \
-            --bind "ctrl-t:transform:[[ \$FZF_PROMPT == 'Man> ' ]] && echo 'change-preview($helper tldr {})+change-prompt(tldr> )+execute-silent(echo tldr > $mode_file)' || echo 'change-preview($helper man {})+change-prompt(Man> )+execute-silent(echo man > $mode_file)'")
+        fzf --prompt='man> ' \
+            --preview "[[ \$FZF_PROMPT == 'tldr> ' ]] && $helper tldr {} || $helper man {}" \
+            --header='Enter: man öffnen | Ctrl+S: man ↔ tldr' \
+            --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'man> ' ]] && echo 'change-prompt(tldr> )+refresh-preview' || echo 'change-prompt(man> )+refresh-preview'")
     
-    local mode=$(cat "$mode_file")
-    trap - EXIT INT TERM
-    rm -f "$mode_file"
     if [[ -n "$selection" ]]; then
         page=$(echo "$selection" | sed 's/(.*//' | xargs)
-        
-        if [[ "$mode" == "tldr" ]]; then
-            tldr "$page"
+        section=$(echo "$selection" | sed -n 's/.*([^0-9]*\([0-9][a-z]*\)).*/\1/p')
+        if [[ -n "$section" ]]; then
+            man "$section" "$page"
         else
-            section=$(echo "$selection" | sed -n 's/.*([^0-9]*\([0-9][a-z]*\)).*/\1/p')
-            if [[ -n "$section" ]]; then
-                man "$section" "$page"
-            else
-                man "$page"
-            fi
+            man "$page"
         fi
     fi
 }

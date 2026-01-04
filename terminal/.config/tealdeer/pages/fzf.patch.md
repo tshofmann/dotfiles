@@ -26,7 +26,7 @@
 
 `fkill`
 
-- dotfiles: Man-Pages durchsuchen (`<Enter>` Öffnen, `<Ctrl t>` man↔tldr):
+- dotfiles: Man-Pages durchsuchen (`<Enter>` Öffnen, `<Ctrl s>` man↔tldr):
 
 `fman`
 
