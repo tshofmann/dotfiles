@@ -23,12 +23,6 @@ fi
 # ------------------------------------------------------------
 TEALDEER_DIR="$TERMINAL_DIR/.config/tealdeer/pages"
 
-# Mapping: alias-Dateiname → patch-Dateiname
-typeset -gA PATCH_NAME_MAP=(
-    [homebrew]="brew"
-    [ripgrep]="rg"
-)
-
 # Alle relevanten Keybinding-Patterns
 # Format im Code: "Enter: ...", "Ctrl+D: ...", "Tab: ..."
 # Format in tools.md: "Enter=...", "Ctrl+D=...", "Tab=..."
@@ -122,8 +116,7 @@ validate_keybindings() {
     # Durchsuche alle .alias Dateien
     for alias_file in "$ALIAS_DIR"/*.alias(N); do
         local base=$(basename "$alias_file" .alias)
-        local patch_name="${PATCH_NAME_MAP[$base]:-$base}"
-        local patch_file="$TEALDEER_DIR/${patch_name}.patch.md"
+        local patch_file="$TEALDEER_DIR/${base}.patch.md"
         
         # Finde alle Funktionen (keine privaten mit _)
         local -a functions=($(extract_functions_from_file "$alias_file" | grep -v "^_"))

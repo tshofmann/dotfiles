@@ -58,6 +58,7 @@ dotfiles/
     └── .config/
         ├── alias/               # Tool-Aliase (10 Dateien)
         │   ├── bat.alias        # bat-Aliase (cat-Ersatz)
+        │   ├── brew.alias       # Homebrew + mas Aliase + brewv()
         │   ├── btop.alias       # btop-Aliase (top-Ersatz)
         │   ├── eza.alias        # eza-Aliase (ls-Ersatz)
         │   ├── fastfetch.alias  # fastfetch-Aliase (neofetch-Ersatz)
@@ -65,8 +66,7 @@ dotfiles/
         │   ├── fzf.alias        # fzf Tool-Kombinationen + fa()
         │   ├── gh.alias         # GitHub CLI Funktionen
         │   ├── git.alias        # Git-Aliase + lazygit
-        │   ├── homebrew.alias   # Homebrew + mas Aliase + brewv()
-        │   └── ripgrep.alias    # ripgrep-Aliase (grep-Ersatz)
+        │   └── rg.alias         # ripgrep-Aliase (grep-Ersatz)
         ├── shell-colors         # Catppuccin Mocha ANSI-Farbvariablen
         ├── bat/
         │   ├── config           # bat native Config
@@ -80,7 +80,9 @@ dotfiles/
         │   └── ignore           # fd globale Ignore-Patterns
         ├── fzf/
         │   ├── config           # fzf globale Optionen (FZF_DEFAULT_OPTS_FILE)
+        │   ├── fa-preview       # Helper-Skript für fa() Preview-Wechsel
         │   ├── fenv-reload      # Helper-Skript für fenv() Ctrl+S Toggle
+        │   ├── fzf-lib          # Gemeinsame Bibliothek (Farben, ANSI-Strip)
         │   └── init.zsh         # fzf Shell-Integration (Keybindings, fd-Backend)
         ├── lazygit/
         │   └── config.yml       # lazygit Config mit Catppuccin Mocha

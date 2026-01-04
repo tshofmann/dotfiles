@@ -212,10 +212,10 @@ $EDITOR ~/dotfiles/terminal/.config/fzf/config
 
 | Datei | Beschreibung | Dokumentation |
 |-------|--------------|---------------|
-| `homebrew.alias` | Homebrew-Wartungsbefehle | [Tools → Aliase](tools.md#homebrewalias) |
+| `brew.alias` | Homebrew-Wartungsbefehle | [Tools → Aliase](tools.md#brewalias) |
 | `eza.alias` | Moderne ls-Ersetzungen mit Icons | [Tools → Aliase](tools.md#ezaalias) |
 | `bat.alias` | cat mit Syntax-Highlighting | [Tools → Aliase](tools.md#batalias) |
-| `ripgrep.alias` | Schnelle Textsuche | [Tools → Aliase](tools.md#ripgrepalias) |
+| `rg.alias` | Schnelle Textsuche | [Tools → Aliase](tools.md#rgalias) |
 | `fd.alias` | Dateisuche | [Tools → Aliase](tools.md#fdalias) |
 | `fzf.alias` | Tool-Kombinationen (20+ Funktionen) | [Tools → Aliase](tools.md#fzfalias--generische-utilities) |
 | `btop.alias` | Prozess-Monitor | [Tools → Aliase](tools.md#btopalias) |

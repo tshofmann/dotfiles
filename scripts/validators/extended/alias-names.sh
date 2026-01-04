@@ -15,13 +15,13 @@ fi
 # ------------------------------------------------------------
 # Format: tool_name:docs_section:code_file
 typeset -gA ALIAS_MAPPINGS=(
-    [ripgrep]="ripgrep:ripgrep.alias"
+    [rg]="rg:rg.alias"
     [fd]="fd:fd.alias"
     [eza]="eza:eza.alias"
     [bat]="bat:bat.alias"
     [fzf]="fzf:fzf.alias"
     [btop]="btop:btop.alias"
-    [homebrew]="homebrew:homebrew.alias"
+    [brew]="brew:brew.alias"
     [zoxide]="zoxide:eza.alias"
 )
 

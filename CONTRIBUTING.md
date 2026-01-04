@@ -362,13 +362,9 @@ touch ~/.config/tealdeer/pages/tool.patch.md
 `funktionsname`
 ```
 
-**3. Namenskonventionen:**
+**3. Namenskonvention:**
 
-| Alias-Datei | Patch-Datei | Grund |
-|-------------|-------------|-------|
-| `homebrew.alias` | `brew.patch.md` | tldr-Befehl ist `brew` |
-| `ripgrep.alias` | `rg.patch.md` | tldr-Befehl ist `rg` |
-| `*.alias` | `*.patch.md` | Sonst identisch |
+Alias-Dateiname = Patch-Dateiname = tldr-Befehlsname (z.B. `brew.alias` → `brew.patch.md` → `tldr brew`)
 
 **4. Tastenkürzel-Syntax:**
 

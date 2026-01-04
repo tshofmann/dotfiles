@@ -10,17 +10,8 @@
 #           Filter- und Farblogik hier zentral (DRY)
 # ============================================================
 
-# Lade Shell-Farben (mit Fallback wenn Datei fehlt)
-colors_file="${XDG_CONFIG_HOME:-$HOME/.config}/shell-colors"
-if [[ -f "$colors_file" ]]; then
-    source "$colors_file"
-fi
-# Fallback: leere Werte wenn shell-colors nicht verfügbar (Ausgabe ohne Farben)
-: "${C_MAUVE:=}"
-: "${C_GREEN:=}"
-: "${C_BLUE:=}"
-: "${C_TEXT:=}"
-: "${C_RESET:=}"
+# Gemeinsame Bibliothek laden (Farben, ANSI-Strip)
+source "${0:A:h}/fzf-lib"
 
 # Argument: Pfad zur Statusdatei (Pflicht, um Session-Kollisionen zu vermeiden)
 if [[ -z "${1:-}" ]]; then

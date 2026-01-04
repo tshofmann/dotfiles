@@ -120,9 +120,11 @@ fman() {
 # Zeigt: Name, Typ (alias/function), Beschreibungskommentar
 fa() {
     local alias_dir="${XDG_CONFIG_HOME:-$HOME/.config}/alias"
+    local fzf_dir="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
     local query="${1:-}"
     local selection name entries
     local file category prev_comment line
+    local strip_ansi="sed 's/\x1b\[[0-9;]*m//g'"
     
     # Aliase und Funktionen aus allen .alias-Dateien extrahieren
     # Format: name|typ|kategorie|beschreibung
@@ -192,41 +194,15 @@ fa() {
                 text, desc, reset
         }
     ' | fzf --ansi --query="$query" \
-        --header='Enter: Befehl übernehmen | Ctrl+T: tldr | Ctrl+C: Code' \
-        --preview 'line=$(echo {} | sed "s/\x1b\[[0-9;]*m//g")
-            name=$(echo "$line" | awk "{print \$1}")
-            cat=$(echo "$line" | awk "{print \$3}")
-            file="${XDG_CONFIG_HOME:-$HOME/.config}/alias/${cat}.alias"
-            if [[ -f "$file" ]]; then
-                # Suche Definition in der Datei
-                awk -v name="$name" '\''
-                    BEGIN { found=0; buffer=""; printing=0 }
-                    /^[[:space:]]*#/ { 
-                        if (!found) buffer = $0 "\n"
-                        next 
-                    }
-                    $0 ~ "^alias[[:space:]]+" name "=" { 
-                        printf "%s%s\n", buffer, $0
-                        found=1; buffer=""
-                        next
-                    }
-                    $0 ~ "^[[:space:]]*" name "\\(\\)" {
-                        printf "%s", buffer
-                        found=1; buffer=""
-                        printing=1
-                    }
-                    printing { print }
-                    printing && /^[[:space:]]*}/ { printing=0 }
-                    !found { buffer="" }
-                '\'' "$file"
-            fi' \
+        --header='Enter: Befehl übernehmen | Ctrl+C: Code | Ctrl+T: tldr' \
+        --preview "zsh '$fzf_dir/fa-preview' tldr {}" \
         --preview-window='right:50%:wrap' \
-        --bind 'ctrl-t:change-preview(cat=$(echo {} | sed "s/\x1b\[[0-9;]*m//g" | awk "{print \$3}"); tldr --color=always "$cat" 2>/dev/null || echo "Keine tldr-Seite für $cat")' \
-        --bind 'ctrl-c:change-preview(line=$(echo {} | sed "s/\x1b\[[0-9;]*m//g"); name=$(echo "$line" | awk "{print \$1}"); cat=$(echo "$line" | awk "{print \$3}"); file="${XDG_CONFIG_HOME:-$HOME/.config}/alias/${cat}.alias"; awk -v name="$name" '\''BEGIN{f=0;b="";p=0} /^[[:space:]]*#/{if(!f)b=$0"\n";next} $0~"^alias[[:space:]]+"name"="{printf"%s%s\n",b,$0;f=1;b="";next} $0~"^[[:space:]]*"name"\\(\\)"{printf"%s",b;f=1;b="";p=1} p{print} p&&/^[[:space:]]*}/{p=0} !f{b=""}'\'' "$file")')
+        --bind "ctrl-c:change-preview(zsh '$fzf_dir/fa-preview' code {})" \
+        --bind "ctrl-t:change-preview(zsh '$fzf_dir/fa-preview' tldr {})")
     
     # Bei Enter: Befehl ins Edit-Buffer (kann editiert/ausgeführt werden)
     if [[ -n "$selection" ]]; then
-        name=$(echo "$selection" | sed 's/\x1b\[[0-9;]*m//g' | awk '{print $1}')
+        name=$(echo "$selection" | eval "$strip_ansi" | awk '{print $1}')
         print -z "$name"
     fi
 }
