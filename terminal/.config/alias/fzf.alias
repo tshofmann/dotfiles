@@ -49,7 +49,7 @@ if command -v zoxide >/dev/null 2>&1; then
                 --preview "$preview_cmd" \
                 --bind 'ctrl-d:execute-silent(zoxide remove {2..})+reload(zoxide query -l -s)' \
                 --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)' \
-                --header='Enter: Wechseln | Ctrl+D: Löschen | Ctrl+Y: Kopieren')
+                --header='Enter: Wechseln | Ctrl+D: Eintrag löschen | Ctrl+Y: Pfad kopieren')
         
         # Pfad extrahieren (alles nach dem Score)
         [[ -n "$selection" ]] && dir="${selection#* }" && cd "$dir"
@@ -133,9 +133,10 @@ fa() {
         prev_comment=""
         
         while IFS= read -r line; do
-            # Kommentar merken (Zeile beginnt mit #)
-            if [[ "$line" == \#* ]]; then
-                prev_comment="${line#\#}"
+            # Kommentar merken (Zeile beginnt mit # oder eingerückt mit #)
+            local trimmed_line="${line#"${line%%[![:space:]]*}"}"
+            if [[ "$trimmed_line" == \#* ]]; then
+                prev_comment="${trimmed_line#\#}"
                 prev_comment="${prev_comment## }"  # Führendes Leerzeichen entfernen
                 continue
             fi
@@ -191,9 +192,10 @@ fa() {
                 text, desc, reset
         }
     ' | fzf --ansi --query="$query" \
-        --header='Enter: Definition | Ctrl+Y: Kopieren | Ctrl+T: tldr' \
-        --preview 'name=$(echo {} | awk "{print \$1}")
-            cat=$(echo {} | awk "{print \$3}")
+        --header='Enter: Befehl übernehmen | Ctrl+T: tldr | Ctrl+C: Code' \
+        --preview 'line=$(echo {} | sed "s/\x1b\[[0-9;]*m//g")
+            name=$(echo "$line" | awk "{print \$1}")
+            cat=$(echo "$line" | awk "{print \$3}")
             file="${XDG_CONFIG_HOME:-$HOME/.config}/alias/${cat}.alias"
             if [[ -f "$file" ]]; then
                 # Suche Definition in der Datei
@@ -208,25 +210,24 @@ fa() {
                         found=1; buffer=""
                         next
                     }
-                    $0 ~ "^" name "\\(\\)" {
+                    $0 ~ "^[[:space:]]*" name "\\(\\)" {
                         printf "%s", buffer
                         found=1; buffer=""
                         printing=1
                     }
                     printing { print }
-                    printing && /^}/ { printing=0 }
+                    printing && /^[[:space:]]*}/ { printing=0 }
                     !found { buffer="" }
                 '\'' "$file"
             fi' \
         --preview-window='right:50%:wrap' \
-        --bind 'ctrl-y:execute-silent(echo {} | awk "{print \$1}" | pbcopy)+abort' \
-        --bind 'ctrl-t:execute(cat=$(echo {} | awk "{print \$3}"); tldr "$cat" 2>/dev/null | less)')
+        --bind 'ctrl-t:change-preview(cat=$(echo {} | sed "s/\x1b\[[0-9;]*m//g" | awk "{print \$3}"); tldr --color=always "$cat" 2>/dev/null || echo "Keine tldr-Seite für $cat")' \
+        --bind 'ctrl-c:change-preview(line=$(echo {} | sed "s/\x1b\[[0-9;]*m//g"); name=$(echo "$line" | awk "{print \$1}"); cat=$(echo "$line" | awk "{print \$3}"); file="${XDG_CONFIG_HOME:-$HOME/.config}/alias/${cat}.alias"; awk -v name="$name" '\''BEGIN{f=0;b="";p=0} /^[[:space:]]*#/{if(!f)b=$0"\n";next} $0~"^alias[[:space:]]+"name"="{printf"%s%s\n",b,$0;f=1;b="";next} $0~"^[[:space:]]*"name"\\(\\)"{printf"%s",b;f=1;b="";p=1} p{print} p&&/^[[:space:]]*}/{p=0} !f{b=""}'\'' "$file")')
     
-    # Bei Enter: Definition anzeigen
+    # Bei Enter: Befehl ins Edit-Buffer (kann editiert/ausgeführt werden)
     if [[ -n "$selection" ]]; then
-        name=$(echo "$selection" | awk '{print $1}')
-        print "\n${C_MAUVE}━━━ $name ━━━${C_RESET}\n"
-        type -a "$name" 2>/dev/null || alias "$name" 2>/dev/null
+        name=$(echo "$selection" | sed 's/\x1b\[[0-9;]*m//g' | awk '{print $1}')
+        print -z "$name"
     fi
 }
 
