@@ -63,7 +63,7 @@ fi
 fkill() {
     local pid
     pid=$(ps -ef | sed 1d | fzf -m \
-        --header='Enter: Beenden | Tab: Mehrfach | Ctrl+K: Kill -9' \
+        --header='Enter: Prozess beenden | Tab: Mehrfach | Ctrl+K: Kill -9' \
         --bind 'ctrl-k:execute(echo {} | awk "{print \$2}" | xargs kill -9)+abort' | \
         awk '{print $2}')
     
@@ -298,7 +298,7 @@ fenv() {
     fi
     
     selection=$(_fenv_filter | _fenv_colorize | fzf --ansi \
-        --header='Enter: Kopieren | Ctrl+Y: Nur Wert | Ctrl+S: System-Variablen' \
+        --header='Enter: Variable kopieren | Ctrl+Y: Nur Wert | Ctrl+S: System-Vars' \
         --preview='n=$(echo {} | cut -d"│" -f1 | xargs)
             v=$(printenv "$n" 2>/dev/null)
             printf "%s%s%s\n\n" "$C_MAUVE" "$n" "$C_RESET"
@@ -331,7 +331,7 @@ fenv() {
 fhist() {
     local cmd
     cmd=$(fc -l 1 | fzf --tac --no-sort -n2.. \
-        --header='Enter: Ins Edit-Buffer | Ctrl+Y: Kopieren' \
+        --header='Enter: Befehl übernehmen | Ctrl+Y: Befehl kopieren' \
         --bind 'ctrl-y:execute-silent(echo {2..} | pbcopy)+abort' | \
         awk '{$1=""; print substr($0,2)}')
     
