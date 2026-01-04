@@ -60,12 +60,19 @@ fi
 # KILL + FZF: Prozess-Management
 # ------------------------------------------------------------
 # Prozesse interaktiv suchen und beenden (Tab für Mehrfachauswahl)
+# Ctrl+S: Toggle Apps ↔ Alle Prozesse
 fkill() {
     local pid
-    pid=$(ps -ef | sed 1d | fzf -m \
-        --header='Enter: Prozess beenden | Tab: Mehrfach | Ctrl+K: Kill -9' \
-        --bind 'ctrl-k:execute(echo {} | awk "{print \$2}" | xargs kill -9)+abort' | \
-        awk '{print $2}')
+    local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fkill-list"
+    
+    pid=$("$helper" apps | \
+        fzf -m \
+            --prompt='Apps> ' \
+            --header='Enter: SIGTERM | Tab: Auswählen | Ctrl+S: Toggle Apps/Alle | Ctrl+K: SIGKILL' \
+            --bind 'ctrl-a:select-all' \
+            --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Apps> ' ]] && echo 'reload($helper all)+change-prompt(Alle> )' || echo 'reload($helper apps)+change-prompt(Apps> )'" \
+            --bind 'ctrl-k:execute(echo {} | awk "{print \$1}" | xargs kill -9)+abort' | \
+        awk '{print $1}')
     
     [[ -n "$pid" ]] && echo "$pid" | xargs kill -${1:-15}
 }

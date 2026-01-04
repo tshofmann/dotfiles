@@ -217,7 +217,7 @@ validate_keybindings() {
             if [[ -n "$patch_line" ]]; then
                 for key in "${code_keys[@]}"; do
                     if [[ ! " ${patch_keys[*]} " =~ " ${key} " ]]; then
-                        err "$func: Keybinding '$key' aus Code fehlt in ${patch_name}.patch.md"
+                        err "$func: Keybinding '$key' aus Code fehlt in ${base}.patch.md"
                         (( errors++ )) || true
                     fi
                 done
@@ -227,7 +227,7 @@ validate_keybindings() {
             if [[ -n "$patch_line" ]]; then
                 for key in "${patch_keys[@]}"; do
                     if [[ ! " ${code_keys[*]} " =~ " ${key} " ]]; then
-                        err "$func: Keybinding '$key' in ${patch_name}.patch.md existiert nicht im Code"
+                        err "$func: Keybinding '$key' in ${base}.patch.md existiert nicht im Code"
                         (( errors++ )) || true
                     fi
                 done

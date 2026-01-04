@@ -1,0 +1,20 @@
+#!/usr/bin/env zsh
+# ============================================================
+# fkill-list - Prozessliste für fkill
+# ============================================================
+# Zweck   : Generiert Prozessliste für fzf (Apps oder Alle)
+# Pfad    : ~/.config/fzf/fkill-list
+# Aufruf  : fkill-list [apps|all]
+# ============================================================
+
+local mode="${1:-apps}"
+
+if [[ "$mode" == "apps" ]]; then
+    # Nur .app Prozesse
+    ps -u $USER -o pid,pcpu,pmem,comm | \
+        awk '/\.app\// {n=split($4,a,"/"); printf "%7s %5s%% %5s%%  %s\n", $1, $2, $3, a[n]}'
+else
+    # Alle User-Prozesse
+    ps -u $USER -o pid,pcpu,pmem,comm | \
+        awk 'NR>1 {n=split($4,a,"/"); printf "%7s %5s%% %5s%%  %s\n", $1, $2, $3, a[n]}'
+fi
