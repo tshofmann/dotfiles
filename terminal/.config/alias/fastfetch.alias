@@ -22,6 +22,3 @@ alias ff='fastfetch'
 
 # Neofetch-Kompatibilität
 alias neofetch='fastfetch'
-
-# Kurze System-Info ohne Logo
-alias sysinfo='fastfetch --logo none'

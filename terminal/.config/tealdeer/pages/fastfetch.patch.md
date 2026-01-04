@@ -7,7 +7,3 @@
 - dotfiles: neofetch-Kompatibilität:
 
 `neofetch`
-
-- dotfiles: System-Info ohne Logo:
-
-`sysinfo`

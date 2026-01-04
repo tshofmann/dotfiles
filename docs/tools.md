@@ -213,7 +213,6 @@ Verfügbare Aliase aus `~/.config/alias/`:
 |-------|--------|--------------|
 | `ff` | `fastfetch` | Schnelle System-Info (Standardanzeige) |
 | `neofetch` | `fastfetch` | neofetch-Kompatibilität |
-| `sysinfo` | `fastfetch --logo none` | System-Info ohne Logo |
 
 > **Hinweis:** fastfetch ist in C geschrieben und deutlich schneller als neofetch. Die Konfiguration liegt in `~/.config/fastfetch/config.jsonc` mit Catppuccin-Farben und Nerd-Font-Icons.
 
