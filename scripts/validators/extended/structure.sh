@@ -2,7 +2,9 @@
 # ============================================================
 # structure.sh - Verzeichnisstruktur Validierung
 # ============================================================
-# Prüft: terminal/ Dateien in architecture.md Struktur-Baum
+# Prüft: Alle Dateien in terminal/ gegen architecture.md
+# ============================================================
+# Dynamisch: Scannt tatsächliche Dateien und vergleicht mit Doku
 # ============================================================
 
 [[ -z "${VALIDATOR_LIB_LOADED:-}" ]] && source "${0:A:h:h}/lib.sh"
@@ -14,42 +16,79 @@ check_structure() {
     local terminal_dir="$TERMINAL_DIR"
     local errors=0
     
-    # Extrahiere terminal/ Einträge aus dem Struktur-Baum in architecture.md
-    # Format:     ├── .zshenv  oder     ├── .gitconfig          # Kommentar
-    # Entferne alles nach # (Kommentare) und extrahiere nur Dateinamen
-    local -a doc_files
-    doc_files=($(sed -n '/└── terminal\//,/^```$/p' "$arch_doc" | \
-        grep -E '^\s+[├└]── \.' | \
-        sed 's/#.*//' | \
-        sed 's/.*[├└]── //' | \
-        sed 's/[[:space:]]*$//' | \
-        grep -v '\.config'))
+    # ----------------------------------------------------
+    # Extrahiere alle Dateinamen aus dem terminal/ Baum in architecture.md
+    # Strategie: Suche alle Zeilen mit ├── oder └── die Dateien enthalten
+    # ----------------------------------------------------
+    local -a doc_files=()
     
-    # Prüfe ob jede tatsächliche Datei in terminal/ dokumentiert ist
-    local -a actual_files
-    actual_files=(.zshenv .zshrc .zprofile .zlogin)
+    # Extrahiere den terminal/ Block
+    local terminal_block=$(sed -n '/└── terminal\//,/^```$/p' "$arch_doc")
     
-    for file in "${actual_files[@]}"; do
-        if [[ -f "$terminal_dir/$file" ]]; then
-            if ! grep -q "$file" <<< "${doc_files[*]}"; then
-                err "terminal/$file existiert aber fehlt in architecture.md Struktur"
-                (( errors++ )) || true
-            fi
+    # Parse jede Zeile und extrahiere Dateinamen
+    echo "$terminal_block" | while IFS= read -r line; do
+        # Nur Zeilen mit ├── oder └── 
+        [[ "$line" != *[├└]──* ]] && continue
+        
+        # Extrahiere den Eintrag (entferne Kommentare und Baum-Zeichen)
+        local entry=$(echo "$line" | sed 's/#.*//' | sed 's/.*[├└]── //' | sed 's/[[:space:]]*$//')
+        
+        # Überspringe leere und Verzeichnis-Einträge
+        [[ -z "$entry" ]] && continue
+        [[ "$entry" == */ ]] && continue
+        
+        # Speichere nur den Dateinamen (nicht den vollen Pfad)
+        doc_files+=("$entry")
+    done
+    
+    # Array aus Subshell zurückholen
+    doc_files=($(echo "$terminal_block" | grep -E '[├└]──' | \
+        sed 's/#.*//' | sed 's/.*[├└]── //' | sed 's/[[:space:]]*$//' | \
+        grep -v '/$' | grep -v '^$'))
+    
+    # ----------------------------------------------------
+    # Prüfung 1: Dokumentierte Dateien müssen irgendwo in terminal/ existieren
+    # ----------------------------------------------------
+    for doc_file in "${doc_files[@]}"; do
+        # Überspringe Platzhalter-Kommentare wie "(10 Dateien)"
+        [[ "$doc_file" == *"("* ]] && continue
+        
+        # Suche die Datei rekursiv in terminal/
+        local found=$(find "$terminal_dir" -name "$doc_file" -type f 2>/dev/null | head -1)
+        
+        if [[ -z "$found" ]]; then
+            err "architecture.md listet '$doc_file' aber existiert nicht in terminal/"
+            (( errors++ )) || true
         fi
     done
     
-    # Prüfe ob dokumentierte Dateien existieren
-    for file in "${doc_files[@]}"; do
-        [[ -z "$file" ]] && continue
-        if [[ ! -f "$terminal_dir/$file" && ! -d "$terminal_dir/$file" ]]; then
-            err "architecture.md listet terminal/$file aber existiert nicht"
-            (( errors++ )) || true
-        fi
+    # ----------------------------------------------------
+    # Prüfung 2: Wichtige Config-Dateien müssen dokumentiert sein
+    # Scanne .config/fzf/ und .config/alias/ dynamisch
+    # ----------------------------------------------------
+    local -a critical_dirs=(".config/fzf" ".config/alias")
+    
+    for check_dir in "${critical_dirs[@]}"; do
+        local dir_path="$terminal_dir/$check_dir"
+        [[ ! -d "$dir_path" ]] && continue
+        
+        # Alle Dateien in diesem Verzeichnis (nicht rekursiv)
+        for f in "$dir_path"/*(.N); do
+            local filename=$(basename "$f")
+            
+            # Prüfe ob Dateiname in der Doku erwähnt wird
+            if ! grep -q "$filename" "$arch_doc" 2>/dev/null; then
+                err "Datei '$check_dir/$filename' existiert aber fehlt in architecture.md"
+                (( errors++ )) || true
+            fi
+        done
     done
     
     if ((errors == 0)); then
         ok "terminal/ Struktur in architecture.md korrekt"
     fi
+    
+    return $errors
 }
 
 register_validator "structure" "check_structure" "Verzeichnisstruktur architecture.md" "extended"
