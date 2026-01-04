@@ -88,6 +88,7 @@ dotfiles/
         │   ├── config           # fzf globale Optionen (FZF_DEFAULT_OPTS_FILE)
         │   ├── fa-preview       # Helper-Skript für fa() Preview-Wechsel
         │   ├── fkill-list       # Helper-Skript für fkill() Prozessliste
+        │   ├── fman-preview     # Helper-Skript für fman() Preview (man/tldr)
         │   ├── fzf-lib          # Gemeinsame Bibliothek (Farben, ANSI-Strip)
         │   └── init.zsh         # fzf Shell-Integration (Keybindings, fd-Backend)
         ├── lazygit/

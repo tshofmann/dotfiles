@@ -79,12 +79,11 @@ fkill() {
 # MAN + FZF + BAT: Man-Pages Browser
 # ------------------------------------------------------------
 # Man-Pages interaktiv durchsuchen mit Syntax-Highlighting
-# Ctrl+L wechselt zu tldr-Preview, Ctrl+B zurück zu man
+# Ctrl+T togglet zwischen man und tldr Preview
 # Enter öffnet je nach Modus man oder tldr
 fman() {
     local selection page section mode_file
-    local man_preview="echo {} | sed 's/(.*//' | xargs man 2>/dev/null | col -bx | bat --color=always -l man -p"
-    local tldr_preview="echo {} | sed 's/(.*//' | xargs tldr --color=always 2>/dev/null || echo 'Keine tldr-Seite verfügbar'"
+    local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fman-preview"
     
     mode_file=$(mktemp)
     echo "man" > "$mode_file"
@@ -94,10 +93,9 @@ fman() {
     
     selection=$(man -k . 2>/dev/null | \
         fzf --prompt='Man> ' \
-            --preview "$man_preview" \
-            --header='Enter: Öffnen | Ctrl+L: tldr | Ctrl+B: man' \
-            --bind "ctrl-l:change-preview($tldr_preview)+change-prompt(tldr> )+execute-silent(echo tldr > $mode_file)" \
-            --bind "ctrl-b:change-preview($man_preview)+change-prompt(Man> )+execute-silent(echo man > $mode_file)")
+            --preview "$helper man {}" \
+            --header='Enter: Öffnen | Ctrl+T: man ↔ tldr' \
+            --bind "ctrl-t:transform:[[ \$FZF_PROMPT == 'Man> ' ]] && echo 'change-preview($helper tldr {})+change-prompt(tldr> )+execute-silent(echo tldr > $mode_file)' || echo 'change-preview($helper man {})+change-prompt(Man> )+execute-silent(echo man > $mode_file)'")
     
     local mode=$(cat "$mode_file")
     trap - EXIT INT TERM
