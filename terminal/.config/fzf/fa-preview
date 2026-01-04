@@ -68,11 +68,12 @@ case "$mode" in
             
             # Funktions-Definition: name() { (auch eingerückt)
             # Exakter Namensvergleich verhindert false positives (z.B. fa vs fak)
-            /^[[:space:]]*[a-zA-Z_][a-zA-Z0-9_]*\(\)[[:space:]]*\{/ {
+            # Pattern erlaubt auch Bindestriche (z.B. bat-theme)
+            /^[[:space:]]*[a-zA-Z_][a-zA-Z0-9_-]*\(\)[[:space:]]*\{/ {
                 match($0, /^[[:space:]]*/)
                 line_indent = substr($0, RSTART, RLENGTH)
                 rest = substr($0, RLENGTH + 1)
-                match(rest, /^[a-zA-Z_][a-zA-Z0-9_]*/)
+                match(rest, /^[a-zA-Z_][a-zA-Z0-9_-]*/)
                 func_name = substr(rest, RSTART, RLENGTH)
                 if (func_name == name && !found) {
                     printf "%s", buffer

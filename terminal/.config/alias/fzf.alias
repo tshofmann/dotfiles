@@ -11,11 +11,11 @@
 #           Globale fzf-Optionen in ~/.config/fzf/config
 #
 #           Tool-spezifische fzf-Funktionen:
-#           - fd.alias      → cdf (Verzeichnis+Vorschau)
-#           - ripgrep.alias → rgf (Live-Grep)
-#           - git.alias     → glog, gbr, gst, gstash
-#           - homebrew.alias→ bip, bup, brp, bsp
-#           - gh.alias      → ghpr, ghis, ghrun, ghrepo
+#           - fd.alias   → cdf (Verzeichnis), fo (Datei öffnen)
+#           - rg.alias   → rgf (Live-Grep)
+#           - git.alias  → glog, gbr, gst, gstash
+#           - brew.alias → bip, brp
+#           - gh.alias   → ghpr, ghis, ghrun, ghrepo, ghgist
 # ============================================================
 
 # Guard   : Nur wenn fzf installiert ist
@@ -106,6 +106,7 @@ fman() {
 # ALIAS + FZF: Alias-/Funktions-Browser
 # ------------------------------------------------------------
 # Alle Aliase und Funktionen durchsuchen mit Beschreibung
+# Ctrl+S togglet zwischen tldr und Code Preview
 # Zeigt: Name, Typ (alias/function), Beschreibungskommentar
 fa() {
     local alias_dir="${XDG_CONFIG_HOME:-$HOME/.config}/alias"
@@ -167,6 +168,7 @@ fa() {
     entries=$(echo "$entries" | sort -t'|' -k1,1 -u)
     
     # Formatierte Ausgabe für fzf (Farben aus shell-colors)
+    # Preview prüft Prompt für Toggle (wie fman-Pattern)
     selection=$(echo "$entries" | awk -F'|' \
         -v mauve="$C_MAUVE" -v green="$C_GREEN" -v blue="$C_BLUE" \
         -v text="$C_TEXT" -v reset="$C_RESET" '
@@ -183,11 +185,11 @@ fa() {
                 text, desc, reset
         }
     ' | fzf --ansi --query="$query" \
-        --header='Enter: Befehl übernehmen | Ctrl+C: Code | Ctrl+T: tldr' \
-        --preview "zsh '$fzf_dir/fa-preview' tldr {}" \
+        --prompt='tldr> ' \
+        --header='Enter: Befehl übernehmen | Ctrl+S: tldr ↔ Code' \
+        --preview "[[ \$FZF_PROMPT == 'code> ' ]] && zsh '$fzf_dir/fa-preview' code {} || zsh '$fzf_dir/fa-preview' tldr {}" \
         --preview-window='right:50%:wrap' \
-        --bind "ctrl-c:change-preview(zsh '$fzf_dir/fa-preview' code {})" \
-        --bind "ctrl-t:change-preview(zsh '$fzf_dir/fa-preview' tldr {})")
+        --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'tldr> ' ]] && echo 'change-prompt(code> )+refresh-preview' || echo 'change-prompt(tldr> )+refresh-preview'")
     
     # Bei Enter: Befehl ins Edit-Buffer (kann editiert/ausgeführt werden)
     if [[ -n "$selection" ]]; then
