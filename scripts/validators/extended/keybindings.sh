@@ -113,7 +113,6 @@ validate_keybindings() {
     
     local errors=0
     
-    section "Keybinding-Konsistenz"
     log "Prüfe Keybindings in Code vs. Dokumentation..."
     
     # Durchsuche alle .alias Dateien
