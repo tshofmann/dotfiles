@@ -63,9 +63,9 @@ fa commit       # Nach "commit" filtern
 
 | Keybinding | Aktion |
 |------------|--------|
-| `Enter` | Definition anzeigen |
-| `Ctrl+Y` | Name kopieren |
-| `Ctrl+T` | `tldr <tool>` öffnen |
+| `Enter` | Befehl übernehmen (ins Edit-Buffer) |
+| `Ctrl+C` | Preview: Code-Definition |
+| `Ctrl+T` | Preview: tldr für Tool-Kategorie |
 
 ### brewv – Versionsübersicht
 
@@ -149,7 +149,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 > **Guard-System:** Alle Tool-Aliase prüfen zuerst ob das jeweilige Tool installiert ist (`command -v`). Ist ein Tool nicht vorhanden, bleiben die originalen Befehle (`ls`, `cat`, `grep`) erhalten.
 
-### homebrew.alias
+### brew.alias
 
 | Alias | Befehl | Beschreibung |
 |-------|--------|--------------|
@@ -279,7 +279,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 > **Hinweis:** `-pp` ist die Kurzform für `--style=plain --paging=never` – verhält sich wie das echte `cat`.
 
-### ripgrep.alias
+### rg.alias
 
 | Alias | Befehl | Beschreibung |
 |-------|--------|--------------|
@@ -348,7 +348,7 @@ fzf ist als "Enhancer" in die jeweiligen Tool-Alias-Dateien integriert. Diese Da
 
 | Funktion | Beschreibung |
 |----------|--------------|
-| `fa` | **Fuzzy Alias**: Aliase/Funktionen durchsuchen, Enter=Definition, Ctrl+Y=Kopieren, Ctrl+T=tldr |
+| `fa` | **Fuzzy Alias**: Aliase/Funktionen durchsuchen, Enter=Übernehmen, Ctrl+C=Code, Ctrl+T=tldr |
 | `fkill` | **Fuzzy Kill**: Prozesse auswählen und beenden, Enter=Beenden, Tab=Mehrfach, Ctrl+K=Kill -9 |
 | `fman` | **Fuzzy Man**: Man-Pages mit bat-Vorschau, Enter=Öffnen, Ctrl+L=tldr, Ctrl+B=man |
 | `fenv` | **Fuzzy Env**: Umgebungsvariablen durchsuchen mit Farbkodierung. Enter=Kopieren, Ctrl+Y=Nur Wert, Ctrl+S=System-Variablen togglen |
@@ -358,13 +358,13 @@ fzf ist als "Enhancer" in die jeweiligen Tool-Alias-Dateien integriert. Diese Da
 
 Die folgenden Funktionen nutzen fzf, sind aber nach ihrem primären Zweck in den jeweiligen Tool-Dateien organisiert:
 
-- **ripgrep.alias**: `rgf`
+- **rg.alias**: `rgf`
 - **fd.alias**: `cdf`, `fo`
 - **git.alias**: `glog`, `gbr`, `gst`, `gstash`
-- **homebrew.alias**: `bip`, `brp`, `brewv`
+- **brew.alias**: `bip`, `brp`, `brewv`
 - **gh.alias**: `ghpr`, `ghis`, `ghrun`, `ghrepo`, `ghgist`
 
-> **Design-Prinzip:** Aliase werden nach ihrem primären Zweck organisiert, nicht nach den verwendeten Tools. `rgf` nutzt fzf+bat, ist aber primär eine Suche – daher in `ripgrep.alias`.
+> **Design-Prinzip:** Aliase werden nach ihrem primären Zweck organisiert, nicht nach den verwendeten Tools. `rgf` nutzt fzf+bat, ist aber primär eine Suche – daher in `rg.alias`.
 
 ### Verwendung
 

@@ -22,13 +22,6 @@ fi
 # ------------------------------------------------------------
 TEALDEER_DIR="$TERMINAL_DIR/.config/tealdeer/pages"
 
-# Mapping: alias-Dateiname → patch-Dateiname
-# (für Fälle wo die Namen abweichen)
-typeset -gA PATCH_NAME_MAP=(
-    [homebrew]="brew"
-    [ripgrep]="rg"
-)
-
 # Ausgeschlossene .alias Dateien (keine Patches nötig)
 typeset -ga EXCLUDED_ALIAS_FILES=(
     # Keine Ausnahmen – alle .alias Dateien brauchen Patches
@@ -56,17 +49,6 @@ is_command_in_patch() {
     
     # Suche nach dem Befehl in Backticks
     grep -qE "^\`${cmd}( |\`)" "$patch_file" 2>/dev/null
-}
-
-# Hole den Patch-Dateinamen für eine Alias-Datei
-get_patch_name() {
-    local alias_base="$1"
-    
-    if [[ -n "${PATCH_NAME_MAP[$alias_base]:-}" ]]; then
-        echo "${PATCH_NAME_MAP[$alias_base]}"
-    else
-        echo "$alias_base"
-    fi
 }
 
 # ------------------------------------------------------------
@@ -100,12 +82,11 @@ validate_tealdeer_patches() {
         # Überspringe ausgeschlossene Dateien
         [[ " ${EXCLUDED_ALIAS_FILES[*]} " =~ " ${base} " ]] && continue
         
-        local patch_name=$(get_patch_name "$base")
-        expected_patches+=("$patch_name")
+        expected_patches+=("$base")
         
-        local patch_file="$TEALDEER_DIR/${patch_name}.patch.md"
+        local patch_file="$TEALDEER_DIR/${base}.patch.md"
         if [[ ! -f "$patch_file" ]]; then
-            missing_patches+=("$base → ${patch_name}.patch.md")
+            missing_patches+=("$base → ${base}.patch.md")
         fi
     done
     
@@ -153,8 +134,7 @@ validate_tealdeer_patches() {
         # Überspringe ausgeschlossene Dateien
         [[ " ${EXCLUDED_ALIAS_FILES[*]} " =~ " ${base} " ]] && continue
         
-        local patch_name=$(get_patch_name "$base")
-        local patch_file="$TEALDEER_DIR/${patch_name}.patch.md"
+        local patch_file="$TEALDEER_DIR/${base}.patch.md"
         
         # Überspringe wenn Patch nicht existiert (bereits gemeldet)
         [[ ! -f "$patch_file" ]] && continue
@@ -213,8 +193,7 @@ validate_tealdeer_patches() {
         # Überspringe ausgeschlossene Dateien
         [[ " ${EXCLUDED_ALIAS_FILES[*]} " =~ " ${base} " ]] && continue
         
-        local patch_name=$(get_patch_name "$base")
-        local patch_file="$TEALDEER_DIR/${patch_name}.patch.md"
+        local patch_file="$TEALDEER_DIR/${base}.patch.md"
         
         # Überspringe wenn Patch nicht existiert
         [[ ! -f "$patch_file" ]] && continue

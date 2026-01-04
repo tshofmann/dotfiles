@@ -14,7 +14,7 @@
 
 # dotfiles: Funktionen (aus fzf.alias)
 
-- dotfiles: Aliase und Funktionen durchsuchen (`<Enter>` Definition, `<Ctrl y>` Kopieren, `<Ctrl t>` tldr):
+- dotfiles: Aliase und Funktionen durchsuchen (`<Enter>` Befehl übernehmen, `<Ctrl c>` Code, `<Ctrl t>` tldr):
 
 `fa {{suche}}`
 

@@ -49,6 +49,10 @@ Validierungs-Tools liegen in `scripts/` – selbst erkunden was zur Änderung pa
 
 ## Code-Stil
 
+### Grundprinzipien
+- **DRY (Don't Repeat Yourself)** – Wiederholte Logik in Funktionen/Bibliotheken auslagern
+- **Single Source of Truth** – Eine Quelle für jede Information (Dateiname = Befehlsname = tldr-Seite)
+
 ### Shell-Dateien (ausschließlich ZSH)
 - **Kein POSIX** – dieses Projekt ist rein ZSH (macOS Standard-Shell)
 - ZSH-Features nutzen: `[[ ]]`, Parameter Expansion `${var##pattern}`, Arrays (1-indexed!)
