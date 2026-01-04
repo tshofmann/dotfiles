@@ -12,9 +12,9 @@
 
 `la`
 
-- dotfiles: Mit Git-Status (kurz):
+- dotfiles: Long-Format mit Git-Status:
 
-`lsg`
+`llg`
 
 - dotfiles: Alle Dateien mit Git-Status:
 

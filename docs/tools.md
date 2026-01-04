@@ -257,8 +257,8 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `ls` | `eza --group-directories-first` | ls-Ersatz mit Icons |
 | `ll` | `eza -l --group-directories-first --header` | Ausführliche Auflistung |
 | `la` | `eza -la --group-directories-first --header` | Alle Dateien inkl. versteckter |
-| `lsg` | `eza -l --git --header` | Long-Format mit Git-Status |
-| `lag` | `eza -la --git --header` | Alle Dateien mit Git-Status |
+| `llg` | `eza -l --git --group-directories-first --header` | Long-Format mit Git-Status |
+| `lag` | `eza -la --git --group-directories-first --header` | Alle Dateien mit Git-Status |
 | `lt` | `eza --tree --level=2` | Baumansicht (2 Ebenen) |
 | `lt3` | `eza --tree --level=3` | Baumansicht (3 Ebenen) |
 | `lss` | `eza -l --sort=size --reverse --header` | Sortiert nach Größe |
@@ -396,7 +396,7 @@ ll                 # Long-Format mit Header
 la                 # Alle Dateien inkl. versteckter
 
 # Mit Git-Integration (in Git-Repos)
-lsg                # Long-Format mit Git-Status
+llg                # Long-Format mit Git-Status
 lag                # Alle Dateien mit Git-Status
 
 # Baumansicht

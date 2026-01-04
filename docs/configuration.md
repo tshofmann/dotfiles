@@ -238,7 +238,7 @@ alias ...='cd ../..'
 EOF
 ```
 
-> **Hinweis:** Der frühere `ll`-Alias wird jetzt durch `eza.alias` bereitgestellt (`ll='eza -l --icons=auto --group-directories-first --header'`).
+> **Hinweis:** Der frühere `ll`-Alias wird jetzt durch `eza.alias` bereitgestellt (`ll='eza -l --group-directories-first --header'`). Icons werden automatisch über `EZA_ICONS_AUTO=1` aktiviert.
 
 ### Stow aktualisieren
 
