@@ -349,7 +349,7 @@ fzf ist als "Enhancer" in die jeweiligen Tool-Alias-Dateien integriert. Diese Da
 | Funktion | Beschreibung |
 |----------|--------------|
 | `fa` | **Fuzzy Alias**: Aliase/Funktionen durchsuchen, Enter=Übernehmen, Ctrl+C=Code, Ctrl+T=tldr |
-| `fkill` | **Fuzzy Kill**: Prozesse beenden. Enter=SIGTERM, Tab=Mehrfach, Ctrl+A=Markieren, Ctrl+S=Apps/Alle, Ctrl+K=SIGKILL |
+| `fkill` | **Fuzzy Kill**: Prozesse beenden. Enter=Beenden, Tab=Mehrfach, Ctrl+S=Apps/Alle. Optional: `fkill 9` für SIGKILL |
 | `fman` | **Fuzzy Man**: Man-Pages mit bat-Vorschau, Enter=Öffnen, Ctrl+L=tldr, Ctrl+B=man |
 | `fenv` | **Fuzzy Env**: Umgebungsvariablen durchsuchen mit Farbkodierung. Enter=Export→Edit, Ctrl+Y=Wert kopieren |
 | `fhist` | **Fuzzy History**: Shell-History, Enter=Edit-Buffer (editierbar), Ctrl+Y=Kopieren |

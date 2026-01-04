@@ -22,7 +22,7 @@
 
 `zf`
 
-- dotfiles: Prozesse beenden (`<Enter>` SIGTERM, `<Tab>` Mehrfach, `<Ctrl a>` Markieren, `<Ctrl s>` Apps/Alle, `<Ctrl k>` SIGKILL):
+- dotfiles: Prozesse beenden (`<Enter>` Beenden, `<Tab>` Mehrfach, `<Ctrl s>` Apps/Alle, optional `fkill 9` für SIGKILL):
 
 `fkill`
 
