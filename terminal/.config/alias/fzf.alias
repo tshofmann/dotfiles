@@ -11,11 +11,11 @@
 #           Globale fzf-Optionen in ~/.config/fzf/config
 #
 #           Tool-spezifische fzf-Funktionen:
-#           - fd.alias      → cdf (Verzeichnis+Vorschau)
-#           - ripgrep.alias → rgf (Live-Grep)
-#           - git.alias     → glog, gbr, gst, gstash
-#           - homebrew.alias→ bip, bup, brp, bsp
-#           - gh.alias      → ghpr, ghis, ghrun, ghrepo
+#           - fd.alias   → cdf (Verzeichnis), fo (Datei öffnen)
+#           - rg.alias   → rgf (Live-Grep)
+#           - git.alias  → glog, gbr, gst, gstash
+#           - brew.alias → bip, brp
+#           - gh.alias   → ghpr, ghis, ghrun, ghrepo, ghgist
 # ============================================================
 
 # Guard   : Nur wenn fzf installiert ist
@@ -60,12 +60,17 @@ fi
 # KILL + FZF: Prozess-Management
 # ------------------------------------------------------------
 # Prozesse interaktiv suchen und beenden (Tab für Mehrfachauswahl)
+# Ctrl+S: Toggle Apps ↔ Alle Prozesse
 fkill() {
     local pid
-    pid=$(ps -ef | sed 1d | fzf -m \
-        --header='Enter: Prozess beenden | Tab: Mehrfach | Ctrl+K: Kill -9' \
-        --bind 'ctrl-k:execute(echo {} | awk "{print \$2}" | xargs kill -9)+abort' | \
-        awk '{print $2}')
+    local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fkill-list"
+    
+    pid=$("$helper" apps | \
+        fzf -m \
+            --prompt='Apps> ' \
+            --header='Enter: Beenden | Tab: Mehrfach | Ctrl+S: Apps/Alle' \
+            --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Apps> ' ]] && echo 'reload($helper all)+change-prompt(Alle> )' || echo 'reload($helper apps)+change-prompt(Apps> )'" | \
+        awk '{print $1}')
     
     [[ -n "$pid" ]] && echo "$pid" | xargs kill -${1:-15}
 }
@@ -74,41 +79,25 @@ fkill() {
 # MAN + FZF + BAT: Man-Pages Browser
 # ------------------------------------------------------------
 # Man-Pages interaktiv durchsuchen mit Syntax-Highlighting
-# Ctrl+L wechselt zu tldr-Preview, Ctrl+B zurück zu man
-# Enter öffnet je nach Modus man oder tldr
+# Ctrl+S togglet zwischen man und tldr Preview
+# Enter öffnet immer die volle man-Page
 fman() {
-    local selection page section mode_file
-    local man_preview="echo {} | sed 's/(.*//' | xargs man 2>/dev/null | col -bx | bat --color=always -l man -p"
-    local tldr_preview="echo {} | sed 's/(.*//' | xargs tldr --color=always 2>/dev/null || echo 'Keine tldr-Seite verfügbar'"
-    
-    mode_file=$(mktemp)
-    echo "man" > "$mode_file"
-    
-    # Cleanup bei Abbruch oder Funktionsende
-    trap 'rm -f "$mode_file" 2>/dev/null' EXIT INT TERM
+    local selection page section
+    local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fman-preview"
     
     selection=$(man -k . 2>/dev/null | \
-        fzf --prompt='Man> ' \
-            --preview "$man_preview" \
-            --header='Enter: Öffnen | Ctrl+L: tldr | Ctrl+B: man' \
-            --bind "ctrl-l:change-preview($tldr_preview)+change-prompt(tldr> )+execute-silent(echo tldr > $mode_file)" \
-            --bind "ctrl-b:change-preview($man_preview)+change-prompt(Man> )+execute-silent(echo man > $mode_file)")
+        fzf --prompt='man> ' \
+            --preview "[[ \$FZF_PROMPT == 'tldr> ' ]] && $helper tldr {} || $helper man {}" \
+            --header='Enter: man öffnen | Ctrl+S: man ↔ tldr' \
+            --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'man> ' ]] && echo 'change-prompt(tldr> )+refresh-preview' || echo 'change-prompt(man> )+refresh-preview'")
     
-    local mode=$(cat "$mode_file")
-    trap - EXIT INT TERM
-    rm -f "$mode_file"
     if [[ -n "$selection" ]]; then
         page=$(echo "$selection" | sed 's/(.*//' | xargs)
-        
-        if [[ "$mode" == "tldr" ]]; then
-            tldr "$page"
+        section=$(echo "$selection" | sed -n 's/.*([^0-9]*\([0-9][a-z]*\)).*/\1/p')
+        if [[ -n "$section" ]]; then
+            man "$section" "$page"
         else
-            section=$(echo "$selection" | sed -n 's/.*([^0-9]*\([0-9][a-z]*\)).*/\1/p')
-            if [[ -n "$section" ]]; then
-                man "$section" "$page"
-            else
-                man "$page"
-            fi
+            man "$page"
         fi
     fi
 }
@@ -117,6 +106,7 @@ fman() {
 # ALIAS + FZF: Alias-/Funktions-Browser
 # ------------------------------------------------------------
 # Alle Aliase und Funktionen durchsuchen mit Beschreibung
+# Ctrl+S togglet zwischen tldr und Code Preview
 # Zeigt: Name, Typ (alias/function), Beschreibungskommentar
 fa() {
     local alias_dir="${XDG_CONFIG_HOME:-$HOME/.config}/alias"
@@ -178,6 +168,7 @@ fa() {
     entries=$(echo "$entries" | sort -t'|' -k1,1 -u)
     
     # Formatierte Ausgabe für fzf (Farben aus shell-colors)
+    # Preview prüft Prompt für Toggle (wie fman-Pattern)
     selection=$(echo "$entries" | awk -F'|' \
         -v mauve="$C_MAUVE" -v green="$C_GREEN" -v blue="$C_BLUE" \
         -v text="$C_TEXT" -v reset="$C_RESET" '
@@ -194,11 +185,11 @@ fa() {
                 text, desc, reset
         }
     ' | fzf --ansi --query="$query" \
-        --header='Enter: Befehl übernehmen | Ctrl+C: Code | Ctrl+T: tldr' \
-        --preview "zsh '$fzf_dir/fa-preview' tldr {}" \
+        --prompt='tldr> ' \
+        --header='Enter: Befehl übernehmen | Ctrl+S: tldr ↔ Code' \
+        --preview "[[ \$FZF_PROMPT == 'code> ' ]] && zsh '$fzf_dir/fa-preview' code {} || zsh '$fzf_dir/fa-preview' tldr {}" \
         --preview-window='right:50%:wrap' \
-        --bind "ctrl-c:change-preview(zsh '$fzf_dir/fa-preview' code {})" \
-        --bind "ctrl-t:change-preview(zsh '$fzf_dir/fa-preview' tldr {})")
+        --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'tldr> ' ]] && echo 'change-prompt(code> )+refresh-preview' || echo 'change-prompt(tldr> )+refresh-preview'")
     
     # Bei Enter: Befehl ins Edit-Buffer (kann editiert/ausgeführt werden)
     if [[ -n "$selection" ]]; then
@@ -212,32 +203,8 @@ fa() {
 # ------------------------------------------------------------
 # Umgebungsvariablen durchsuchen mit formatierter Anzeige
 # PATH-artige Werte werden in der Preview aufgesplittet
-# Ctrl+S togglet Systemvariablen (_, __CF*, TERM_SESSION*)
 fenv() {
     local selection name value
-    # Temporäre Datei für Toggle-Status (mit Fehlerbehandlung)
-    local tmpfile
-    tmpfile=$(mktemp 2>/dev/null) || {
-        echo "fenv: Konnte temporäre Datei nicht erstellen." >&2
-        return 1
-    }
-    echo "${FENV_SHOW_SYSTEM:-0}" > "$tmpfile"
-    
-    # Cleanup bei Abbruch oder Funktionsende
-    trap 'rm -f "$tmpfile" 2>/dev/null' EXIT INT TERM
-    
-    # Filtert Umgebungsvariablen: entfernt System-Präfixe im gefilterten Modus
-    # Liest show_sys aus tmpfile: 0=gefiltert, 1=alle anzeigen
-    _fenv_filter() {
-        local show_sys=$(cat "$tmpfile" 2>/dev/null || echo "0")
-        printenv | grep -E '^[a-zA-Z_][a-zA-Z0-9_]*=' | sort | \
-        if [[ "$show_sys" == "0" ]]; then
-            # Systemvariablen ausblenden
-            grep -v -E '^(_|__CF|TERM_SESSION)'
-        else
-            cat
-        fi
-    }
     
     # Farbkodiert KEY=VALUE-Zeilen nach Kategorie (Catppuccin Mocha)
     # Dotfiles/XDG=Mauve, PATH=Green, Tools=Blue, Rest=Text
@@ -266,15 +233,8 @@ fenv() {
         }'
     }
     
-    # Helper-Skript für Ctrl+S Toggle (zsh-Aufruf, kein chmod +x erforderlich)
-    local reload_helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fenv-reload"
-    local reload_cmd=""
-    if [[ -f "$reload_helper" ]]; then
-        reload_cmd="zsh $reload_helper $tmpfile"
-    fi
-    
-    selection=$(_fenv_filter | _fenv_colorize | fzf --ansi \
-        --header='Enter: Variable kopieren | Ctrl+Y: Nur Wert | Ctrl+S: System-Variablen' \
+    selection=$(printenv | grep -E '^[a-zA-Z_][a-zA-Z0-9_]*=' | sort | _fenv_colorize | fzf --ansi \
+        --header='Enter: Export → Edit | Ctrl+Y: Wert kopieren' \
         --preview='n=$(echo {} | cut -d"│" -f1 | xargs)
             v=$(printenv "$n" 2>/dev/null)
             printf "%s%s%s\n\n" "$C_MAUVE" "$n" "$C_RESET"
@@ -284,18 +244,13 @@ fenv() {
                 echo "$v"
             fi' \
         --preview-window='right:50%,wrap' \
-        ${reload_cmd:+--bind="ctrl-s:reload($reload_cmd)"} \
         --bind='ctrl-y:execute-silent(n=$(echo {} | cut -d"│" -f1 | xargs); printenv "$n" | pbcopy)+abort')
-    
-    # Cleanup: Trap zuerst zurücksetzen, dann Datei löschen
-    trap - EXIT INT TERM
-    rm -f "$tmpfile"
     
     if [[ -n "$selection" ]]; then
         name=$(echo "$selection" | cut -d'│' -f1 | xargs)
         value=$(printenv "$name")
-        echo "$value" | pbcopy
-        echo "${C_GREEN}Kopiert:${C_RESET} $name"
+        # Export-Statement ins Edit-Buffer (editierbar vor Ausführung)
+        print -z "export ${name}=\"${value}\""
     fi
 }
 

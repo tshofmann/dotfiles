@@ -1,0 +1,20 @@
+#!/usr/bin/env zsh
+# ============================================================
+# fman-preview - Preview für fman (man/tldr)
+# ============================================================
+# Zweck   : Generiert man oder tldr Preview für fzf
+# Pfad    : ~/.config/fzf/fman-preview
+# Aufruf  : fman-preview [man|tldr] "entry"
+# ============================================================
+
+local mode="$1"
+local entry="$2"
+
+# Extrahiere Seitenname (alles vor der Klammer)
+local page=$(echo "$entry" | sed 's/(.*//' | tr -d ' ')
+
+if [[ "$mode" == "tldr" ]]; then
+    tldr --color=always "$page" 2>/dev/null || echo "Keine tldr-Seite für '$page' verfügbar"
+else
+    man "$page" 2>/dev/null | col -bx | bat --color=always -l man -p
+fi

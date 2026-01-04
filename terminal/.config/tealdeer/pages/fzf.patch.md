@@ -14,7 +14,7 @@
 
 # dotfiles: Funktionen (aus fzf.alias)
 
-- dotfiles: Aliase und Funktionen durchsuchen (`<Enter>` Befehl übernehmen, `<Ctrl c>` Code, `<Ctrl t>` tldr):
+- dotfiles: Aliase und Funktionen durchsuchen (`<Enter>` Befehl übernehmen, `<Ctrl s>` tldr↔Code):
 
 `fa {{suche}}`
 
@@ -22,15 +22,15 @@
 
 `zf`
 
-- dotfiles: Prozesse beenden (`<Enter>` Beenden, `<Tab>` Mehrfach, `<Ctrl k>` Kill -9):
+- dotfiles: Prozesse beenden (`<Enter>` Beenden, `<Tab>` Mehrfach, `<Ctrl s>` Apps/Alle, optional `fkill 9` für SIGKILL):
 
 `fkill`
 
-- dotfiles: Man-Pages durchsuchen (`<Enter>` Öffnen, `<Ctrl l>` tldr, `<Ctrl b>` man):
+- dotfiles: Man-Pages durchsuchen (`<Enter>` Öffnen, `<Ctrl s>` man↔tldr):
 
 `fman`
 
-- dotfiles: Umgebungsvariablen durchsuchen (`<Enter>` Kopieren, `<Ctrl y>` Nur Wert, `<Ctrl s>` System-Variablen):
+- dotfiles: Umgebungsvariablen durchsuchen (`<Enter>` Export→Edit, `<Ctrl y>` Wert kopieren):
 
 `fenv`
 
