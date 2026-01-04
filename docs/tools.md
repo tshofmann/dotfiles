@@ -164,10 +164,8 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 | Funktion | Beschreibung |
 |----------|--------------|
-| `bip` | **Brew Install**: Interaktive Paketsuche, Enter=Installieren, Tab=Mehrfach |
-| `bup` | **Brew Update**: Veraltete Pakete upgraden, Enter=Upgrade, Tab=Mehrfach |
-| `brp` | **Brew Remove**: Installierte Pakete entfernen, Enter=Entfernen, Tab=Mehrfach |
-| `bsp [query]` | **Brew Search**: Suchen mit Info-Vorschau, Enter=Installieren, Ctrl+O=Homepage |
+| `bip` | **Brew Install**: Formulae [F] und Casks [C] durchsuchen, Enter=Installieren, Tab=Mehrfach |
+| `brp` | **Brew Remove**: Ungenutzte Pakete entfernen (nur Leaves), Enter=Entfernen, Tab=Mehrfach |
 | `brewv` | **Brew Versions**: Alle Formulae, Casks und MAS-Apps mit Versionen |
 
 > **Hinweis:** Die mas-Aliase sind nur verfügbar wenn mas installiert ist. `brewup` enthält automatisch `mas upgrade` wenn mas vorhanden ist. Die interaktiven Funktionen benötigen fzf.
@@ -363,7 +361,7 @@ Die folgenden Funktionen nutzen fzf, sind aber nach ihrem primären Zweck in den
 - **ripgrep.alias**: `rgf`
 - **fd.alias**: `cdf`, `fo`
 - **git.alias**: `glog`, `gbr`, `gst`, `gstash`
-- **homebrew.alias**: `bip`, `bup`, `brp`, `bsp`, `brewv`
+- **homebrew.alias**: `bip`, `brp`, `brewv`
 - **gh.alias**: `ghpr`, `ghis`, `ghrun`, `ghrepo`, `ghgist`
 
 > **Design-Prinzip:** Aliase werden nach ihrem primären Zweck organisiert, nicht nach den verwendeten Tools. `rgf` nutzt fzf+bat, ist aber primär eine Suche – daher in `ripgrep.alias`.
