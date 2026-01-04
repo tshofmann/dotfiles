@@ -81,7 +81,6 @@ dotfiles/
         ├── fzf/
         │   ├── config           # fzf globale Optionen (FZF_DEFAULT_OPTS_FILE)
         │   ├── fa-preview       # Helper-Skript für fa() Preview-Wechsel
-        │   ├── fenv-reload      # Helper-Skript für fenv() Ctrl+S Toggle
         │   ├── fzf-lib          # Gemeinsame Bibliothek (Farben, ANSI-Strip)
         │   └── init.zsh         # fzf Shell-Integration (Keybindings, fd-Backend)
         ├── lazygit/

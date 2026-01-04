@@ -2,7 +2,7 @@
 # ============================================================
 # fzf-lib - Gemeinsame Funktionen für fzf-Helper
 # ============================================================
-# Zweck   : Geteilte Utilities für fa-preview, fenv-reload etc.
+# Zweck   : Geteilte Utilities für fa-preview etc.
 # Pfad    : ~/.config/fzf/fzf-lib
 # ============================================================
 # Hinweis : Wird von fzf-Helpern per 'source' eingebunden

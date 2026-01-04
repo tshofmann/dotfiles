@@ -212,32 +212,8 @@ fa() {
 # ------------------------------------------------------------
 # Umgebungsvariablen durchsuchen mit formatierter Anzeige
 # PATH-artige Werte werden in der Preview aufgesplittet
-# Ctrl+S togglet Systemvariablen (_, __CF*, TERM_SESSION*)
 fenv() {
     local selection name value
-    # Temporäre Datei für Toggle-Status (mit Fehlerbehandlung)
-    local tmpfile
-    tmpfile=$(mktemp 2>/dev/null) || {
-        echo "fenv: Konnte temporäre Datei nicht erstellen." >&2
-        return 1
-    }
-    echo "${FENV_SHOW_SYSTEM:-0}" > "$tmpfile"
-    
-    # Cleanup bei Abbruch oder Funktionsende
-    trap 'rm -f "$tmpfile" 2>/dev/null' EXIT INT TERM
-    
-    # Filtert Umgebungsvariablen: entfernt System-Präfixe im gefilterten Modus
-    # Liest show_sys aus tmpfile: 0=gefiltert, 1=alle anzeigen
-    _fenv_filter() {
-        local show_sys=$(cat "$tmpfile" 2>/dev/null || echo "0")
-        printenv | grep -E '^[a-zA-Z_][a-zA-Z0-9_]*=' | sort | \
-        if [[ "$show_sys" == "0" ]]; then
-            # Systemvariablen ausblenden
-            grep -v -E '^(_|__CF|TERM_SESSION)'
-        else
-            cat
-        fi
-    }
     
     # Farbkodiert KEY=VALUE-Zeilen nach Kategorie (Catppuccin Mocha)
     # Dotfiles/XDG=Mauve, PATH=Green, Tools=Blue, Rest=Text
@@ -266,15 +242,8 @@ fenv() {
         }'
     }
     
-    # Helper-Skript für Ctrl+S Toggle (zsh-Aufruf, kein chmod +x erforderlich)
-    local reload_helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fenv-reload"
-    local reload_cmd=""
-    if [[ -f "$reload_helper" ]]; then
-        reload_cmd="zsh $reload_helper $tmpfile"
-    fi
-    
-    selection=$(_fenv_filter | _fenv_colorize | fzf --ansi \
-        --header='Enter: Variable kopieren | Ctrl+Y: Nur Wert | Ctrl+S: System-Variablen' \
+    selection=$(printenv | grep -E '^[a-zA-Z_][a-zA-Z0-9_]*=' | sort | _fenv_colorize | fzf --ansi \
+        --header='Enter: Export → Edit | Ctrl+Y: Wert kopieren' \
         --preview='n=$(echo {} | cut -d"│" -f1 | xargs)
             v=$(printenv "$n" 2>/dev/null)
             printf "%s%s%s\n\n" "$C_MAUVE" "$n" "$C_RESET"
@@ -284,18 +253,13 @@ fenv() {
                 echo "$v"
             fi' \
         --preview-window='right:50%,wrap' \
-        ${reload_cmd:+--bind="ctrl-s:reload($reload_cmd)"} \
         --bind='ctrl-y:execute-silent(n=$(echo {} | cut -d"│" -f1 | xargs); printenv "$n" | pbcopy)+abort')
-    
-    # Cleanup: Trap zuerst zurücksetzen, dann Datei löschen
-    trap - EXIT INT TERM
-    rm -f "$tmpfile"
     
     if [[ -n "$selection" ]]; then
         name=$(echo "$selection" | cut -d'│' -f1 | xargs)
         value=$(printenv "$name")
-        echo "$value" | pbcopy
-        echo "${C_GREEN}Kopiert:${C_RESET} $name"
+        # Export-Statement ins Edit-Buffer (editierbar vor Ausführung)
+        print -z "export ${name}=\"${value}\""
     fi
 }
 
