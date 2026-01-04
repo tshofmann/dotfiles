@@ -46,7 +46,7 @@ case "$mode" in
         fi
         
         # AWK-Skript: Sucht Alias oder Funktion mit vorangehendem Kommentar
-        awk -v name="$name" '
+        extracted=$(awk -v name="$name" '
             BEGIN { found=0; buffer=""; printing=0 }
             
             # Kommentar-Zeilen (eingerückt oder nicht) merken
@@ -77,7 +77,14 @@ case "$mode" in
             
             # Kein Match = Buffer zurücksetzen
             !found { buffer="" }
-        ' "$file"
+        ' "$file")
+        
+        # Syntax-Highlighting mit bat (falls verfügbar)
+        if command -v bat >/dev/null 2>&1; then
+            echo "$extracted" | bat --language=zsh --style=plain --color=always
+        else
+            echo "$extracted"
+        fi
         ;;
         
     tldr)
