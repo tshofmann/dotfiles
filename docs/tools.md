@@ -273,14 +273,12 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `cat` | `bat -pp` | cat-Ersatz: Plain + kein Pager |
 | `catn` | `bat --style=numbers --paging=never` | Nur Zeilennummern |
 | `catd` | `bat --diff` | Mit Git-Diff-Markierungen |
-| `bat-themes` | `bat --list-themes` | Verfügbare Themes auflisten |
-| `bat-langs` | `bat --list-languages` | Verfügbare Sprachen auflisten |
 
 **Interaktive Funktionen (mit fzf):**
 
 | Funktion | Beschreibung |
 |----------|--------------|
-| `bat-preview` | **Theme-Vorschau**: Themes interaktiv durchsuchen. Enter=Auswählen, Ctrl+Y=Name kopieren |
+| `bat-theme` | **Theme-Auswahl**: Theme interaktiv auswählen und aktivieren |
 
 > **Hinweis:** `-pp` ist die Kurzform für `--style=plain --paging=never` – verhält sich wie das echte `cat`.
 
@@ -430,8 +428,8 @@ man ls                 # Automatisch via MANPAGER
 # Theme temporär wechseln
 bat --theme="Dracula" file.py
 
-# Theme-Vorschau mit fzf
-bat-preview
+# Theme interaktiv auswählen
+bat-theme
 ```
 
 > **Hinweis:** `-pp` = `--style=plain --paging=never` – verhält sich wie echtes `cat`. bat ist automatisch als `MANPAGER` konfiguriert für Syntax-Highlighting in Man-Pages.

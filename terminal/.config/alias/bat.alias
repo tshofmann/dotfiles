@@ -20,30 +20,36 @@ fi
 # Ersetzt cat mit Syntax-Highlighting (plain style)
 alias cat='bat -pp'
 
-# Mit Zeilennummern, ohne weitere Dekoration
+# Mit Zeilennummern, ohne Pager (bat allein hat Pager)
 alias catn='bat --style=numbers --paging=never'
 
 # Zeigt Git-Diff-Markierungen an
 alias catd='bat --diff'
 
 # ------------------------------------------------------------
-# Hilfs-Aliase
+# Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
-# Liste aller verfügbaren Themes
-alias bat-themes='bat --list-themes'
-
-# Liste aller unterstützten Sprachen
-alias bat-langs='bat --list-languages'
-
 if command -v fzf >/dev/null 2>&1; then
-    # Theme-Vorschau mit fzf – interaktiv Themes durchsuchen
-    bat-preview() {
+    # Theme interaktiv auswählen und aktivieren
+    bat-theme() {
         local theme
+        local config_file="$HOME/.config/bat/config"
+        
+        # Symlink auflösen für sed -i
+        [[ -L "$config_file" ]] && config_file=$(readlink -f "$config_file")
+        
         theme=$(bat --list-themes | fzf \
             --preview='bat --theme={} --color=always ~/.zshrc' \
-            --header='Enter: Auswählen | Ctrl+Y: Name kopieren' \
-            --bind='ctrl-y:execute-silent(echo -n {} | pbcopy)+abort')
+            --header='Enter: Theme aktivieren | Esc: Abbrechen')
         
-        [[ -n "$theme" ]] && echo "Theme: $theme"
+        [[ -z "$theme" ]] && return 0
+        
+        if [[ -f "$config_file" ]] && grep -q '^--theme=' "$config_file"; then
+            sed -i '' "s/^--theme=.*$/--theme=\"$theme\"/" "$config_file"
+            echo "✓ Theme aktiviert: $theme"
+        else
+            echo "✗ Konnte Config nicht aktualisieren"
+            echo "  Manuell: --theme=\"$theme\" in ~/.config/bat/config"
+        fi
     }
 fi
