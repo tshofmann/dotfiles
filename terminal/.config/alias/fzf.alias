@@ -68,7 +68,7 @@ fkill() {
     pid=$("$helper" apps | \
         fzf -m \
             --prompt='Apps> ' \
-            --header='Enter: SIGTERM | Tab: Mehrfach | Ctrl+A: Alle | Ctrl+S: Apps/Alle | Ctrl+K: SIGKILL' \
+            --header='Enter: SIGTERM | Tab: Mehrfach | Ctrl+A: Markieren | Ctrl+S: Apps/Alle | Ctrl+K: SIGKILL' \
             --bind 'ctrl-a:select-all' \
             --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Apps> ' ]] && echo 'reload($helper all)+change-prompt(Alle> )' || echo 'reload($helper apps)+change-prompt(Apps> )'" \
             --bind 'ctrl-k:execute(echo {} | awk "{print \$1}" | xargs kill -9)+abort' | \
