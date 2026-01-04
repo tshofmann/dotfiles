@@ -298,7 +298,7 @@ fenv() {
     fi
     
     selection=$(_fenv_filter | _fenv_colorize | fzf --ansi \
-        --header='Enter: Variable kopieren | Ctrl+Y: Nur Wert | Ctrl+S: System-Vars' \
+        --header='Enter: Variable kopieren | Ctrl+Y: Nur Wert | Ctrl+S: System-Variablen' \
         --preview='n=$(echo {} | cut -d"│" -f1 | xargs)
             v=$(printenv "$n" 2>/dev/null)
             printf "%s%s%s\n\n" "$C_MAUVE" "$n" "$C_RESET"
