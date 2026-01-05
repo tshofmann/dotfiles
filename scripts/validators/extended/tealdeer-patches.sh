@@ -48,11 +48,11 @@ extract_commands_from_patch() {
 extract_see_also_refs() {
     local file="$1"
     # Suche "Siehe `tldr X`" Zeilen und extrahiere Tool + Befehle
-    grep -E "^- dotfiles: Siehe \`tldr [a-z]+\`" "$file" 2>/dev/null | while read -r line; do
+    grep -E "^- dotfiles: Siehe \`tldr [a-z][a-z0-9_-]*\`" "$file" 2>/dev/null | while read -r line; do
         # Extrahiere Tool-Name (nach "tldr ")
-        local tool=$(echo "$line" | sed -n 's/.*`tldr \([a-z]*\)`.*/\1/p')
+        local tool=$(echo "$line" | sed -n 's/.*`tldr \([a-z][a-z0-9_-]*\)`.*/\1/p')
         # Extrahiere alle Befehle in Backticks nach "für" (als Array)
-        local cmds_str=$(echo "$line" | sed 's/.*für //' | grep -oE '\`[a-z_]+\`' | sed 's/`//g' | tr '\n' ' ')
+        local cmds_str=$(echo "$line" | sed 's/.*für //' | grep -oE '\`[a-z][a-z0-9_-]*\`' | sed 's/`//g' | tr '\n' ' ')
         # Ausgabe: tool:cmd für jeden Befehl
         for cmd in ${=cmds_str}; do
             echo "${tool}:${cmd}"
