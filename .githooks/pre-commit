@@ -5,7 +5,10 @@
 # Prüft:
 #   1. Syntax-Check für ZSH-Dateien (zsh -n)
 #      - *.sh, *.alias, .zshrc, .zshenv, .zprofile, .zlogin, pre-commit
-#   2. Doku-Konsistenz bei relevanten Änderungen
+#   2. Auto-Generierung & Doku-Konsistenz bei relevanten Änderungen
+#      - Generiert Dokumentation aus Code (generate-docs.sh)
+#      - Staged generierte Änderungen automatisch
+#      - Validiert Konsistenz (validate-docs.sh)
 #
 # Install : git config core.hooksPath .githooks
 # ============================================================
@@ -48,10 +51,27 @@ if [[ -n "$zsh_files" ]]; then
 fi
 
 # ------------------------------------------------------------
-# 2. Dokumentations-Konsistenz
+# 2. Dokumentations-Generierung & Konsistenz
 # ------------------------------------------------------------
 # Trigger bei: docs/, Brewfile, terminal/.config/, CONTRIBUTING.md, terminal/.zsh*, .github/copilot-instructions.md
 if echo "$changed_files" | grep -qE '^(docs/|setup/Brewfile|terminal/\.config/|CONTRIBUTING\.md|terminal/\.zsh|\.github/copilot-instructions\.md)'; then
+    echo "📝 Generiere Dokumentation aus Code..."
+    
+    # Führe Generator aus
+    if "$DOTFILES_DIR/scripts/generate-docs.sh"; then
+        # Stage generierte Änderungen automatisch
+        git add "$DOTFILES_DIR/docs/"*.md 2>/dev/null || true
+        echo "  ✔ Dokumentation generiert und gestaged"
+    else
+        echo ""
+        echo "❌ Commit abgebrochen: Dokumentations-Generator fehlgeschlagen!"
+        echo ""
+        echo "Optionen:"
+        echo "  1. Generator-Fehler beheben und erneut committen"
+        echo "  2. Hook überspringen: git commit --no-verify"
+        exit 1
+    fi
+    
     echo "📖 Prüfe Dokumentations-Konsistenz..."
     
     if ! "$DOTFILES_DIR/scripts/validate-docs.sh"; then

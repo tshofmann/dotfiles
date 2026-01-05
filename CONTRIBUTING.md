@@ -66,6 +66,72 @@ git commit --no-verify -m "..."
 
 ---
 
+## Automatische Dokumentations-Generierung
+
+### Konzept
+
+Die Dokumentation wird **automatisch aus dem Code generiert** – manuelle Pflege entfällt:
+
+```
+Code → Generator → Dokumentation → Validation → Commit
+```
+
+**Workflow:**
+1. Entwickler ändert Alias in `*.alias`-Datei
+2. Pre-Commit Hook führt `generate-docs.sh` aus
+3. Markdown-Tabellen werden automatisch aktualisiert
+4. Validatoren prüfen Konsistenz
+5. Commit erfolgt mit aktualisierter Dokumentation
+
+### Generator manuell ausführen
+
+```zsh
+# Alle Dokumentations-Inhalte generieren
+./scripts/generate-docs.sh
+
+# Dry-Run: Zeige was generiert würde
+./scripts/generate-docs.sh --dry-run
+```
+
+### Was wird generiert?
+
+| Sektion | Quelle | Ziel |
+|---------|--------|------|
+| **Alias-Tabellen** | `terminal/.config/alias/*.alias` | `docs/tools.md` (pro Tool) |
+| **Funktions-Tabellen** | `terminal/.config/alias/*.alias` | `docs/tools.md` (pro Tool) |
+
+### Marker-System
+
+Generierte Bereiche sind mit Markern gekennzeichnet:
+
+```markdown
+<!-- BEGIN:GENERATED:ALIASES_BREW -->
+<!-- AUTO-GENERATED – Änderungen werden überschrieben -->
+| Alias | Befehl | Beschreibung |
+...
+<!-- END:GENERATED:ALIASES_BREW -->
+```
+
+**Wichtig:** Inhalte zwischen Markern werden bei jedem Commit überschrieben – manuelle Änderungen gehen verloren!
+
+### Neue Aliase dokumentieren
+
+**Automatisch (empfohlen):**
+
+1. Füge Beschreibungskommentar vor Alias hinzu:
+   ```zsh
+   # Vollständiges System-Update
+   alias brewup='brew update && brew upgrade'
+   ```
+
+2. Commit – Generator aktualisiert Docs automatisch
+
+**Manuell (falls Generator fehlschlägt):**
+
+Tabelle in `docs/tools.md` im entsprechenden Abschnitt ergänzen.
+
+---
+
 ## Dokumentations-Validierung
 
 ### Manuell ausführen
