@@ -62,7 +62,7 @@ alias rggo='rg -t go'
 # ------------------------------------------------------------
 # Interaktive Suche (mit fzf)
 # ------------------------------------------------------------
-# rgf: Live-Grep mit fzf + bat Vorschau
+# rgf: Live-Grep mit fzf + bat Vorschau (Datei:Zeile bleibt beim Scrollen sichtbar)
 # Verwendung: rgf [initiale-suche]
 if command -v fzf >/dev/null 2>&1; then
     rgf() {
@@ -73,6 +73,7 @@ if command -v fzf >/dev/null 2>&1; then
             --bind "start:reload:$rg_prefix {q} || true" \
             --bind "change:reload:sleep 0.1; $rg_prefix {q} || true" \
             --delimiter : \
+            --freeze-left=1 \
             --preview "$preview_cmd" \
             --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' \
             --header='Enter: Datei öffnen | Ctrl+Y: Pfad kopieren' \
