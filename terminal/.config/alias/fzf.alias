@@ -255,19 +255,3 @@ fenv() {
     fi
 }
 
-# ------------------------------------------------------------
-# HISTORY + FZF: Erweiterte History-Suche
-# ------------------------------------------------------------
-# Befehlshistorie durchsuchen und ins Edit-Buffer laden
-# Community-Pattern: print -z statt eval → Befehl editierbar vor Ausführung
-fhist() {
-    local cmd
-    cmd=$(fc -l 1 | fzf --tac --no-sort -n2.. \
-        --header='Enter: Befehl übernehmen | Ctrl+Y: Befehl kopieren' \
-        --bind 'ctrl-y:execute-silent(echo {2..} | pbcopy)+abort' | \
-        awk '{$1=""; print substr($0,2)}')
-    
-    # print -z: Befehl erscheint in Kommandozeile, editierbar vor Enter
-    [[ -n "$cmd" ]] && print -z "$cmd"
-}
-

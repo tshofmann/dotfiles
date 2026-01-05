@@ -366,7 +366,6 @@ fzf ist als "Enhancer" in die jeweiligen Tool-Alias-Dateien integriert. Diese Da
 | `fkill` | **Fuzzy Kill**: Prozesse beenden. Enter=Beenden, Tab=Mehrfach, Ctrl+S=Apps/Alle. Optional: `fkill 9` für SIGKILL |
 | `fman` | **Fuzzy Man**: Man-Pages mit bat-Vorschau. Enter=Öffnen, Ctrl+S=man↔tldr |
 | `fenv` | **Fuzzy Env**: Umgebungsvariablen durchsuchen mit Farbkodierung. Enter=Export→Edit, Ctrl+Y=Wert kopieren |
-| `fhist` | **Fuzzy History**: Shell-History, Enter=Edit-Buffer (editierbar), Ctrl+Y=Kopieren |
 
 **Tool-spezifische fzf-Funktionen:**
 
@@ -377,6 +376,16 @@ Die folgenden Funktionen nutzen fzf, sind aber nach ihrem primären Zweck in den
 - **git.alias**: `glog`, `gbr`, `gst`, `gstash`
 - **brew.alias**: `bip`, `brp`, `brewv`
 - **gh.alias**: `ghpr`, `ghis`, `ghrun`, `ghrepo`, `ghgist`
+
+**Shell-Keybindings (Ctrl+X Prefix):**
+
+Diese Keybindings werden global in `~/.config/fzf/init.zsh` konfiguriert:
+
+| Keybinding | Beschreibung |
+|------------|--------------|
+| `Ctrl+X 1` | **History-Suche**: Shell-History mit fzf, Enter=Edit-Buffer, Ctrl+Y=Kopieren |
+| `Ctrl+X 2` | **Datei-Suche**: Dateien mit bat-Vorschau, Enter=Pfad einfügen |
+| `Ctrl+X 3` | **Verzeichnis-Wechsel**: Verzeichnisse mit eza-Vorschau, Enter=Wechseln |
 
 > **Design-Prinzip:** Aliase werden nach ihrem primären Zweck organisiert, nicht nach den verwendeten Tools. `rgf` nutzt fzf+bat, ist aber primär eine Suche – daher in `rg.alias`.
 
