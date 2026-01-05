@@ -34,9 +34,19 @@
 
 `fenv`
 
-- dotfiles: Historie durchsuchen, ins Edit-Buffer laden (`<Enter>` Ins Edit-Buffer, `<Ctrl y>` Kopieren):
+# dotfiles: Shell-Keybindings (Ctrl+X Prefix)
 
-`fhist`
+- dotfiles: Historie durchsuchen (`<Enter>` Ins Edit-Buffer, `<Ctrl y>` Kopieren):
+
+`<Ctrl x> 1`
+
+- dotfiles: Datei suchen (`<Enter>` Pfad einfügen, bat-Vorschau):
+
+`<Ctrl x> 2`
+
+- dotfiles: Verzeichnis wechseln (`<Enter>` Wechseln, eza-Vorschau):
+
+`<Ctrl x> 3`
 
 # dotfiles: Tool-spezifische fzf-Funktionen
 

@@ -371,7 +371,7 @@ exec zsh
 | `ghpr`, `ghis`, `ghrun`, `ghrepo` | fzf, gh |
 | `glog`, `gbr`, `gst`, `gstash` | fzf, git, bat |
 | `bip`, `bup`, `brp`, `bsp` | fzf, brew |
-| `fkill`, `fman`, `fenv`, `fhist` | fzf |
+| `fkill`, `fman`, `fenv` | fzf |
 
 ---
 

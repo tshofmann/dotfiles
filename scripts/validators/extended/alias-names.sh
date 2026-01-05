@@ -195,7 +195,8 @@ validate_fzf_functions() {
             local func_name=$(echo "$line" | sed 's/^| `//' | sed 's/`.*//')
             func_name=$(echo "$func_name" | awk '{print $1}')
             # Ignoriere zi (zoxide builtin, nicht in fzf.alias)
-            if [[ -n "$func_name" ]] && [[ ${#func_name} -gt 1 ]] && [[ "$func_name" != "zi" ]]; then
+            # Ignoriere Keybindings (Ctrl+X, Alt+X) - werden von keybindings.sh validiert
+            if [[ -n "$func_name" ]] && [[ ${#func_name} -gt 1 ]] && [[ "$func_name" != "zi" ]] && [[ ! "$func_name" =~ ^(Ctrl|Alt)\+ ]]; then
                 doc_functions+=("$func_name")
             fi
         fi
