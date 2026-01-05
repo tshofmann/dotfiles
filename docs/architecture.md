@@ -193,6 +193,8 @@ Die Rust-Library `dirs` gibt auf macOS `~/Library/Application Support` zurück s
 
 ---
 
+<a name="komponenten-abhängigkeiten"></a>
+
 ## Komponenten-Abhängigkeiten
 
 Die visuelle Terminal-Darstellung basiert auf drei eng gekoppelten Komponenten:
@@ -424,6 +426,8 @@ Wird **nach** `.zshrc` geladen, nur bei Login-Shells:
 | **Bedingung** | Nur wenn `.zwc` fehlt oder älter als `.zcompdump` ist |
 
 > **Hinweis:** Bei aktuellem Setup kein messbarer Performance-Unterschied (~0.1s). Die Optimierung ist eine "Zero-Cost Versicherung" für zukünftige Completions (kubectl, nvm, docker etc.).
+
+<a name="tool-konfiguration"></a>
 
 ### Tool-Konfiguration
 

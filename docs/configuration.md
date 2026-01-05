@@ -82,6 +82,8 @@ Bei einem ungültigen Preset-Namen zeigt das Skript eine Warnung und verwendet `
 
 ---
 
+<a name="schriftart-wechseln"></a>
+
 ## Schriftart wechseln
 
 Das Terminal-Profil, der Nerd Font und das Starship-Preset sind eng gekoppelt. Wenn du die Schriftart ändern möchtest, musst du alle drei Komponenten berücksichtigen.
@@ -175,6 +177,8 @@ git commit -m "feat: eigene Starship-Konfiguration"
 ```
 
 ---
+
+<a name="aliase-erweitern"></a>
 
 ## Aliase erweitern
 

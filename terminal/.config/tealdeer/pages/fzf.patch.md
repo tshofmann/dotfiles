@@ -44,4 +44,5 @@
 - dotfiles: Siehe `tldr rg` für `rgf`
 - dotfiles: Siehe `tldr git` für `glog`, `gbr`, `gst`, `gstash`
 - dotfiles: Siehe `tldr gh` für `ghpr`, `ghis`, `ghrun`, `ghrepo`, `ghgist`
-- dotfiles: Siehe `tldr brew` für `bip`, `bup`, `brp`, `bsp`
+- dotfiles: Siehe `tldr brew` für `bip`, `brp`, `brewv`
+

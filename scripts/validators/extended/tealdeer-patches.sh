@@ -42,6 +42,25 @@ extract_commands_from_patch() {
         sort -u
 }
 
+# Extrahiere Cross-Referenzen aus "Siehe"-Zeilen
+# Format: "- dotfiles: Siehe `tldr tool` für `cmd1`, `cmd2`, ..."
+# Gibt zurück: tool:cmd1 tool:cmd2 ...
+extract_see_also_refs() {
+    local file="$1"
+    # Suche "Siehe `tldr X`" Zeilen und extrahiere Tool + Befehle
+    grep -E "^- dotfiles: Siehe \`tldr [a-z][a-z0-9_-]*\`" "$file" 2>/dev/null | while read -r line; do
+        # Extrahiere Tool-Name (nach "tldr ")
+        local tool=$(echo "$line" | sed -n 's/.*`tldr \([a-z][a-z0-9_-]*\)`.*/\1/p')
+        # Extrahiere alle Befehle in Backticks nach "für" (als Array)
+        local -a cmds
+        cmds=("${(@f)$(echo "$line" | sed 's/.*für //' | grep -oE '\`[a-z][a-z0-9_-]*\`' | sed 's/`//g')}")
+        # Ausgabe: tool:cmd für jeden Befehl
+        for cmd in "${cmds[@]}"; do
+            echo "${tool}:${cmd}"
+        done
+    done
+}
+
 # Prüfe ob ein Befehl im Patch dokumentiert ist
 is_command_in_patch() {
     local cmd="$1"
@@ -225,8 +244,56 @@ validate_tealdeer_patches() {
     fi
     
     # ----------------------------------------------------
-    # 4. Prüfung: Format (# dotfiles: Header)
+    # 4. Prüfung: Cross-Referenzen ("Siehe tldr X für cmd")
     # ----------------------------------------------------
+    log "Prüfe Cross-Referenzen in Patches..."
+    
+    local -a invalid_refs=()
+    
+    for patch_file in "$TEALDEER_DIR"/*.patch.md(N); do
+        local patch_base=$(basename "$patch_file" .patch.md)
+        
+        # Überspringe Template
+        [[ "$patch_base" == "_template" ]] && continue
+        
+        # Extrahiere alle Cross-Referenzen (tool:cmd Format)
+        local -a refs=($(extract_see_also_refs "$patch_file"))
+        
+        for ref in "${refs[@]}"; do
+            local tool="${ref%%:*}"
+            local cmd="${ref#*:}"
+            local target_alias="$ALIAS_DIR/${tool}.alias"
+            
+            # Prüfe ob Ziel-Alias-Datei existiert
+            if [[ ! -f "$target_alias" ]]; then
+                invalid_refs+=("$cmd → ${tool}.alias existiert nicht (${patch_base}.patch.md)")
+                continue
+            fi
+            
+            # Extrahiere Aliase und Funktionen aus Ziel-Datei
+            local -a target_aliases=($(extract_aliases_from_file "$target_alias"))
+            local -a target_functions=($(extract_functions_from_file "$target_alias"))
+            local -a all_target_cmds=("${target_aliases[@]}" "${target_functions[@]}")
+            
+            # Prüfe ob referenzierter Befehl existiert
+            if [[ ! " ${all_target_cmds[*]} " =~ " ${cmd} " ]]; then
+                invalid_refs+=("$cmd → nicht in ${tool}.alias (${patch_base}.patch.md)")
+            fi
+        done
+    done
+    
+    if (( ${#invalid_refs[@]} > 0 )); then
+        err "Ungültige Cross-Referenzen in Patches:"
+        for item in "${invalid_refs[@]}"; do
+            print "   ${RED}→${NC} $item"
+        done
+        (( errors += ${#invalid_refs[@]} )) || true
+    else
+        ok "Alle Cross-Referenzen sind gültig"
+    fi
+    
+    # ----------------------------------------------------
+    # 5. Prüfung: Format (# dotfiles: Header)
     # ----------------------------------------------------
     log "Prüfe Patch-Format..."
     
