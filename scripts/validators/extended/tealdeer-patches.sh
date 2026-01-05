@@ -52,9 +52,10 @@ extract_see_also_refs() {
         # Extrahiere Tool-Name (nach "tldr ")
         local tool=$(echo "$line" | sed -n 's/.*`tldr \([a-z][a-z0-9_-]*\)`.*/\1/p')
         # Extrahiere alle Befehle in Backticks nach "für" (als Array)
-        local cmds_str=$(echo "$line" | sed 's/.*für //' | grep -oE '\`[a-z][a-z0-9_-]*\`' | sed 's/`//g' | tr '\n' ' ')
+        local -a cmds
+        cmds=("${(@f)$(echo "$line" | sed 's/.*für //' | grep -oE '\`[a-z][a-z0-9_-]*\`' | sed 's/`//g')}")
         # Ausgabe: tool:cmd für jeden Befehl
-        for cmd in ${=cmds_str}; do
+        for cmd in "${cmds[@]}"; do
             echo "${tool}:${cmd}"
         done
     done
