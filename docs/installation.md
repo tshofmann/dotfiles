@@ -107,6 +107,8 @@ tldr --update
 
 > ⚠️ **ACHTUNG:** Der Befehl `git reset --hard HEAD` verwirft **alle lokalen Änderungen** im Repository **unwiderruflich**!
 
+<a name="eigene-änderungen-sichern"></a>
+
 ### Eigene Änderungen sichern
 
 Falls du bereits eigene Anpassungen an den Dotfiles hast:

@@ -6,11 +6,17 @@
 # Pfad    : ~/.config/fzf/fkill-list
 # Aufruf  : fkill-list [apps|all]
 # ============================================================
+# Hinweis : macOS-spezifisch! Das Pattern \.app\/ filtert nach
+#           macOS App-Bundles. Für Linux-Portabilität müsste
+#           dieses Pattern durch Desktop-Anwendungserkennung
+#           ersetzt werden (z.B. via .desktop-Dateien oder
+#           /proc/<pid>/exe Symlink-Analyse).
+# ============================================================
 
 local mode="${1:-apps}"
 
 if [[ "$mode" == "apps" ]]; then
-    # Nur .app Prozesse
+    # Nur .app Prozesse (macOS-spezifisch – siehe Hinweis oben)
     ps -u "$USER" -o pid,pcpu,pmem,comm | \
         awk '/\.app\// {n=split($4,a,"/"); printf "%7s %5s%% %5s%%  %s\n", $1, $2, $3, a[n]}'
 else

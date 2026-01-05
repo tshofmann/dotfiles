@@ -239,6 +239,33 @@ warn() { print "⚠ $*"; }
   - Müssen nicht dokumentiert werden
   - Für interne Helper, Parser, etc.
 
+### Funktions-Syntax
+
+**Verwende die POSIX-kompatible Form:**
+
+```zsh
+name() {
+    # ...
+}
+```
+
+**Nicht verwenden:**
+
+```zsh
+function name {   # ❌ ksh-Style – nicht POSIX
+function name() { # ❌ Hybrid-Style
+```
+
+| Syntax | Status | Grund |
+|--------|--------|-------|
+| `name() {` | ✅ Verwenden | POSIX-konform, von `fa()` erkannt |
+| `function name {` | ❌ Nicht verwenden | Nicht POSIX, von `fa()` nicht erkannt |
+| `function name() {` | ❌ Nicht verwenden | Redundant, Inkonsistenz |
+
+> **Hinweis:** Die `fa()`-Funktion (Alias-Browser) erkennt nur die POSIX-Syntax.
+> Diese Einschränkung ist beabsichtigt – siehe [Google Shell Style Guide](https://google.github.io/styleguide/shellguide.html#function-names):
+> *"The keyword `function` is optional, but must be used consistently throughout a project."*
+
 ### Stil-Regeln (automatisch geprüft)
 
 Diese Regeln werden durch `style-consistency.sh` automatisch validiert:

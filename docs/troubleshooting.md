@@ -172,6 +172,8 @@ brew bundle check
 
 ---
 
+<a name="mac-app-store-mas-probleme"></a>
+
 ## Mac App Store (mas) Probleme
 
 ### Symptom: App Store Apps werden nicht installiert

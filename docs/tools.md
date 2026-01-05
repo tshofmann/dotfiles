@@ -149,6 +149,8 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 > **Guard-System:** Alle Tool-Aliase prüfen zuerst ob das jeweilige Tool installiert ist (`command -v`). Ist ein Tool nicht vorhanden, bleiben die originalen Befehle (`ls`, `cat`, `grep`) erhalten.
 
+<a name="brewalias"></a>
+
 ### brew.alias
 
 | Alias | Befehl | Beschreibung |
@@ -169,6 +171,8 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `brewv` | **Brew Versions**: Alle Formulae, Casks und MAS-Apps mit Versionen |
 
 > **Hinweis:** Die mas-Aliase sind nur verfügbar wenn mas installiert ist. `brewup` enthält automatisch `mas upgrade` wenn mas vorhanden ist. Die interaktiven Funktionen benötigen fzf.
+
+<a name="fdalias"></a>
 
 ### fd.alias
 
@@ -195,6 +199,8 @@ Verfügbare Aliase aus `~/.config/alias/`:
 > **Hinweis:** fd respektiert automatisch `.gitignore` und ist deutlich schneller als find. Zusätzlich werden Patterns aus `~/.config/fd/ignore` global ausgeschlossen (z.B. `.git/`, `node_modules/`, `__pycache__/`). Mit `fd -u` (unrestricted) werden alle Ignore-Dateien umgangen.
 >
 > **Tipp:** Für Dateisuche mit Vorschau nutze `Ctrl+T` (fzf Shell-Integration) – fügt den Pfad direkt ein.
+
+<a name="btopalias"></a>
 
 ### btop.alias
 
@@ -247,6 +253,8 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 > **Hinweis:** `lg` ist ein Alias für lazygit und benötigt nicht fzf.
 
+<a name="ezaalias"></a>
+
 ### eza.alias
 
 | Alias | Befehl | Beschreibung |
@@ -263,6 +271,8 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 > **Hinweis:** Icons werden automatisch über `EZA_ICONS_AUTO=1` in `.zshrc` aktiviert. Ordner werden immer zuerst angezeigt (`--group-directories-first`).
 
+<a name="batalias"></a>
+
 ### bat.alias
 
 | Alias | Befehl | Beschreibung |
@@ -278,6 +288,8 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `bat-theme` | **Theme-Auswahl**: Theme interaktiv auswählen und aktivieren |
 
 > **Hinweis:** `-pp` ist die Kurzform für `--style=plain --paging=never` – verhält sich wie das echte `cat`.
+
+<a name="rgalias"></a>
 
 ### rg.alias
 
@@ -322,6 +334,8 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `ghgist` | Gists durchsuchen: Enter=Anzeigen, Ctrl+E=Bearbeiten, Ctrl+O=Browser |
 
 > **Hinweis:** Alle interaktiven gh-Funktionen benötigen sowohl gh CLI als auch fzf. Die Aliase `gho` und `ghst` funktionieren auch ohne fzf.
+
+<a name="fzfalias--generische-utilities"></a>
 
 ### fzf.alias – Generische Utilities
 
@@ -647,6 +661,8 @@ starship preset --list
 # Config editieren
 $EDITOR ~/.config/starship.toml
 ```
+
+<a name="preset-kompatibilität"></a>
 
 ### Preset-Kompatibilität
 
