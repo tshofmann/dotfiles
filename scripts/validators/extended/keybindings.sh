@@ -230,7 +230,6 @@ validate_keybindings() {
                 match($0, pattern) {
                     in_func = 1
                     # Speichere Einrückung der Funktionsdefinition
-                    start_indent = ""
                     for (i = 1; i <= length($0); i++) {
                         c = substr($0, i, 1)
                         if (c == " " || c == "\t") start_indent = start_indent c
