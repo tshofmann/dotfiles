@@ -6,11 +6,18 @@
 # Docs    : https://github.com/junegunn/fzf#usage
 # ============================================================
 # Hinweis : Wird via .zshrc geladen. Keybindings:
-#           Ctrl+R = History, Ctrl+T = Datei, Alt+C = Verzeichnis
+#           Ctrl+X 1 = History, Ctrl+X 2 = Datei, Ctrl+X 3 = Verzeichnis
 # ============================================================
 
 # Shell-Integration aktivieren
 source <(fzf --zsh)
+
+# Keybindings umlegen auf Ctrl+X Prefix (Alt+C funktioniert nicht ohne Meta-Taste)
+bindkey -r '^R'                          # Standard-Binding entfernen
+bindkey -r '^T'                          # Standard-Binding entfernen
+bindkey '^X1' fzf-history-widget         # Ctrl+X 1 = History
+bindkey '^X2' fzf-file-widget            # Ctrl+X 2 = Dateien
+bindkey '^X3' fzf-cd-widget              # Ctrl+X 3 = Verzeichnisse
 
 # fd als Backend (schneller als find, respektiert .gitignore)
 if command -v fd >/dev/null 2>&1; then

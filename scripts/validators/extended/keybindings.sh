@@ -105,6 +105,94 @@ __extract_patch_keys() {
 }
 
 # ------------------------------------------------------------
+# Validierung: Shell-Keybindings (init.zsh)
+# ------------------------------------------------------------
+validate_shell_keybindings() {
+    local init_zsh="$TERMINAL_DIR/.config/fzf/init.zsh"
+    local tools_md="$DOCS_DIR/tools.md"
+    local patch_md="$TEALDEER_DIR/fzf.patch.md"
+    local errors=0
+    
+    [[ -f "$init_zsh" ]] || { debug "init.zsh nicht gefunden, überspringe"; return 0; }
+    
+    # Extrahiere Keybindings aus init.zsh (bindkey '^X1' ...)
+    local -a code_keys=()
+    while IFS= read -r line; do
+        # Extrahiere Nummer nach ^X aus bindkey-Zeilen (nicht -r)
+        if [[ "$line" == bindkey\ * ]] && [[ "$line" != *"-r"* ]] && [[ "$line" == *"^X"* ]]; then
+            local num=$(echo "$line" | grep -oE '\^X[0-9]' | sed 's/\^X//')
+            [[ -n "$num" ]] && code_keys+=("Ctrl+X $num")
+        fi
+    done < "$init_zsh"
+    
+    # Extrahiere Keybindings aus tools.md (Shell-Keybindings Sektion)
+    local -a docs_keys=()
+    local in_shell_kb_section=false
+    while IFS= read -r line; do
+        if [[ "$line" == *"Shell-Keybindings"* ]]; then
+            in_shell_kb_section=true
+            continue
+        fi
+        if $in_shell_kb_section && [[ "$line" == "**"* ]] && [[ "$line" != *"Shell-Keybindings"* ]]; then
+            break
+        fi
+        if $in_shell_kb_section && [[ "$line" == "| \`Ctrl+X"* ]]; then
+            local kb=$(echo "$line" | sed 's/^| `//' | sed 's/`.*//')
+            docs_keys+=("$kb")
+        fi
+    done < "$tools_md"
+    
+    # Extrahiere aus fzf.patch.md
+    local -a patch_keys=()
+    while IFS= read -r line; do
+        if [[ "$line" =~ \<Ctrl\ x\>\ ([0-9]) ]]; then
+            patch_keys+=("Ctrl+X ${match[1]}")
+        fi
+    done < "$patch_md"
+    
+    # Hilfsfunktion: Prüfe ob Element in Array enthalten ist
+    __in_array() {
+        local needle="$1"
+        shift
+        local item
+        for item in "$@"; do
+            [[ "$item" == "$needle" ]] && return 0
+        done
+        return 1
+    }
+    
+    # Validiere: Code → Docs
+    for key in "${code_keys[@]}"; do
+        if ! __in_array "$key" "${docs_keys[@]}"; then
+            err "Shell-Keybinding '$key' aus init.zsh fehlt in tools.md"
+            (( errors++ )) || true
+        fi
+    done
+    
+    # Validiere: Docs → Code
+    for key in "${docs_keys[@]}"; do
+        if ! __in_array "$key" "${code_keys[@]}"; then
+            err "Shell-Keybinding '$key' in tools.md existiert nicht in init.zsh"
+            (( errors++ )) || true
+        fi
+    done
+    
+    # Validiere: Code → Patch
+    for key in "${code_keys[@]}"; do
+        if ! __in_array "$key" "${patch_keys[@]}"; then
+            err "Shell-Keybinding '$key' aus init.zsh fehlt in fzf.patch.md"
+            (( errors++ )) || true
+        fi
+    done
+    
+    if (( errors == 0 )) && (( ${#code_keys[@]} > 0 )); then
+        ok "Shell-Keybindings (init.zsh): ${#code_keys[@]} validiert"
+    fi
+    
+    return $errors
+}
+
+# ------------------------------------------------------------
 # Hauptvalidierung
 # ------------------------------------------------------------
 validate_keybindings() {
@@ -112,6 +200,10 @@ validate_keybindings() {
     setopt localoptions noerrexit
     
     local errors=0
+    
+    # Validiere Shell-Keybindings zuerst
+    validate_shell_keybindings
+    (( errors += $? )) || true
     
     log "Prüfe Keybindings in Code vs. Dokumentation..."
     
@@ -125,29 +217,32 @@ validate_keybindings() {
         
         for func in "${functions[@]}"; do
             # Extrahiere Funktionsblock mit korrektem Brace-Counting
-            # (unterstützt verschachtelte Funktionen wie _fenv_colorize in fenv)
+            # Extrahiere Funktionsblock - einfacherer Ansatz:
+            # Start: Zeile mit "funcname() {" am Anfang
+            # Ende: Zeile die nur "}" enthält (auf gleicher Einrückungsebene)
             local func_block=$(awk -v fn="$func" '
                 BEGIN { 
                     gsub(/[.^$*+?(){}|]/, "\\\\&", fn)
                     in_func = 0
-                    brace_count = 0
+                    start_indent = ""
+                    pattern = "^([[:space:]]*)" fn "\\(\\)[[:space:]]*\\{"
                 }
-                $0 ~ fn"\\(\\)[[:space:]]*\\{" {
+                match($0, pattern) {
                     in_func = 1
-                    brace_count = 1
+                    # Speichere Einrückung der Funktionsdefinition
+                    start_indent = ""
+                    for (i = 1; i <= length($0); i++) {
+                        c = substr($0, i, 1)
+                        if (c == " " || c == "\t") start_indent = start_indent c
+                        else break
+                    }
                     print
                     next
                 }
                 in_func {
-                    # Zähle öffnende und schließende Klammern
-                    for (i = 1; i <= length($0); i++) {
-                        c = substr($0, i, 1)
-                        if (c == "{") brace_count++
-                        if (c == "}") brace_count--
-                    }
                     print
-                    if (brace_count <= 0) {
-                        in_func = 0
+                    # Ende: Zeile ist nur "}" mit gleicher oder weniger Einrückung
+                    if ($0 ~ "^" start_indent "\\}[[:space:]]*$") {
                         exit
                     }
                 }
@@ -164,13 +259,39 @@ validate_keybindings() {
             local header=""
             [[ -n "$header_line" ]] && header=$(echo "$header_line" | sed "s/--header='//;s/'$//")
             
-            # PRÜFUNG 1: fzf-Funktion ohne --header
-            if $uses_fzf && [[ -z "$header" ]]; then
-                # Prüfe ob es --bind Aktionen gibt (dann sollte Header existieren)
-                if echo "$func_block" | grep -qE -- "--bind '[[:space:]]*(enter|ctrl|alt)"; then
-                    err "$func: fzf-Funktion mit Keybindings aber ohne --header"
+            # Extrahiere --bind Keys aus dem Funktionsblock (ctrl-x, alt-x)
+            local -a bind_keys=()
+            local bind_ctrl=$(echo "$func_block" | grep -oE "bind.*ctrl-[a-z]" | grep -oE "ctrl-[a-z]" | sort -u)
+            local bind_alt=$(echo "$func_block" | grep -oE "bind.*alt-[a-z]" | grep -oE "alt-[a-z]" | sort -u)
+            for k in ${(f)bind_ctrl} ${(f)bind_alt}; do
+                [[ -n "$k" ]] && bind_keys+=("$k")
+            done
+            
+            # PRÜFUNG 0: --bind Keys müssen im --header dokumentiert sein
+            if (( ${#bind_keys[@]} > 0 )); then
+                if [[ -z "$header" ]]; then
+                    err "$func: Hat --bind Keybindings aber keinen --header"
+                    for key in "${bind_keys[@]}"; do
+                        print "   ${RED}→${NC} $key undokumentiert"
+                    done
                     (( errors++ )) || true
+                    continue
                 fi
+                
+                # Normalisiere Header-Keys für Vergleich
+                local header_normalized=$(echo "$header" | tr '[:upper:]' '[:lower:]' | sed 's/ctrl+/ctrl-/g; s/alt+/alt-/g')
+                
+                for key in "${bind_keys[@]}"; do
+                    if [[ ! "$header_normalized" =~ "$key" ]]; then
+                        err "$func: --bind '$key' fehlt im --header"
+                        (( errors++ )) || true
+                    fi
+                done
+            fi
+            
+            # PRÜFUNG 1: fzf-Funktion ohne --header (nur wenn keine bind-keys gefunden)
+            if $uses_fzf && [[ -z "$header" ]] && (( ${#bind_keys[@]} == 0 )); then
+                # Keine Keybindings, kein Header – das ist OK (z.B. einfache Auswahl)
                 continue
             fi
             
