@@ -60,13 +60,14 @@ fi
 # KILL + FZF: Prozess-Management
 # ------------------------------------------------------------
 # Prozesse interaktiv suchen und beenden (Tab für Mehrfachauswahl)
-# Ctrl+S: Toggle Apps ↔ Alle Prozesse
+# Ctrl+S: Toggle Apps ↔ Alle Prozesse (PID bleibt beim Scrollen sichtbar)
 fkill() {
     local pid
     local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fkill-list"
     
     pid=$("$helper" apps | \
         fzf -m \
+            --freeze-left=1 \
             --prompt='Apps> ' \
             --header='Enter: Beenden | Tab: Mehrfach | Ctrl+S: Apps/Alle' \
             --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Apps> ' ]] && echo 'reload($helper all)+change-prompt(Alle> )' || echo 'reload($helper apps)+change-prompt(Apps> )'" | \
