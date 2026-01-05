@@ -153,6 +153,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 ### brew.alias
 
+<!-- BEGIN:GENERATED:ALIASES_BREW -->
 | Alias | Befehl | Beschreibung |
 |-------|--------|--------------|
 | `brewup` | `brew update && brew upgrade && mas upgrade && brew autoremove && brew cleanup` | Vollständiges System-Update (inkl. App Store) |
@@ -169,6 +170,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `bip` | **Brew Install**: Formulae [F] und Casks [C] durchsuchen, Enter=Installieren, Tab=Mehrfach |
 | `brp` | **Brew Remove**: Ungenutzte Pakete entfernen (nur Leaves), Enter=Entfernen, Tab=Mehrfach |
 | `brewv` | **Brew Versions**: Alle Formulae, Casks und MAS-Apps mit Versionen |
+<!-- END:GENERATED:ALIASES_BREW -->
 
 > **Hinweis:** Die mas-Aliase sind nur verfügbar wenn mas installiert ist. `brewup` enthält automatisch `mas upgrade` wenn mas vorhanden ist. Die interaktiven Funktionen benötigen fzf.
 
@@ -176,6 +178,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 ### fd.alias
 
+<!-- BEGIN:GENERATED:ALIASES_FD -->
 | Alias | Befehl | Beschreibung |
 |-------|--------|--------------|
 | `fdf` | `fd --type f` | Nur Dateien suchen |
@@ -195,6 +198,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 |----------|--------------|
 | `cdf [path]` | **Fuzzy CD**: fd + fzf + eza – Verzeichnisnavigation mit Baum-Vorschau. Enter=Wechseln, Ctrl+Y=Pfad kopieren |
 | `fo [path]` | **Fuzzy Open**: fd + fzf + open – Datei mit Standard-App öffnen. Enter=Öffnen, Ctrl+Y=Pfad kopieren |
+<!-- END:GENERATED:ALIASES_FD -->
 
 > **Hinweis:** fd respektiert automatisch `.gitignore` und ist deutlich schneller als find. Zusätzlich werden Patterns aus `~/.config/fd/ignore` global ausgeschlossen (z.B. `.git/`, `node_modules/`, `__pycache__/`). Mit `fd -u` (unrestricted) werden alle Ignore-Dateien umgangen.
 >
@@ -204,24 +208,29 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 ### btop.alias
 
+<!-- BEGIN:GENERATED:ALIASES_BTOP -->
 | Alias | Befehl | Beschreibung |
 |-------|--------|--------------|
 | `top` | `btop` | top durch btop ersetzen |
 | `htop` | `btop` | htop durch btop ersetzen |
+<!-- END:GENERATED:ALIASES_BTOP -->
 
 > **Hinweis:** btop bietet CPU, RAM, Disk, Netzwerk und Prozess-Überwachung in einer ansprechenden TUI. Für einfache Terminals: `btop --low-color`.
 
 ### fastfetch.alias
 
+<!-- BEGIN:GENERATED:ALIASES_FASTFETCH -->
 | Alias | Befehl | Beschreibung |
 |-------|--------|--------------|
 | `ff` | `fastfetch` | Schnelle System-Info (Standardanzeige) |
 | `neofetch` | `fastfetch` | neofetch-Kompatibilität |
+<!-- END:GENERATED:ALIASES_FASTFETCH -->
 
 > **Hinweis:** fastfetch ist in C geschrieben und deutlich schneller als neofetch. Die Konfiguration liegt in `~/.config/fastfetch/config.jsonc` mit Catppuccin-Farben und Nerd-Font-Icons.
 
 ### git.alias
 
+<!-- BEGIN:GENERATED:ALIASES_GIT -->
 | Alias | Befehl | Beschreibung |
 |-------|--------|--------------|
 | `ga` | `git add` | Dateien stagen |
@@ -242,6 +251,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `gbr` | Branch wechseln: Log-Vorschau, Enter=Checkout, Ctrl+D=Löschen |
 | `gst` | Status mit Diff-Vorschau (bat): Enter=Add, Tab=Mehrfach, Ctrl+R=Reset |
 | `gstash` | Stash-Browser: Enter=Apply, Ctrl+P=Pop, Ctrl+D=Drop |
+<!-- END:GENERATED:ALIASES_GIT -->
 
 > **Hinweis:** Die interaktiven Funktionen benötigen fzf und nutzen bat für Syntax-Highlighting in der Diff-Vorschau.
 
@@ -257,6 +267,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 ### eza.alias
 
+<!-- BEGIN:GENERATED:ALIASES_EZA -->
 | Alias | Befehl | Beschreibung |
 |-------|--------|--------------|
 | `ls` | `eza --group-directories-first` | ls-Ersatz mit Icons |
@@ -268,6 +279,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `lt3` | `eza --tree --level=3` | Baumansicht (3 Ebenen) |
 | `lss` | `eza -l --sort=size --reverse --header` | Sortiert nach Größe |
 | `lst` | `eza -l --sort=modified --reverse --header` | Sortiert nach Datum |
+<!-- END:GENERATED:ALIASES_EZA -->
 
 > **Hinweis:** Icons werden automatisch über `EZA_ICONS_AUTO=1` in `.zshrc` aktiviert. Ordner werden immer zuerst angezeigt (`--group-directories-first`).
 
@@ -275,6 +287,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 ### bat.alias
 
+<!-- BEGIN:GENERATED:ALIASES_BAT -->
 | Alias | Befehl | Beschreibung |
 |-------|--------|--------------|
 | `cat` | `bat -pp` | cat-Ersatz: Plain + kein Pager |
@@ -286,6 +299,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | Funktion | Beschreibung |
 |----------|--------------|
 | `bat-theme` | **Theme-Auswahl**: Theme interaktiv auswählen und aktivieren |
+<!-- END:GENERATED:ALIASES_BAT -->
 
 > **Hinweis:** `-pp` ist die Kurzform für `--style=plain --paging=never` – verhält sich wie das echte `cat`.
 
@@ -293,6 +307,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 ### rg.alias
 
+<!-- BEGIN:GENERATED:ALIASES_RG -->
 | Alias | Befehl | Beschreibung |
 |-------|--------|--------------|
 | `rgc` | `rg -C 3` | Suche mit Kontext (3 Zeilen) |
@@ -313,11 +328,13 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | Funktion | Beschreibung |
 |----------|--------------|
 | `rgf [query]` | **Live-Grep**: ripgrep + fzf + bat – Echtzeit-Suche während der Eingabe. Enter=Datei öffnen, Ctrl+Y=Pfad kopieren |
+<!-- END:GENERATED:ALIASES_RG -->
 
 > **Hinweis:** `--smart-case` ist global in `~/.config/ripgrep/config` konfiguriert – alle Aliase erben diese Einstellung automatisch. Die interaktive Funktion `rgf` benötigt fzf.
 
 ### gh.alias
 
+<!-- BEGIN:GENERATED:ALIASES_GH -->
 | Alias | Befehl | Beschreibung |
 |-------|--------|--------------|
 | `gho` | `gh browse` | Repository im Browser öffnen |
@@ -332,6 +349,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `ghrun` | Actions Runs: Enter=Logs, Ctrl+R=Rerun, Ctrl+O=Browser |
 | `ghrepo` | Repositories: Enter=Klonen, Ctrl+O=Browser |
 | `ghgist` | Gists durchsuchen: Enter=Anzeigen, Ctrl+E=Bearbeiten, Ctrl+O=Browser |
+<!-- END:GENERATED:ALIASES_GH -->
 
 > **Hinweis:** Alle interaktiven gh-Funktionen benötigen sowohl gh CLI als auch fzf. Die Aliase `gho` und `ghst` funktionieren auch ohne fzf.
 
@@ -341,6 +359,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 fzf ist als "Enhancer" in die jeweiligen Tool-Alias-Dateien integriert. Diese Datei enthält nur generische Funktionen:
 
+<!-- BEGIN:GENERATED:ALIASES_FZF -->
 **Zoxide + fzf:**
 
 | Funktion | Beschreibung |
@@ -370,6 +389,11 @@ fzf ist als "Enhancer" in die jeweiligen Tool-Alias-Dateien integriert. Diese Da
 **Shell-Keybindings (Ctrl+X Prefix):**
 
 | Keybinding | Beschreibung |
+|------------|--------------|
+| `Ctrl+X 1` | **History-Suche**: Shell-History mit fzf, Enter=Edit-Buffer, Ctrl+Y=Kopieren |
+| `Ctrl+X 2` | **Datei-Suche**: Dateien mit bat-Vorschau, Enter=Pfad einfügen |
+| `Ctrl+X 3` | **Verzeichnis-Wechsel**: Verzeichnisse mit eza-Vorschau, Enter=Wechseln |
+<!-- END:GENERATED:ALIASES_FZF -->
 |------------|--------------|
 | `Ctrl+X 1` | **History-Suche**: Shell-History mit fzf, Enter=Edit-Buffer, Ctrl+Y=Kopieren |
 | `Ctrl+X 2` | **Datei-Suche**: Dateien mit bat-Vorschau, Enter=Pfad einfügen |
