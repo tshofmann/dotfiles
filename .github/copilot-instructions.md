@@ -96,6 +96,30 @@ count=$((count + 1))
 --preview='zsh -c '\''[[ -f "$1" ]] && cat "$1"'\'' -- {}'
 ```
 
+**Regex für Befehle/Funktionsnamen:**
+```zsh
+# IMMER Bindestriche erlauben (z.B. bat-theme):
+[a-z][a-z0-9_-]*
+
+# FALSCH – findet bat-theme nicht:
+[a-z][a-z0-9_]*
+```
+
+**Array-Iteration (IFS-unabhängig):**
+```zsh
+# RICHTIG – robust bei beliebigem IFS:
+local -a items=("${(@f)$(command)}")
+for item in "${items[@]}"; do
+    echo "$item"
+done
+
+# FRAGIL – abhängig von IFS-Einstellung:
+local items_str=$(command | tr '\n' ' ')
+for item in ${=items_str}; do
+    echo "$item"
+done
+```
+
 ---
 
 ## GitHub Issues
