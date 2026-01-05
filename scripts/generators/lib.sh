@@ -65,11 +65,26 @@ extract_alias_table() {
     local file="$1"
     local -a lines=()
     local desc="" alias_name="" alias_cmd=""
+    local in_guard=false
     
     while IFS= read -r line; do
-        # Beschreibungskommentar vor Alias
+        # Überspringen Guard-Checks
+        if [[ "$line" =~ ^if.*command[[:space:]]+-v ]]; then
+            in_guard=true
+            continue
+        fi
+        if $in_guard && [[ "$line" =~ ^fi ]]; then
+            in_guard=false
+            continue
+        fi
+        
+        # Beschreibungskommentar vor Alias (einzelne Zeile nach #)
         if [[ "$line" =~ ^[[:space:]]*#[[:space:]](.+)$ ]]; then
-            desc="${match[1]}"
+            local comment="${match[1]}"
+            # Ignoriere Trennlinien und Überschriften
+            [[ "$comment" =~ ^[-=]+$ ]] && continue
+            [[ "$comment" =~ ^(Zweck|Pfad|Docs|Hinweis|Guard|Nutzt|Voraussetzung) ]] && continue
+            desc="$comment"
             continue
         fi
         
@@ -105,11 +120,18 @@ extract_function_table() {
     local file="$1"
     local -a lines=()
     local desc="" func_name=""
+    local in_function=false
     
     while IFS= read -r line; do
-        # Beschreibungskommentar vor Funktion
+        # Beschreibungskommentar vor Funktion (einzelne Zeile nach #)
         if [[ "$line" =~ ^[[:space:]]*#[[:space:]](.+)$ ]]; then
-            desc="${match[1]}"
+            local comment="${match[1]}"
+            # Ignoriere Trennlinien und Überschriften
+            [[ "$comment" =~ ^[-=]+$ ]] && continue
+            [[ "$comment" =~ ^(Zweck|Pfad|Docs|Hinweis|Guard|Nutzt|Voraussetzung) ]] && continue
+            
+            # Prüfe ob nächste Zeile eine Funktion sein könnte
+            desc="$comment"
             continue
         fi
         
@@ -118,7 +140,10 @@ extract_function_table() {
             func_name="${match[1]}"
             
             # Ignoriere private Funktionen
-            [[ "$func_name" == _* ]] && { desc=""; continue; }
+            if [[ "$func_name" == _* ]]; then
+                desc=""
+                continue
+            fi
             
             # Nutze Beschreibung oder leeren String
             lines+=("| \`${func_name}\` | ${desc:-} |")
