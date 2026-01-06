@@ -65,6 +65,7 @@ alias rggo='rg -t go'
 # rgf: Live-Grep mit fzf + bat Vorschau (Datei:Zeile bleibt beim Scrollen sichtbar)
 # Verwendung: rgf [initiale-suche]
 if command -v fzf >/dev/null 2>&1; then
+    # Live-Grep mit bat-Vorschau – Enter=Datei öffnen, Ctrl+Y=Pfad kopieren
     rgf() {
         local rg_prefix="rg --column --line-number --no-heading --color=always --smart-case"
         local preview_cmd="bat --color=always {1} --highlight-line {2} 2>/dev/null || cat {1}"

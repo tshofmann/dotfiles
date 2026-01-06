@@ -55,7 +55,7 @@ alias fdyaml='fd -e yaml -e yml'
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # Verzeichnis wechseln mit eza-Vorschau, Ctrl+Y kopiert Pfad (cdf [pfad])
+    # Verzeichnis wechseln mit eza-Vorschau – Enter=Wechseln, Ctrl+Y=Pfad kopieren
     cdf() {
         local dir
         local preview_cmd="eza --tree --level=1 --icons --color=always {} 2>/dev/null || ls -la {}"
@@ -68,7 +68,7 @@ if command -v fzf >/dev/null 2>&1; then
         [[ -n "$dir" ]] && cd "$dir"
     }
 
-    # Datei mit Standard-App öffnen, Ctrl+Y kopiert Pfad (fo [pfad])
+    # Datei mit Standard-App öffnen – Enter=Öffnen, Ctrl+Y=Pfad kopieren
     fo() {
         local file
         file=$(fd --type f --hidden --follow --exclude .git . "${1:-.}" | \

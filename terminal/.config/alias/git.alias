@@ -48,7 +48,7 @@ alias gd='git diff'
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # Git Log mit Commit-Vorschau (SHA bleibt beim Scrollen sichtbar)
+    # Commit-History mit bat-Vorschau – Enter=Anzeigen, Ctrl+Y=SHA kopieren
     glog() {
         local sha
         sha=$(git log --oneline --color=always --decorate | \
@@ -68,7 +68,7 @@ if command -v fzf >/dev/null 2>&1; then
         fi
     }
     
-    # Git Branch wechseln mit Vorschau
+    # Branch wechseln mit Log-Vorschau – Enter=Checkout, Ctrl+D=Löschen
     gbr() {
         local branch
         branch=$(git branch --all --color=always | \
@@ -82,7 +82,7 @@ if command -v fzf >/dev/null 2>&1; then
         [[ -n "$branch" ]] && git checkout "$branch"
     }
     
-    # Git Status mit Diff-Vorschau
+    # Status mit Diff-Vorschau (bat) – Enter=Add, Tab=Mehrfach, Ctrl+R=Reset
     gst() {
         local files
         files=$(git -c color.status=always status --short | \
@@ -101,7 +101,7 @@ if command -v fzf >/dev/null 2>&1; then
         fi
     }
     
-    # Stash-Browser
+    # Stash-Browser – Enter=Apply, Ctrl+P=Pop, Ctrl+D=Drop
     gstash() {
         local stash
         stash=$(git stash list | \
