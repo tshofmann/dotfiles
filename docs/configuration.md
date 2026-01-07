@@ -22,7 +22,19 @@ Das gesamte Setup verwendet [Catppuccin Mocha](https://catppuccin.com/) als einh
 | **btop** | `terminal/.config/btop/themes/` | Via Stow verlinkt |
 | **eza** | `terminal/.config/eza/theme.yml` | Via Stow verlinkt |
 | **zsh-syntax-highlighting** | `terminal/.config/zsh/` | Via Stow verlinkt |
+| **Xcode** | `setup/Catppuccin Mocha.xccolortheme` | Via Bootstrap kopiert (manuelle Aktivierung) |
 
+
+### Xcode Theme aktivieren
+
+Das Catppuccin Mocha Theme für Xcode wird automatisch vom Bootstrap-Skript nach `~/Library/Developer/Xcode/UserData/FontAndColorThemes/` kopiert, muss aber einmalig manuell aktiviert werden:
+
+1. **Xcode** öffnen
+2. **Xcode** → **Preferences** (⌘,)
+3. Tab **Themes** auswählen
+4. **Catppuccin Mocha** anklicken
+
+> **Hinweis:** Änderungen am Original in `setup/Catppuccin Mocha.xccolortheme` werden bei erneutem Bootstrap-Lauf übernommen.
 
 ### Farbpalette (Referenz)
 
@@ -199,4 +211,3 @@ bindkey '^X3' fzf-cd-widget
 | ripgrep Optionen | `~/.config/ripgrep/config` | CLI-Flags |
 | lazygit Keybindings | `~/.config/lazygit/config.yml` | YAML |
 | fastfetch Modules | `~/.config/fastfetch/config.jsonc` | JSONC |
-

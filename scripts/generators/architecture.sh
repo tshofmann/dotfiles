@@ -128,7 +128,8 @@ HEADER
 ├── setup/
 │   ├── bootstrap.sh             # Automatisiertes Setup-Skript
 │   ├── Brewfile                 # Homebrew-Abhängigkeiten
-│   └── catppuccin-mocha.terminal  # Terminal.app Profil
+│   ├── catppuccin-mocha.terminal  # Terminal.app Profil
+│   └── Catppuccin Mocha.xccolortheme  # Xcode Theme
 └── terminal/
     ├── .zshenv                  # Umgebungsvariablen (wird zuerst geladen)
     ├── .zprofile                # Login-Shell Konfiguration
@@ -270,7 +271,8 @@ Terminal.app Profil
                                ├── fzf Colors
                                ├── btop Theme
                                ├── eza Theme
-                               └── zsh-syntax-highlighting
+                               ├── zsh-syntax-highlighting
+                               └── Xcode Theme
 ```
 
 Bei Icon-Problemen (□ oder ?) prüfen:

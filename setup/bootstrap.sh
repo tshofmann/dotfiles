@@ -340,6 +340,43 @@ else
 fi
 
 # ------------------------------------------------------------
+# Xcode Catppuccin Mocha Theme installieren
+# ------------------------------------------------------------
+# Xcode verwendet .xccolortheme Dateien für Syntax-Highlighting.
+# Das Theme wird nach ~/Library/Developer/Xcode/UserData/FontAndColorThemes/ kopiert.
+# Nach Installation muss das Theme manuell in Xcode aktiviert werden:
+#   Xcode > Preferences (⌘,) > Themes > "Catppuccin Mocha"
+print ""
+CURRENT_STEP="Xcode Theme Installation"
+readonly XCODE_THEME_FILE="$SCRIPT_DIR/Catppuccin Mocha.xccolortheme"
+readonly XCODE_THEMES_DIR="$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
+
+# Prüfe ob Xcode Command Line Tools installiert sind (xcode-select wurde bereits oben geprüft)
+if command -v xcode-select &>/dev/null; then
+  log "Prüfe Xcode Theme-Installation"
+
+  if [[ -f "$XCODE_THEME_FILE" ]]; then
+    # Zielverzeichnis erstellen falls nicht vorhanden
+    if [[ ! -d "$XCODE_THEMES_DIR" ]]; then
+      log "Erstelle Xcode Themes-Verzeichnis"
+      mkdir -p "$XCODE_THEMES_DIR"
+    fi
+
+    # Theme kopieren (überschreibt existierende Version)
+    if cp "$XCODE_THEME_FILE" "$XCODE_THEMES_DIR/"; then
+      ok "Xcode Catppuccin Mocha Theme installiert"
+      log "Aktivierung: Xcode → Preferences (⌘,) → Themes → 'Catppuccin Mocha'"
+    else
+      warn "Konnte Xcode Theme nicht kopieren"
+    fi
+  else
+    warn "Xcode Theme-Datei nicht gefunden: $XCODE_THEME_FILE"
+  fi
+else
+  log "Xcode nicht installiert, überspringe Theme-Installation"
+fi
+
+# ------------------------------------------------------------
 # macOS zsh Session-Wiederherstellung deaktivieren
 # ------------------------------------------------------------
 # macOS Terminal.app speichert standardmäßig separate History pro Tab/Fenster
