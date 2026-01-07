@@ -96,9 +96,35 @@ dotfiles/
 │   │   ├── readme.sh            # README.md Generator
 │   │   └── tldr.sh              # tldr-Patches Generator
 │   └── tests/                   # Unit-Tests
-│       ├── run-tests.sh         # Test-Runner
-│       ├── test_lib.sh          # lib.sh Tests
-│       └── test_validators.sh   # Validator-Modul Tests
+HEADER
+
+    # Test-Dateien dynamisch auflisten
+    local test_dir="$DOTFILES_DIR/scripts/tests"
+    local test_count=0
+    local -a test_files=()
+    
+    for test_file in "$test_dir"/*.sh(N); do
+        [[ -f "$test_file" ]] || continue
+        test_files+=("$test_file")
+        (( test_count++ )) || true
+    done
+    
+    local i=0
+    for test_file in "${test_files[@]}"; do
+        (( i++ )) || true
+        local name="${test_file:t}"
+        local desc=""
+        # Beschreibung aus Header extrahieren
+        desc=$(grep "^# Zweck" "$test_file" 2>/dev/null | head -1 | sed 's/^# Zweck[[:space:]]*:[[:space:]]*//')
+        [[ -z "$desc" ]] && desc="Tests"
+        
+        local connector="│       ├──"
+        (( i == test_count )) && connector="│       └──"
+        
+        echo "$connector $name"
+    done
+    
+    cat << 'REST'
 ├── setup/
 │   ├── bootstrap.sh             # Automatisiertes Setup-Skript
 │   ├── Brewfile                 # Homebrew-Abhängigkeiten

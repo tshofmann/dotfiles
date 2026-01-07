@@ -15,16 +15,14 @@ set -euo pipefail
 SCRIPT_DIR="${0:A:h}"
 DOTFILES_DIR="${SCRIPT_DIR:h:h}"
 LIB_FILE="$DOTFILES_DIR/scripts/generators/lib.sh"
+SHELL_COLORS="$DOTFILES_DIR/terminal/.config/shell-colors"
 
-# Farben (Catppuccin Mocha)
-C_RESET='\033[0m'
-C_MAUVE='\033[38;2;203;166;247m'
-C_GREEN='\033[38;2;166;227;161m'
-C_RED='\033[38;2;243;139;168m'
-C_YELLOW='\033[38;2;249;226;175m'
-C_BLUE='\033[38;2;137;180;250m'
-C_TEXT='\033[38;2;205;214;244m'
-C_DIM='\033[38;2;108;112;134m'
+# Farben (Catppuccin Mocha) – zentral definiert
+[[ -f "$SHELL_COLORS" ]] && source "$SHELL_COLORS" || {
+    C_RESET='\033[0m' C_GREEN='\033[32m' C_RED='\033[31m'
+    C_YELLOW='\033[33m' C_BLUE='\033[34m' C_DIM='\033[90m'
+    C_MAUVE='\033[35m' C_TEXT='\033[0m'
+}
 
 # Statistik
 TESTS_RUN=0

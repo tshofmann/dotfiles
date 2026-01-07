@@ -35,9 +35,7 @@ dotfiles/
 │   │   ├── readme.sh            # README.md Generator
 │   │   └── tldr.sh              # tldr-Patches Generator
 │   └── tests/                   # Unit-Tests
-│       ├── run-tests.sh         # Test-Runner
-│       ├── test_lib.sh          # lib.sh Tests
-│       └── test_validators.sh   # Validator-Modul Tests
+│       └── test_generators.sh
 ├── setup/
 │   ├── bootstrap.sh             # Automatisiertes Setup-Skript
 │   ├── Brewfile                 # Homebrew-Abhängigkeiten
@@ -48,17 +46,29 @@ dotfiles/
     ├── .zshrc                   # Interactive Shell Konfiguration
     ├── .zlogin                  # Post-Login (Background-Optimierungen)
     └── .config/
-        ├── alias/               # Tool-Aliase
-        │   ├── bat.alias
-        │   ├── brew.alias
-        │   ├── btop.alias
-        │   ├── eza.alias
-        │   ├── fastfetch.alias
-        │   ├── fd.alias
-        │   ├── fzf.alias
-        │   ├── gh.alias
-        │   ├── git.alias
-        │   └── rg.alias
+HEADER
+
+    # Alias-Dateien dynamisch auflisten
+    echo "        ├── alias/               # Tool-Aliase"
+    local alias_count=0
+    for alias_file in "$ALIAS_DIR"/*.alias(N); do
+        (( alias_count++ )) || true
+    done
+    
+    local i=0
+    for alias_file in "$ALIAS_DIR"/*.alias(N); do
+        (( i++ )) || true
+        local name="${alias_file:t}"
+        local desc=$(parse_header_field "$alias_file" "Zweck")
+        [[ -z "$desc" ]] && desc="${name%.alias}-Aliase"
+        
+        local connector="│   ├──"
+        (( i == alias_count )) && connector="│   └──"
+        
+        echo "        $connector $name"
+    done
+    
+    cat << 'REST'
         ├── shell-colors         # Catppuccin Mocha ANSI-Farbvariablen
         ├── bat/
         │   ├── config           # bat native Config
