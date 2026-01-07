@@ -8,7 +8,7 @@
 
 - dotfiles: Status mit Diff-Vorschau (`<Enter>` Add, `<Tab>` Mehrfach, `<Ctrl r>` Reset):
 
-`gst {{bat}}`
+`gst`
 
 - dotfiles: Stash-Browser (`<Enter>` Apply, `<Ctrl p>` Pop, `<Ctrl d>` Drop):
 

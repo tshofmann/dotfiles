@@ -53,12 +53,21 @@ parse_description_comment() {
     comment="${comment## }"
     
     # Extrahiere Name (vor Klammer oder Dash)
-    if [[ "$comment" == *'('* ]]; then
+    # Parameter-Notation: Name(param) ohne Leerzeichen vor (
+    # Hinweis in Klammern: Name (hinweis) mit Leerzeichen → kein Parameter
+    if [[ "$comment" == *[a-zA-Z0-9]'('* ]]; then
+        # Klammer direkt nach Wort → Parameter-Notation
         name="${comment%%\(*}"
         name="${name%% }"
         # Parameter extrahieren
         local param_part="${comment#*\(}"
         param="${param_part%%\)*}"
+    elif [[ "$comment" == *' ('* ]]; then
+        # Leerzeichen vor Klammer → nur Hinweis, kein Parameter
+        name="${comment%% \(*}"
+        name="${name%% –*}"
+        name="${name%% -*}"
+        param=""
     else
         name="${comment%% –*}"
         name="${name%% -*}"
@@ -245,12 +254,21 @@ parse_cross_references() {
         
         # Cross-Reference Pattern: "- tool.alias → func1 (desc), func2"
         if [[ "$line" == *".alias"*"→"* ]]; then
-            # Extrahiere Tool-Name
-            local tool=$(echo "$line" | sed -n 's/.*- \([a-z]*\)\.alias.*/\1/p')
+            # Extrahiere Tool-Name via ZSH Parameter Expansion
+            # Pattern: "#           - fd.alias   → cdf, fo"
+            local temp="${line#*- }"      # Entferne alles bis "- "
+            local tool="${temp%%.alias*}" # Entferne ab ".alias"
+            tool="${tool// /}"            # Trim Leerzeichen
+            
             # Extrahiere alles nach →
             local after_arrow="${line#*→ }"
-            # Entferne Beschreibungen in Klammern und trimme
-            local funcs=$(echo "$after_arrow" | sed 's/([^)]*)//g' | tr -d ' ')
+            # Entferne Beschreibungen in Klammern via ZSH
+            local funcs="$after_arrow"
+            # Iterativ alle (...) entfernen
+            while [[ "$funcs" == *'('*')'* ]]; do
+                funcs="${funcs%%\(*}${funcs#*\)}"
+            done
+            funcs="${funcs// /}"          # Alle Leerzeichen entfernen
             
             [[ -n "$tool" && -n "$funcs" ]] && output+="${tool}|${funcs}\n"
         fi
