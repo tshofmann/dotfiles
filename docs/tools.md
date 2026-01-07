@@ -161,6 +161,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `cat` | `bat -pp` | Ersetzt cat mit Syntax-Highlighting (plain style) |
 | `catn` | `bat --style=numbers --paging=never` | Mit Zeilennummern, ohne Pager (bat allein hat Pager) |
 | `catd` | `bat --diff` | Zeigt Git-Diff-Markierungen an |
+
 **Interaktive Funktionen (mit fzf):**
 
 | Funktion | Beschreibung |
@@ -180,6 +181,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `mass` | `mas search` | Im Mac App Store nach Apps suchen (gibt ID zurück) |
 | `masi` | `mas install` | App aus Mac App Store installieren (benötigt ID) |
 | `masl` | `mas list` | Alle installierten Mac App Store Apps auflisten |
+
 **Interaktive Funktionen (mit fzf):**
 
 | Funktion | Beschreibung |
@@ -198,8 +200,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | Alias | Befehl | Beschreibung |
 |-------|--------|--------------|
 | `top` | `btop` | Systemmonitor mit modernem Interface |
-| `htop` | `btop` | Bessere Alternative zu htop |
-> **Hinweis:** Konfiguration in ~/.config/btop/btop.conf Theme: Catppuccin Mocha
+| `htop` | `btop` | Bessere Alternative zu htop |> **Hinweis:** Konfiguration in ~/.config/btop/btop.conf Theme: Catppuccin Mocha
 
 
 <a name="ezaalias"></a>
@@ -216,8 +217,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `lt` | `eza --tree --level=2` | Verzeichnisbaum bis Tiefe 2 |
 | `lt3` | `eza --tree --level=3` | Verzeichnisbaum bis Tiefe 3 |
 | `lss` | `eza -l --sort=size --reverse --header` | Nach Größe sortieren (größte zuerst) |
-| `lst` | `eza -l --sort=modified --reverse --header` | Nach Änderungsdatum sortieren (neueste zuerst) |
-> **Hinweis:** EZA_ICONS_AUTO=1 ist in .zshrc gesetzt, daher kein --icons=auto in den Aliasen nötig
+| `lst` | `eza -l --sort=modified --reverse --header` | Nach Änderungsdatum sortieren (neueste zuerst) |> **Hinweis:** EZA_ICONS_AUTO=1 ist in .zshrc gesetzt, daher kein --icons=auto in den Aliasen nötig
 
 
 <a name="fastfetchalias"></a>
@@ -227,8 +227,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | Alias | Befehl | Beschreibung |
 |-------|--------|--------------|
 | `ff` | `fastfetch` | Schnelle System-Info (Standardanzeige) |
-| `neofetch` | `fastfetch` | Neofetch-Kompatibilität |
-> **Hinweis:** Konfiguration in ~/.config/fastfetch/config.jsonc Theme: Catppuccin Mocha (Box-Layout)
+| `neofetch` | `fastfetch` | Neofetch-Kompatibilität |> **Hinweis:** Konfiguration in ~/.config/fastfetch/config.jsonc Theme: Catppuccin Mocha (Box-Layout)
 
 
 <a name="fdalias"></a>
@@ -247,6 +246,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `fdmd` | `fd --extension md` | Markdown-Dateien finden |
 | `fdjson` | `fd --extension json` | JSON-Dateien finden |
 | `fdyaml` | `fd -e yaml -e yml` | YAML-Dateien finden |
+
 **Interaktive Funktionen (mit fzf):**
 
 | Funktion | Beschreibung |
@@ -259,6 +259,8 @@ Verfügbare Aliase aus `~/.config/alias/`:
 <a name="fzfalias"></a>
 
 ### fzf.alias
+
+
 
 **Interaktive Funktionen (mit fzf):**
 
@@ -280,6 +282,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 |-------|--------|--------------|
 | `gho` | `gh browse` | Repository im Browser öffnen |
 | `ghst` | `gh status` | GitHub Status: Zugewiesene Issues, PRs, Mentions |
+
 **Interaktive Funktionen (mit fzf):**
 
 | Funktion | Beschreibung |
@@ -308,6 +311,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `gs` | `git status` | Status des Repositories anzeigen |
 | `gd` | `git diff` | Änderungen anzeigen |
 | `lg` | `lazygit` | Terminal-UI für Git (lazygit) |
+
 **Interaktive Funktionen (mit fzf):**
 
 | Funktion | Beschreibung |
@@ -337,6 +341,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `rgsh` | `rg -t sh` | Suche in Shell-Skripten |
 | `rgrb` | `rg -t ruby` | Suche in Ruby-Dateien |
 | `rggo` | `rg -t go` | Suche in Go-Dateien |
+
 **Interaktive Funktionen (mit fzf):**
 
 | Funktion | Beschreibung |

@@ -558,13 +558,12 @@ Verfügbare Aliase aus `~/.config/alias/`:
             output+="| Alias | Befehl | Beschreibung |\n"
             output+="|-------|--------|--------------|\n"
             output+="$aliases"
-            output+="\n"
         fi
         
         # Funktionen
         local funcs=$(extract_functions_from_file "$alias_file")
         if [[ -n "${funcs// /}" ]]; then
-            output+="**Interaktive Funktionen (mit fzf):**\n\n"
+            output+="\n\n**Interaktive Funktionen (mit fzf):**\n\n"
             output+="| Funktion | Beschreibung |\n"
             output+="|----------|--------------|\n"
             output+="$funcs"
