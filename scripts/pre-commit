@@ -11,19 +11,22 @@
 
 set -uo pipefail
 
-# Farben
+# Farben (Catppuccin Mocha)
 C_RESET='\033[0m'
-C_RED='\033[38;2;243;139;168m'
+C_MAUVE='\033[38;2;203;166;247m'
 C_GREEN='\033[38;2;166;227;161m'
+C_RED='\033[38;2;243;139;168m'
 C_YELLOW='\033[38;2;249;226;175m'
 C_BLUE='\033[38;2;137;180;250m'
+C_TEXT='\033[38;2;205;214;244m'
+C_DIM='\033[38;2;108;112;134m'
 
 SCRIPT_DIR="${0:A:h}"
 DOTFILES_DIR="${SCRIPT_DIR:h}"
 
-err()  { print -P "%F{red}✖%f $1" >&2; }
-ok()   { print -P "%F{green}✔%f $1"; }
-info() { print -P "%F{blue}→%f $1"; }
+err()  { echo -e "${C_RED}✖${C_RESET} $1" >&2; }
+ok()   { echo -e "${C_GREEN}✔${C_RESET} $1"; }
+info() { echo -e "${C_BLUE}→${C_RESET} $1"; }
 
 # ------------------------------------------------------------
 # 1. Shell-Syntax prüfen
