@@ -38,14 +38,9 @@ readonly SCRIPT_DIR="${0:A:h}"
 readonly DOTFILES_DIR="${SCRIPT_DIR:h}"
 readonly SHELL_COLORS="$DOTFILES_DIR/terminal/.config/shell-colors"
 
-# ------------------------------------------------------------
 # Farben (Catppuccin Mocha) – zentral definiert
-# ------------------------------------------------------------
-[[ -f "$SHELL_COLORS" ]] && source "$SHELL_COLORS" || {
-    C_RESET='\033[0m' C_GREEN='\033[32m' C_RED='\033[31m'
-    C_YELLOW='\033[33m' C_BLUE='\033[34m' C_DIM='\033[90m'
-    C_MAUVE='\033[35m' C_TEXT='\033[0m'
-}
+[[ -f "$SHELL_COLORS" ]] && source "$SHELL_COLORS"
+
 readonly TERMINAL_DIR="$DOTFILES_DIR/terminal"
 readonly BREWFILE="$DOTFILES_DIR/setup/Brewfile"
 
