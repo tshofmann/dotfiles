@@ -100,7 +100,6 @@ Bei einem ungültigen Preset-Namen zeigt das Skript eine Warnung und verwendet `
 ## Schriftart wechseln
 
 Das Terminal-Profil, der Nerd Font und das Starship-Preset sind eng gekoppelt. Wenn du die Schriftart ändern möchtest, musst du alle drei Komponenten berücksichtigen.
-
 > **⚠️ Wichtig:** Die Datei `catppuccin-mocha.terminal` enthält binäre NSArchiver-Daten. **Niemals direkt editieren** – nur über die Terminal.app GUI ändern und neu exportieren.
 
 ### Voraussetzung
@@ -129,7 +128,8 @@ brew install --cask font-meslo-lg-nerd-font
 ### Schritt 3: Exportiertes Profil ins Repository
 
 ```zsh
-# Altes Profil ersetzen
+# Altes Profil löschen und neues verschieben
+rm ~/dotfiles/setup/*.terminal
 mv ~/Downloads/<profilname>.terminal ~/dotfiles/setup/
 
 # Änderung committen
@@ -138,7 +138,7 @@ git add setup/*.terminal
 git commit -m "Terminal-Profil: <Neuer Font Name>"
 ```
 
-> **Hinweis:** Der Dateiname ist frei wählbar – bootstrap.sh findet automatisch die erste `.terminal`-Datei in `setup/`.
+> **Hinweis:** Der Dateiname ist frei wählbar – bootstrap.sh findet automatisch die erste `.terminal`-Datei in `setup/`. Bei mehreren Dateien erscheint eine Warnung.
 
 
 ---

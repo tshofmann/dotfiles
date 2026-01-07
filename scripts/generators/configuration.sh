@@ -282,7 +282,8 @@ brew install --cask $installed_font
 ### Schritt 3: Exportiertes Profil ins Repository
 
 \`\`\`zsh
-# Altes Profil ersetzen
+# Altes Profil löschen und neues verschieben
+rm ~/dotfiles/setup/*.terminal
 mv ~/Downloads/<profilname>.terminal ~/dotfiles/setup/
 
 # Änderung committen
@@ -291,7 +292,7 @@ git add setup/*.terminal
 git commit -m "Terminal-Profil: <Neuer Font Name>"
 \`\`\`
 
-> **Hinweis:** Der Dateiname ist frei wählbar – bootstrap.sh findet automatisch die erste \`.terminal\`-Datei in \`setup/\`.
+> **Hinweis:** Der Dateiname ist frei wählbar – bootstrap.sh findet automatisch die erste \`.terminal\`-Datei in \`setup/\`. Bei mehreren Dateien erscheint eine Warnung.
 
 FONT_EXAMPLE
 
