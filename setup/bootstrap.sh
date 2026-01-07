@@ -345,14 +345,14 @@ fi
 # Xcode verwendet .xccolortheme Dateien für Syntax-Highlighting.
 # Das Theme wird nach ~/Library/Developer/Xcode/UserData/FontAndColorThemes/ kopiert.
 # Nach Installation muss das Theme manuell in Xcode aktiviert werden:
-#   Xcode > Preferences (⌘,) > Themes > "Catppuccin Mocha"
+#   Xcode > Settings (⌘,) > Themes > "Catppuccin Mocha"
 print ""
 CURRENT_STEP="Xcode Theme Installation"
-readonly XCODE_THEME_FILE="$SCRIPT_DIR/Catppuccin Mocha.xccolortheme"
-readonly XCODE_THEMES_DIR="$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
+XCODE_THEME_FILE="$SCRIPT_DIR/Catppuccin Mocha.xccolortheme"
+XCODE_THEMES_DIR="$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
 
-# Prüfe ob Xcode Command Line Tools installiert sind (xcode-select wurde bereits oben geprüft)
-if command -v xcode-select &>/dev/null; then
+# Prüfe ob Xcode.app installiert ist (nicht nur Command Line Tools)
+if [[ -d "/Applications/Xcode.app" ]]; then
   log "Prüfe Xcode Theme-Installation"
 
   if [[ -f "$XCODE_THEME_FILE" ]]; then
@@ -365,7 +365,7 @@ if command -v xcode-select &>/dev/null; then
     # Theme kopieren (überschreibt existierende Version)
     if cp "$XCODE_THEME_FILE" "$XCODE_THEMES_DIR/"; then
       ok "Xcode Catppuccin Mocha Theme installiert"
-      log "Aktivierung: Xcode → Preferences (⌘,) → Themes → 'Catppuccin Mocha'"
+      log "Aktivierung: Xcode → Settings (⌘,) → Themes → 'Catppuccin Mocha'"
     else
       warn "Konnte Xcode Theme nicht kopieren"
     fi
@@ -373,7 +373,7 @@ if command -v xcode-select &>/dev/null; then
     warn "Xcode Theme-Datei nicht gefunden: $XCODE_THEME_FILE"
   fi
 else
-  log "Xcode nicht installiert, überspringe Theme-Installation"
+  log "Xcode.app nicht installiert, überspringe Theme-Installation"
 fi
 
 # ------------------------------------------------------------

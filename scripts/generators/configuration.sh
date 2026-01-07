@@ -80,7 +80,7 @@ HEADER
 Das Catppuccin Mocha Theme für Xcode wird automatisch vom Bootstrap-Skript nach `~/Library/Developer/Xcode/UserData/FontAndColorThemes/` kopiert, muss aber einmalig manuell aktiviert werden:
 
 1. **Xcode** öffnen
-2. **Xcode** → **Preferences** (⌘,)
+2. **Xcode** → **Settings** (⌘,)
 3. Tab **Themes** auswählen
 4. **Catppuccin Mocha** anklicken
 
