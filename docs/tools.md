@@ -166,7 +166,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | Funktion | Beschreibung |
 |----------|--------------|
 | `bat-theme` | Theme Browser (Enter=Aktivieren) |
-> **Hinweis:** Globale Optionen (Theme, Style, Syntax-Mappings) sind in ~/.config/bat/config definiert.
+> **Hinweis:** Globale Optionen (Theme, Style, Syntax-Mappings) sind in ~/.config/bat/config definiert. Nach Theme-Änderungen: `bat cache --build`
 
 
 <a name="brewalias"></a>
@@ -371,7 +371,7 @@ catd              # Zeigt Git-Diff-Markierungen an
 # Interaktive Funktionen (mit fzf)
 ```
 
-> **Hinweis:** Globale Optionen (Theme, Style, Syntax-Mappings) sind in ~/.config/bat/config definiert.
+> **Hinweis:** Globale Optionen (Theme, Style, Syntax-Mappings) sind in ~/.config/bat/config definiert. Nach Theme-Änderungen: `bat cache --build`
 
 ---
 
