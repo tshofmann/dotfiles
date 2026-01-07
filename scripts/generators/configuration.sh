@@ -24,12 +24,13 @@ collect_theme_configs() {
         ["btop"]="$DOTFILES_DIR/terminal/.config/btop/themes/|Via Stow verlinkt"
         ["eza"]="$DOTFILES_DIR/terminal/.config/eza/theme.yml|Via Stow verlinkt"
         ["zsh-syntax-highlighting"]="$DOTFILES_DIR/terminal/.config/zsh/|Via Stow verlinkt"
+        ["Xcode"]="$DOTFILES_DIR/setup/Catppuccin Mocha.xccolortheme|Via Bootstrap kopiert (manuelle Aktivierung)"
     )
     
     output+="| Tool | Theme-Datei | Status |\n"
     output+="|------|-------------|--------|\n"
     
-    for tool in "Terminal.app" "Starship" "bat" "fzf" "btop" "eza" "zsh-syntax-highlighting"; do
+    for tool in "Terminal.app" "Starship" "bat" "fzf" "btop" "eza" "zsh-syntax-highlighting" "Xcode"; do
         local info="${theme_files[$tool]}"
         local file="${info%%|*}"
         local stat="${info##*|}"
@@ -73,6 +74,17 @@ HEADER
     collect_theme_configs
     
     cat << 'REST'
+
+### Xcode Theme aktivieren
+
+Das Catppuccin Mocha Theme für Xcode wird automatisch vom Bootstrap-Skript nach `~/Library/Developer/Xcode/UserData/FontAndColorThemes/` kopiert, muss aber einmalig manuell aktiviert werden:
+
+1. **Xcode** öffnen
+2. **Xcode** → **Settings** (⌘,)
+3. Tab **Themes** auswählen
+4. **Catppuccin Mocha** anklicken
+
+> **Hinweis:** Änderungen am Original in `setup/Catppuccin Mocha.xccolortheme` werden bei erneutem Bootstrap-Lauf übernommen.
 
 ### Farbpalette (Referenz)
 
