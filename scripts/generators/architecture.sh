@@ -135,7 +135,7 @@ HEADER
     ├── .zshrc                   # Interactive Shell Konfiguration
     ├── .zlogin                  # Post-Login (Background-Optimierungen)
     └── .config/
-HEADER
+REST
 
     # Alias-Dateien dynamisch auflisten
     echo "        ├── alias/               # Tool-Aliase"
