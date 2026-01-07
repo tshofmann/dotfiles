@@ -173,6 +173,23 @@ test_parse_alias_command() {
     # Test: Mehrfache escaped single quotes
     local cmd8=$(parse_alias_command "alias multi='it'\\''s a '\\''test'\\'''")
     assert_equals "it's a 'test'" "$cmd8" "Mehrfache escaped single quotes"
+    
+    # Edge-Cases für komplexe Quote-Patterns (Copilot Review Issue #3)
+    # Test: Leerer Single-Quoted String
+    local cmd9=$(parse_alias_command "alias empty=''")
+    assert_equals "" "$cmd9" "Leerer Single-Quoted String"
+    
+    # Test: Nur Leerzeichen
+    local cmd10=$(parse_alias_command "alias space='   '")
+    assert_equals "   " "$cmd10" "Nur Leerzeichen"
+    
+    # Test: Nested double quotes in single quotes (häufig bei fzf --preview)
+    local cmd11=$(parse_alias_command "alias fzf-preview='fzf --preview \"cat {}\"'")
+    assert_equals 'fzf --preview "cat {}"' "$cmd11" "Double quotes innerhalb single quotes"
+    
+    # Test: Backslash ohne Quote (für Pfade)
+    local cmd12=$(parse_alias_command "alias path='echo /some/path'")
+    assert_equals "echo /some/path" "$cmd12" "Pfad ohne spezielle Zeichen"
 }
 
 # ------------------------------------------------------------

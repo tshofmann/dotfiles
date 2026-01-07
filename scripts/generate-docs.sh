@@ -33,12 +33,19 @@ source "$GENERATORS_DIR/lib.sh"
 run_generator() {
     local module="$1"
     local func="$2"
-    (
-        # Markiere dass wir aus dem Generator aufrufen (export für source)
+    local output
+    
+    # Subshell mit Error-Handling
+    if ! output=$(
         export _SOURCED_BY_GENERATOR=1
         source "$GENERATORS_DIR/$module"
-        $func
-    )
+        "$func"
+    ); then
+        err "Generator $module ($func) fehlgeschlagen"
+        return 1
+    fi
+    
+    printf '%s\n' "$output"
 }
 
 # ------------------------------------------------------------
@@ -94,15 +101,15 @@ check_all() {
     fi
     
     # tldr-Patches
+    local tldr_ok=true
     (
         source "$GENERATORS_DIR/tldr.sh"
-        if ! generate_tldr_patches --check; then
-            exit 1
-        fi
+        generate_tldr_patches --check
     ) || {
+        tldr_ok=false
         (( errors++ )) || true
     }
-    [[ $errors -eq 0 || $? -eq 0 ]] && ok "tldr-Patches sind aktuell"
+    $tldr_ok && ok "tldr-Patches sind aktuell"
     
     if (( errors > 0 )); then
         echo ""
