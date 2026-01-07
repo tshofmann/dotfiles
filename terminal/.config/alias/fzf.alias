@@ -37,7 +37,7 @@ fi
 # Erweiterte Version mit Score-Anzeige, Lösch- und Kopier-Option
 # Community-Pattern: -n2.. für Pfade mit Leerzeichen
 if command -v zoxide >/dev/null 2>&1; then
-    # zoxide + fzf mit eza-Vorschau – Enter=Wechseln, Ctrl+D=Löschen, Ctrl+Y=Kopieren
+    # zoxide Browser – Enter=Wechseln, Ctrl+D=Löschen, Ctrl+Y=Kopieren
     zf() {
         local selection dir
         local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
@@ -60,7 +60,7 @@ fi
 # KILL + FZF: Prozess-Management
 # ------------------------------------------------------------
 # Prozesse interaktiv suchen und beenden (Tab für Mehrfachauswahl)
-# Prozesse beenden – Enter=Beenden, Tab=Mehrfach, Ctrl+S=Apps/Alle
+# Prozess Browser(signal=15) – Enter=Beenden, Tab=Mehrfach, Ctrl+S=Apps↔Alle
 fkill() {
     local pid
     local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fkill-list"
@@ -80,19 +80,27 @@ fkill() {
 # MAN + FZF + BAT: Man-Pages Browser
 # ------------------------------------------------------------
 # Man-Pages interaktiv durchsuchen mit Syntax-Highlighting
-# Man-Pages mit bat-Vorschau – Enter=Öffnen, Ctrl+S=man↔tldr
+# Man/tldr Browser – Ctrl+S=Modus wechseln, Enter=je nach Modus öffnen
 fman() {
-    local selection page section
+    local output mode selection page section
     local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fman-preview"
     
-    selection=$(man -k . 2>/dev/null | \
+    output=$(man -k . 2>/dev/null | \
         fzf --prompt='man> ' \
             --preview "[[ \$FZF_PROMPT == 'tldr> ' ]] && $helper tldr {} || $helper man {}" \
-            --header='Enter: man öffnen | Ctrl+S: man ↔ tldr' \
-            --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'man> ' ]] && echo 'change-prompt(tldr> )+refresh-preview' || echo 'change-prompt(man> )+refresh-preview'")
+            --header='Enter: öffnen | Ctrl+S: man ↔ tldr' \
+            --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'man> ' ]] && echo 'change-prompt(tldr> )+refresh-preview' || echo 'change-prompt(man> )+refresh-preview'" \
+            --bind "enter:transform:[[ \$FZF_PROMPT == 'tldr> ' ]] && echo 'print(tldr)+accept' || echo 'print(man)+accept'")
     
-    if [[ -n "$selection" ]]; then
-        page=$(echo "$selection" | sed 's/(.*//' | xargs)
+    [[ -z "$output" ]] && return 0
+    
+    mode=$(echo "$output" | head -1)
+    selection=$(echo "$output" | tail -1)
+    page=$(echo "$selection" | sed 's/(.*//' | xargs)
+    
+    if [[ "$mode" == "tldr" ]]; then
+        tldr "$page"
+    else
         section=$(echo "$selection" | sed -n 's/.*([^0-9]*\([0-9][a-z]*\)).*/\1/p')
         if [[ -n "$section" ]]; then
             man "$section" "$page"
@@ -105,7 +113,8 @@ fman() {
 # ------------------------------------------------------------
 # ALIAS + FZF: Alias-/Funktions-Browser
 # ------------------------------------------------------------
-# Fuzzy-Suche für Aliase/Funktionen – Enter=Übernehmen, Ctrl+S=tldr↔Code
+# Fuzzy-Suche für Aliase und Funktionen aus allen .alias-Dateien
+# fa Browser(suche?) – Enter=Übernehmen, Ctrl+S=tldr↔Code
 fa() {
     local alias_dir="${XDG_CONFIG_HOME:-$HOME/.config}/alias"
     local fzf_dir="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
@@ -200,7 +209,7 @@ fa() {
 # ENV + FZF: Umgebungsvariablen-Browser
 # ------------------------------------------------------------
 # Umgebungsvariablen durchsuchen mit formatierter Anzeige
-# Umgebungsvariablen mit Farbkodierung – Enter=Export→Edit, Ctrl+Y=Kopieren
+# Env Browser – Enter=Export→Edit, Ctrl+Y=Kopieren
 fenv() {
     local selection name value
     

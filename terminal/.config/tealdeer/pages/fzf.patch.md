@@ -4,55 +4,51 @@
 
 `<Ctrl />`
 
-- dotfiles: Alle Einträge auswählen (Multi-Select):
+- dotfiles: Alle auswählen (im Multi-Modus):
 
 `<Ctrl a>`
 
 - dotfiles: Einzelnen Eintrag zur Auswahl hinzufügen:
 
 `<Tab>`
-
 # dotfiles: Funktionen (aus fzf.alias)
 
-- dotfiles: Aliase und Funktionen durchsuchen (`<Enter>` Befehl übernehmen, `<Ctrl s>` tldr↔Code):
-
-`fa {{suche}}`
-
-- dotfiles: Verzeichniswechsel mit zoxide-Daten (`<Enter>` Wechseln, `<Ctrl d>` Löschen, `<Ctrl y>` Kopieren):
+- dotfiles: zoxide Browser (`<Enter>` Wechseln, `<Ctrl d>` Löschen, `<Ctrl y>` Kopieren):
 
 `zf`
 
-- dotfiles: Prozesse beenden (`<Enter>` Beenden, `<Tab>` Mehrfach, `<Ctrl s>` Apps/Alle, optional `fkill 9` für SIGKILL):
+- dotfiles: Prozess Browser (`<Enter>` Beenden, `<Tab>` Mehrfach, `<Ctrl s>` Apps↔Alle):
 
-`fkill`
+`fkill {{signal}}`
 
-- dotfiles: Man-Pages durchsuchen (`<Enter>` Öffnen, `<Ctrl s>` man↔tldr):
+- dotfiles: Man/tldr Browser (`<Ctrl s>` Modus wechseln, `<Enter>` je nach Modus öffnen):
 
 `fman`
 
-- dotfiles: Umgebungsvariablen durchsuchen (`<Enter>` Export→Edit, `<Ctrl y>` Wert kopieren):
+- dotfiles: fa Browser (`<Enter>` Übernehmen, `<Ctrl s>` tldr↔Code):
+
+`fa {{suche}}`
+
+- dotfiles: Env Browser (`<Enter>` Export→Edit, `<Ctrl y>` Kopieren):
 
 `fenv`
-
 # dotfiles: Shell-Keybindings (Ctrl+X Prefix)
 
-- dotfiles: Historie durchsuchen (`<Enter>` Ins Edit-Buffer, `<Ctrl y>` Kopieren):
+- dotfiles: History durchsuchen mit Vorschau:
 
 `<Ctrl x> 1`
 
-- dotfiles: Datei suchen (`<Enter>` Pfad einfügen, bat-Vorschau):
+- dotfiles: Datei suchen mit bat-Vorschau, Pfad einfügen:
 
 `<Ctrl x> 2`
 
-- dotfiles: Verzeichnis wechseln (`<Enter>` Wechseln, eza-Vorschau):
+- dotfiles: Verzeichnis wechseln mit eza-Vorschau:
 
 `<Ctrl x> 3`
-
 # dotfiles: Tool-spezifische fzf-Funktionen
 
 - dotfiles: Siehe `tldr fd` für `cdf`, `fo`
 - dotfiles: Siehe `tldr rg` für `rgf`
 - dotfiles: Siehe `tldr git` für `glog`, `gbr`, `gst`, `gstash`
+- dotfiles: Siehe `tldr brew` für `bip`, `brp`
 - dotfiles: Siehe `tldr gh` für `ghpr`, `ghis`, `ghrun`, `ghrepo`, `ghgist`
-- dotfiles: Siehe `tldr brew` für `bip`, `brp`, `brewv`
-

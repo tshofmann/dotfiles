@@ -24,6 +24,7 @@ dotfiles/
 ├── scripts/                     # Utility-Scripts
 │   ├── health-check.sh          # Validierung der Installation
 │   ├── validate-docs.sh         # Docs-Code-Synchronisation prüfen
+│   ├── generate-tldr-patches.sh # Generator für tldr-Patches (Single Source of Truth)
 │   ├── tests/                   # Unit-Tests für Validatoren
 │   │   ├── run-tests.sh         # Test-Runner
 │   │   ├── test_lib.sh          # lib.sh Tests

@@ -12,7 +12,7 @@
 # ------------------------------------------------------------
 # Update & Wartung
 # ------------------------------------------------------------
-# Vollständiges Homebrew-Update mit Cleanup (inkl. mas falls installiert)
+# Homebrew Komplett-Update – update, upgrade, autoremove, cleanup, mas
 brewup() {
     brew update && brew upgrade
     command -v mas >/dev/null 2>&1 && mas upgrade
@@ -47,7 +47,7 @@ fi
 # ------------------------------------------------------------
 # Versionsübersicht
 # ------------------------------------------------------------
-# Zeige Versionen der im Brewfile deklarierten Pakete
+# Brewfile Versionsübersicht – zeigt installierte Versionen aller Pakete
 # Nutzt   : shell-colors ($C_MAUVE, $C_GREEN, $C_TEXT, $C_RESET)
 brewv() {
     local brewfile="${DOTFILES_DIR:-$HOME/dotfiles}/setup/Brewfile"
@@ -108,7 +108,7 @@ brewv() {
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # Formulae und Casks interaktiv suchen und installieren (Tab für Mehrfachauswahl)
+    # Brew Install Browser – Enter=Installieren, Tab=Mehrfach
     bip() {
         local selection type pkg
         selection=$({
@@ -131,7 +131,7 @@ if command -v fzf >/dev/null 2>&1; then
         done
     }
     
-    # Ungenutzte Pakete interaktiv entfernen (nur Leaves)
+    # Brew Remove Browser – Enter=Entfernen, Tab=Mehrfach
     brp() {
         local pkg
         pkg=$(brew leaves | fzf --multi \

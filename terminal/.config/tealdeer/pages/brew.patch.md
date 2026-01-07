@@ -1,41 +1,15 @@
-# dotfiles: Funktionen
-
-- dotfiles: Vollständiges Update (Homebrew + mas + Cleanup):
+- dotfiles: Homebrew Komplett-Update:
 
 `brewup`
 
-- dotfiles: Versionsübersicht aller installierten Pakete (Formulae, Casks, MAS):
+- dotfiles: Brewfile Versionsübersicht:
 
 `brewv`
 
-# dotfiles: Aliase (mas - Mac App Store)
-
-- dotfiles: Veraltete Apps anzeigen:
-
-`maso`
-
-- dotfiles: Alle Apps aktualisieren:
-
-`masu`
-
-- dotfiles: Nach Apps suchen:
-
-`mass {{name}}`
-
-- dotfiles: App installieren:
-
-`masi {{app-id}}`
-
-- dotfiles: Installierte Apps auflisten:
-
-`masl`
-
-# dotfiles: Funktionen (fzf)
-
-- dotfiles: Formulae [F] und Casks [C] interaktiv installieren (`<Enter>` Installieren, `<Tab>` Mehrfach):
+- dotfiles: Brew Install Browser (`<Enter>` Installieren, `<Tab>` Mehrfach):
 
 `bip`
 
-- dotfiles: Ungenutzte Pakete entfernen (`<Enter>` Entfernen, `<Tab>` Mehrfach):
+- dotfiles: Brew Remove Browser (`<Enter>` Entfernen, `<Tab>` Mehrfach):
 
 `brp`
