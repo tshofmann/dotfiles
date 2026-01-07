@@ -45,6 +45,8 @@
 
 ## Architektur
 
+> **Unix-Philosophie:** *"Do One Thing and Do It Well"*
+
 | Aspekt | Wert |
 |--------|------|
 | **Plattform** | macOS Apple Silicon (arm64) |
