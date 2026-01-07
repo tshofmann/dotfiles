@@ -18,11 +18,11 @@ generate_tool_usage_section() {
     # Nur für Tools mit mehr als 3 Aliasen
     for alias_file in "$ALIAS_DIR"/*.alias(N); do
         local tool_name=$(basename "$alias_file" .alias)
-        local alias_count
+        local alias_count=0
         alias_count=$(grep -c "^alias " "$alias_file" 2>/dev/null) || alias_count=0
         
         # Mindestens 3 Aliase für eine Nutzungs-Sektion
-        (( alias_count < 3 )) && continue
+        [[ $alias_count -lt 3 ]] && continue
         
         local usage=$(extract_usage_codeblock "$alias_file")
         [[ -z "${usage// /}" ]] && continue

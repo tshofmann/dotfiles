@@ -351,15 +351,6 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 Ausführliche Beispiele für die wichtigsten Tools:
 
-alias_count=3
-alias_count=0
-alias_count=2
-alias_count=9
-alias_count=2
-alias_count=10
-alias_count=0
-alias_count=2
-alias_count=9
 ### bat – bat mit verschiedenen Ausgabe-Stilen
 
 ```zsh
@@ -369,6 +360,7 @@ catn              # Mit Zeilennummern, ohne Pager (bat allein hat Pager)
 catd              # Zeigt Git-Diff-Markierungen an
 
 # Interaktive Funktionen (mit fzf)
+bat-theme         # Theme Browser – Enter=Aktivieren
 ```
 
 > **Hinweis:** Globale Optionen (Theme, Style, Syntax-Mappings) sind in ~/.config/bat/config definiert. Nach Theme-Änderungen: `bat cache --build`
@@ -418,6 +410,8 @@ fdjson            # JSON-Dateien finden
 fdyaml            # YAML-Dateien finden
 
 # Interaktive Funktionen (mit fzf)
+cdf               # Verzeichnis wechseln(pfad=.) – Enter=Wechseln, Ctrl+Y=Pfad kopieren
+fo                # Datei öffnen(pfad=.) – Enter=Öffnen, Ctrl+Y=Pfad kopieren
 ```
 
 > **Hinweis:** Globale Ignore-Patterns (.git/, node_modules/, etc.) sind in ~/.config/fd/ignore definiert. Mit "fd -u" werden alle Ignore-Dateien umgangen.
@@ -439,6 +433,10 @@ gs                # Status des Repositories anzeigen
 gd                # Änderungen anzeigen
 
 # Interaktive Funktionen (mit fzf)
+glog              # Commit-History mit bat-Vorschau – Enter=Anzeigen, Ctrl+Y=SHA kopieren
+gbr               # Branch wechseln mit Log-Vorschau – Enter=Checkout, Ctrl+D=Löschen
+gst               # Status mit Diff-Vorschau (bat) – Enter=Add, Tab=Mehrfach, Ctrl+R=Reset
+gstash            # Stash-Browser – Enter=Apply, Ctrl+P=Pop, Ctrl+D=Drop
 
 # lazygit Integration
 lg                # Terminal-UI für Git (lazygit)
@@ -470,6 +468,7 @@ rgrb              # Suche in Ruby-Dateien
 rggo              # Suche in Go-Dateien
 
 # Interaktive Suche (mit fzf)
+rgf               # Live-Grep(suche?) – Enter=Datei öffnen, Ctrl+Y=Pfad kopieren
 ```
 
 > **Hinweis:** Globale Optionen (--smart-case, --line-number, --heading) sind in ~/.config/ripgrep/config definiert.
