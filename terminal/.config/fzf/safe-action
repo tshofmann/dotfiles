@@ -1,0 +1,59 @@
+#!/usr/bin/env zsh
+# ============================================================
+# safe-action - Sichere Aktionen für fzf-Bindings
+# ============================================================
+# Zweck   : Führt Aktionen Shell-Injection-sicher aus
+# Pfad    : ~/.config/fzf/safe-action
+# Aufruf  : safe-action <action> "argument" [...]
+# ============================================================
+# Actions : copy, edit, open, git-diff, git-restore, git-add,
+#           zoxide-remove
+# ============================================================
+
+local action="$1"
+shift
+
+case "$action" in
+    copy)
+        # Pfad ins Clipboard kopieren
+        printf '%s' "$1" | pbcopy
+        ;;
+    edit)
+        # Datei im Editor öffnen (optional mit Zeile)
+        local file="$1"
+        local line="${2:-}"
+        if [[ -n "$line" ]]; then
+            ${EDITOR:-vim} -- "$file" "+$line"
+        else
+            ${EDITOR:-vim} -- "$file"
+        fi
+        ;;
+    open)
+        # Datei mit Standard-App öffnen
+        open -- "$1"
+        ;;
+    git-diff)
+        # Git diff für Datei
+        git diff --color=always -- "$1" | bat --style=numbers --color=always -l diff 2>/dev/null || git diff --color=always -- "$1"
+        ;;
+    git-restore)
+        # Git restore für Datei(en)
+        for file in "$@"; do
+            git restore -- "$file"
+        done
+        ;;
+    git-add)
+        # Git add für Datei(en)
+        for file in "$@"; do
+            git add -- "$file"
+        done
+        ;;
+    zoxide-remove)
+        # Zoxide Eintrag entfernen
+        zoxide remove -- "$1"
+        ;;
+    *)
+        echo "Unbekannte Aktion: $action" >&2
+        return 1
+        ;;
+esac

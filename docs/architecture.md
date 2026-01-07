@@ -90,7 +90,10 @@ dotfiles/
         │   ├── fkill-list       # Helper-Skript für fkill() Prozessliste
         │   ├── fman-preview     # Helper-Skript für fman() Preview (man/tldr)
         │   ├── fzf-lib          # Gemeinsame Bibliothek (Farben, ANSI-Strip)
-        │   └── init.zsh         # fzf Shell-Integration (Keybindings, fd-Backend)
+        │   ├── init.zsh         # fzf Shell-Integration (Keybindings, fd-Backend)
+        │   ├── preview-dir      # Sichere Verzeichnis-Vorschau (eza/ls)
+        │   ├── preview-file     # Sichere Datei-Vorschau (bat/cat)
+        │   └── safe-action      # Sichere fzf-Aktionen (copy, edit, git-*)
         ├── lazygit/
         │   └── config.yml       # lazygit Config mit Catppuccin Mocha
         ├── ripgrep/

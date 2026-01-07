@@ -85,17 +85,19 @@ if command -v fzf >/dev/null 2>&1; then
     # Status mit Diff-Vorschau (bat) – Enter=Add, Tab=Mehrfach, Ctrl+R=Reset
     gst() {
         local files
+        local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
+        
         files=$(git -c color.status=always status --short | \
             fzf --ansi --multi \
-                --preview 'git diff --color=always -- {2} | bat --style=numbers --color=always -l diff 2>/dev/null || git diff --color=always -- {2}' \
+                --preview "$helper/safe-action git-diff {2}" \
                 --header='Enter: Add | Tab: Mehrfach | Ctrl+R: Reset' \
-                --bind 'ctrl-r:execute(git restore {+2})+reload(git -c color.status=always status --short)' | \
+                --bind "ctrl-r:execute($helper/safe-action git-restore {+2})+reload(git -c color.status=always status --short)" | \
             awk '{print $2}')
         
         if [[ -n "$files" ]]; then
             local count=0
             while IFS= read -r file; do
-                git add -- "$file" && ((count++))
+                git add -- "$file" && ((count++)) || true
             done <<< "$files"
             echo "Staged: $count Datei(en)"
         fi

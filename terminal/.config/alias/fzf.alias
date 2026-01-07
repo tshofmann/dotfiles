@@ -40,15 +40,15 @@ if command -v zoxide >/dev/null 2>&1; then
     # zoxide + fzf mit eza-Vorschau – Enter=Wechseln, Ctrl+D=Löschen, Ctrl+Y=Kopieren
     zf() {
         local selection dir
-        local preview_cmd="eza --tree --level=2 --icons --color=always {2..} 2>/dev/null || ls -la {2..}"
+        local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
         
         # Mit Score anzeigen (Format: "1234.5 /path/to/dir")
         # -n2.. durchsucht nur den Pfad (nicht den Score), unterstützt Leerzeichen
         selection=$(zoxide query -l -s | \
             fzf -n2.. \
-                --preview "$preview_cmd" \
-                --bind 'ctrl-d:execute-silent(zoxide remove {2..})+reload(zoxide query -l -s)' \
-                --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)' \
+                --preview "$helper/preview-dir {2..} 2" \
+                --bind "ctrl-d:execute-silent($helper/safe-action zoxide-remove {2..})+reload(zoxide query -l -s)" \
+                --bind "ctrl-y:execute-silent($helper/safe-action copy {2..})" \
                 --header='Enter: Wechseln | Ctrl+D: Eintrag löschen | Ctrl+Y: Pfad kopieren')
         
         # Pfad extrahieren (alles nach dem Score)

@@ -68,17 +68,17 @@ if command -v fzf >/dev/null 2>&1; then
     # Live-Grep mit bat-Vorschau – Enter=Datei öffnen, Ctrl+Y=Pfad kopieren
     rgf() {
         local rg_prefix="rg --column --line-number --no-heading --color=always --smart-case"
-        local preview_cmd="bat --color=always {1} --highlight-line {2} 2>/dev/null || cat {1}"
+        local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
         
         fzf --ansi --disabled --query "${*:-}" \
             --bind "start:reload:$rg_prefix {q} || true" \
             --bind "change:reload:sleep 0.1; $rg_prefix {q} || true" \
             --delimiter : \
             --freeze-left=1 \
-            --preview "$preview_cmd" \
+            --preview "$helper/preview-file {1} {2}" \
             --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' \
             --header='Enter: Datei öffnen | Ctrl+Y: Pfad kopieren' \
-            --bind='ctrl-y:execute-silent(echo -n {1} | pbcopy)+abort' \
-            --bind 'enter:become(${EDITOR:-vim} {1} +{2})'
+            --bind "ctrl-y:execute-silent($helper/safe-action copy {1})+abort" \
+            --bind "enter:become($helper/safe-action edit {1} {2})"
     }
 fi
