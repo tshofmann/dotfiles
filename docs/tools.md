@@ -209,15 +209,13 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 | Alias | Befehl | Beschreibung |
 |-------|--------|--------------|
-| `ls` | `eza --group-directories-first` | Verzeichnisse zuerst anzeigen mit Icons |
-| `ll` | `eza -l --group-directories-first --header` | Lange Listenansicht mit Details |
-| `la` | `eza -la --group-directories-first --header` | Alle Dateien inklusive versteckte |
-| `llg` | `eza -l --git --group-directories-first --header` | Lange Liste mit Git-Status |
-| `lag` | `eza -la --git --group-directories-first --header` | Alle Dateien mit Git-Status |
-| `lt` | `eza --tree --level=2` | Verzeichnisbaum bis Tiefe 2 |
-| `lt3` | `eza --tree --level=3` | Verzeichnisbaum bis Tiefe 3 |
-| `lss` | `eza -l --sort=size --reverse --header` | Nach Größe sortieren (größte zuerst) |
-| `lst` | `eza -l --sort=modified --reverse --header` | Nach Änderungsdatum sortieren (neueste zuerst) |> **Hinweis:** EZA_ICONS_AUTO=1 ist in .zshrc gesetzt, daher kein --icons=auto in den Aliasen nötig
+| `ls` | `eza --group-directories-first` | Kompakte Liste, Verzeichnisse zuerst |
+| `ll` | `eza -l --git --group-directories-first --header` | Lange Liste mit Git-Status und Spaltenüberschriften |
+| `la` | `eza -la --git --group-directories-first --header` | Wie ll, aber inkl. versteckter Dateien |
+| `lt` | `eza --tree --level=2` | Verzeichnisbaum, 2 Ebenen tief |
+| `lt3` | `eza --tree --level=3` | Verzeichnisbaum, 3 Ebenen tief |
+| `lss` | `eza -l --git --sort=size --reverse --group-directories-first --header` | Nach Größe sortiert (größte zuerst), mit Git-Status |
+| `lst` | `eza -l --git --sort=modified --reverse --group-directories-first --header` | Nach Änderungsdatum sortiert (neueste zuerst), mit Git-Status |> **Hinweis:** EZA_ICONS_AUTO=1 ist in .zshrc gesetzt, daher kein --icons=auto in den Aliasen nötig
 
 
 <a name="fastfetchalias"></a>
@@ -376,21 +374,17 @@ bat-theme         # Theme Browser – Enter=Aktivieren
 
 ```zsh
 # Basis-Auflistung
-ls                # Verzeichnisse zuerst anzeigen mit Icons
-ll                # Lange Listenansicht mit Details
-la                # Alle Dateien inklusive versteckte
-
-# Mit Git-Integration (nur in Git-Repos sinnvoll)
-llg               # Lange Liste mit Git-Status
-lag               # Alle Dateien mit Git-Status
+ls                # Kompakte Liste, Verzeichnisse zuerst
+ll                # Lange Liste mit Git-Status und Spaltenüberschriften
+la                # Wie ll, aber inkl. versteckter Dateien
 
 # Baumansicht
-lt                # Verzeichnisbaum bis Tiefe 2
-lt3               # Verzeichnisbaum bis Tiefe 3
+lt                # Verzeichnisbaum, 2 Ebenen tief
+lt3               # Verzeichnisbaum, 3 Ebenen tief
 
 # Sortierung
-lss               # Nach Größe sortieren (größte zuerst)
-lst               # Nach Änderungsdatum sortieren (neueste zuerst)
+lss               # Nach Größe sortiert (größte zuerst), mit Git-Status
+lst               # Nach Änderungsdatum sortiert (neueste zuerst), mit Git-Status
 ```
 
 > **Hinweis:** EZA_ICONS_AUTO=1 ist in .zshrc gesetzt, daher kein --icons=auto in den Aliasen nötig
