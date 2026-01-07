@@ -253,7 +253,5 @@ bindkey '^X3' fzf-cd-widget
 REST
 }
 
-# Nur ausführen wenn direkt aufgerufen
-if [[ "${(%):-%x}" == "${0:A}" ]]; then
-    generate_configuration_md
-fi
+# Nur ausführen wenn direkt aufgerufen (nicht gesourct)
+[[ -z "${_SOURCED_BY_GENERATOR:-}" ]] && generate_configuration_md || true

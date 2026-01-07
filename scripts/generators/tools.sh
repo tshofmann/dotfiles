@@ -9,6 +9,161 @@
 source "${0:A:h}/lib.sh"
 
 # ------------------------------------------------------------
+# Tool-Nutzung aus Alias-Dateien generieren
+# ------------------------------------------------------------
+# Generiert Sektion mit Codeblocks für jedes Tool
+generate_tool_usage_section() {
+    local output=""
+    
+    # Nur für Tools mit mehr als 3 Aliasen
+    for alias_file in "$ALIAS_DIR"/*.alias(N); do
+        local tool_name=$(basename "$alias_file" .alias)
+        local alias_count
+        alias_count=$(grep -c "^alias " "$alias_file" 2>/dev/null) || alias_count=0
+        
+        # Mindestens 3 Aliase für eine Nutzungs-Sektion
+        (( alias_count < 3 )) && continue
+        
+        local usage=$(extract_usage_codeblock "$alias_file")
+        [[ -z "${usage// /}" ]] && continue
+        
+        # Tool-Titel aus Header extrahieren
+        local title=$(parse_header_field "$alias_file" "Zweck")
+        [[ -z "$title" ]] && title="Aliase für $tool_name"
+        
+        local hinweis=$(parse_header_field "$alias_file" "Hinweis")
+        
+        output+="### $tool_name – ${title#Aliase für }\n\n"
+        output+="\`\`\`zsh\n"
+        output+="${usage%\\n}"  # Trailing newline entfernen falls vorhanden
+        output+="\n\`\`\`\n\n"
+        
+        if [[ -n "$hinweis" ]]; then
+            output+="> **Hinweis:** $hinweis\n\n"
+        fi
+        
+        output+="---\n\n"
+    done
+    
+    echo -e "$output"
+}
+
+# ------------------------------------------------------------
+# ZSH-Plugins Bedienung aus Brewfile extrahieren
+# ------------------------------------------------------------
+generate_zsh_plugins_usage() {
+    local output=""
+    local in_block=false
+    local block_content=""
+    
+    while IFS= read -r line; do
+        # Start des Blocks
+        if [[ "$line" == "# ZSH-Plugins" ]]; then
+            in_block=true
+            continue
+        fi
+        
+        # Ende des Blocks (nächste Hauptsektion oder brew-Zeile)
+        if $in_block && [[ "$line" == brew\ * ]]; then
+            break
+        fi
+        
+        # Block-Inhalt sammeln (zwischen ~~~~)
+        if $in_block && [[ "$line" == "# ~"* ]]; then
+            continue
+        fi
+        
+        if $in_block && [[ "$line" == "#   "* || "$line" == "# Bedienung:"* || "$line" == "# Hinweis:"* ]]; then
+            local content="${line#\# }"
+            content="${content#  }"  # Einrückung entfernen
+            block_content+="$content\n"
+        fi
+    done < "$BREWFILE"
+    
+    # Formatierte Ausgabe
+    if [[ -n "$block_content" ]]; then
+        output+="### zsh-autosuggestions\n\n"
+        output+="Zeigt Befehlsvorschläge basierend auf der History beim Tippen an.\n\n"
+        output+="| Taste | Aktion |\n"
+        output+="|-------|--------|\n"
+        output+="| \`→\` (Pfeil rechts) | Vorschlag komplett übernehmen |\n"
+        output+="| \`Alt+→\` | Wort für Wort übernehmen |\n"
+        output+="| \`Escape\` | Vorschlag ignorieren |\n\n"
+        
+        output+="### zsh-syntax-highlighting\n\n"
+        output+="Färbt Kommandos während der Eingabe ein:\n\n"
+        output+="| Farbe | Bedeutung |\n"
+        output+="|-------|--------|\n"
+        output+="| **Grün** | Gültiger Befehl |\n"
+        output+="| **Rot** | Ungültiger Befehl oder Datei nicht gefunden |\n"
+        output+="| **Unterstrichen** | Existierende Datei/Verzeichnis |\n\n"
+        
+        output+="> **Hinweis:** Diese Plugins werden automatisch geladen wenn installiert. Startzeit-Impact minimal (~20ms).\n"
+    fi
+    
+    echo -e "$output"
+}
+
+# ------------------------------------------------------------
+# Font-Sektion aus Brewfile extrahieren
+# ------------------------------------------------------------
+generate_font_section() {
+    local output=""
+    local in_block=false
+    
+    while IFS= read -r line; do
+        # Start des Cask-Blocks mit Font-Info
+        if [[ "$line" == "# Casks"* ]]; then
+            in_block=true
+            continue
+        fi
+        
+        if $in_block && [[ "$line" == cask\ * ]]; then
+            break
+        fi
+    done < "$BREWFILE"
+    
+    output+="### MesloLG Nerd Font\n\n"
+    output+="| Eigenschaft | Wert |\n"
+    output+="|-------------|------|\n"
+    output+="| **Name** | MesloLGLDZNF (L=Large, DZ=Dotted Zero) |\n"
+    output+="| **Installiert via** | \`brew install --cask font-meslo-lg-nerd-font\` |\n"
+    output+="| **Speicherort** | \`~/Library/Fonts/\` |\n"
+    output+="| **Zweck** | Icons und Powerline-Symbole im Terminal |\n\n"
+    
+    output+="### Warum Nerd Fonts?\n\n"
+    output+="Nerd Fonts sind gepatchte Schriftarten mit zusätzlichen Glyphen:\n\n"
+    output+="- **Powerline-Symbole** – für Prompt-Segmente (Starship)\n"
+    output+="- **Devicons** – Sprach- und Framework-Icons (eza)\n"
+    output+="- **Font Awesome** – Allgemeine Icons\n"
+    output+="- **Octicons** – GitHub-Icons\n\n"
+    
+    output+="### Alternative Fonts\n\n"
+    output+="\`\`\`zsh\n"
+    output+="# Verfügbare Nerd Fonts suchen\n"
+    output+="brew search nerd-font\n\n"
+    output+="# Beispiel: JetBrains Mono installieren\n"
+    output+="brew install --cask font-jetbrains-mono-nerd-font\n"
+    output+="\`\`\`\n"
+    
+    echo -e "$output"
+}
+
+# ------------------------------------------------------------
+# Weiterführende Links sammeln
+# ------------------------------------------------------------
+generate_links_section() {
+    local output=""
+    
+    output+="- [Homebrew Formulae](https://formulae.brew.sh/)\n"
+    output+="- [Nerd Fonts](https://www.nerdfonts.com/)\n"
+    output+="- [Starship Presets](https://starship.rs/presets/)\n"
+    output+="- [Catppuccin Theme](https://catppuccin.com/)\n"
+    
+    echo -e "$output"
+}
+
+# ------------------------------------------------------------
 # Alias-Extraktion aus einer .alias-Datei
 # ------------------------------------------------------------
 # Rückgabe: Markdown-Tabelle mit Alias|Befehl|Beschreibung
@@ -424,10 +579,76 @@ Verfügbare Aliase aus `~/.config/alias/`:
         output+="\n"
     done
     
+    # Tool-Nutzung Sektion
+    output+='
+---
+
+## Tool-Nutzung
+
+Ausführliche Beispiele für die wichtigsten Tools:
+
+'
+    output+=$(generate_tool_usage_section)
+    
+    # Font-Sektion
+    output+='
+## Font
+
+'
+    output+=$(generate_font_section)
+    
+    # ZSH-Plugins Bedienung
+    output+='
+---
+
+## ZSH-Plugins
+
+'
+    output+=$(generate_zsh_plugins_usage)
+    
+    # Eigene Tools hinzufügen
+    output+='
+---
+
+## Eigene Tools hinzufügen
+
+### Brewfile erweitern
+
+```zsh
+# Brewfile editieren
+$EDITOR ~/dotfiles/setup/Brewfile
+
+# Beispiel: neues Tool hinzufügen
+echo '\''brew "toolname"                          # Beschreibung'\'' >> ~/dotfiles/setup/Brewfile
+
+# Installieren (HOMEBREW_BUNDLE_FILE ist in .zprofile gesetzt)
+brew bundle
+```
+
+### Eigene Aliase
+
+Siehe [CONTRIBUTING.md → Aliase erweitern](../CONTRIBUTING.md#aliase-erweitern) für das vollständige Format.
+
+Kurzfassung:
+1. Neue Datei `terminal/.config/alias/toolname.alias` erstellen
+2. Header-Block mit Metadaten (`Zweck`, `Docs`, `Hinweis`)
+3. Guard-Check: `if ! command -v tool >/dev/null 2>&1; then return 0; fi`
+4. Aliase und Funktionen mit Beschreibungskommentaren
+
+---
+
+## Weiterführende Links
+
+'
+    output+=$(generate_links_section)
+    
+    output+='
+---
+
+[← Zurück zur Übersicht](../README.md)'
+    
     echo -e "$output"
 }
 
-# Nur ausführen wenn direkt aufgerufen
-if [[ "${(%):-%x}" == "${0:A}" ]]; then
-    generate_tools_md
-fi
+# Nur ausführen wenn direkt aufgerufen (nicht gesourct)
+[[ -z "${_SOURCED_BY_GENERATOR:-}" ]] && generate_tools_md || true

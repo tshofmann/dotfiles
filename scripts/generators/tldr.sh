@@ -302,7 +302,5 @@ generate_tldr_patches() {
     esac
 }
 
-# Nur ausführen wenn direkt aufgerufen
-if [[ "${(%):-%x}" == "${0:A}" ]]; then
-    generate_tldr_patches "$@"
-fi
+# Nur ausführen wenn direkt aufgerufen (nicht gesourct)
+[[ -z "${_SOURCED_BY_GENERATOR:-}" ]] && generate_tldr_patches "$@" || true

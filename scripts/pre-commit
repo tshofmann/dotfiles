@@ -1,0 +1,133 @@
+#!/usr/bin/env zsh
+# ============================================================
+# pre-commit - Git Pre-Commit Hook für dotfiles
+# ============================================================
+# Zweck   : Verhindert Commits mit veralteter Dokumentation
+#           oder ungültiger Shell-Syntax
+#
+# Install : ln -sf ../../scripts/pre-commit .git/hooks/pre-commit
+# WICHTIG : --no-verify ist VERBOTEN (siehe copilot-instructions.md)
+# ============================================================
+
+set -uo pipefail
+
+# Farben
+C_RESET='\033[0m'
+C_RED='\033[38;2;243;139;168m'
+C_GREEN='\033[38;2;166;227;161m'
+C_YELLOW='\033[38;2;249;226;175m'
+C_BLUE='\033[38;2;137;180;250m'
+
+SCRIPT_DIR="${0:A:h}"
+DOTFILES_DIR="${SCRIPT_DIR:h}"
+
+err()  { print -P "%F{red}✖%f $1" >&2; }
+ok()   { print -P "%F{green}✔%f $1"; }
+info() { print -P "%F{blue}→%f $1"; }
+
+# ------------------------------------------------------------
+# 1. Shell-Syntax prüfen
+# ------------------------------------------------------------
+check_shell_syntax() {
+    info "Prüfe Shell-Syntax..."
+    local errors=0
+    
+    # Alle .sh und .alias Dateien prüfen
+    for file in "$DOTFILES_DIR"/scripts/**/*.sh(N) \
+                "$DOTFILES_DIR"/terminal/.config/alias/*.alias(N) \
+                "$DOTFILES_DIR"/setup/bootstrap.sh; do
+        if [[ -f "$file" ]]; then
+            if ! zsh -n "$file" 2>/dev/null; then
+                err "Syntax-Fehler in: ${file#$DOTFILES_DIR/}"
+                zsh -n "$file" 2>&1 | head -3
+                (( errors++ ))
+            fi
+        fi
+    done
+    
+    if (( errors > 0 )); then
+        err "$errors Datei(en) mit Syntax-Fehlern"
+        return 1
+    fi
+    
+    ok "Shell-Syntax OK"
+    return 0
+}
+
+# ------------------------------------------------------------
+# 2. Dokumentation prüfen
+# ------------------------------------------------------------
+check_docs() {
+    info "Prüfe ob Dokumentation aktuell ist..."
+    
+    if ! "$DOTFILES_DIR/scripts/generate-docs.sh" --check >/dev/null 2>&1; then
+        err "Dokumentation ist veraltet!"
+        print ""
+        print "  Bitte ausführen:"
+        print "    ${C_YELLOW}./scripts/generate-docs.sh --generate${C_RESET}"
+        print ""
+        print "  Dann erneut committen."
+        return 1
+    fi
+    
+    ok "Dokumentation ist aktuell"
+    return 0
+}
+
+# ------------------------------------------------------------
+# 3. Alias-Datei-Format prüfen (Guards, Header)
+# ------------------------------------------------------------
+check_alias_format() {
+    info "Prüfe Alias-Datei-Format..."
+    local errors=0
+    
+    for file in "$DOTFILES_DIR"/terminal/.config/alias/*.alias(N); do
+        local name=$(basename "$file")
+        
+        # Header-Block vorhanden?
+        if ! head -3 "$file" | grep -q "^# ===="; then
+            err "$name: Kein Header-Block"
+            (( errors++ ))
+        fi
+        
+        # Guard-Check vorhanden?
+        if ! grep -q "command -v.*>/dev/null" "$file"; then
+            err "$name: Kein Guard-Check"
+            (( errors++ ))
+        fi
+    done
+    
+    if (( errors > 0 )); then
+        err "$errors Alias-Datei(en) mit Format-Fehlern"
+        return 1
+    fi
+    
+    ok "Alias-Format OK"
+    return 0
+}
+
+# ------------------------------------------------------------
+# Hauptprogramm
+# ------------------------------------------------------------
+print "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+print "🔍 Pre-Commit Checks"
+print "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+failed=0
+
+check_shell_syntax || (( failed++ ))
+check_docs || (( failed++ ))
+check_alias_format || (( failed++ ))
+
+print "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+if (( failed > 0 )); then
+    err "Pre-Commit fehlgeschlagen ($failed Check(s))"
+    print ""
+    print "  ${C_RED}--no-verify ist VERBOTEN!${C_RESET}"
+    print "  Bitte Fehler beheben und erneut committen."
+    exit 1
+fi
+
+ok "Alle Checks bestanden"
+exit 0

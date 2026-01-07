@@ -241,7 +241,5 @@ HEADER
     echo '> **Hinweis:** Die Anmeldung im App Store muss manuell erfolgen – die Befehle `mas account` und `mas signin` sind auf macOS 12+ nicht verfügbar.'
 }
 
-# Nur ausführen wenn direkt aufgerufen
-if [[ "${(%):-%x}" == "${0:A}" ]]; then
-    generate_installation_md
-fi
+# Nur ausführen wenn direkt aufgerufen (nicht gesourct)
+[[ -z "${_SOURCED_BY_GENERATOR:-}" ]] && generate_installation_md || true

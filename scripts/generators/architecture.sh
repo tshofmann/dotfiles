@@ -272,7 +272,5 @@ Bei Icon-Problemen (□ oder ?) prüfen:
 REST
 }
 
-# Nur ausführen wenn direkt aufgerufen
-if [[ "${(%):-%x}" == "${0:A}" ]]; then
-    generate_architecture_md
-fi
+# Nur ausführen wenn direkt aufgerufen (nicht gesourct)
+[[ -z "${_SOURCED_BY_GENERATOR:-}" ]] && generate_architecture_md || true

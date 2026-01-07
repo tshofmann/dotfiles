@@ -34,6 +34,8 @@ run_generator() {
     local module="$1"
     local func="$2"
     (
+        # Markiere dass wir aus dem Generator aufrufen (export für source)
+        export _SOURCED_BY_GENERATOR=1
         source "$GENERATORS_DIR/$module"
         $func
     )

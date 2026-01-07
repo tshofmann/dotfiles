@@ -42,20 +42,36 @@ dim()  { echo -e "${C_DIM}$1${C_RESET}"; }
 # Extrahiert Metadaten aus Header-Blöcken:
 #   # Zweck   : Beschreibung
 #   # Docs    : https://...
+#   # Hinweis : Kann mehrzeilig sein
+#               Fortsetzung mit Einrückung
 # Rückgabe: Wert oder leer
 parse_header_field() {
     local file="$1"
     local field="$2"
     local value=""
+    local in_field=false
     
     while IFS= read -r line; do
-        # Header endet bei Guard oder leerer Zeile nach =====
+        # Header endet bei Guard oder ====== Abschluss nach gefundenem Feld
         [[ "$line" == "# Guard"* ]] && break
         
         # Field-Pattern: # Field   : Value
         if [[ "$line" == "# ${field}"*":"* ]]; then
             value="${line#*: }"
-            break
+            in_field=true
+            continue
+        fi
+        
+        # Fortsetzungszeile (mit Einrückung, Teil des aktuellen Felds)
+        if $in_field; then
+            if [[ "$line" == "#           "* ]]; then
+                # Fortsetungszeile - füge zum Wert hinzu
+                local continuation="${line#\#           }"
+                value+=" $continuation"
+            else
+                # Keine Fortsetzung mehr
+                break
+            fi
         fi
     done < "$file"
     
@@ -113,7 +129,7 @@ parse_description_comment() {
 # ------------------------------------------------------------
 # Parser: Alias-Befehl extrahieren
 # ------------------------------------------------------------
-# Format: alias name='command' oder alias name="command"
+# Format: alias name='command' oder alias name="command"  # optional comment
 # Rückgabe: command (ohne Quotes)
 parse_alias_command() {
     local line="$1"
@@ -122,11 +138,16 @@ parse_alias_command() {
     # Entferne "alias name="
     command="${line#alias *=}"
     
-    # Entferne umschließende Quotes
-    command="${command#\'}"
-    command="${command%\'}"
-    command="${command#\"}"
-    command="${command%\"}"
+    # Bestimme Quote-Typ und extrahiere bis zum schließenden Quote
+    if [[ "$command" == \'* ]]; then
+        # Single-quoted: alias x='cmd'
+        command="${command#\'}"
+        command="${command%%\'*}"
+    elif [[ "$command" == \"* ]]; then
+        # Double-quoted: alias x="cmd"
+        command="${command#\"}"
+        command="${command%%\"*}"
+    fi
     
     echo "$command"
 }
@@ -173,6 +194,74 @@ parse_brewfile_entry() {
 }
 
 # ------------------------------------------------------------
+# Parser: Tool-Nutzung aus Alias-Datei
+# ------------------------------------------------------------
+# Generiert Codeblock mit Alias-Beispielen pro Sektion
+# Struktur: # ---- \n # Sektions-Titel \n # ---- \n # Beschreibung \n alias
+extract_usage_codeblock() {
+    local file="$1"
+    local output=""
+    local prev_line=""
+    local prev_prev_line=""
+    local current_section=""
+    local in_header=true
+    local first_section=true
+    
+    while IFS= read -r line; do
+        local trimmed="${line#"${line%%[![:space:]]*}"}"
+        
+        # Header überspringen (bis Guard endet)
+        if $in_header; then
+            [[ "$trimmed" == "fi" ]] && in_header=false
+            prev_prev_line="$prev_line"
+            prev_line="$trimmed"
+            continue
+        fi
+        
+        # Sektions-Titel erkennen:
+        # Aktuelle Zeile ist "# ----" und prev_prev_line war auch "# ----"
+        # Dann ist prev_line der Titel
+        if [[ "$trimmed" == "# ----"* && "$prev_prev_line" == "# ----"* ]]; then
+            local title="${prev_line#\# }"
+            if [[ -n "$title" && "$title" != "$current_section" ]]; then
+                if ! $first_section; then
+                    output+="\n"
+                fi
+                first_section=false
+                output+="# ${title}\n"
+                current_section="$title"
+            fi
+            prev_prev_line="$prev_line"
+            prev_line="$trimmed"
+            continue
+        fi
+        
+        # Alias-Zeile mit vorheriger Beschreibung
+        if [[ "$trimmed" == alias\ * && "$prev_line" == "# "* && "$prev_line" != "# ----"* ]]; then
+            local alias_part="${trimmed#alias }"
+            local alias_name="${alias_part%%=*}"
+            alias_name="${alias_name## }"
+            alias_name="${alias_name%% }"
+            
+            local desc="${prev_line#\# }"
+            
+            # Alignment (max 18 Zeichen)
+            local padding=$((18 - ${#alias_name}))
+            (( padding < 1 )) && padding=1
+            local spaces=""
+            for ((i=0; i<padding; i++)); do spaces+=" "; done
+            
+            output+="${alias_name}${spaces}# ${desc}\n"
+        fi
+        
+        prev_prev_line="$prev_line"
+        prev_line="$trimmed"
+    done < "$file"
+    
+    echo -e "$output"
+}
+
+# ------------------------------------------------------------
 # Datei-Vergleich
 # ------------------------------------------------------------
 # Vergleicht generierten Inhalt mit existierender Datei
@@ -199,7 +288,8 @@ write_if_changed() {
         return 0
     fi
     
-    echo "$content" > "$file"
+    # printf statt echo um trailing newline zu vermeiden
+    printf '%s\n' "$content" > "$file"
     ok "Generiert: $(basename "$file")"
     return 0
 }
