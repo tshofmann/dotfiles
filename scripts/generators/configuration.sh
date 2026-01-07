@@ -13,16 +13,16 @@ source "${0:A:h}/lib.sh"
 # ------------------------------------------------------------
 
 # Extrahiert fzf-Farben aus der echten Config
+# Zeigt alle --color Zeilen + die wichtigsten Layout-Optionen als Beispiel
 extract_fzf_colors() {
     local config="$DOTFILES_DIR/terminal/.config/fzf/config"
-    [[ -f "$config" ]] || return 1
+    [[ -f "$config" ]] || { echo '```zsh'; echo '# Config nicht gefunden'; echo '```'; return 1; }
     
-    # Erste 2 --color Zeilen + Layout-Optionen
     echo '```zsh'
     echo '# Catppuccin Mocha Farben (bereits konfiguriert)'
-    grep '^--color=' "$config" | head -2
+    grep '^--color=' "$config"
     echo ''
-    echo '# Layout'
+    echo '# Layout (Auszug)'
     grep -E '^--(height|layout|border)=' "$config" | head -3
     echo '```'
 }
@@ -30,7 +30,7 @@ extract_fzf_colors() {
 # Extrahiert fzf-Keybindings aus init.zsh
 extract_fzf_keybindings() {
     local init="$DOTFILES_DIR/terminal/.config/fzf/init.zsh"
-    [[ -f "$init" ]] || return 1
+    [[ -f "$init" ]] || { echo '```zsh'; echo '# Config nicht gefunden'; echo '```'; return 1; }
     
     echo '```zsh'
     echo '# Ctrl+X Prefix für dotfiles-Keybindings'
@@ -39,28 +39,33 @@ extract_fzf_keybindings() {
 }
 
 # Extrahiert den installierten Nerd Font aus Brewfile
+# Hinweis: Bei mehreren Nerd Fonts wird nur der erste als Beispiel verwendet
 extract_installed_nerd_font() {
     local brewfile="$DOTFILES_DIR/setup/Brewfile"
     [[ -f "$brewfile" ]] || return 1
     
-    # Findet: cask "font-xyz-nerd-font"
+    # Findet: cask "font-xyz-nerd-font" (erster Treffer)
     grep -o 'cask "font-[^"]*-nerd-font"' "$brewfile" | head -1 | sed 's/cask "\(.*\)"/\1/'
 }
 
 # Generiert Font-Anzeigename aus Cask-Name
-# font-meslo-lg-nerd-font → MesloLG Nerd Font Mono
+# Eingabe:  font-meslo-lg-nerd-font (Brew Cask-Name)
+# Ausgabe:  MesloLG Nerd Font Mono (Anzeigename in Font-Auswahl)
+# Bekannte Fonts sind explizit gemappt, Fallback kapitalisiert und entfernt Bindestriche
 font_display_name() {
     local cask="$1"
+    [[ -z "$cask" ]] && { echo "Nerd Font"; return; }
+    
     # Entferne "font-" Prefix und "-nerd-font" Suffix
     local base="${cask#font-}"
     base="${base%-nerd-font}"
     
-    # Mapping bekannter Fonts
+    # Mapping bekannter Fonts (markenspezifische Schreibweisen)
     case "$base" in
-        meslo-lg)      echo "MesloLG Nerd Font Mono" ;;
+        meslo-lg)       echo "MesloLG Nerd Font Mono" ;;
         jetbrains-mono) echo "JetBrainsMono Nerd Font Mono" ;;
-        fira-code)     echo "FiraCode Nerd Font Mono" ;;
-        *)             echo "${(C)base} Nerd Font Mono" ;;  # Fallback: Capitalize
+        fira-code)      echo "FiraCode Nerd Font Mono" ;;
+        *)              echo "${${(C)base}//-/} Nerd Font Mono" ;;  # Fallback: Bindestriche entfernen + Capitalize
     esac
 }
 
@@ -217,9 +222,10 @@ Bei Starship-Presets mit Powerline-Symbolen (wie `catppuccin-powerline`) muss di
 
 FONT_SECTION
 
-    # Font-Beispiel dynamisch generieren
+    # Font-Beispiel dynamisch generieren (Fallback wenn Brewfile fehlt)
     local installed_font
     installed_font=$(extract_installed_nerd_font)
+    [[ -z "$installed_font" ]] && installed_font="font-meslo-lg-nerd-font"
     local display_name
     display_name=$(font_display_name "$installed_font")
     
