@@ -16,7 +16,7 @@ colourful: true
 # Dateitypen (filekinds)
 # ------------------------------------------------------------
 filekinds:
-  normal: {foreground: "#cdd6f4"}           # Text
+  normal: {foreground: "#cdd6f4"}
   directory: {foreground: "#cba6f7"}
   symlink: {foreground: "#89b4fa"}
   pipe: {foreground: "#bac2de"}
@@ -24,8 +24,8 @@ filekinds:
   char_device: {foreground: "#eba0ac"}
   socket: {foreground: "#bac2de"}
   special: {foreground: "#cba6f7"}
-  executable: {foreground: "#a6e3a1"}        # Green
-  mount_point: {foreground: "#94e2d5"}       # Teal
+  executable: {foreground: "#a6e3a1"}
+  mount_point: {foreground: "#94e2d5"}
 
 # ------------------------------------------------------------
 # Berechtigungen (perms)
