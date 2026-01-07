@@ -22,7 +22,7 @@ generate_tool_usage_section() {
         alias_count=$(grep -c "^alias " "$alias_file" 2>/dev/null) || alias_count=0
         
         # Mindestens 3 Aliase für eine Nutzungs-Sektion
-        [[ $alias_count -lt 3 ]] && continue
+        [[ "$alias_count" -lt 3 ]] && continue
         
         local usage=$(extract_usage_codeblock "$alias_file")
         [[ -z "${usage// /}" ]] && continue
