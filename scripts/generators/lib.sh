@@ -23,7 +23,6 @@ BOOTSTRAP="$DOTFILES_DIR/setup/bootstrap.sh"
 C_RESET='\033[0m'
 C_GREEN='\033[38;2;166;227;161m'
 C_RED='\033[38;2;243;139;168m'
-C_YELLOW='\033[38;2;249;226;175m'
 C_BLUE='\033[38;2;137;180;250m'
 C_DIM='\033[38;2;108;112;134m'
 
@@ -33,7 +32,6 @@ C_DIM='\033[38;2;108;112;134m'
 log()  { echo -e "${C_BLUE}→${C_RESET} $1"; }
 ok()   { echo -e "${C_GREEN}✔${C_RESET} $1"; }
 err()  { echo -e "${C_RED}✖${C_RESET} $1" >&2; }
-warn() { echo -e "${C_YELLOW}⚠${C_RESET} $1"; }
 dim()  { echo -e "${C_DIM}$1${C_RESET}"; }
 
 # ------------------------------------------------------------
@@ -211,10 +209,14 @@ extract_usage_codeblock() {
         local trimmed="${line#"${line%%[![:space:]]*}"}"
         
         # Header überspringen (bis Guard endet)
+        # Guard kann einzeilig sein: if ...; then return 0; fi
+        # Oder mehrzeilig mit 'fi' auf eigener Zeile
         if $in_header; then
-            [[ "$trimmed" == "fi" ]] && in_header=false
-            prev_prev_line="$prev_line"
-            prev_line="$trimmed"
+            if [[ "$trimmed" == "fi" || "$trimmed" == *"; fi" || "$trimmed" == *";fi" ]]; then
+                in_header=false
+                prev_line=""
+                prev_prev_line=""
+            fi
             continue
         fi
         
