@@ -271,7 +271,7 @@ Die Variable muss in `.zshenv` gesetzt werden, da macOS `/etc/zshrc_Apple_Termin
 
 **Gründe für die Deaktivierung:**
 - Konsistenz: Eine zentrale `~/.zsh_history` statt fragmentierter Session-Dateien
-- Kompatibilität: Bessere Integration mit `fzf` History-Suche (`Ctrl+R`)
+- Kompatibilität: Bessere Integration mit `fzf` History-Suche (`Ctrl+X 1`)
 - Wartbarkeit: History-Optionen in `.zshrc` wirken auf alle Befehle
 
 > **Hinweis:** Bestehende Dateien in `~/.zsh_sessions/` können manuell gelöscht werden: `rm -rf ~/.zsh_sessions/`
@@ -308,7 +308,7 @@ Befehle mit sensiblen Daten (Passwörter, Tokens) kannst du von der History auss
 
 | Methode | Tastenkombination |
 |---------|-------------------|
-| fzf Fuzzy Search | `Ctrl+R` |
+| fzf Fuzzy Search | `Ctrl+X 1` |
 | Zsh-Suche rückwärts | `Ctrl+R` (ohne fzf) |
 | Zsh-Suche vorwärts | `Ctrl+S` |
 

@@ -48,7 +48,7 @@ alias gd='git diff'
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # Git Log mit Commit-Vorschau (SHA bleibt beim Scrollen sichtbar)
+    # Commit-History mit bat-Vorschau – Enter=Anzeigen, Ctrl+Y=SHA kopieren
     glog() {
         local sha
         sha=$(git log --oneline --color=always --decorate | \
@@ -68,7 +68,7 @@ if command -v fzf >/dev/null 2>&1; then
         fi
     }
     
-    # Git Branch wechseln mit Vorschau
+    # Branch wechseln mit Log-Vorschau – Enter=Checkout, Ctrl+D=Löschen
     gbr() {
         local branch
         branch=$(git branch --all --color=always | \
@@ -82,26 +82,28 @@ if command -v fzf >/dev/null 2>&1; then
         [[ -n "$branch" ]] && git checkout "$branch"
     }
     
-    # Git Status mit Diff-Vorschau
+    # Status mit Diff-Vorschau (bat) – Enter=Add, Tab=Mehrfach, Ctrl+R=Reset
     gst() {
         local files
+        local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
+        
         files=$(git -c color.status=always status --short | \
             fzf --ansi --multi \
-                --preview 'git diff --color=always -- {2} | bat --style=numbers --color=always -l diff 2>/dev/null || git diff --color=always -- {2}' \
+                --preview "$helper/safe-action git-diff {2}" \
                 --header='Enter: Add | Tab: Mehrfach | Ctrl+R: Reset' \
-                --bind 'ctrl-r:execute(git restore {+2})+reload(git -c color.status=always status --short)' | \
+                --bind "ctrl-r:execute($helper/safe-action git-restore {+2})+reload(git -c color.status=always status --short)" | \
             awk '{print $2}')
         
         if [[ -n "$files" ]]; then
             local count=0
             while IFS= read -r file; do
-                git add -- "$file" && ((count++))
+                git add -- "$file" && ((count++)) || true
             done <<< "$files"
             echo "Staged: $count Datei(en)"
         fi
     }
     
-    # Stash-Browser
+    # Stash-Browser – Enter=Apply, Ctrl+P=Pop, Ctrl+D=Drop
     gstash() {
         local stash
         stash=$(git stash list | \

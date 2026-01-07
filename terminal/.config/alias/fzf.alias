@@ -5,8 +5,8 @@
 # Pfad    : ~/.config/alias/fzf.alias
 # Docs    : https://github.com/junegunn/fzf
 # ============================================================
-# Hinweis : Shell-Keybindings (in .zshrc): Ctrl+R=History,
-#           Ctrl+T=Dateisuche mit Vorschau, Alt+C=Verzeichnis
+# Hinweis : Shell-Keybindings via Ctrl+X Prefix (in init.zsh):
+#           Ctrl+X 1=History, Ctrl+X 2=Dateisuche, Ctrl+X 3=Verzeichnis
 #
 #           Globale fzf-Optionen in ~/.config/fzf/config
 #
@@ -24,11 +24,11 @@ if ! command -v fzf >/dev/null 2>&1; then
 fi
 
 # ------------------------------------------------------------
-# Shell-Keybindings (in .zshrc konfiguriert)
+# Shell-Keybindings (in init.zsh konfiguriert, Ctrl+X Prefix)
 # ------------------------------------------------------------
-# Ctrl+T: Datei suchen mit bat-Vorschau, Pfad einfügen
-# Ctrl+R: History durchsuchen mit Vorschau
-# Alt+C:  Verzeichnis wechseln mit eza-Vorschau
+# Ctrl+X 1: History durchsuchen mit Vorschau
+# Ctrl+X 2: Datei suchen mit bat-Vorschau, Pfad einfügen
+# Ctrl+X 3: Verzeichnis wechseln mit eza-Vorschau
 
 # ------------------------------------------------------------
 # ZOXIDE + FZF: Intelligente Directory-Jumps
@@ -37,18 +37,18 @@ fi
 # Erweiterte Version mit Score-Anzeige, Lösch- und Kopier-Option
 # Community-Pattern: -n2.. für Pfade mit Leerzeichen
 if command -v zoxide >/dev/null 2>&1; then
-    # Schneller Verzeichniswechsel mit Score, Vorschau und Lösch-Option
+    # zoxide + fzf mit eza-Vorschau – Enter=Wechseln, Ctrl+D=Löschen, Ctrl+Y=Kopieren
     zf() {
         local selection dir
-        local preview_cmd="eza --tree --level=2 --icons --color=always {2..} 2>/dev/null || ls -la {2..}"
+        local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
         
         # Mit Score anzeigen (Format: "1234.5 /path/to/dir")
         # -n2.. durchsucht nur den Pfad (nicht den Score), unterstützt Leerzeichen
         selection=$(zoxide query -l -s | \
             fzf -n2.. \
-                --preview "$preview_cmd" \
-                --bind 'ctrl-d:execute-silent(zoxide remove {2..})+reload(zoxide query -l -s)' \
-                --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)' \
+                --preview "$helper/preview-dir {2..} 2" \
+                --bind "ctrl-d:execute-silent($helper/safe-action zoxide-remove {2..})+reload(zoxide query -l -s)" \
+                --bind "ctrl-y:execute-silent($helper/safe-action copy {2..})" \
                 --header='Enter: Wechseln | Ctrl+D: Eintrag löschen | Ctrl+Y: Pfad kopieren')
         
         # Pfad extrahieren (alles nach dem Score)
@@ -60,7 +60,7 @@ fi
 # KILL + FZF: Prozess-Management
 # ------------------------------------------------------------
 # Prozesse interaktiv suchen und beenden (Tab für Mehrfachauswahl)
-# Ctrl+S: Toggle Apps ↔ Alle Prozesse (PID bleibt beim Scrollen sichtbar)
+# Prozesse beenden – Enter=Beenden, Tab=Mehrfach, Ctrl+S=Apps/Alle
 fkill() {
     local pid
     local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fkill-list"
@@ -80,8 +80,7 @@ fkill() {
 # MAN + FZF + BAT: Man-Pages Browser
 # ------------------------------------------------------------
 # Man-Pages interaktiv durchsuchen mit Syntax-Highlighting
-# Ctrl+S togglet zwischen man und tldr Preview
-# Enter öffnet immer die volle man-Page
+# Man-Pages mit bat-Vorschau – Enter=Öffnen, Ctrl+S=man↔tldr
 fman() {
     local selection page section
     local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fman-preview"
@@ -106,9 +105,7 @@ fman() {
 # ------------------------------------------------------------
 # ALIAS + FZF: Alias-/Funktions-Browser
 # ------------------------------------------------------------
-# Alle Aliase und Funktionen durchsuchen mit Beschreibung
-# Ctrl+S togglet zwischen tldr und Code Preview
-# Zeigt: Name, Typ (alias/function), Beschreibungskommentar
+# Fuzzy-Suche für Aliase/Funktionen – Enter=Übernehmen, Ctrl+S=tldr↔Code
 fa() {
     local alias_dir="${XDG_CONFIG_HOME:-$HOME/.config}/alias"
     local fzf_dir="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
@@ -203,7 +200,7 @@ fa() {
 # ENV + FZF: Umgebungsvariablen-Browser
 # ------------------------------------------------------------
 # Umgebungsvariablen durchsuchen mit formatierter Anzeige
-# PATH-artige Werte werden in der Preview aufgesplittet
+# Umgebungsvariablen mit Farbkodierung – Enter=Export→Edit, Ctrl+Y=Kopieren
 fenv() {
     local selection name value
     

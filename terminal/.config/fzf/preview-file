@@ -1,0 +1,27 @@
+#!/usr/bin/env zsh
+# ============================================================
+# preview-file - Sichere Datei-Vorschau für fzf
+# ============================================================
+# Zweck   : Zeigt Dateiinhalt mit bat/cat (Shell-Injection-sicher)
+# Pfad    : ~/.config/fzf/preview-file
+# Aufruf  : preview-file "datei" [zeile]
+# ============================================================
+# Hinweis : Pfad wird als Argument übergeben, nicht interpoliert
+# ============================================================
+
+local file="$1"
+local line="${2:-}"
+
+# Validierung: Datei muss existieren
+if [[ ! -f "$file" ]]; then
+    echo "Datei nicht gefunden: $file"
+    return 1
+fi
+
+if [[ -n "$line" ]] && command -v bat >/dev/null 2>&1; then
+    bat --color=always --highlight-line "$line" -- "$file" 2>/dev/null || cat -- "$file"
+elif command -v bat >/dev/null 2>&1; then
+    bat --style=numbers --color=always -- "$file" 2>/dev/null || cat -- "$file"
+else
+    cat -- "$file"
+fi

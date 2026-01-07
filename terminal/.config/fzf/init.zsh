@@ -26,17 +26,17 @@ if command -v fd >/dev/null 2>&1; then
     export FZF_ALT_C_COMMAND='fd --type d --strip-cwd-prefix --hidden --follow --exclude .git'
 fi
 
-# Ctrl+R: History-Suche mit Kopier-Funktion
+# Ctrl+X 1: History-Suche mit Kopier-Funktion
 export FZF_CTRL_R_OPTS="
     --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
     --header 'Ctrl+Y: Kopieren'"
 
-# Ctrl+T: Dateisuche mit Syntax-Highlighting Vorschau
+# Ctrl+X 2: Dateisuche mit Syntax-Highlighting Vorschau
 if command -v bat >/dev/null 2>&1; then
     export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always --line-range=:500 {}'"
 fi
 
-# Alt+C: Verzeichniswechsel mit Baum-Vorschau
+# Ctrl+X 3: Verzeichniswechsel mit Baum-Vorschau
 if command -v eza >/dev/null 2>&1; then
     export FZF_ALT_C_OPTS="--preview 'eza --tree --level=1 --icons --color=always {}'"
 fi

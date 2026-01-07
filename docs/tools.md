@@ -12,9 +12,9 @@ Die wichtigsten Tastenkombinationen und Befehle auf einen Blick:
 
 | Taste | Funktion | Beschreibung |
 |-------|----------|--------------|
-| `Ctrl+R` | History-Suche | Frühere Befehle fuzzy suchen |
-| `Ctrl+T` | Datei einfügen | Datei suchen und in Kommandozeile einfügen |
-| `Alt+C` | Verzeichnis wechseln | Interaktiv in Unterverzeichnis springen |
+| `Ctrl+X 1` | History-Suche | Frühere Befehle fuzzy suchen |
+| `Ctrl+X 2` | Datei einfügen | Datei suchen und in Kommandozeile einfügen |
+| `Ctrl+X 3` | Verzeichnis wechseln | Interaktiv in Unterverzeichnis springen |
 | `Tab` | Autovervollständigung | Befehle, Pfade, Optionen vervollständigen |
 | `→` (Pfeil rechts) | Vorschlag übernehmen | zsh-autosuggestion akzeptieren |
 
@@ -40,7 +40,7 @@ ls
 # 3. Datei mit Syntax-Highlighting anzeigen
 cat ~/.zshrc
 
-# 4. Frühere Befehle suchen (Ctrl+R drücken, tippen, Enter)
+# 4. Frühere Befehle suchen (Ctrl+X 1 drücken, tippen, Enter)
 
 # 5. Zu einem Verzeichnis springen (lernt mit der Zeit)
 z dotfiles
@@ -198,7 +198,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 > **Hinweis:** fd respektiert automatisch `.gitignore` und ist deutlich schneller als find. Zusätzlich werden Patterns aus `~/.config/fd/ignore` global ausgeschlossen (z.B. `.git/`, `node_modules/`, `__pycache__/`). Mit `fd -u` (unrestricted) werden alle Ignore-Dateien umgangen.
 >
-> **Tipp:** Für Dateisuche mit Vorschau nutze `Ctrl+T` (fzf Shell-Integration) – fügt den Pfad direkt ein.
+> **Tipp:** Für Dateisuche mit Vorschau nutze `Ctrl+X 2` (fzf Shell-Integration) – fügt den Pfad direkt ein.
 
 <a name="btopalias"></a>
 
@@ -566,10 +566,10 @@ masl                   # Zeigt ID und Name
 
 | Taste | Funktion | Vorschau |
 |-------|----------|----------|
-| `Ctrl+R` | History durchsuchen | – |
-| `Ctrl+Y` | (in Ctrl+R) Befehl ins Clipboard kopieren | – |
-| `Ctrl+T` | Datei suchen und einfügen | bat (Syntax-Highlighting) |
-| `Alt+C` | Verzeichnis wechseln (cd) | eza (Tree-Ansicht) |
+| `Ctrl+X 1` | History durchsuchen | – |
+| `Ctrl+Y` | (in Ctrl+X 1) Befehl ins Clipboard kopieren | – |
+| `Ctrl+X 2` | Datei suchen und einfügen | bat (Syntax-Highlighting) |
+| `Ctrl+X 3` | Verzeichnis wechseln (cd) | eza (Tree-Ansicht) |
 
 **fd-Integration:**
 
@@ -583,7 +583,7 @@ fzf nutzt automatisch fd als Backend (konfiguriert in `.zshrc`):
 vim $(fzf)
 
 # History durchsuchen
-# Ctrl+R drücken, tippen, Enter
+# Ctrl+X 1 drücken, tippen, Enter
 # Ctrl+Y kopiert den Befehl ins Clipboard ohne Ausführung
 
 # Live-Grep (interaktive Suche in Dateien)
@@ -591,10 +591,10 @@ rgf                # Startet interaktive Suche
 rgf "TODO"         # Startet mit Suchbegriff
 
 # Datei suchen und in Kommandozeile einfügen
-# Ctrl+T drücken → Vorschau mit bat
+# Ctrl+X 2 drücken → Vorschau mit bat
 
 # Verzeichnis wechseln
-# Alt+C drücken → Vorschau mit eza Tree
+# Ctrl+X 3 drücken → Vorschau mit eza Tree
 cdf                # Alternative: cd mit fzf-Auswahl
 
 # In Pipe verwenden

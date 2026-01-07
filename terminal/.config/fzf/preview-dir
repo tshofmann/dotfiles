@@ -1,0 +1,25 @@
+#!/usr/bin/env zsh
+# ============================================================
+# preview-dir - Sichere Verzeichnis-Vorschau für fzf
+# ============================================================
+# Zweck   : Zeigt Verzeichnisinhalt mit eza/ls (Shell-Injection-sicher)
+# Pfad    : ~/.config/fzf/preview-dir
+# Aufruf  : preview-dir "verzeichnis" [level]
+# ============================================================
+# Hinweis : Pfad wird als Argument übergeben, nicht interpoliert
+# ============================================================
+
+local dir="$1"
+local level="${2:-1}"
+
+# Validierung: Verzeichnis muss existieren
+if [[ ! -d "$dir" ]]; then
+    echo "Verzeichnis nicht gefunden: $dir"
+    return 1
+fi
+
+if command -v eza >/dev/null 2>&1; then
+    eza --tree --level="$level" --icons --color=always -- "$dir" 2>/dev/null || ls -la -- "$dir"
+else
+    ls -la -- "$dir"
+fi

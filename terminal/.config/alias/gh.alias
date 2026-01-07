@@ -28,7 +28,7 @@ alias ghst='gh status'
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # Pull Requests interaktiv durchsuchen, auschecken oder im Browser öffnen
+    # PRs durchsuchen – Enter=Checkout, Ctrl+D=Diff, Ctrl+O=Browser
     ghpr() {
         local pr
         pr=$(gh pr list --limit 50 | \
@@ -42,7 +42,7 @@ if command -v fzf >/dev/null 2>&1; then
         [[ -n "$pr" ]] && gh pr checkout "$pr"
     }
     
-    # Issues interaktiv durchsuchen, öffnen oder bearbeiten
+    # Issues durchsuchen – Enter=Browser, Ctrl+E=Bearbeiten
     ghis() {
         local issue
         issue=$(gh issue list --limit 50 | \
@@ -55,7 +55,7 @@ if command -v fzf >/dev/null 2>&1; then
         [[ -n "$issue" ]] && gh issue view "$issue" --web
     }
     
-    # GitHub Actions Workflow-Runs anzeigen, Logs lesen oder wiederholen
+    # Actions Runs – Enter=Logs, Ctrl+R=Rerun, Ctrl+O=Browser
     ghrun() {
         local run
         run=$(gh run list --limit 20 | \
@@ -70,7 +70,7 @@ if command -v fzf >/dev/null 2>&1; then
         [[ -n "$run" ]] && gh run view "$run" --log | bat --color=always
     }
     
-    # Eigene Repositories durchsuchen und schnell klonen
+    # Repositories durchsuchen – Enter=Klonen, Ctrl+O=Browser
     ghrepo() {
         local repo
         local query="${1:-}"
@@ -84,7 +84,7 @@ if command -v fzf >/dev/null 2>&1; then
         [[ -n "$repo" ]] && gh repo clone "$repo"
     }
     
-    # Gists durchsuchen und anzeigen oder bearbeiten
+    # Gists durchsuchen – Enter=Anzeigen, Ctrl+E=Bearbeiten, Ctrl+O=Browser
     ghgist() {
         local gist
         gist=$(gh gist list --limit 30 | \

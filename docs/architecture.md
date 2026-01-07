@@ -90,7 +90,10 @@ dotfiles/
         │   ├── fkill-list       # Helper-Skript für fkill() Prozessliste
         │   ├── fman-preview     # Helper-Skript für fman() Preview (man/tldr)
         │   ├── fzf-lib          # Gemeinsame Bibliothek (Farben, ANSI-Strip)
-        │   └── init.zsh         # fzf Shell-Integration (Keybindings, fd-Backend)
+        │   ├── init.zsh         # fzf Shell-Integration (Keybindings, fd-Backend)
+        │   ├── preview-dir      # Sichere Verzeichnis-Vorschau (eza/ls)
+        │   ├── preview-file     # Sichere Datei-Vorschau (bat/cat)
+        │   └── safe-action      # Sichere fzf-Aktionen (copy, edit, git-*)
         ├── lazygit/
         │   └── config.yml       # lazygit Config mit Catppuccin Mocha
         ├── ripgrep/
@@ -224,13 +227,13 @@ Die visuelle Terminal-Darstellung basiert auf drei eng gekoppelten Komponenten:
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                         fzf                                 │
-│              Fuzzy Finder (Ctrl+T, Alt+C, Ctrl+R)           │
+│        Fuzzy Finder (Ctrl+X 1, Ctrl+X 2, Ctrl+X 3)          │
 └──────────┬─────────────────┬─────────────────┬──────────────┘
            │                 │                 │
     ┌──────▼──────┐   ┌──────▼──────┐   ┌──────▼──────┐
     │     fd      │   │     bat     │   │     eza     │
     │  (Backend)  │   │  (Preview)  │   │  (Preview)  │
-    │ Ctrl+T/Alt+C│   │   Ctrl+T    │   │    Alt+C    │
+    │ Ctrl+X 2/3  │   │  Ctrl+X 2   │   │  Ctrl+X 3   │
     └─────────────┘   └─────────────┘   └─────────────┘
 
 ┌─────────────────────────────────────────────────────────────┐
@@ -470,7 +473,7 @@ Die Tools nutzen **native Config-Dateien** für globale Einstellungen und Shell-
 | `FZF_CTRL_T_OPTS` | `--preview 'bat ...'` | Datei-Vorschau mit Syntax-Highlighting |
 | `FZF_ALT_C_OPTS` | `--preview 'eza --tree ...'` | Verzeichnis-Vorschau mit Baumansicht |
 
-**Key Bindings:** `Ctrl+R` (History), `Ctrl+T` (Datei einfügen), `Alt+C` (cd)
+**Key Bindings:** `Ctrl+X 1` (History), `Ctrl+X 2` (Datei einfügen), `Ctrl+X 3` (cd)
 
 #### ripgrep Config (`~/.config/ripgrep/config`)
 

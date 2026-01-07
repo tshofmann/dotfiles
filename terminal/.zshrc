@@ -62,7 +62,7 @@ export EZA_ICONS_AUTO=1
 # ------------------------------------------------------------
 # Tools initialisieren
 # ------------------------------------------------------------
-# fzf: Shell-Integration (Ctrl+R, Ctrl+T, Alt+C)
+# fzf: Shell-Integration (Ctrl+X 1=History, Ctrl+X 2=Datei, Ctrl+X 3=Verzeichnis)
 if command -v fzf >/dev/null 2>&1; then
     [[ -f "$HOME/.config/fzf/init.zsh" ]] && source "$HOME/.config/fzf/init.zsh"
 fi

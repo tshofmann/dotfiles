@@ -55,26 +55,28 @@ alias fdyaml='fd -e yaml -e yml'
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # Verzeichnis wechseln mit eza-Vorschau, Ctrl+Y kopiert Pfad (cdf [pfad])
+    # Verzeichnis wechseln mit eza-Vorschau – Enter=Wechseln, Ctrl+Y=Pfad kopieren
     cdf() {
         local dir
-        local preview_cmd="eza --tree --level=1 --icons --color=always {} 2>/dev/null || ls -la {}"
+        local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
         
         dir=$(fd --type d --hidden --follow --exclude .git . "${1:-.}" | \
-            fzf --preview "$preview_cmd" \
+            fzf --preview "$helper/preview-dir {}" \
                 --header='Enter: Wechseln | Ctrl+Y: Pfad kopieren' \
-                --bind='ctrl-y:execute-silent(echo -n {} | pbcopy)+abort')
+                --bind="ctrl-y:execute-silent($helper/safe-action copy {})+abort")
         
         [[ -n "$dir" ]] && cd "$dir"
     }
 
-    # Datei mit Standard-App öffnen, Ctrl+Y kopiert Pfad (fo [pfad])
+    # Datei mit Standard-App öffnen – Enter=Öffnen, Ctrl+Y=Pfad kopieren
     fo() {
         local file
+        local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
+        
         file=$(fd --type f --hidden --follow --exclude .git . "${1:-.}" | \
-            fzf --preview 'bat --style=numbers --color=always {} 2>/dev/null || file {}' \
+            fzf --preview "$helper/preview-file {}" \
                 --header='Enter: Öffnen | Ctrl+Y: Pfad kopieren' \
-                --bind='ctrl-y:execute-silent(echo -n {} | pbcopy)+abort')
+                --bind="ctrl-y:execute-silent($helper/safe-action copy {})+abort")
         
         [[ -n "$file" ]] && open "$file"
     }
