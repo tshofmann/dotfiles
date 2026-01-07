@@ -5,6 +5,8 @@
 # Pfad    : ~/.config/ripgrep/config
 # Docs    : https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md
 # ============================================================
+# Aliase  : ~/.config/alias/rg.alias (rgc, rgi, rga, rgf, ...)
+# ============================================================
 
 # ------------------------------------------------------------
 # Such-Verhalten
@@ -38,3 +40,13 @@
 --type-add=conf:*.conf
 --type-add=conf:*.config
 --type-add=conf:*rc
+
+# ------------------------------------------------------------
+# Globale Excludes (macOS-Systemverzeichnisse)
+# ------------------------------------------------------------
+# Diese Verzeichnisse enthalten nur System-/App-generierte Dateien
+# (Caches, Logs, App-Daten, Medien-Bibliotheken)
+--glob=!Library/
+--glob=!Music/
+--glob=!Pictures/
+--glob=!Movies/

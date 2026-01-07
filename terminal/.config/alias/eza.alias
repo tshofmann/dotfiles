@@ -11,8 +11,8 @@
 #   - Innerhalb Git-Repos: ~20ms (unter Wahrnehmungsschwelle)
 #   - Opt-out: export EZA_OVERRIDE_GIT=1
 #
-# Hinweis : EZA_ICONS_AUTO=1 ist in .zshrc gesetzt, daher kein
-#           --icons=auto in den Aliasen nötig
+# Hinweis : EZA_ICONS_AUTO=1 ist in .zshrc gesetzt.
+#           Farbschema in ~/.config/eza/theme.yml (Catppuccin Mocha)
 # ============================================================
 
 # Guard   : Nur wenn eza installiert ist

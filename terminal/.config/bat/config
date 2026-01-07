@@ -5,6 +5,8 @@
 # Pfad    : ~/.config/bat/config
 # Docs    : https://github.com/sharkdp/bat#configuration-file
 # ============================================================
+# Aliase  : ~/.config/alias/bat.alias (cat, catn, catd)
+# ============================================================
 
 # ------------------------------------------------------------
 # Farbschema

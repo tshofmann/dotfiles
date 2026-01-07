@@ -5,6 +5,8 @@
 # Pfad    : ~/.config/fzf/config
 # Docs    : https://github.com/junegunn/fzf#environment-variables
 # ============================================================
+# Aliase  : ~/.config/alias/fzf.alias (zf, fkill, fman, fa, fenv)
+# ============================================================
 
 # ------------------------------------------------------------
 # Catppuccin Mocha Theme
@@ -17,26 +19,36 @@
 --color=selected-bg:#45475A
 --color=border:#6C7086,label:#CDD6F4
 
+# ------------------------------------------------------------
 # Layout & Darstellung
+# ------------------------------------------------------------
 --height=~50%
 --layout=reverse
 --border=rounded
 --margin=0,1
 
-# Farben & Stil
+# Zusätzliche Farb-Stile
 --color=header:italic
 --color=prompt:bold
 
-# Vorschau-Fenster (Standard für alle Funktionen)
+# ------------------------------------------------------------
+# Vorschau-Fenster
+# ------------------------------------------------------------
+# Standard für alle Funktionen (kann per --preview-window überschrieben werden)
 --preview-window=right:60%:wrap
 
+# ------------------------------------------------------------
 # Tastenkürzel (universell)
+# ------------------------------------------------------------
 # Ctrl+/ : Vorschau ein-/ausblenden
 --bind=ctrl-/:toggle-preview
 
 # Ctrl+A : Alle auswählen (im Multi-Modus)
 --bind=ctrl-a:select-all
 
-# Hinweis : --ansi wird NICHT global gesetzt (Performance!)
-#           Nur in Funktionen aktivieren wo nötig.
-# Docs    : https://github.com/junegunn/fzf#performance
+# ------------------------------------------------------------
+# Performance-Hinweise
+# ------------------------------------------------------------
+# --ansi wird NICHT global gesetzt (Performance!)
+# Nur in Funktionen aktivieren wo nötig.
+# Siehe: https://github.com/junegunn/fzf#performance
