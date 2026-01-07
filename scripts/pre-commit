@@ -24,15 +24,17 @@ C_DIM='\033[38;2;108;112;134m'
 SCRIPT_DIR="${0:A:h}"
 DOTFILES_DIR="${SCRIPT_DIR:h}"
 
-err()  { echo -e "${C_RED}✖${C_RESET} $1" >&2; }
+# Logging (konsistent mit anderen Skripten)
+log()  { echo -e "${C_BLUE}→${C_RESET} $1"; }
 ok()   { echo -e "${C_GREEN}✔${C_RESET} $1"; }
-info() { echo -e "${C_BLUE}→${C_RESET} $1"; }
+warn() { echo -e "${C_YELLOW}⚠${C_RESET} $1"; }
+err()  { echo -e "${C_RED}✖${C_RESET} $1" >&2; }
 
 # ------------------------------------------------------------
 # 1. Shell-Syntax prüfen
 # ------------------------------------------------------------
 check_shell_syntax() {
-    info "Prüfe Shell-Syntax..."
+    log "Prüfe Shell-Syntax..."
     local errors=0
     
     # Alle .sh und .alias Dateien prüfen
@@ -61,7 +63,7 @@ check_shell_syntax() {
 # 2. Dokumentation prüfen
 # ------------------------------------------------------------
 check_docs() {
-    info "Prüfe ob Dokumentation aktuell ist..."
+    log "Prüfe ob Dokumentation aktuell ist..."
     
     if ! "$DOTFILES_DIR/scripts/generate-docs.sh" --check >/dev/null 2>&1; then
         err "Dokumentation ist veraltet!"
@@ -81,7 +83,7 @@ check_docs() {
 # 3. Alias-Datei-Format prüfen (Guards, Header)
 # ------------------------------------------------------------
 check_alias_format() {
-    info "Prüfe Alias-Datei-Format..."
+    log "Prüfe Alias-Datei-Format..."
     local errors=0
     
     for file in "$DOTFILES_DIR"/terminal/.config/alias/*.alias(N); do
