@@ -167,6 +167,18 @@ test_parse_alias_command() {
     # Test: Pipe im Befehl
     local cmd5=$(parse_alias_command "alias ports='lsof -i -P | grep LISTEN'")
     assert_equals "lsof -i -P | grep LISTEN" "$cmd5" "Mit Pipe"
+    
+    # Test: Escaped single quotes ('\'' Pattern)
+    local cmd6=$(parse_alias_command "alias esc='echo '\\''hello'\\'' world'")
+    assert_equals "echo 'hello' world" "$cmd6" "Escaped single quotes"
+    
+    # Test: Escaped double quotes (\" Pattern)
+    local cmd7=$(parse_alias_command 'alias say="echo \"hello world\""')
+    assert_equals 'echo "hello world"' "$cmd7" "Escaped double quotes"
+    
+    # Test: Mehrfache escaped single quotes
+    local cmd8=$(parse_alias_command "alias multi='it'\\''s a '\\''test'\\'''")
+    assert_equals "it's a 'test'" "$cmd8" "Mehrfache escaped single quotes"
 }
 
 # ------------------------------------------------------------

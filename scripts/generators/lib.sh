@@ -132,26 +132,84 @@ parse_description_comment() {
 # Parser: Alias-Befehl extrahieren
 # ------------------------------------------------------------
 # Format: alias name='command' oder alias name="command"  # optional comment
-# Rückgabe: command (ohne Quotes)
+# Rückgabe: command (ohne äußere Quotes)
+# Unterstützt:
+#   - Einfache Aliase: alias x='cmd'
+#   - Mit Pipes: alias x='cmd | grep foo'
+#   - Escaped single quotes: alias x='echo '\''text'\''' → echo 'text'
+#   - Escaped double quotes: alias x="say \"hello\"" → say "hello"
 parse_alias_command() {
     local line="$1"
-    local command
+    local after_eq
     
     # Entferne "alias name="
-    command="${line#alias *=}"
+    after_eq="${line#alias *=}"
     
-    # Bestimme Quote-Typ und extrahiere bis zum schließenden Quote
-    if [[ "$command" == \'* ]]; then
-        # Single-quoted: alias x='cmd'
-        command="${command#\'}"
-        command="${command%%\'*}"
-    elif [[ "$command" == \"* ]]; then
-        # Double-quoted: alias x="cmd"
-        command="${command#\"}"
-        command="${command%%\"*}"
+    # Entferne trailing comment (nach schließendem Quote und Whitespace)
+    # Aber vorsichtig – # innerhalb des Befehls behalten
+    
+    if [[ "$after_eq" == \'* ]]; then
+        # Single-quoted alias
+        after_eq="${after_eq#\'}"  # Öffnendes Quote entfernen
+        
+        # Bei '\'' Pattern: Ersetze durch einzelnes Quote für Ausgabe
+        # Das Pattern '\'' ist: Ende-Quote + Escaped-Quote + Start-Quote
+        # Für die Doku wollen wir das lesbare Ergebnis
+        local result=""
+        local rest="$after_eq"
+        
+        while [[ -n "$rest" ]]; do
+            # Nimm alles bis zum nächsten Quote
+            local segment="${rest%%\'*}"
+            result+="$segment"
+            rest="${rest#"$segment"}"
+            
+            # Prüfe was nach dem Quote kommt
+            if [[ "$rest" == "'\\''"* ]]; then
+                # Pattern '\'' gefunden – füge literal ' hinzu
+                result+="'"
+                rest="${rest#\"'\\''\"}"
+                rest="${rest#\'\\\'\'}"
+            elif [[ "$rest" == "'"* ]]; then
+                # Normales schließendes Quote – fertig
+                break
+            else
+                # Kein Quote mehr – fertig
+                break
+            fi
+        done
+        
+        echo "$result"
+        
+    elif [[ "$after_eq" == \"* ]]; then
+        # Double-quoted alias
+        after_eq="${after_eq#\"}"  # Öffnendes Quote entfernen
+        
+        # Bei \" Pattern: Ersetze durch einzelnes Quote für Ausgabe
+        local result=""
+        local rest="$after_eq"
+        
+        while [[ -n "$rest" ]]; do
+            local segment="${rest%%\"*}"
+            
+            # Prüfe ob das " escaped war (Backslash davor)
+            if [[ "$segment" == *'\' ]]; then
+                # Escaped quote – füge ohne Backslash + Quote hinzu
+                result+="${segment%\\}\""
+                rest="${rest#"$segment"\"}"
+            else
+                # Normales schließendes Quote
+                result+="$segment"
+                break
+            fi
+        done
+        
+        echo "$result"
+        
+    else
+        # Kein Quote (ungewöhnlich)
+        echo "${after_eq%%[[:space:]#]*}"
     fi
-    
-    echo "$command"
 }
 
 # ------------------------------------------------------------
