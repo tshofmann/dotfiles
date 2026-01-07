@@ -80,7 +80,6 @@ fkill() {
 # MAN + FZF + BAT: Man-Pages Browser
 # ------------------------------------------------------------
 # Man-Pages interaktiv durchsuchen mit Syntax-Highlighting
-# Ctrl+S togglet zwischen man und tldr Preview
 # Man-Pages mit bat-Vorschau – Enter=Öffnen, Ctrl+S=man↔tldr
 fman() {
     local selection page section
