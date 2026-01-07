@@ -38,6 +38,17 @@ extract_fzf_keybindings() {
     echo '```'
 }
 
+# Extrahiert den Terminal-Profilnamen aus der .terminal-Datei im setup/
+# Gibt Dateinamen ohne Endung zurück (z.B. "catppuccin-mocha")
+extract_terminal_profile_name() {
+    local terminal_file
+    terminal_file=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.terminal" | head -1)
+    [[ -f "$terminal_file" ]] || return 1
+    
+    # Dateiname ohne Pfad und ohne .terminal-Endung
+    echo "${${terminal_file:t}%.terminal}"
+}
+
 # Extrahiert den installierten Nerd Font aus Brewfile
 # Hinweis: Bei mehreren Nerd Fonts wird nur der erste als Beispiel verwendet
 extract_installed_nerd_font() {
@@ -76,16 +87,25 @@ font_display_name() {
 collect_theme_configs() {
     local output=""
     
+    # Terminal-Profil und Xcode-Theme dynamisch ermitteln
+    local terminal_file
+    terminal_file=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.terminal" | head -1)
+    [[ -z "$terminal_file" ]] && terminal_file="$DOTFILES_DIR/setup/catppuccin-mocha.terminal"
+    
+    local xcode_file
+    xcode_file=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.xccolortheme" | head -1)
+    [[ -z "$xcode_file" ]] && xcode_file="$DOTFILES_DIR/setup/Catppuccin Mocha.xccolortheme"
+    
     # Bekannte Theme-Dateien
     local -A theme_files=(
-        ["Terminal.app"]="$DOTFILES_DIR/setup/catppuccin-mocha.terminal|Via Bootstrap importiert + als Standard gesetzt"
+        ["Terminal.app"]="$terminal_file|Via Bootstrap importiert + als Standard gesetzt"
         ["Starship"]="catppuccin-powerline Preset|Via Bootstrap konfiguriert"
         ["bat"]="$DOTFILES_DIR/terminal/.config/bat/themes/|Via Stow verlinkt (+ Cache-Build)"
         ["fzf"]="$DOTFILES_DIR/terminal/.config/fzf/config|Farben in Config-Datei (via Stow)"
         ["btop"]="$DOTFILES_DIR/terminal/.config/btop/themes/|Via Stow verlinkt"
         ["eza"]="$DOTFILES_DIR/terminal/.config/eza/theme.yml|Via Stow verlinkt"
         ["zsh-syntax-highlighting"]="$DOTFILES_DIR/terminal/.config/zsh/|Via Stow verlinkt"
-        ["Xcode"]="$DOTFILES_DIR/setup/Catppuccin Mocha.xccolortheme|Via Bootstrap kopiert (manuelle Aktivierung)"
+        ["Xcode"]="$xcode_file|Via Bootstrap kopiert (manuelle Aktivierung)"
     )
     
     output+="| Tool | Theme-Datei | Status |\n"
@@ -211,16 +231,23 @@ Bei einem ungültigen Preset-Namen zeigt das Skript eine Warnung und verwendet `
 ## Schriftart wechseln
 
 Das Terminal-Profil, der Nerd Font und das Starship-Preset sind eng gekoppelt. Wenn du die Schriftart ändern möchtest, musst du alle drei Komponenten berücksichtigen.
+FONT_SECTION
 
-> **⚠️ Wichtig:** Die Datei `catppuccin-mocha.terminal` enthält binäre NSArchiver-Daten. **Niemals direkt editieren** – nur über die Terminal.app GUI ändern und neu exportieren.
+    # Terminal-Profilname für die Warnung dynamisch ermitteln (Fallback: catppuccin-mocha)
+    local profile_for_warning
+    profile_for_warning=$(extract_terminal_profile_name)
+    [[ -z "$profile_for_warning" ]] && profile_for_warning="catppuccin-mocha"
+
+    cat << FONT_WARNING
+> **⚠️ Wichtig:** Die Datei \`$profile_for_warning.terminal\` enthält binäre NSArchiver-Daten. **Niemals direkt editieren** – nur über die Terminal.app GUI ändern und neu exportieren.
 
 ### Voraussetzung
 
-Bei Starship-Presets mit Powerline-Symbolen (wie `catppuccin-powerline`) muss die neue Schriftart ein **Nerd Font** sein. Siehe [Tools → Warum Nerd Fonts?](tools.md#warum-nerd-fonts) für Details.
+Bei Starship-Presets mit Powerline-Symbolen (wie \`catppuccin-powerline\`) muss die neue Schriftart ein **Nerd Font** sein. Siehe [Tools → Warum Nerd Fonts?](tools.md#warum-nerd-fonts) für Details.
 
 ### Schritt 1: Neuen Nerd Font installieren
 
-FONT_SECTION
+FONT_WARNING
 
     # Font-Beispiel dynamisch generieren (Fallback wenn Brewfile fehlt)
     local installed_font
@@ -228,6 +255,11 @@ FONT_SECTION
     [[ -z "$installed_font" ]] && installed_font="font-meslo-lg-nerd-font"
     local display_name
     display_name=$(font_display_name "$installed_font")
+    
+    # Terminal-Profilname dynamisch aus .terminal-Datei (Fallback: catppuccin-mocha)
+    local profile_name
+    profile_name=$(extract_terminal_profile_name)
+    [[ -z "$profile_name" ]] && profile_name="catppuccin-mocha"
     
     cat << FONT_EXAMPLE
 \`\`\`zsh
@@ -241,7 +273,7 @@ brew install --cask $installed_font
 ### Schritt 2: Terminal.app Profil anpassen
 
 1. Terminal.app öffnen
-2. **Terminal** → **Einstellungen** → **Profile** → **catppuccin-mocha**
+2. **Terminal** → **Einstellungen** → **Profile** → **$profile_name**
 3. Tab **Text** → **Schrift** → **Ändern…**
 4. Neuen Nerd Font auswählen (z.B. "$display_name")
 5. Größe anpassen (empfohlen: 13-14pt)
