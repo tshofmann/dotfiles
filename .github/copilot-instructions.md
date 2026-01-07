@@ -100,6 +100,28 @@ alias x='command'
 
 ## GitHub PRs
 
+### Merge-Workflow (KRITISCH)
+
+**VOR jedem Merge diese Schritte ausführen:**
+
+```zsh
+# 1. CI-Status prüfen
+gh pr checks <nr>
+
+# 2. Auf Copilot-Review WARTEN (erscheint nach ~30-60 Sek)
+gh pr view <nr> --json reviews | jq '.reviews[] | select(.author.login | contains("copilot"))'
+
+# 3. Review-Kommentare LESEN und BEHEBEN
+gh api repos/{owner}/{repo}/pulls/<nr>/reviews
+# oder: mcp_io_github_git_pull_request_read mit method=get_review_comments
+
+# 4. Erst wenn alle Kommentare adressiert sind: Mergen
+```
+
+**Niemals blind mergen** nur weil CI grün ist – Copilot-Reviews enthalten wertvolles Feedback!
+
+### Review-Thread-Handling
+
 | Regel | Begründung |
 |-------|------------|
 | **Review-Threads einzeln beantworten** | Erklärung im Thread dokumentiert, nicht nur global |
