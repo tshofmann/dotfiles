@@ -5,6 +5,7 @@ on:
     branches: [main, feature/**]
   pull_request:
     branches: [main]
+  workflow_dispatch:  # Manuelles Triggern ermöglichen
 
 jobs:
   validate:
@@ -14,9 +15,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
-      - name: Shell-Syntax prüfen
+      - name: ZSH-Syntax prüfen
         run: |
-          echo "Prüfe Shell-Syntax..."
+          echo "Prüfe ZSH-Syntax (inkl. Alias-Dateien)..."
           errors=0
           for file in scripts/**/*.sh terminal/.config/alias/*.alias setup/bootstrap.sh; do
             if [[ -f "$file" ]]; then

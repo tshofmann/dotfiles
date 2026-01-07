@@ -33,8 +33,8 @@ Siehe [architecture.md → Verzeichnisstruktur](docs/architecture.md#verzeichnis
 
 | Pfad | Zweck |
 |------|-------|
-| `scripts/validators/` | Modulare Validierungs-Komponenten (`core/`, `extended/`) |
-| `scripts/tests/` | Unit-Tests für Validatoren |
+| `scripts/generators/` | Dokumentations-Generatoren (Single Source of Truth) |
+| `scripts/tests/` | Unit-Tests für Generatoren |
 | `setup/` | Bootstrap, Brewfile, Terminal-Profil |
 | `terminal/` | Dotfiles (werden nach `~` verlinkt) |
 | `docs/` | Dokumentation für Endnutzer |
@@ -68,69 +68,46 @@ git commit --no-verify -m "..."
 
 ## Dokumentations-Validierung
 
+Die Dokumentation wird automatisch aus dem Code generiert (Single Source of Truth).
+
 ### Manuell ausführen
 
 ```zsh
-# Alle Validierungen
-./scripts/validate-docs.sh
+# Prüfen ob Dokumentation aktuell ist
+./scripts/generate-docs.sh --check
 
-# Nur Kern-Validierungen (schnell)
-./scripts/validate-docs.sh --core
-
-# Nur erweiterte Prüfungen
-./scripts/validate-docs.sh --extended
-
-# Verfügbare Validatoren anzeigen
-./scripts/validate-docs.sh --list
-
-# Einzelnen Validator ausführen
-./scripts/validate-docs.sh brewfile
+# Dokumentation neu generieren
+./scripts/generate-docs.sh --generate
 ```
 
-### Unit-Tests für Validatoren
+### Unit-Tests für Generatoren
 
 ```zsh
-# Alle Tests ausführen
-./scripts/tests/run-tests.sh
-
-# Mit ausführlicher Ausgabe
-./scripts/tests/run-tests.sh --verbose
+# Tests ausführen
+./scripts/tests/test_generators.sh
 ```
 
 Die Test-Suite prüft:
 - Pfad-Konfiguration (DOTFILES_DIR, etc.)
 - Extraktions-Funktionen (Aliase, Funktionen, Docs)
 - Logging und Zähler (ok, warn, err)
-- Validator-Registry (register, run)
-- Alle Validator-Dateien (Syntax, Registrierung)
 
-### Was wird geprüft?
+### Was wird generiert?
 
-**Kern-Validierungen (--core):** (siehe `validators/core/`)
-| Prüfung | Details |
-|---------|---------|
-| **Brewfile** | brew/cask/mas Anzahl in `architecture.md` |
-| **Aliase** | Alias-Anzahl pro Datei dokumentiert |
-| **Configs** | fzf/bat/ripgrep Config-Beispiele |
-| **Symlinks** | Symlink-Tabelle in `installation.md` |
-| **macOS** | macOS-Version in Docs |
-| **Bootstrap** | Bootstrap-Schritte dokumentiert |
-| **Health-Check** | Tool-Liste synchron |
-| **Starship** | Starship-Prompt konfiguriert |
-
-**Erweiterte Validierungen (--extended):** (siehe `validators/extended/`)
-| Prüfung | Details |
-|---------|---------|
-| **alias-names** | Alias-Namen in Docs existieren im Code |
-| **codeblocks** | Shell-Commands in Code-Blöcken sind gültig |
-| **structure** | terminal/ Dateien in CONTRIBUTING.md Struktur |
-| **style-consistency** | Metadaten-Padding, Guards, Sektions-Trenner |
+| Datei | Quelle |
+|-------|--------|
+| `README.md` | Template in `generators/readme.sh` |
+| `docs/tools.md` | `.alias`-Dateien + `Brewfile` |
+| `docs/installation.md` | `bootstrap.sh` |
+| `docs/architecture.md` | Verzeichnisstruktur + Configs |
+| `docs/configuration.md` | Config-Dateien |
+| `tealdeer/pages/*.patch.md` | Alias-Kommentare |
 
 ### Bei Fehlern
 
 1. Öffne die gemeldete Dokumentationsdatei
-2. Aktualisiere den veralteten Abschnitt
-3. Führe `./scripts/validate-docs.sh` erneut aus
+2. Aktualisiere den veralteten Abschnitt **im Code** (nicht in der Doku!)
+3. Führe `./scripts/generate-docs.sh --generate` aus
 4. Committe die Änderung
 
 ---
@@ -231,7 +208,7 @@ rgf() { ... }
 ```
 
 > **Wichtig:** Diese Kommentare sind die Single Source of Truth für tldr-Patches.
-> Der Generator `scripts/generate-tldr-patches.sh` erzeugt die `.patch.md` Dateien
+> Der Generator `scripts/generators/tldr.sh` erzeugt die `.patch.md` Dateien
 > automatisch aus diesen Kommentaren.
 
 ### tldr-Patches generieren
@@ -239,14 +216,14 @@ rgf() { ... }
 Die `.patch.md` Dateien in `terminal/.config/tealdeer/pages/` werden **automatisch generiert**:
 
 ```bash
-# Prüfen ob Patches aktuell sind
-./scripts/generate-tldr-patches.sh --check
+# Prüfen ob Patches aktuell sind (Teil von generate-docs.sh)
+./scripts/generate-docs.sh --check
 
-# Patches neu generieren
-./scripts/generate-tldr-patches.sh --generate
+# Alle Docs inkl. Patches neu generieren
+./scripts/generate-docs.sh --generate
 ```
 
-Der Validator `tealdeer-patches` prüft bei jedem `validate-docs.sh` ob die Patches aktuell sind.
+Der Pre-Commit Hook prüft automatisch ob die Patches aktuell sind.
 
 ### Ausnahmen vom Header-Format
 
@@ -260,7 +237,7 @@ Einige Dateien folgen **nicht** dem Standard-Header-Format:
 | `zsh/catppuccin_*.zsh` | Third-Party Theme (Catppuccin) – bei Updates überschrieben |
 | `tealdeer/pages/*.patch.md` | Markdown-Format für tldr-Patches – eigenes Schema |
 
-Diese Dateien werden vom `style-consistency` Validator ignoriert.
+Diese Dateien werden vom Pre-Commit Hook nicht auf Header-Format geprüft.
 
 ---
 
@@ -350,7 +327,7 @@ git checkout -b feature/beschreibung
 
 - Code ändern
 - Dokumentation aktualisieren (falls relevant)
-- `./scripts/validate-docs.sh` ausführen
+- `./scripts/generate-docs.sh --check` ausführen
 
 ### 3. Testen
 
@@ -391,16 +368,17 @@ gh pr create
 
 1. **Brewfile** erweitern: `setup/Brewfile`
 2. **Alias-Datei** erstellen: `terminal/.config/alias/tool.alias`
-3. **Tealdeer-Patch** erstellen: `terminal/.config/tealdeer/pages/tool.patch.md`
-4. **tools.md** aktualisieren: Tabelle + Alias-Sektion
-5. **architecture.md** aktualisieren: Brewfile-Beispiel
-6. `./scripts/validate-docs.sh` ausführen
+3. Dokumentation wird automatisch generiert (tldr-Patch, tools.md, etc.)
+4. `./scripts/generate-docs.sh --generate` ausführen
+5. Änderungen prüfen und committen
 
 ### Dokumentation ändern
 
-1. Datei in `docs/` bearbeiten
-2. Bei strukturellen Änderungen: Cross-References prüfen
-3. `./scripts/validate-docs.sh` ausführen (bei Code-relevanten Docs)
+> ⚠️ **Wichtig:** Dokumentation wird aus Code generiert! Änderungen direkt in `docs/` werden überschrieben.
+
+1. Änderung im **Quellcode** vornehmen (`.alias`, `Brewfile`, Configs, oder `generators/*.sh`)
+2. `./scripts/generate-docs.sh --generate` ausführen
+3. Generierte Änderungen prüfen und committen
 
 ### Terminal-Profil ändern
 
@@ -455,7 +433,7 @@ Alias-Dateiname = Patch-Dateiname = tldr-Befehlsname (z.B. `brew.alias` → `bre
 **5. Validieren:**
 
 ```zsh
-./scripts/validate-docs.sh tealdeer-patches
+./scripts/generate-docs.sh --check
 ```
 
 **6. Was wird validiert?**
@@ -472,8 +450,8 @@ Alias-Dateiname = Patch-Dateiname = tldr-Befehlsname (z.B. `brew.alias` → `bre
 
 ## Hilfe
 
-- **Docs stimmen nicht mit Code überein?** → `./scripts/validate-docs.sh` zeigt Details
-- **Hook blockiert Commit?** → Fehlermeldung lesen, Docs aktualisieren
+- **Docs stimmen nicht mit Code überein?** → `./scripts/generate-docs.sh --check` zeigt Details
+- **Hook blockiert Commit?** → `./scripts/generate-docs.sh --generate` ausführen, dann committen
 - **Installation kaputt?** → `./scripts/health-check.sh` zur Diagnose
 
 ---

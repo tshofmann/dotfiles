@@ -15,6 +15,11 @@ generate_readme_md() {
     cat << 'EOF'
 # 🍎 dotfiles
 
+[![CI](https://github.com/tshofmann/dotfiles/actions/workflows/validate.yml/badge.svg)](https://github.com/tshofmann/dotfiles/actions/workflows/validate.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![macOS](https://img.shields.io/badge/macOS-14%2B-black?logo=apple)](https://www.apple.com/macos/)
+[![Shell: zsh](https://img.shields.io/badge/Shell-zsh-green?logo=gnubash)](https://www.zsh.org/)
+
 > macOS Setup für Apple Silicon (arm64) – automatisiert, idempotent, minimal.
 
 ## Quickstart
