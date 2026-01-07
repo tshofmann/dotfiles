@@ -70,7 +70,7 @@ if command -v fzf >/dev/null 2>&1; then
         [[ -n "$run" ]] && gh run view "$run" --log | bat --color=always
     }
     
-    # Repositories durchsuchen – Enter=Klonen, Ctrl+O=Browser
+    # Repo Browser(suche?) – Enter=Klonen, Ctrl+O=Browser
     ghrepo() {
         local repo
         local query="${1:-}"

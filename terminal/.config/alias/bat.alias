@@ -30,7 +30,7 @@ alias catd='bat --diff'
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # Theme interaktiv auswählen und aktivieren
+    # Theme Browser – Enter=Aktivieren
     bat-theme() {
         local theme
         local config_file="$HOME/.config/bat/config"

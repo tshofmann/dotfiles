@@ -55,7 +55,7 @@ alias fdyaml='fd -e yaml -e yml'
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # Verzeichnis wechseln mit eza-Vorschau – Enter=Wechseln, Ctrl+Y=Pfad kopieren
+    # Verzeichnis wechseln(pfad=.) – Enter=Wechseln, Ctrl+Y=Pfad kopieren
     cdf() {
         local dir
         local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
@@ -68,7 +68,7 @@ if command -v fzf >/dev/null 2>&1; then
         [[ -n "$dir" ]] && cd "$dir"
     }
 
-    # Datei mit Standard-App öffnen – Enter=Öffnen, Ctrl+Y=Pfad kopieren
+    # Datei öffnen(pfad=.) – Enter=Öffnen, Ctrl+Y=Pfad kopieren
     fo() {
         local file
         local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"

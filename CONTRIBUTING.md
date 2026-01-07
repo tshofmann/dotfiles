@@ -190,13 +190,63 @@ Alle Shell-Dateien (`.alias`, `.sh`, `.zsh*`) beginnen mit einem standardisierte
 # Verzeichnisse zuerst anzeigen mit Icons
 alias ls='eza --group-directories-first'
 
-# Man-Pages interaktiv durchsuchen mit Syntax-Highlighting
+# Man/tldr Browser – Ctrl+S=Modus wechseln, Enter=je nach Modus öffnen
 fman() {
     # ... Implementation
 }
 ```
 
 **Private Funktionen** (mit `_` Präfix) sind von dieser Regel ausgenommen.
+
+#### Beschreibungskommentar-Format für fzf-Funktionen
+
+Funktionen mit fzf-UI nutzen ein erweitertes Format:
+
+```
+# Name(param?) – Key=Aktion, Key=Aktion
+```
+
+**Parameter-Notation:**
+| Notation | Bedeutung | Beispiel |
+|----------|-----------|----------|
+| `(param)` | Pflichtparameter | `# Suche(query)` |
+| `(param?)` | Optionaler Parameter | `# Suche(query?)` |
+| `(param=default)` | Optional mit Default | `# Wechseln(pfad=.)` |
+
+**Keybinding-Format:**
+- `Enter=Aktion` – Einzelne Taste
+- `Ctrl+S=Aktion` – Modifier-Kombination
+- Mehrere Keybindings durch `, ` getrennt
+
+**Beispiele:**
+```zsh
+# zoxide Browser – Enter=Wechseln, Ctrl+D=Löschen, Ctrl+Y=Kopieren
+zf() { ... }
+
+# Verzeichnis wechseln(pfad=.) – Enter=Wechseln, Ctrl+Y=Pfad kopieren
+cdf() { ... }
+
+# Live-Grep(suche?) – Enter=Datei öffnen, Ctrl+Y=Pfad kopieren
+rgf() { ... }
+```
+
+> **Wichtig:** Diese Kommentare sind die Single Source of Truth für tldr-Patches.
+> Der Generator `scripts/generate-tldr-patches.sh` erzeugt die `.patch.md` Dateien
+> automatisch aus diesen Kommentaren.
+
+### tldr-Patches generieren
+
+Die `.patch.md` Dateien in `terminal/.config/tealdeer/pages/` werden **automatisch generiert**:
+
+```bash
+# Prüfen ob Patches aktuell sind
+./scripts/generate-tldr-patches.sh --check
+
+# Patches neu generieren
+./scripts/generate-tldr-patches.sh --generate
+```
+
+Der Validator `tealdeer-patches` prüft bei jedem `validate-docs.sh` ob die Patches aktuell sind.
 
 ### Ausnahmen vom Header-Format
 

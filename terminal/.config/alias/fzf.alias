@@ -60,7 +60,7 @@ fi
 # KILL + FZF: Prozess-Management
 # ------------------------------------------------------------
 # Prozesse interaktiv suchen und beenden (Tab für Mehrfachauswahl)
-# Prozess Browser – Enter=Beenden, Tab=Mehrfach, Ctrl+S=Apps↔Alle
+# Prozess Browser(signal=15) – Enter=Beenden, Tab=Mehrfach, Ctrl+S=Apps↔Alle
 fkill() {
     local pid
     local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fkill-list"
@@ -114,7 +114,7 @@ fman() {
 # ALIAS + FZF: Alias-/Funktions-Browser
 # ------------------------------------------------------------
 # Fuzzy-Suche für Aliase und Funktionen aus allen .alias-Dateien
-# fa Browser – Enter=Übernehmen, Ctrl+S=tldr↔Code
+# fa Browser(suche?) – Enter=Übernehmen, Ctrl+S=tldr↔Code
 fa() {
     local alias_dir="${XDG_CONFIG_HOME:-$HOME/.config}/alias"
     local fzf_dir="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
