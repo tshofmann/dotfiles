@@ -17,7 +17,7 @@ collect_theme_configs() {
     
     # Bekannte Theme-Dateien
     local -A theme_files=(
-        ["Terminal.app"]="$DOTFILES_DIR/setup/catppuccin-mocha.terminal|Via Bootstrap importiert"
+        ["Terminal.app"]="$DOTFILES_DIR/setup/catppuccin-mocha.terminal|Via Bootstrap importiert + als Standard gesetzt"
         ["Starship"]="catppuccin-powerline Preset|Via Bootstrap konfiguriert"
         ["bat"]="$DOTFILES_DIR/terminal/.config/bat/themes/|Via Stow verlinkt (+ Cache-Build)"
         ["fzf"]="$DOTFILES_DIR/terminal/.config/fzf/config|Farben in Config-Datei (via Stow)"

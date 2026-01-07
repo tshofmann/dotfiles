@@ -15,7 +15,7 @@ Das gesamte Setup verwendet [Catppuccin Mocha](https://catppuccin.com/) als einh
 
 | Tool | Theme-Datei | Status |
 |------|-------------|--------|
-| **Terminal.app** | `setup/catppuccin-mocha.terminal` | Via Bootstrap importiert |
+| **Terminal.app** | `setup/catppuccin-mocha.terminal` | Via Bootstrap importiert + als Standard gesetzt |
 | **Starship** | catppuccin-powerline Preset | Via Bootstrap konfiguriert |
 | **bat** | `terminal/.config/bat/themes/` | Via Stow verlinkt (+ Cache-Build) |
 | **fzf** | `terminal/.config/fzf/config` | Farben in Config-Datei (via Stow) |
@@ -199,3 +199,4 @@ bindkey '^X3' fzf-cd-widget
 | ripgrep Optionen | `~/.config/ripgrep/config` | CLI-Flags |
 | lazygit Keybindings | `~/.config/lazygit/config.yml` | YAML |
 | fastfetch Modules | `~/.config/fastfetch/config.jsonc` | JSONC |
+
