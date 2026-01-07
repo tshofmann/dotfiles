@@ -10,12 +10,24 @@
 set -euo pipefail
 
 # ------------------------------------------------------------
+# Farben (Catppuccin Mocha)
+# ------------------------------------------------------------
+C_RESET='\033[0m'
+C_MAUVE='\033[38;2;203;166;247m'
+C_GREEN='\033[38;2;166;227;161m'
+C_RED='\033[38;2;243;139;168m'
+C_YELLOW='\033[38;2;249;226;175m'
+C_BLUE='\033[38;2;137;180;250m'
+C_TEXT='\033[38;2;205;214;244m'
+C_DIM='\033[38;2;108;112;134m'
+
+# ------------------------------------------------------------
 # Logging-Helper
 # ------------------------------------------------------------
-log()  { print "→ $*"; }
-ok()   { print "✔ $*"; }
-err()  { print "✖ $*" >&2; }
-warn() { print "⚠ $*"; }
+log()  { echo -e "${C_BLUE}→${C_RESET} $*"; }
+ok()   { echo -e "${C_GREEN}✔${C_RESET} $*"; }
+err()  { echo -e "${C_RED}✖${C_RESET} $*" >&2; }
+warn() { echo -e "${C_YELLOW}⚠${C_RESET} $*"; }
 
 # ------------------------------------------------------------
 # Trap-Handler für Abbruch/Fehler
@@ -359,3 +371,5 @@ print ""
 log "Nächste Schritte:"
 log "  1. Terminal.app neu starten für vollständige Übernahme aller Einstellungen"
 log "  2. Konfigurationsdateien verlinken: cd $DOTFILES_DIR && stow --adopt -R terminal && git reset --hard HEAD"
+log "  3. bat Theme-Cache bauen: bat cache --build"
+log "  4. tldr-Pages herunterladen: tldr --update"

@@ -5,6 +5,9 @@
 # Pfad    : ~/.config/tealdeer/config.toml
 # Docs    : https://tealdeer-rs.github.io/tealdeer/config.html
 # ============================================================
+# Hinweis : Erster Start erfordert `tldr --update` für
+#           initialen Cache-Download. Danach auto_update.
+# ============================================================
 
 # ------------------------------------------------------------
 # Darstellung

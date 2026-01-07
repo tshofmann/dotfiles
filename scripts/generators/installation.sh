@@ -1,3 +1,41 @@
+#!/usr/bin/env zsh
+# ============================================================
+# installation.sh - Generator für docs/installation.md
+# ============================================================
+# Zweck   : Generiert Installationsdokumentation aus bootstrap.sh
+# Pfad    : scripts/generators/installation.sh
+# ============================================================
+
+source "${0:A:h}/lib.sh"
+
+# ------------------------------------------------------------
+# Bootstrap-Schritte extrahieren
+# ------------------------------------------------------------
+# Parst CURRENT_STEP Zuweisungen und Aktionen aus bootstrap.sh
+extract_bootstrap_steps() {
+    local output=""
+    local step_count=0
+    
+    while IFS= read -r line; do
+        # CURRENT_STEP="..." Zuweisungen
+        if [[ "$line" == *'CURRENT_STEP='* ]]; then
+            local step="${line#*CURRENT_STEP=}"
+            step="${step#\"}"
+            step="${step%\"}"
+            [[ -n "$step" && "$step" != "Initialisierung" ]] && {
+                (( step_count++ )) || true
+            }
+        fi
+    done < "$BOOTSTRAP"
+    
+    echo "$step_count"
+}
+
+# ------------------------------------------------------------
+# Haupt-Generator für installation.md
+# ------------------------------------------------------------
+generate_installation_md() {
+    cat << 'HEADER'
 # 🚀 Installation
 
 Diese Anleitung führt dich durch die vollständige Installation der dotfiles auf einem frischen Apple Silicon Mac.
@@ -133,41 +171,75 @@ ff
 
 ## Installierte Pakete
 
-### CLI-Tools (via Homebrew)
+HEADER
 
-| Paket | Beschreibung |
-|-------|--------------|
-| `fzf` | Fuzzy Finder |
-| `gh` | GitHub CLI |
-| `stow` | Symlink-Manager |
-| `starship` | Shell-Prompt |
-| `tealdeer` | tldr-Client für vereinfachte Man-Pages |
-| `zoxide` | Smartes cd |
-| `mas` | Mac App Store CLI |
-| `eza` | Moderner ls-Ersatz mit Icons |
-| `bat` | cat mit Syntax-Highlighting |
-| `ripgrep` | Ultraschneller grep-Ersatz |
-| `fd` | Schneller find-Ersatz |
-| `btop` | Ressourcen-Monitor (top-Ersatz) |
-| `fastfetch` | Schnelle System-Info (neofetch-Ersatz) |
-| `lazygit` | Terminal-UI für Git |
-| `zsh-syntax-highlighting` | Syntax-Highlighting für Kommandos |
-| `zsh-autosuggestions` | History-basierte Vorschläge |
+    # CLI-Tools aus Brewfile
+    echo "### CLI-Tools (via Homebrew)"
+    echo ""
+    echo "| Paket | Beschreibung |"
+    echo "|-------|--------------|"
+    
+    while IFS= read -r line; do
+        [[ "$line" == \#* || -z "$line" ]] && continue
+        
+        local parsed=$(parse_brewfile_entry "$line")
+        [[ -z "$parsed" ]] && continue
+        
+        local name="${parsed%%|*}"
+        local rest="${parsed#*|}"
+        local desc="${rest%%|*}"
+        local typ="${rest##*|}"
+        
+        [[ "$typ" == "brew" ]] && echo "| \`$name\` | $desc |"
+    done < "$BREWFILE"
+    
+    echo ""
+    
+    # Casks
+    echo "### Apps & Fonts (via Cask)"
+    echo ""
+    echo "| Paket | Beschreibung |"
+    echo "|-------|--------------|"
+    
+    while IFS= read -r line; do
+        [[ "$line" == \#* || -z "$line" ]] && continue
+        
+        local parsed=$(parse_brewfile_entry "$line")
+        [[ -z "$parsed" ]] && continue
+        
+        local name="${parsed%%|*}"
+        local rest="${parsed#*|}"
+        local desc="${rest%%|*}"
+        local typ="${rest##*|}"
+        
+        [[ "$typ" == "cask" ]] && echo "| \`$name\` | $desc |"
+    done < "$BREWFILE"
+    
+    echo ""
+    
+    # MAS Apps
+    echo "### Mac App Store Apps (via mas)"
+    echo ""
+    echo "| App | Beschreibung |"
+    echo "|-----|--------------|"
+    
+    while IFS= read -r line; do
+        [[ "$line" == \#* || -z "$line" ]] && continue
+        
+        local parsed=$(parse_brewfile_entry "$line")
+        [[ -z "$parsed" ]] && continue
+        
+        local name="${parsed%%|*}"
+        local rest="${parsed#*|}"
+        local desc="${rest%%|*}"
+        local typ="${rest##*|}"
+        
+        [[ "$typ" == "mas" ]] && echo "| $name | $desc |"
+    done < "$BREWFILE"
+    
+    echo ""
+    echo '> **Hinweis:** Die Anmeldung im App Store muss manuell erfolgen – die Befehle `mas account` und `mas signin` sind auf macOS 12+ nicht verfügbar.'
+}
 
-### Apps & Fonts (via Cask)
-
-| Paket | Beschreibung |
-|-------|--------------|
-| `font-meslo-lg-nerd-font` | Nerd Font für Terminal-Icons |
-| `claude-code` | Terminal-basierter KI-Coding-Assistent |
-
-### Mac App Store Apps (via mas)
-
-| App | Beschreibung |
-|-----|--------------|
-| Xcode | Apple IDE für iOS/macOS |
-| Pages | Textverarbeitung |
-| Numbers | Tabellenkalkulation |
-| Keynote | Präsentationen |
-
-> **Hinweis:** Die Anmeldung im App Store muss manuell erfolgen – die Befehle `mas account` und `mas signin` sind auf macOS 12+ nicht verfügbar.
+# Nur ausführen wenn direkt aufgerufen (nicht gesourct)
+[[ -z "${_SOURCED_BY_GENERATOR:-}" ]] && generate_installation_md || true

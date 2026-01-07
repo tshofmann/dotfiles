@@ -1,90 +1,13 @@
 #!/usr/bin/env zsh
 # ============================================================
-# generate-tldr-patches.sh - tldr-Patches aus Code generieren
+# tldr.sh - Generator für tldr-Patches
 # ============================================================
-# Zweck   : Single Source of Truth – generiert .patch.md aus Code
-# Pfad    : scripts/generate-tldr-patches.sh
-# Aufruf  : ./scripts/generate-tldr-patches.sh [--check|--generate]
-# ============================================================
-# Quellen:
-#   - .alias Dateien: Funktionen + Beschreibungskommentare
-#   - fzf/config: Globale Keybindings
-#   - Header-Blöcke: Cross-Referenzen
+# Zweck   : Generiert tldr-Patches aus .alias-Dateien
+# Pfad    : scripts/generators/tldr.sh
+# Hinweis : Ersetzt scripts/generate-tldr-patches.sh
 # ============================================================
 
-set -euo pipefail
-
-# ------------------------------------------------------------
-# Konfiguration
-# ------------------------------------------------------------
-SCRIPT_DIR="${0:A:h}"
-DOTFILES_DIR="${SCRIPT_DIR:h}"
-ALIAS_DIR="$DOTFILES_DIR/terminal/.config/alias"
-FZF_CONFIG="$DOTFILES_DIR/terminal/.config/fzf/config"
-TEALDEER_DIR="$DOTFILES_DIR/terminal/.config/tealdeer/pages"
-
-# Farben
-C_RESET='\033[0m'
-C_GREEN='\033[38;2;166;227;161m'
-C_RED='\033[38;2;243;139;168m'
-C_YELLOW='\033[38;2;249;226;175m'
-C_BLUE='\033[38;2;137;180;250m'
-
-# ------------------------------------------------------------
-# Hilfsfunktionen
-# ------------------------------------------------------------
-log() { echo -e "${C_BLUE}→${C_RESET} $1"; }
-ok() { echo -e "${C_GREEN}✔${C_RESET} $1"; }
-err() { echo -e "${C_RED}✖${C_RESET} $1" >&2; }
-warn() { echo -e "${C_YELLOW}⚠${C_RESET} $1"; }
-
-# ------------------------------------------------------------
-# Parser: Beschreibungskommentar
-# ------------------------------------------------------------
-# Format: # Name(param?) – Key1=Aktion1, Key2=Aktion2
-# Rückgabe: name|param|keybindings
-parse_description_comment() {
-    local comment="$1"
-    local name param keybindings
-    
-    # Entferne führendes "# "
-    comment="${comment#\# }"
-    comment="${comment#\#}"
-    comment="${comment## }"
-    
-    # Extrahiere Name (vor Klammer oder Dash)
-    # Parameter-Notation: Name(param) ohne Leerzeichen vor (
-    # Hinweis in Klammern: Name (hinweis) mit Leerzeichen → kein Parameter
-    if [[ "$comment" == *[a-zA-Z0-9]'('* ]]; then
-        # Klammer direkt nach Wort → Parameter-Notation
-        name="${comment%%\(*}"
-        name="${name%% }"
-        # Parameter extrahieren
-        local param_part="${comment#*\(}"
-        param="${param_part%%\)*}"
-    elif [[ "$comment" == *' ('* ]]; then
-        # Leerzeichen vor Klammer → nur Hinweis, kein Parameter
-        name="${comment%% \(*}"
-        name="${name%% –*}"
-        name="${name%% -*}"
-        param=""
-    else
-        name="${comment%% –*}"
-        name="${name%% -*}"
-        param=""
-    fi
-    
-    # Keybindings extrahieren (nach – oder -)
-    if [[ "$comment" == *" – "* ]]; then
-        keybindings="${comment#* – }"
-    elif [[ "$comment" == *" - "* ]]; then
-        keybindings="${comment#* - }"
-    else
-        keybindings=""
-    fi
-    
-    echo "${name}|${param}|${keybindings}"
-}
+source "${0:A:h}/lib.sh"
 
 # ------------------------------------------------------------
 # Parser: Keybindings zu tldr-Format
@@ -95,44 +18,34 @@ format_keybindings_for_tldr() {
     local keybindings="$1"
     [[ -z "$keybindings" ]] && return
     
-    # Prüfe ob überhaupt Keybindings vorhanden sind (Key=Action Format)
-    # Gültige Keys: Enter, Tab, Ctrl+X, Shift+X, Alt+X, Esc
+    # Prüfe ob überhaupt Keybindings vorhanden sind
     case "$keybindings" in
         *Enter* | *Tab* | *Ctrl* | *Shift* | *Alt* | *Esc*) ;;
-        *) return ;;  # Kein Keybinding-Format, ignorieren
+        *) return ;;
     esac
     
     local result=""
     local IFS=','
     
     for binding in ${=keybindings}; do
-        binding="${binding## }"  # Trim
+        binding="${binding## }"
         binding="${binding%% }"
         
-        # Nur verarbeiten wenn es ein Key=Action Format ist
         [[ "$binding" != *"="* ]] && continue
         
         local key="${binding%%=*}"
         local action="${binding#*=}"
         
-        # Validiere dass key ein gültiger Key ist (einfache Pattern-Prüfung)
         case "$key" in
             Enter | Tab | Esc | Ctrl+* | Shift+* | Alt+*) ;;
-            *) continue ;;  # Kein gültiger Key
+            *) continue ;;
         esac
         
-        # Konvertiere Key-Format: Ctrl+S → Ctrl s (lowercase nach Modifier)
         key="${key//+/ }"
-        # Zweiten Teil lowercase machen (nur wenn es ein Buchstabe ist)
         if [[ "$key" == *" "* ]]; then
             local modifier="${key%% *}"
             local letter="${key##* }"
-            # Nur Buchstaben lowercase machen
-            if [[ "$letter" == [A-Za-z] ]]; then
-                key="${modifier} ${(L)letter}"
-            else
-                key="${modifier} ${letter}"
-            fi
+            [[ "$letter" == [A-Za-z] ]] && key="${modifier} ${(L)letter}"
         fi
         
         [[ -n "$result" ]] && result+=", "
@@ -145,13 +58,10 @@ format_keybindings_for_tldr() {
 # ------------------------------------------------------------
 # Parser: Parameter zu tldr-Format
 # ------------------------------------------------------------
-# Eingabe: suche? oder pfad=. oder leer
-# Ausgabe: {{suche}} oder {{pfad}} oder leer
 format_param_for_tldr() {
     local param="$1"
     [[ -z "$param" ]] && return
     
-    # Entferne ? und =default
     param="${param%%\?}"
     param="${param%%=*}"
     
@@ -161,32 +71,23 @@ format_param_for_tldr() {
 # ------------------------------------------------------------
 # Parser: fzf/config globale Keybindings
 # ------------------------------------------------------------
-# Format in config:
-#   # Ctrl+/ : Vorschau ein-/ausblenden
-#   --bind=ctrl-/:toggle-preview
 parse_fzf_config_keybindings() {
     local config="$1"
     local output=""
     local prev_comment=""
     
     while IFS= read -r line; do
-        # Kommentar mit Keybinding-Beschreibung (startet mit # Ctrl oder # Alt)
         if [[ "$line" == "# Ctrl"*":"* || "$line" == "# Alt"*":"* ]]; then
             prev_comment="${line#\# }"
-        # --bind Zeile
         elif [[ "$line" == "--bind="* && -n "$prev_comment" ]]; then
             local key="${prev_comment%% :*}"
             local action="${prev_comment#*: }"
             
-            # Konvertiere Ctrl+/ → Ctrl / und lowercase (nur Buchstaben)
             key="${key//+/ }"
             if [[ "$key" == *" "* ]]; then
                 local modifier="${key%% *}"
                 local letter="${key##* }"
-                # Nur Buchstaben lowercase, Sonderzeichen behalten
-                if [[ "$letter" =~ ^[A-Za-z]+$ ]]; then
-                    letter="${(L)letter}"
-                fi
+                [[ "$letter" =~ ^[A-Za-z]+$ ]] && letter="${(L)letter}"
                 key="${modifier} ${letter}"
             fi
             
@@ -197,7 +98,6 @@ parse_fzf_config_keybindings() {
         fi
     done < "$config"
     
-    # Tab ist fzf-default, manuell hinzufügen
     output+="- dotfiles: Einzelnen Eintrag zur Auswahl hinzufügen:\n\n\`<Tab>\`\n\n"
     
     echo -e "$output"
@@ -206,28 +106,17 @@ parse_fzf_config_keybindings() {
 # ------------------------------------------------------------
 # Parser: Shell-Keybindings aus fzf.alias Header
 # ------------------------------------------------------------
-# Format: # Ctrl+X 1: History durchsuchen mit Vorschau
 parse_shell_keybindings() {
     local file="$1"
     local output=""
     local in_section=false
     
     while IFS= read -r line; do
-        # Sektion beginnt bei Shell-Keybindings Header (Zeile mit ----)
-        if [[ "$line" == *"Shell-Keybindings"* ]]; then
-            in_section=true
-            continue
-        fi
-        
-        # Trennlinien innerhalb der Sektion überspringen
+        [[ "$line" == *"Shell-Keybindings"* ]] && { in_section=true; continue; }
         [[ "$in_section" == true && "$line" == "# ----"* ]] && continue
-        
-        # Sektion endet bei ZOXIDE oder nächster benannter Sektion
         [[ "$in_section" == true && "$line" == *"ZOXIDE"* ]] && break
         
-        # Keybinding parsen: # Ctrl+X N: Beschreibung
         if [[ "$in_section" == true && "$line" == "# Ctrl+X "* ]]; then
-            # Extrahiere: # Ctrl+X 1: History durchsuchen...
             local rest="${line#\# Ctrl+X }"
             local num="${rest%%:*}"
             local desc="${rest#*: }"
@@ -241,34 +130,24 @@ parse_shell_keybindings() {
 # ------------------------------------------------------------
 # Parser: Cross-Referenzen aus Header-Block
 # ------------------------------------------------------------
-# Format im Header:
-#   #           - fd.alias   → cdf (Verzeichnis), fo (Datei öffnen)
-# Ausgabe: fd|cdf,fo
 parse_cross_references() {
     local file="$1"
     local output=""
     
     while IFS= read -r line; do
-        # Header endet bei Guard
         [[ "$line" == "# Guard"* ]] && break
         
-        # Cross-Reference Pattern: "- tool.alias → func1 (desc), func2"
         if [[ "$line" == *".alias"*"→"* ]]; then
-            # Extrahiere Tool-Name via ZSH Parameter Expansion
-            # Pattern: "#           - fd.alias   → cdf, fo"
-            local temp="${line#*- }"      # Entferne alles bis "- "
-            local tool="${temp%%.alias*}" # Entferne ab ".alias"
-            tool="${tool// /}"            # Trim Leerzeichen
+            local temp="${line#*- }"
+            local tool="${temp%%.alias*}"
+            tool="${tool// /}"
             
-            # Extrahiere alles nach →
             local after_arrow="${line#*→ }"
-            # Entferne Beschreibungen in Klammern via ZSH
             local funcs="$after_arrow"
-            # Iterativ alle (...) entfernen
             while [[ "$funcs" == *'('*')'* ]]; do
                 funcs="${funcs%%\(*}${funcs#*\)}"
             done
-            funcs="${funcs// /}"          # Alle Leerzeichen entfernen
+            funcs="${funcs// /}"
             
             [[ -n "$tool" && -n "$funcs" ]] && output+="${tool}|${funcs}\n"
         fi
@@ -282,43 +161,28 @@ parse_cross_references() {
 # ------------------------------------------------------------
 generate_patch_for_alias() {
     local alias_file="$1"
-    local tool_name=$(basename "$alias_file" .alias)
     local output=""
     local prev_comment=""
-    local line_num=0
     
-    # Sammle Funktionen und ihre Beschreibungen
     while IFS= read -r line; do
-        (( line_num++ )) || true
-        
-        # Kommentar vor Funktion merken
         local trimmed="${line#"${line%%[![:space:]]*}"}"
+        
         if [[ "$trimmed" == \#* && "$trimmed" != \#\ ----* && "$trimmed" != \#\ ====* ]]; then
-            # Beschreibungskommentar: # Name(params?) – Keybindings
-            # Muss mit "# Wort(" oder "# Wort –" beginnen (ohne : dazwischen)
-            # Header-Kommentare haben Format "# Wort   :" und werden übersprungen
             local content="${trimmed#\# }"
             local first_word="${content%% *}"
-            # Beschreibungskommentar erkennen: enthält – und beginnt NICHT mit Keyword:
+            
             if [[ "$content" == *" – "* || "$content" == *" - "* ]]; then
-                # Header-Keywords ausschließen
                 case "$first_word" in
-                    Zweck|Hinweis|Pfad|Docs|Guard|Voraussetzung)
-                        prev_comment=""
-                        ;;
-                    *)
-                        prev_comment="$trimmed"
-                        ;;
+                    Zweck|Hinweis|Pfad|Docs|Guard|Voraussetzung) prev_comment="" ;;
+                    *) prev_comment="$trimmed" ;;
                 esac
             fi
             continue
         fi
         
-        # Funktion gefunden
         if [[ "$trimmed" =~ "^[a-zA-Z][a-zA-Z0-9_-]*\(\) \{" ]]; then
             local func_name="${trimmed%%\(*}"
             
-            # Private Funktionen überspringen
             [[ "$func_name" == _* ]] && { prev_comment=""; continue; }
             
             if [[ -n "$prev_comment" ]]; then
@@ -327,6 +191,7 @@ generate_patch_for_alias() {
                 local rest="${parsed#*|}"
                 local param="${rest%%|*}"
                 local keybindings="${rest#*|}"
+                keybindings="${keybindings%%|*}"
                 
                 local tldr_param=$(format_param_for_tldr "$param")
                 local tldr_keys=$(format_keybindings_for_tldr "$keybindings")
@@ -373,17 +238,14 @@ generate_complete_patch() {
     
     [[ ! -f "$alias_file" ]] && { err "Alias-Datei nicht gefunden: $alias_file"; return 1; }
     
-    # Spezialfall fzf: Globale Keybindings + Shell-Keybindings + Cross-Refs
     if [[ "$tool_name" == "fzf" ]]; then
         output+="# dotfiles: Globale Tastenkürzel (in allen fzf-Dialogen)\n\n"
         output+=$(parse_fzf_config_keybindings "$FZF_CONFIG")
         output+="\n# dotfiles: Funktionen (aus fzf.alias)\n\n"
     fi
     
-    # Funktionen aus .alias
     output+=$(generate_patch_for_alias "$alias_file")
     
-    # Spezialfall fzf: Shell-Keybindings + Cross-Referenzen
     if [[ "$tool_name" == "fzf" ]]; then
         output+="\n# dotfiles: Shell-Keybindings (Ctrl+X Prefix)\n\n"
         output+=$(parse_shell_keybindings "$alias_file")
@@ -395,16 +257,14 @@ generate_complete_patch() {
 }
 
 # ------------------------------------------------------------
-# Hauptlogik
+# Öffentliche Funktion: Alle tldr-Patches generieren/prüfen
 # ------------------------------------------------------------
-main() {
+generate_tldr_patches() {
     local mode="${1:---check}"
     local errors=0
     
     case "$mode" in
         --check)
-            log "Prüfe ob Patches aktuell sind..."
-            
             for alias_file in "$ALIAS_DIR"/*.alias(N); do
                 local tool_name=$(basename "$alias_file" .alias)
                 local patch_file="$TEALDEER_DIR/${tool_name}.patch.md"
@@ -417,48 +277,30 @@ main() {
                 if [[ "$generated" != "$current" ]]; then
                     err "${tool_name}.patch.md ist veraltet"
                     (( errors++ )) || true
-                else
-                    ok "${tool_name}.patch.md ist aktuell"
                 fi
             done
             
-            if (( errors > 0 )); then
-                echo ""
-                err "$errors Patch(es) veraltet. Führe './scripts/generate-tldr-patches.sh --generate' aus."
-                return 1
-            fi
+            return $errors
             ;;
             
         --generate)
-            log "Generiere Patches..."
-            
             for alias_file in "$ALIAS_DIR"/*.alias(N); do
                 local tool_name=$(basename "$alias_file" .alias)
                 local patch_file="$TEALDEER_DIR/${tool_name}.patch.md"
                 
                 local generated=$(generate_complete_patch "$tool_name")
                 
-                # Nur generieren wenn Inhalt vorhanden ist
-                # (mehr als nur Whitespace)
                 local trimmed="${generated//[[:space:]]/}"
                 if [[ -z "$trimmed" ]]; then
-                    # Leere Patch-Datei löschen falls vorhanden
                     [[ -f "$patch_file" ]] && rm "$patch_file"
                     continue
                 fi
                 
-                echo -e "$generated" > "$patch_file"
-                ok "Generiert: ${tool_name}.patch.md"
+                write_if_changed "$patch_file" "$generated"
             done
-            ;;
-            
-        *)
-            echo "Verwendung: $0 [--check|--generate]"
-            echo "  --check    Prüft ob Patches aktuell sind (Default)"
-            echo "  --generate Generiert alle Patches neu"
-            return 1
             ;;
     esac
 }
 
-main "$@"
+# Nur ausführen wenn direkt aufgerufen (nicht gesourct)
+[[ -z "${_SOURCED_BY_GENERATOR:-}" ]] && generate_tldr_patches "$@" || true

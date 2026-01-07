@@ -36,6 +36,11 @@ set -uo pipefail
 # ------------------------------------------------------------
 readonly SCRIPT_DIR="${0:A:h}"
 readonly DOTFILES_DIR="${SCRIPT_DIR:h}"
+readonly SHELL_COLORS="$DOTFILES_DIR/terminal/.config/shell-colors"
+
+# Farben (Catppuccin Mocha) – zentral definiert
+[[ -f "$SHELL_COLORS" ]] && source "$SHELL_COLORS"
+
 readonly TERMINAL_DIR="$DOTFILES_DIR/terminal"
 readonly BREWFILE="$DOTFILES_DIR/setup/Brewfile"
 
@@ -47,10 +52,10 @@ typeset -i warnings=0
 # ------------------------------------------------------------
 # Ausgabe-Helper
 # ------------------------------------------------------------
-pass()    { print "  ✔ $*"; (( passed++ )); }
-fail()    { print "  ✖ $*"; (( failed++ )); }
-warn()    { print "  ⚠ $*"; (( warnings++ )); }
-section() { print "\n━━━ $* ━━━"; }
+pass()    { echo -e "  ${C_GREEN}✔${C_RESET} $*"; (( passed++ )); }
+fail()    { echo -e "  ${C_RED}✖${C_RESET} $*"; (( failed++ )); }
+warn()    { echo -e "  ${C_YELLOW}⚠${C_RESET} $*"; (( warnings++ )); }
+section() { echo -e "\n${C_BLUE}━━━${C_RESET} $* ${C_BLUE}━━━${C_RESET}"; }
 
 # ------------------------------------------------------------
 # Symlink-Prüfung

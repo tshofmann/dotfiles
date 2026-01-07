@@ -1,3 +1,64 @@
+#!/usr/bin/env zsh
+# ============================================================
+# architecture.sh - Generator für docs/architecture.md
+# ============================================================
+# Zweck   : Generiert Architektur-Dokumentation aus Verzeichnisstruktur
+# Pfad    : scripts/generators/architecture.sh
+# ============================================================
+
+source "${0:A:h}/lib.sh"
+
+# ------------------------------------------------------------
+# Verzeichnisbaum generieren
+# ------------------------------------------------------------
+# Vereinfachter tree-Output ohne externe Abhängigkeit
+generate_tree() {
+    local dir="$1"
+    local prefix="${2:-}"
+    local output=""
+    
+    # Ignorierte Verzeichnisse/Dateien
+    local -a ignore_patterns=('.git' '.DS_Store' 'node_modules' '__pycache__')
+    
+    local -a items=()
+    for item in "$dir"/*(.N) "$dir"/*(/.N); do
+        local name="${item:t}"
+        local skip=false
+        
+        for pattern in "${ignore_patterns[@]}"; do
+            [[ "$name" == "$pattern" ]] && skip=true && break
+        done
+        
+        [[ "$skip" == false ]] && items+=("$item")
+    done
+    
+    local count=${#items[@]}
+    local i=0
+    
+    for item in "${items[@]}"; do
+        (( i++ )) || true
+        local name="${item:t}"
+        local connector="├──"
+        local next_prefix="${prefix}│   "
+        
+        (( i == count )) && connector="└──" && next_prefix="${prefix}    "
+        
+        if [[ -d "$item" ]]; then
+            output+="${prefix}${connector} ${name}/\n"
+            output+=$(generate_tree "$item" "$next_prefix")
+        else
+            output+="${prefix}${connector} ${name}\n"
+        fi
+    done
+    
+    echo -e "$output"
+}
+
+# ------------------------------------------------------------
+# Haupt-Generator für architecture.md
+# ------------------------------------------------------------
+generate_architecture_md() {
+    cat << 'HEADER'
 # 🏗️ Architektur
 
 Technische Details zur Struktur und Funktionsweise dieses dotfiles-Repositories.
@@ -35,7 +96,35 @@ dotfiles/
 │   │   ├── readme.sh            # README.md Generator
 │   │   └── tldr.sh              # tldr-Patches Generator
 │   └── tests/                   # Unit-Tests
-│       └── test_generators.sh
+HEADER
+
+    # Test-Dateien dynamisch auflisten
+    local test_dir="$DOTFILES_DIR/scripts/tests"
+    local test_count=0
+    local -a test_files=()
+    
+    for test_file in "$test_dir"/*.sh(N); do
+        [[ -f "$test_file" ]] || continue
+        test_files+=("$test_file")
+        (( test_count++ )) || true
+    done
+    
+    local i=0
+    for test_file in "${test_files[@]}"; do
+        (( i++ )) || true
+        local name="${test_file:t}"
+        local desc=""
+        # Beschreibung aus Header extrahieren
+        desc=$(grep "^# Zweck" "$test_file" 2>/dev/null | head -1 | sed 's/^# Zweck[[:space:]]*:[[:space:]]*//')
+        [[ -z "$desc" ]] && desc="Tests"
+        
+        local connector="│       ├──"
+        (( i == test_count )) && connector="│       └──"
+        
+        echo "$connector $name"
+    done
+    
+    cat << 'REST'
 ├── setup/
 │   ├── bootstrap.sh             # Automatisiertes Setup-Skript
 │   ├── Brewfile                 # Homebrew-Abhängigkeiten
@@ -206,3 +295,8 @@ Bei Icon-Problemen (□ oder ?) prüfen:
                     │
                     └── .zlogin (Background-Tasks)
 ```
+REST
+}
+
+# Nur ausführen wenn direkt aufgerufen (nicht gesourct)
+[[ -z "${_SOURCED_BY_GENERATOR:-}" ]] && generate_architecture_md || true

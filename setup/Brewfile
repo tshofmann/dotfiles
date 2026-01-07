@@ -25,10 +25,29 @@ brew "fastfetch"                            # Schnelle System-Info (neofetch-Ers
 brew "lazygit"                              # Terminal-UI für Git
 
 # ZSH-Plugins
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Bedienung:
+#   zsh-autosuggestions:
+#     → (Pfeil rechts)    Vorschlag komplett übernehmen
+#     Alt+→               Wort für Wort übernehmen
+#     Escape              Vorschlag ignorieren
+#   zsh-syntax-highlighting:
+#     Grün                Gültiger Befehl
+#     Rot                 Ungültiger Befehl
+#     Unterstrichen       Existierende Datei/Verzeichnis
+# Hinweis: Startzeit-Impact minimal (~20ms)
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 brew "zsh-syntax-highlighting"              # Syntax-Highlighting für Kommandos
 brew "zsh-autosuggestions"                  # History-basierte Vorschläge
 
 # Casks (Fonts & Tools)
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# font-meslo-lg-nerd-font:
+#   Variante: LDZNF (L=Large, DZ=Dotted Zero, NF=Nerd Font)
+#   Speicherort: ~/Library/Fonts/
+#   Zweck: Icons (Powerline, Devicons, Font Awesome, Octicons)
+#   Alternativen: brew search nerd-font
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 cask "font-meslo-lg-nerd-font"              # Nerd Font für Terminal-Icons
 cask "claude-code"                          # Terminal-basierter KI-Coding-Assistent
 

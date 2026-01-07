@@ -1,3 +1,18 @@
+#!/usr/bin/env zsh
+# ============================================================
+# readme.sh - Generator für README.md
+# ============================================================
+# Zweck   : Generiert Haupt-README aus Template + dynamischen Daten
+# Pfad    : scripts/generators/readme.sh
+# ============================================================
+
+source "${0:A:h}/lib.sh"
+
+# ------------------------------------------------------------
+# Haupt-Generator für README.md
+# ------------------------------------------------------------
+generate_readme_md() {
+    cat << 'EOF'
 # 🍎 dotfiles
 
 [![CI](https://github.com/tshofmann/dotfiles/actions/workflows/validate.yml/badge.svg)](https://github.com/tshofmann/dotfiles/actions/workflows/validate.yml)
@@ -42,3 +57,8 @@ cd ~/dotfiles && stow --adopt -R terminal && git reset --hard HEAD && bat cache 
 ## Lizenz
 
 [MIT](LICENSE)
+EOF
+}
+
+# Nur ausführen wenn direkt aufgerufen (nicht gesourct)
+[[ -z "${_SOURCED_BY_GENERATOR:-}" ]] && generate_readme_md || true

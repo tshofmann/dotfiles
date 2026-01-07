@@ -1,68 +1,132 @@
 #!/usr/bin/env zsh
 # ============================================================
-# pre-commit - Git Hook für Validierung vor Commits
+# pre-commit - Git Pre-Commit Hook für dotfiles
 # ============================================================
-# Prüft:
-#   1. Syntax-Check für ZSH-Dateien (zsh -n)
-#      - *.sh, *.alias, .zshrc, .zshenv, .zprofile, .zlogin, pre-commit
-#   2. Doku-Konsistenz bei relevanten Änderungen
+# Zweck   : Verhindert Commits mit veralteter Dokumentation
+#           oder ungültiger Shell-Syntax
 #
 # Install : git config core.hooksPath .githooks
+# WICHTIG : --no-verify ist VERBOTEN (siehe copilot-instructions.md)
 # ============================================================
 
-DOTFILES_DIR="$(git rev-parse --show-toplevel)"
-changed_files=$(git diff --cached --name-only)
+set -uo pipefail
+
+SCRIPT_DIR="${0:A:h}"
+DOTFILES_DIR="${SCRIPT_DIR:h}"  # .githooks → dotfiles
+SHELL_COLORS="$DOTFILES_DIR/terminal/.config/shell-colors"
+
+# Farben (Catppuccin Mocha) – zentral definiert
+[[ -f "$SHELL_COLORS" ]] && source "$SHELL_COLORS"
+
+# Logging (konsistent mit anderen Skripten)
+log()  { echo -e "${C_BLUE}→${C_RESET} $1"; }
+ok()   { echo -e "${C_GREEN}✔${C_RESET} $1"; }
+warn() { echo -e "${C_YELLOW}⚠${C_RESET} $1"; }
+err()  { echo -e "${C_RED}✖${C_RESET} $1" >&2; }
 
 # ------------------------------------------------------------
-# 1. Syntax-Check für ZSH-Dateien
+# 1. Shell-Syntax prüfen
 # ------------------------------------------------------------
-# Alle Dateien die zsh-Syntax enthalten
-zsh_files=$(echo "$changed_files" | grep -E '\.(sh|alias)$|\.zshrc$|\.zshenv$|\.zprofile$|\.zlogin$|^\.githooks/pre-commit$' || true)
-
-if [[ -n "$zsh_files" ]]; then
-    echo "🔍 Prüfe ZSH-Syntax..."
-    syntax_errors=0
+check_shell_syntax() {
+    log "Prüfe Shell-Syntax..."
+    local errors=0
     
-    while IFS= read -r file; do
-        [[ -z "$file" ]] && continue
-        filepath="$DOTFILES_DIR/$file"
-        [[ -f "$filepath" ]] || continue
-        
-        if ! zsh -n "$filepath" 2>&1; then
-            echo "  ✖ $file"
-            ((syntax_errors++))
-        else
-            echo "  ✔ $file"
+    # Alle .sh und .alias Dateien prüfen
+    for file in "$DOTFILES_DIR"/scripts/**/*.sh(N) \
+                "$DOTFILES_DIR"/terminal/.config/alias/*.alias(N) \
+                "$DOTFILES_DIR"/setup/bootstrap.sh; do
+        if [[ -f "$file" ]]; then
+            if ! zsh -n "$file" 2>/dev/null; then
+                err "Syntax-Fehler in: ${file#$DOTFILES_DIR/}"
+                zsh -n "$file" 2>&1 | head -3
+                (( errors++ ))
+            fi
         fi
-    done <<< "$zsh_files"
+    done
     
-    if ((syntax_errors > 0)); then
-        echo ""
-        echo "❌ Commit abgebrochen: $syntax_errors Datei(en) mit Syntaxfehlern!"
-        echo ""
-        echo "Optionen:"
-        echo "  1. Syntaxfehler beheben und erneut committen"
-        echo "  2. Hook überspringen: git commit --no-verify"
-        exit 1
+    if (( errors > 0 )); then
+        err "$errors Datei(en) mit Syntax-Fehlern"
+        return 1
     fi
-fi
+    
+    ok "Shell-Syntax OK"
+    return 0
+}
 
 # ------------------------------------------------------------
-# 2. Dokumentations-Konsistenz
+# 2. Dokumentation prüfen
 # ------------------------------------------------------------
-# Trigger bei: docs/, Brewfile, terminal/.config/, CONTRIBUTING.md, terminal/.zsh*, .github/copilot-instructions.md
-if echo "$changed_files" | grep -qE '^(docs/|setup/Brewfile|terminal/\.config/|CONTRIBUTING\.md|terminal/\.zsh|\.github/copilot-instructions\.md)'; then
-    echo "📖 Prüfe Dokumentations-Konsistenz..."
+check_docs() {
+    log "Prüfe ob Dokumentation aktuell ist..."
     
-    if ! "$DOTFILES_DIR/scripts/validate-docs.sh"; then
-        echo ""
-        echo "❌ Commit abgebrochen: Dokumentation stimmt nicht mit Code überein!"
-        echo ""
-        echo "Optionen:"
-        echo "  1. Dokumentation aktualisieren und erneut committen"
-        echo "  2. Hook überspringen: git commit --no-verify"
-        exit 1
+    if ! "$DOTFILES_DIR/scripts/generate-docs.sh" --check >/dev/null 2>&1; then
+        err "Dokumentation ist veraltet!"
+        print ""
+        print "  Bitte ausführen:"
+        print "    ${C_YELLOW}./scripts/generate-docs.sh --generate${C_RESET}"
+        print ""
+        print "  Dann erneut committen."
+        return 1
     fi
+    
+    ok "Dokumentation ist aktuell"
+    return 0
+}
+
+# ------------------------------------------------------------
+# 3. Alias-Datei-Format prüfen (Guards, Header)
+# ------------------------------------------------------------
+check_alias_format() {
+    log "Prüfe Alias-Datei-Format..."
+    local errors=0
+    
+    for file in "$DOTFILES_DIR"/terminal/.config/alias/*.alias(N); do
+        local name=$(basename "$file")
+        
+        # Header-Block vorhanden?
+        if ! head -3 "$file" | grep -q "^# ===="; then
+            err "$name: Kein Header-Block"
+            (( errors++ ))
+        fi
+        
+        # Guard-Check vorhanden?
+        if ! grep -q "command -v.*>/dev/null" "$file"; then
+            err "$name: Kein Guard-Check"
+            (( errors++ ))
+        fi
+    done
+    
+    if (( errors > 0 )); then
+        err "$errors Alias-Datei(en) mit Format-Fehlern"
+        return 1
+    fi
+    
+    ok "Alias-Format OK"
+    return 0
+}
+
+# ------------------------------------------------------------
+# Hauptprogramm
+# ------------------------------------------------------------
+print "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+print "🔍 Pre-Commit Checks"
+print "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+failed=0
+
+check_shell_syntax || (( failed++ ))
+check_docs || (( failed++ ))
+check_alias_format || (( failed++ ))
+
+print "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+if (( failed > 0 )); then
+    err "Pre-Commit fehlgeschlagen ($failed Check(s))"
+    print ""
+    print "  ${C_RED}--no-verify ist VERBOTEN!${C_RESET}"
+    print "  Bitte Fehler beheben und erneut committen."
+    exit 1
 fi
 
+ok "Alle Checks bestanden"
 exit 0

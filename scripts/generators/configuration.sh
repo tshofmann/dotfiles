@@ -1,3 +1,57 @@
+#!/usr/bin/env zsh
+# ============================================================
+# configuration.sh - Generator für docs/configuration.md
+# ============================================================
+# Zweck   : Generiert Konfigurations-Dokumentation aus Config-Dateien
+# Pfad    : scripts/generators/configuration.sh
+# ============================================================
+
+source "${0:A:h}/lib.sh"
+
+# ------------------------------------------------------------
+# Theme-Konfigurationen sammeln
+# ------------------------------------------------------------
+# Durchsucht bekannte Konfigurationspfade nach Theme-Einstellungen
+collect_theme_configs() {
+    local output=""
+    
+    # Bekannte Theme-Dateien
+    local -A theme_files=(
+        ["Terminal.app"]="$DOTFILES_DIR/setup/catppuccin-mocha.terminal|Via Bootstrap importiert + als Standard gesetzt"
+        ["Starship"]="catppuccin-powerline Preset|Via Bootstrap konfiguriert"
+        ["bat"]="$DOTFILES_DIR/terminal/.config/bat/themes/|Via Stow verlinkt (+ Cache-Build)"
+        ["fzf"]="$DOTFILES_DIR/terminal/.config/fzf/config|Farben in Config-Datei (via Stow)"
+        ["btop"]="$DOTFILES_DIR/terminal/.config/btop/themes/|Via Stow verlinkt"
+        ["eza"]="$DOTFILES_DIR/terminal/.config/eza/theme.yml|Via Stow verlinkt"
+        ["zsh-syntax-highlighting"]="$DOTFILES_DIR/terminal/.config/zsh/|Via Stow verlinkt"
+    )
+    
+    output+="| Tool | Theme-Datei | Status |\n"
+    output+="|------|-------------|--------|\n"
+    
+    for tool in "Terminal.app" "Starship" "bat" "fzf" "btop" "eza" "zsh-syntax-highlighting"; do
+        local info="${theme_files[$tool]}"
+        local file="${info%%|*}"
+        local stat="${info##*|}"
+        
+        # Datei/Verzeichnis kürzen für Anzeige
+        local display_file="$file"
+        if [[ "$file" == "$DOTFILES_DIR"* ]]; then
+            display_file="${file#$DOTFILES_DIR/}"
+            display_file="\`$display_file\`"
+        fi
+        
+        output+="| **$tool** | $display_file | $stat |\n"
+    done
+    
+    echo -e "$output"
+}
+
+# ------------------------------------------------------------
+# Haupt-Generator für configuration.md
+# ------------------------------------------------------------
+generate_configuration_md() {
+    cat << 'HEADER'
 # ⚙️ Konfiguration
 
 Diese Anleitung erklärt, wie du die dotfiles an deine Bedürfnisse anpassen kannst.
@@ -13,16 +67,12 @@ Das gesamte Setup verwendet [Catppuccin Mocha](https://catppuccin.com/) als einh
 
 ### Konfigurierte Tools
 
-| Tool | Theme-Datei | Status |
-|------|-------------|--------|
-| **Terminal.app** | `setup/catppuccin-mocha.terminal` | Via Bootstrap importiert + als Standard gesetzt |
-| **Starship** | catppuccin-powerline Preset | Via Bootstrap konfiguriert |
-| **bat** | `terminal/.config/bat/themes/` | Via Stow verlinkt (+ Cache-Build) |
-| **fzf** | `terminal/.config/fzf/config` | Farben in Config-Datei (via Stow) |
-| **btop** | `terminal/.config/btop/themes/` | Via Stow verlinkt |
-| **eza** | `terminal/.config/eza/theme.yml` | Via Stow verlinkt |
-| **zsh-syntax-highlighting** | `terminal/.config/zsh/` | Via Stow verlinkt |
+HEADER
 
+    # Theme-Tabelle
+    collect_theme_configs
+    
+    cat << 'REST'
 
 ### Farbpalette (Referenz)
 
@@ -200,3 +250,8 @@ bindkey '^X3' fzf-cd-widget
 | lazygit Keybindings | `~/.config/lazygit/config.yml` | YAML |
 | fastfetch Modules | `~/.config/fastfetch/config.jsonc` | JSONC |
 
+REST
+}
+
+# Nur ausführen wenn direkt aufgerufen (nicht gesourct)
+[[ -z "${_SOURCED_BY_GENERATOR:-}" ]] && generate_configuration_md || true

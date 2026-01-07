@@ -1,0 +1,75 @@
+name: Dokumentation validieren
+
+on:
+  push:
+    branches: [main, feature/**]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:  # Manuelles Triggern ermöglichen
+
+jobs:
+  validate:
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: ZSH-Syntax prüfen
+        run: |
+          echo "Prüfe ZSH-Syntax (inkl. Alias-Dateien)..."
+          errors=0
+          for file in scripts/**/*.sh terminal/.config/alias/*.alias setup/bootstrap.sh; do
+            if [[ -f "$file" ]]; then
+              if ! zsh -n "$file" 2>/dev/null; then
+                echo "✖ Syntax-Fehler: $file"
+                zsh -n "$file" 2>&1 | head -3
+                errors=$((errors + 1))
+              fi
+            fi
+          done
+          if [[ $errors -gt 0 ]]; then
+            echo "✖ $errors Datei(en) mit Syntax-Fehlern"
+            exit 1
+          fi
+          echo "✔ Shell-Syntax OK"
+      
+      - name: Dokumentation prüfen
+        run: |
+          echo "Prüfe ob Dokumentation aktuell ist..."
+          if ! ./scripts/generate-docs.sh --check; then
+            echo ""
+            echo "✖ Dokumentation ist veraltet!"
+            echo ""
+            echo "Bitte lokal ausführen:"
+            echo "  ./scripts/generate-docs.sh --generate"
+            echo ""
+            exit 1
+          fi
+          echo "✔ Dokumentation ist aktuell"
+      
+      - name: Alias-Format prüfen
+        run: |
+          echo "Prüfe Alias-Datei-Format..."
+          errors=0
+          for file in terminal/.config/alias/*.alias; do
+            name=$(basename "$file")
+            
+            # Header-Block vorhanden?
+            if ! head -3 "$file" | grep -q "^# ===="; then
+              echo "✖ $name: Kein Header-Block"
+              errors=$((errors + 1))
+            fi
+            
+            # Guard-Check vorhanden?
+            if ! grep -q "command -v.*>/dev/null" "$file"; then
+              echo "✖ $name: Kein Guard-Check"
+              errors=$((errors + 1))
+            fi
+          done
+          
+          if [[ $errors -gt 0 ]]; then
+            echo "✖ $errors Alias-Datei(en) mit Format-Fehlern"
+            exit 1
+          fi
+          echo "✔ Alias-Format OK"
