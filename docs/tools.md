@@ -2,6 +2,9 @@
 
 Übersicht aller installierten CLI-Tools und verfügbaren Aliase.
 
+> Diese Dokumentation wird automatisch aus dem Code generiert.
+> Änderungen direkt im Code (`.alias`-Dateien, `Brewfile`) vornehmen.
+
 ---
 
 ## Schnellreferenz für Einsteiger
@@ -97,21 +100,22 @@ Diese Tools werden via Brewfile installiert:
 
 | Tool | Beschreibung | Dokumentation |
 |------|--------------|---------------|
-| **bat** | `cat` mit Syntax-Highlighting und Git-Integration | [github.com/sharkdp/bat](https://github.com/sharkdp/bat) |
-| **btop** | Moderner Ressourcen-Monitor (`top`/`htop`-Ersatz) | [github.com/aristocratos/btop](https://github.com/aristocratos/btop) |
-| **eza** | Moderner `ls`-Ersatz mit Icons und Git-Status | [github.com/eza-community/eza](https://github.com/eza-community/eza) |
-| **fastfetch** | Schnelle System-Info (`neofetch`-Ersatz in C) | [github.com/fastfetch-cli/fastfetch](https://github.com/fastfetch-cli/fastfetch) |
-| **fd** | Schneller `find`-Ersatz (respektiert `.gitignore`) | [github.com/sharkdp/fd](https://github.com/sharkdp/fd) |
-| **fzf** | Fuzzy Finder für Kommandozeile und Dateien | [github.com/junegunn/fzf](https://github.com/junegunn/fzf) |
-| **gh** | GitHub CLI – Issues, PRs, Repos von der Kommandozeile | [cli.github.com](https://cli.github.com/) |
-| **lazygit** | Terminal-UI für Git – interaktives Staging, Commits, Branches | [github.com/jesseduffield/lazygit](https://github.com/jesseduffield/lazygit) |
-| **mas** | Mac App Store CLI – Apps installieren und updaten | [github.com/mas-cli/mas](https://github.com/mas-cli/mas) |
-| **ripgrep** | Ultraschneller `grep`-Ersatz (respektiert `.gitignore`) | [github.com/BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep) |
-| **starship** | Schneller, anpassbarer Shell-Prompt | [starship.rs](https://starship.rs/) |
-| **stow** | GNU Stow – Symlink-Manager für Dotfiles | [gnu.org/software/stow](https://www.gnu.org/software/stow/) |
-| **tealdeer** | Schneller tldr-Client – vereinfachte Man-Pages mit Beispielen | [github.com/tealdeer-rs/tealdeer](https://github.com/tealdeer-rs/tealdeer) |
-| **zoxide** | Smarter `cd`-Ersatz – merkt sich häufige Verzeichnisse | [github.com/ajeetdsouza/zoxide](https://github.com/ajeetdsouza/zoxide) |
-
+| **fzf** | Fuzzy Finder | [github.com/junegunn/fzf](https://github.com/junegunn/fzf) |
+| **gh** | GitHub CLI | [cli.github.com](https://cli.github.com/) |
+| **stow** | Symlink-Manager | [gnu.org/software/stow](https://www.gnu.org/software/stow/) |
+| **starship** | Shell-Prompt | [starship.rs](https://starship.rs/) |
+| **tealdeer** | tldr-Client für vereinfachte Man-Pages | [github.com/tealdeer-rs/tealdeer](https://github.com/tealdeer-rs/tealdeer) |
+| **zoxide** | Smartes cd | [github.com/ajeetdsouza/zoxide](https://github.com/ajeetdsouza/zoxide) |
+| **mas** | Mac App Store CLI | [github.com/mas-cli/mas](https://github.com/mas-cli/mas) |
+| **eza** | Moderner ls-Ersatz mit Icons | [github.com/eza-community/eza](https://github.com/eza-community/eza) |
+| **bat** | cat mit Syntax-Highlighting | [github.com/sharkdp/bat](https://github.com/sharkdp/bat) |
+| **ripgrep** | Ultraschneller grep-Ersatz | [github.com/BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep) |
+| **fd** | Schneller find-Ersatz | [github.com/sharkdp/fd](https://github.com/sharkdp/fd) |
+| **btop** | Ressourcen-Monitor (top-Ersatz) | [github.com/aristocratos/btop](https://github.com/aristocratos/btop) |
+| **fastfetch** | Schnelle System-Info (neofetch-Ersatz) | [github.com/fastfetch-cli/fastfetch](https://github.com/fastfetch-cli/fastfetch) |
+| **lazygit** | Terminal-UI für Git | [github.com/jesseduffield/lazygit](https://github.com/jesseduffield/lazygit) |
+| **zsh-syntax-highlighting** | Syntax-Highlighting für Kommandos | [github.com/zsh-users/zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) |
+| **zsh-autosuggestions** | History-basierte Vorschläge | [github.com/zsh-users/zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) |
 ### ZSH-Plugins
 
 | Plugin | Beschreibung | Dokumentation |
@@ -125,21 +129,19 @@ Diese Pakete werden via `brew install --cask` installiert:
 
 | App | Beschreibung | Dokumentation |
 |-----|--------------|---------------|
-| **claude-code** | Terminal-basierter KI-Coding-Assistent von Anthropic | [github.com/anthropics/claude-code](https://github.com/anthropics/claude-code) |
-| **font-meslo-lg-nerd-font** | Nerd Font für Terminal-Icons und Powerline-Symbole | [github.com/ryanoasis/nerd-fonts](https://github.com/ryanoasis/nerd-fonts) |
-
+| **font-meslo-lg-nerd-font** | Nerd Font für Terminal-Icons | [github.com/ryanoasis/nerd-fonts](https://github.com/ryanoasis/nerd-fonts) |
+| **claude-code** | Terminal-basierter KI-Coding-Assistent | [github.com/anthropics/claude-code](https://github.com/anthropics/claude-code) |
 ### Mac App Store Apps
 
 Diese Apps werden via `mas` installiert (Benutzer muss im App Store angemeldet sein):
 
 | App | Beschreibung |
 |-----|--------------|
-| **Xcode** | Apple IDE für iOS/macOS Entwicklung |
+| **Xcode** | Apple IDE für iOS/macOS |
 | **Pages** | Textverarbeitung |
 | **Numbers** | Tabellenkalkulation |
 | **Keynote** | Präsentationen |
-
-> **Hinweis:** Die Anmeldung im App Store muss manuell über App Store.app erfolgen – die Befehle `mas account` und `mas signin` sind auf macOS 12+ nicht verfügbar. Siehe [Troubleshooting → mas Probleme](troubleshooting.md#mac-app-store-mas-probleme).
+> **Hinweis:** Die Anmeldung im App Store muss manuell über App Store.app erfolgen – die Befehle `mas account` und `mas signin` sind auf macOS 12+ nicht verfügbar.
 
 ---
 
@@ -149,28 +151,85 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 > **Guard-System:** Alle Tool-Aliase prüfen zuerst ob das jeweilige Tool installiert ist (`command -v`). Ist ein Tool nicht vorhanden, bleiben die originalen Befehle (`ls`, `cat`, `grep`) erhalten.
 
+
+<a name="batalias"></a>
+
+### bat.alias
+
+| Alias | Befehl | Beschreibung |
+|-------|--------|--------------|
+| `cat` | `bat -pp` | Ersetzt cat mit Syntax-Highlighting (plain style) |
+| `catn` | `bat --style=numbers --paging=never` | Mit Zeilennummern, ohne Pager (bat allein hat Pager) |
+| `catd` | `bat --diff` | Zeigt Git-Diff-Markierungen an |
+**Interaktive Funktionen (mit fzf):**
+
+| Funktion | Beschreibung |
+|----------|--------------|
+| `bat-theme` | Theme Browser (Enter=Aktivieren) |
+> **Hinweis:** Globale Optionen (Theme, Style, Syntax-Mappings)
+
+
 <a name="brewalias"></a>
 
 ### brew.alias
 
 | Alias | Befehl | Beschreibung |
 |-------|--------|--------------|
-| `brewup` | `brew update && brew upgrade && mas upgrade && brew autoremove && brew cleanup` | Vollständiges System-Update (inkl. App Store) |
-| `maso` | `mas outdated` | Zeige veraltete App Store Apps |
-| `masu` | `mas upgrade` | Aktualisiere alle App Store Apps |
-| `mass` | `mas search <name>` | Suche im App Store |
-| `masi` | `mas install <id>` | Installiere App via ID |
-| `masl` | `mas list` | Liste installierte Apps |
-
+| `maso` | `mas outdated` | Zeige veraltete Mac App Store Apps |
+| `masu` | `mas upgrade` | Alle Mac App Store Apps aktualisieren |
+| `mass` | `mas search` | Im Mac App Store nach Apps suchen (gibt ID zurück) |
+| `masi` | `mas install` | App aus Mac App Store installieren (benötigt ID) |
+| `masl` | `mas list` | Alle installierten Mac App Store Apps auflisten |
 **Interaktive Funktionen (mit fzf):**
 
 | Funktion | Beschreibung |
 |----------|--------------|
-| `bip` | **Brew Install**: Formulae [F] und Casks [C] durchsuchen, Enter=Installieren, Tab=Mehrfach |
-| `brp` | **Brew Remove**: Ungenutzte Pakete entfernen (nur Leaves), Enter=Entfernen, Tab=Mehrfach |
-| `brewv` | **Brew Versions**: Alle Formulae, Casks und MAS-Apps mit Versionen |
+| `brewup` | Homebrew Komplett-Update (update, upgrade, autoremove, cleanup, mas) |
+| `brewv` | Brewfile Versionsübersicht (zeigt installierte Versionen aller Pakete) |
+| `bip` | Brew Install Browser (Enter=Installieren, Tab=Mehrfach) |
+| `brp` | Brew Remove Browser (Enter=Entfernen, Tab=Mehrfach) |
+> **Hinweis:** Kein Guard für brew – ohne Homebrew ist dieses
 
-> **Hinweis:** Die mas-Aliase sind nur verfügbar wenn mas installiert ist. `brewup` enthält automatisch `mas upgrade` wenn mas vorhanden ist. Die interaktiven Funktionen benötigen fzf.
+
+<a name="btopalias"></a>
+
+### btop.alias
+
+| Alias | Befehl | Beschreibung |
+|-------|--------|--------------|
+| `top` | `btop` | Systemmonitor mit modernem Interface |
+| `htop` | `btop` | Bessere Alternative zu htop |
+> **Hinweis:** Konfiguration in ~/.config/btop/btop.conf
+
+
+<a name="ezaalias"></a>
+
+### eza.alias
+
+| Alias | Befehl | Beschreibung |
+|-------|--------|--------------|
+| `ls` | `eza --group-directories-first` | Verzeichnisse zuerst anzeigen mit Icons |
+| `ll` | `eza -l --group-directories-first --header` | Lange Listenansicht mit Details |
+| `la` | `eza -la --group-directories-first --header` | Alle Dateien inklusive versteckte |
+| `llg` | `eza -l --git --group-directories-first --header` | Lange Liste mit Git-Status |
+| `lag` | `eza -la --git --group-directories-first --header` | Alle Dateien mit Git-Status |
+| `lt` | `eza --tree --level=2` | Verzeichnisbaum bis Tiefe 2 |
+| `lt3` | `eza --tree --level=3` | Verzeichnisbaum bis Tiefe 3 |
+| `lss` | `eza -l --sort=size --reverse --header` | Nach Größe sortieren (größte zuerst) |
+| `lst` | `eza -l --sort=modified --reverse --header` | Nach Änderungsdatum sortieren (neueste zuerst) |
+> **Hinweis:** EZA_ICONS_AUTO=1 ist in .zshrc gesetzt, daher kein
+
+
+<a name="fastfetchalias"></a>
+
+### fastfetch.alias
+
+| Alias | Befehl | Beschreibung |
+|-------|--------|--------------|
+| `ff` | `fastfetch` | Schnelle System-Info (Standardanzeige) |
+| `neofetch` | `fastfetch` | Neofetch-Kompatibilität |
+> **Hinweis:** Konfiguration in ~/.config/fastfetch/config.jsonc
+
 
 <a name="fdalias"></a>
 
@@ -180,141 +239,40 @@ Verfügbare Aliase aus `~/.config/alias/`:
 |-------|--------|--------------|
 | `fdf` | `fd --type f` | Nur Dateien suchen |
 | `fdd` | `fd --type d` | Nur Verzeichnisse suchen |
-| `fdh` | `fd --hidden` | Inkl. versteckte Dateien |
-| `fda` | `fd -u` | Alles (unrestricted = --hidden --no-ignore) |
-| `fdsh` | `fd --extension sh` | Shell-Skripte |
-| `fdpy` | `fd --extension py` | Python-Dateien |
-| `fdjs` | `fd -e js -e ts` | JavaScript/TypeScript |
-| `fdmd` | `fd --extension md` | Markdown-Dateien |
-| `fdjson` | `fd --extension json` | JSON-Dateien |
-| `fdyaml` | `fd -e yaml -e yml` | YAML-Dateien |
+| `fdh` | `fd --hidden` | Inklusive versteckte Dateien |
+| `fda` | `fd -u` | Uneingeschränkt: alle Dateien inklusive .gitignore |
+| `fdsh` | `fd --extension sh` | Shell-Skripte finden |
+| `fdpy` | `fd --extension py` | Python-Dateien finden |
+| `fdjs` | `fd -e js -e ts` | JavaScript/TypeScript Dateien |
+| `fdmd` | `fd --extension md` | Markdown-Dateien finden |
+| `fdjson` | `fd --extension json` | JSON-Dateien finden |
+| `fdyaml` | `fd -e yaml -e yml` | YAML-Dateien finden |
+**Interaktive Funktionen (mit fzf):**
+
+| Funktion | Beschreibung |
+|----------|--------------|
+| `cdf` | Verzeichnis wechseln (Enter=Wechseln, Ctrl+Y=Pfad kopieren) |
+| `fo` | Datei öffnen (Enter=Öffnen, Ctrl+Y=Pfad kopieren) |
+> **Hinweis:** Globale Ignore-Patterns (.git/, node_modules/, etc.)
+
+
+<a name="fzfalias"></a>
+
+### fzf.alias
 
 **Interaktive Funktionen (mit fzf):**
 
 | Funktion | Beschreibung |
 |----------|--------------|
-| `cdf [path]` | **Fuzzy CD**: fd + fzf + eza – Verzeichnisnavigation mit Baum-Vorschau. Enter=Wechseln, Ctrl+Y=Pfad kopieren |
-| `fo [path]` | **Fuzzy Open**: fd + fzf + open – Datei mit Standard-App öffnen. Enter=Öffnen, Ctrl+Y=Pfad kopieren |
+| `zf` | zoxide Browser (Enter=Wechseln, Ctrl+D=Löschen, Ctrl+Y=Kopieren) |
+| `fkill` | Prozess Browser (Enter=Beenden, Tab=Mehrfach, Ctrl+S=Apps↔Alle) |
+| `fman` | Man/tldr Browser (Ctrl+S=Modus wechseln, Enter=je nach Modus öffnen) |
+| `fa` | fa Browser (Enter=Übernehmen, Ctrl+S=tldr↔Code) |
+| `fenv` | Env Browser (Enter=Export→Edit, Ctrl+Y=Kopieren) |
+> **Hinweis:** Shell-Keybindings via Ctrl+X Prefix (in init.zsh):
 
-> **Hinweis:** fd respektiert automatisch `.gitignore` und ist deutlich schneller als find. Zusätzlich werden Patterns aus `~/.config/fd/ignore` global ausgeschlossen (z.B. `.git/`, `node_modules/`, `__pycache__/`). Mit `fd -u` (unrestricted) werden alle Ignore-Dateien umgangen.
->
-> **Tipp:** Für Dateisuche mit Vorschau nutze `Ctrl+X 2` (fzf Shell-Integration) – fügt den Pfad direkt ein.
 
-<a name="btopalias"></a>
-
-### btop.alias
-
-| Alias | Befehl | Beschreibung |
-|-------|--------|--------------|
-| `top` | `btop` | top durch btop ersetzen |
-| `htop` | `btop` | htop durch btop ersetzen |
-
-> **Hinweis:** btop bietet CPU, RAM, Disk, Netzwerk und Prozess-Überwachung in einer ansprechenden TUI. Für einfache Terminals: `btop --low-color`.
-
-### fastfetch.alias
-
-| Alias | Befehl | Beschreibung |
-|-------|--------|--------------|
-| `ff` | `fastfetch` | Schnelle System-Info (Standardanzeige) |
-| `neofetch` | `fastfetch` | neofetch-Kompatibilität |
-
-> **Hinweis:** fastfetch ist in C geschrieben und deutlich schneller als neofetch. Die Konfiguration liegt in `~/.config/fastfetch/config.jsonc` mit Catppuccin-Farben und Nerd-Font-Icons.
-
-### git.alias
-
-| Alias | Befehl | Beschreibung |
-|-------|--------|--------------|
-| `ga` | `git add` | Dateien stagen |
-| `gc` | `git commit` | Commit |
-| `gcm` | `git commit -m` | Commit mit Message |
-| `gacm` | `git add --all && git commit -m` | Add all + Commit |
-| `gp` | `git push` | Push |
-| `gpl` | `git pull` | Pull |
-| `gco` | `git checkout` | Checkout |
-| `gs` | `git status` | Status |
-| `gd` | `git diff` | Diff |
-
-**Interaktive Funktionen (mit fzf):**
-
-| Funktion | Beschreibung |
-|----------|--------------|
-| `glog` | Commit-History: Vorschau mit bat, Enter=Anzeigen, Ctrl+Y=SHA kopieren |
-| `gbr` | Branch wechseln: Log-Vorschau, Enter=Checkout, Ctrl+D=Löschen |
-| `gst` | Status mit Diff-Vorschau (bat): Enter=Add, Tab=Mehrfach, Ctrl+R=Reset |
-| `gstash` | Stash-Browser: Enter=Apply, Ctrl+P=Pop, Ctrl+D=Drop |
-
-> **Hinweis:** Die interaktiven Funktionen benötigen fzf und nutzen bat für Syntax-Highlighting in der Diff-Vorschau.
-
-**lazygit Integration:**
-
-| Alias | Beschreibung |
-|-------|--------------|
-| `lg` | **lazygit**: Vollständige Terminal-UI für Git (Catppuccin Mocha Theme) |
-
-> **Hinweis:** `lg` ist ein Alias für lazygit und benötigt nicht fzf.
-
-<a name="ezaalias"></a>
-
-### eza.alias
-
-| Alias | Befehl | Beschreibung |
-|-------|--------|--------------|
-| `ls` | `eza --group-directories-first` | ls-Ersatz mit Icons |
-| `ll` | `eza -l --group-directories-first --header` | Ausführliche Auflistung |
-| `la` | `eza -la --group-directories-first --header` | Alle Dateien inkl. versteckter |
-| `llg` | `eza -l --git --group-directories-first --header` | Long-Format mit Git-Status |
-| `lag` | `eza -la --git --group-directories-first --header` | Alle Dateien mit Git-Status |
-| `lt` | `eza --tree --level=2` | Baumansicht (2 Ebenen) |
-| `lt3` | `eza --tree --level=3` | Baumansicht (3 Ebenen) |
-| `lss` | `eza -l --sort=size --reverse --header` | Sortiert nach Größe |
-| `lst` | `eza -l --sort=modified --reverse --header` | Sortiert nach Datum |
-
-> **Hinweis:** Icons werden automatisch über `EZA_ICONS_AUTO=1` in `.zshrc` aktiviert. Ordner werden immer zuerst angezeigt (`--group-directories-first`).
-
-<a name="batalias"></a>
-
-### bat.alias
-
-| Alias | Befehl | Beschreibung |
-|-------|--------|--------------|
-| `cat` | `bat -pp` | cat-Ersatz: Plain + kein Pager |
-| `catn` | `bat --style=numbers --paging=never` | Nur Zeilennummern |
-| `catd` | `bat --diff` | Mit Git-Diff-Markierungen |
-
-**Interaktive Funktionen (mit fzf):**
-
-| Funktion | Beschreibung |
-|----------|--------------|
-| `bat-theme` | **Theme-Auswahl**: Theme interaktiv auswählen und aktivieren |
-
-> **Hinweis:** `-pp` ist die Kurzform für `--style=plain --paging=never` – verhält sich wie das echte `cat`.
-
-<a name="rgalias"></a>
-
-### rg.alias
-
-| Alias | Befehl | Beschreibung |
-|-------|--------|--------------|
-| `rgc` | `rg -C 3` | Suche mit Kontext (3 Zeilen) |
-| `rgi` | `rg --ignore-case` | Case-insensitive (immer) |
-| `rga` | `rg -uuu` | Alle Dateien (ignoriert nichts) |
-| `rgh` | `rg --hidden` | Inkl. versteckte Dateien |
-| `rgl` | `rg --files-with-matches` | Nur Dateinamen mit Treffern |
-| `rgn` | `rg --count` | Treffer-Anzahl pro Datei |
-| `rgts` | `rg -t ts -t js` | TypeScript/JavaScript |
-| `rgpy` | `rg -t py` | Python |
-| `rgmd` | `rg -t md` | Markdown |
-| `rgsh` | `rg -t sh` | Shell-Skripte |
-| `rgrb` | `rg -t ruby` | Ruby |
-| `rggo` | `rg -t go` | Go |
-
-**Interaktive Funktionen (mit fzf):**
-
-| Funktion | Beschreibung |
-|----------|--------------|
-| `rgf [query]` | **Live-Grep**: ripgrep + fzf + bat – Echtzeit-Suche während der Eingabe. Enter=Datei öffnen, Ctrl+Y=Pfad kopieren |
-
-> **Hinweis:** `--smart-case` ist global in `~/.config/ripgrep/config` konfiguriert – alle Aliase erben diese Einstellung automatisch. Die interaktive Funktion `rgf` benötigt fzf.
+<a name="ghalias"></a>
 
 ### gh.alias
 
@@ -322,469 +280,413 @@ Verfügbare Aliase aus `~/.config/alias/`:
 |-------|--------|--------------|
 | `gho` | `gh browse` | Repository im Browser öffnen |
 | `ghst` | `gh status` | GitHub Status: Zugewiesene Issues, PRs, Mentions |
+**Interaktive Funktionen (mit fzf):**
+
+| Funktion | Beschreibung |
+|----------|--------------|
+| `ghpr` | PRs durchsuchen (Enter=Checkout, Ctrl+D=Diff, Ctrl+O=Browser) |
+| `ghis` | Issues durchsuchen (Enter=Browser, Ctrl+E=Bearbeiten) |
+| `ghrun` | Actions Runs (Enter=Logs, Ctrl+R=Rerun, Ctrl+O=Browser) |
+| `ghrepo` | Repo Browser (Enter=Klonen, Ctrl+O=Browser) |
+| `ghgist` | Gists durchsuchen (Enter=Anzeigen, Ctrl+E=Bearbeiten, Ctrl+O=Browser) |
+> **Hinweis:** Erfordert gh auth login für Authentifizierung.
+
+
+<a name="gitalias"></a>
+
+### git.alias
+
+| Alias | Befehl | Beschreibung |
+|-------|--------|--------------|
+| `ga` | `git add` | Dateien zum Staging hinzufügen |
+| `gc` | `git commit` | Einen neuen Commit erstellen |
+| `gcm` | `git commit -m` | Commit mit Nachricht |
+| `gacm` | `git add --all && git commit -m` | Alle Änderungen stagen und einen Commit erstellen |
+| `gp` | `git push` | Änderungen pushen |
+| `gpl` | `git pull` | Änderungen pullen |
+| `gco` | `git checkout` | Branch wechseln oder Datei zurücksetzen |
+| `gs` | `git status` | Status des Repositories anzeigen |
+| `gd` | `git diff` | Änderungen anzeigen |
+| `lg` | `lazygit` | Terminal-UI für Git (lazygit) |
+**Interaktive Funktionen (mit fzf):**
+
+| Funktion | Beschreibung |
+|----------|--------------|
+| `glog` | Commit-History mit bat-Vorschau (Enter=Anzeigen, Ctrl+Y=SHA kopieren) |
+| `gbr` | Branch wechseln mit Log-Vorschau (Enter=Checkout, Ctrl+D=Löschen) |
+| `gst` | Status mit Diff-Vorschau (Enter=Add, Tab=Mehrfach, Ctrl+R=Reset) |
+| `gstash` | Stash-Browser (Enter=Apply, Ctrl+P=Pop, Ctrl+D=Drop) |
+> **Hinweis:** Interaktive Git-Funktionen (mit fzf) sind unten
+
+
+<a name="rgalias"></a>
+
+### rg.alias
+
+| Alias | Befehl | Beschreibung |
+|-------|--------|--------------|
+| `rgc` | `rg -C 3` | Suche mit 3 Zeilen Kontext vor und nach Treffer |
+| `rgi` | `rg --ignore-case` | Suche ohne Berücksichtigung von Groß-/Kleinschreibung |
+| `rga` | `rg -uuu` | Suche in allen Dateien ohne Einschränkungen |
+| `rgh` | `rg --hidden` | Suche inklusive versteckter Dateien |
+| `rgl` | `rg --files-with-matches` | Zeige nur Dateinamen mit Treffern |
+| `rgn` | `rg --count` | Zähle Treffer pro Datei |
+| `rgts` | `rg -t ts -t js` | Suche in TypeScript/JavaScript Dateien |
+| `rgpy` | `rg -t py` | Suche in Python-Dateien |
+| `rgmd` | `rg -t md` | Suche in Markdown-Dateien |
+| `rgsh` | `rg -t sh` | Suche in Shell-Skripten |
+| `rgrb` | `rg -t ruby` | Suche in Ruby-Dateien |
+| `rggo` | `rg -t go` | Suche in Go-Dateien |
+**Interaktive Funktionen (mit fzf):**
+
+| Funktion | Beschreibung |
+|----------|--------------|
+| `rgf` | Live-Grep (Enter=Datei öffnen, Ctrl+Y=Pfad kopieren) |
+> **Hinweis:** Globale Optionen (--smart-case, --line-number, --heading)
+
+
+# 🛠️ Tools
+
+Übersicht aller installierten CLI-Tools und verfügbaren Aliase.
+
+> Diese Dokumentation wird automatisch aus dem Code generiert.
+> Änderungen direkt im Code (`.alias`-Dateien, `Brewfile`) vornehmen.
+
+---
+
+## Schnellreferenz für Einsteiger
+
+Die wichtigsten Tastenkombinationen und Befehle auf einen Blick:
+
+### Tastenkombinationen (global)
+
+| Taste | Funktion | Beschreibung |
+|-------|----------|--------------|
+| `Ctrl+X 1` | History-Suche | Frühere Befehle fuzzy suchen |
+| `Ctrl+X 2` | Datei einfügen | Datei suchen und in Kommandozeile einfügen |
+| `Ctrl+X 3` | Verzeichnis wechseln | Interaktiv in Unterverzeichnis springen |
+| `Tab` | Autovervollständigung | Befehle, Pfade, Optionen vervollständigen |
+| `→` (Pfeil rechts) | Vorschlag übernehmen | zsh-autosuggestion akzeptieren |
+
+### Die wichtigsten Aliase
+
+| Alias | Statt | Funktion |
+|-------|-------|----------|
+| `ls` | `ls` | Dateien mit Icons anzeigen |
+| `ll` | `ls -la` | Ausführliche Auflistung |
+| `cat` | `cat` | Datei mit Syntax-Highlighting |
+| `z <ort>` | `cd <pfad>` | Zu häufig besuchtem Verzeichnis springen |
+| `brewup` | - | Alle Pakete + Apps aktualisieren |
+
+### Erste Schritte nach der Installation
+
+```zsh
+# 1. System aktualisieren
+brewup
+
+# 2. Verzeichnis mit Icons anzeigen
+ls
+
+# 3. Datei mit Syntax-Highlighting anzeigen
+cat ~/.zshrc
+
+# 4. Frühere Befehle suchen (Ctrl+X 1 drücken, tippen, Enter)
+
+# 5. Zu einem Verzeichnis springen (lernt mit der Zeit)
+z dotfiles
+```
+
+> 💡 **Tipp:** Alle Aliase haben Guard-Checks – fehlt ein Tool, funktioniert der Original-Befehl weiterhin.
+
+---
+
+## Alias-Suche und Dokumentation
+
+### fa – Interaktive Alias-Suche
+
+Die `fa`-Funktion (fzf alias) durchsucht alle Aliase und Funktionen:
+
+```zsh
+fa              # Alle Aliase/Funktionen durchsuchen
+fa commit       # Nach "commit" filtern
+```
+
+| Keybinding | Aktion |
+|------------|--------|
+| `Enter` | Befehl übernehmen (ins Edit-Buffer) |
+| `Ctrl+C` | Preview: Code-Definition |
+| `Ctrl+T` | Preview: tldr für Tool-Kategorie |
+
+### brewv – Versionsübersicht
+
+```zsh
+brewv           # Alle Formulae, Casks und MAS-Apps mit Versionen
+```
+
+---
+
+## tldr mit dotfiles-Erweiterungen
+
+Die `tldr`-Befehle zeigen neben der offiziellen Dokumentation auch **dotfiles-spezifische Aliase und Funktionen**:
+
+```zsh
+tldr git      # + Aliase (ga, gc, gp) + Funktionen (glog, gbr, gst)
+tldr fzf      # + Tastenkürzel + Funktionen (zf, fkill, fman, ...)
+tldr brew     # + brewup, mas-Aliase, fzf-Funktionen
+tldr bat      # + cat, catn, catd Aliase
+tldr rg       # + rgc, rgi, rga + rgf Funktion
+```
+
+Die Erweiterungen sind als Patches implementiert – sie werden automatisch an die offizielle Dokumentation angehängt und beginnen mit `# dotfiles:`.
+
+---
+
+## Installierte CLI-Tools
+
+Diese Tools werden via Brewfile installiert:
+
+| Tool | Beschreibung | Dokumentation |
+|------|--------------|---------------|
+| **fzf** | Fuzzy Finder | [github.com/junegunn/fzf](https://github.com/junegunn/fzf) |
+| **gh** | GitHub CLI | [cli.github.com](https://cli.github.com/) |
+| **stow** | Symlink-Manager | [gnu.org/software/stow](https://www.gnu.org/software/stow/) |
+| **starship** | Shell-Prompt | [starship.rs](https://starship.rs/) |
+| **tealdeer** | tldr-Client für vereinfachte Man-Pages | [github.com/tealdeer-rs/tealdeer](https://github.com/tealdeer-rs/tealdeer) |
+| **zoxide** | Smartes cd | [github.com/ajeetdsouza/zoxide](https://github.com/ajeetdsouza/zoxide) |
+| **mas** | Mac App Store CLI | [github.com/mas-cli/mas](https://github.com/mas-cli/mas) |
+| **eza** | Moderner ls-Ersatz mit Icons | [github.com/eza-community/eza](https://github.com/eza-community/eza) |
+| **bat** | cat mit Syntax-Highlighting | [github.com/sharkdp/bat](https://github.com/sharkdp/bat) |
+| **ripgrep** | Ultraschneller grep-Ersatz | [github.com/BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep) |
+| **fd** | Schneller find-Ersatz | [github.com/sharkdp/fd](https://github.com/sharkdp/fd) |
+| **btop** | Ressourcen-Monitor (top-Ersatz) | [github.com/aristocratos/btop](https://github.com/aristocratos/btop) |
+| **fastfetch** | Schnelle System-Info (neofetch-Ersatz) | [github.com/fastfetch-cli/fastfetch](https://github.com/fastfetch-cli/fastfetch) |
+| **lazygit** | Terminal-UI für Git | [github.com/jesseduffield/lazygit](https://github.com/jesseduffield/lazygit) |
+| **zsh-syntax-highlighting** | Syntax-Highlighting für Kommandos | [github.com/zsh-users/zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) |
+| **zsh-autosuggestions** | History-basierte Vorschläge | [github.com/zsh-users/zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) |
+### ZSH-Plugins
+
+| Plugin | Beschreibung | Dokumentation |
+|--------|--------------|---------------|
+| **zsh-autosuggestions** | History-basierte Befehlsvorschläge beim Tippen | [github.com/zsh-users/zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) |
+| **zsh-syntax-highlighting** | Echtzeit Syntax-Highlighting für Kommandos | [github.com/zsh-users/zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) |
+
+### Casks (Fonts & Tools)
+
+Diese Pakete werden via `brew install --cask` installiert:
+
+| App | Beschreibung | Dokumentation |
+|-----|--------------|---------------|
+| **font-meslo-lg-nerd-font** | Nerd Font für Terminal-Icons | [github.com/ryanoasis/nerd-fonts](https://github.com/ryanoasis/nerd-fonts) |
+| **claude-code** | Terminal-basierter KI-Coding-Assistent | [github.com/anthropics/claude-code](https://github.com/anthropics/claude-code) |
+### Mac App Store Apps
+
+Diese Apps werden via `mas` installiert (Benutzer muss im App Store angemeldet sein):
+
+| App | Beschreibung |
+|-----|--------------|
+| **Xcode** | Apple IDE für iOS/macOS |
+| **Pages** | Textverarbeitung |
+| **Numbers** | Tabellenkalkulation |
+| **Keynote** | Präsentationen |
+> **Hinweis:** Die Anmeldung im App Store muss manuell über App Store.app erfolgen – die Befehle `mas account` und `mas signin` sind auf macOS 12+ nicht verfügbar.
+
+---
+
+## Aliase
+
+Verfügbare Aliase aus `~/.config/alias/`:
+
+> **Guard-System:** Alle Tool-Aliase prüfen zuerst ob das jeweilige Tool installiert ist (`command -v`). Ist ein Tool nicht vorhanden, bleiben die originalen Befehle (`ls`, `cat`, `grep`) erhalten.
+
+
+<a name="batalias"></a>
+
+### bat.alias
+
+| Alias | Befehl | Beschreibung |
+|-------|--------|--------------|
+| `cat` | `bat -pp` | Ersetzt cat mit Syntax-Highlighting (plain style) |
+| `catn` | `bat --style=numbers --paging=never` | Mit Zeilennummern, ohne Pager (bat allein hat Pager) |
+| `catd` | `bat --diff` | Zeigt Git-Diff-Markierungen an |
+**Interaktive Funktionen (mit fzf):**
+
+| Funktion | Beschreibung |
+|----------|--------------|
+| `bat-theme` | Theme Browser (Enter=Aktivieren) |
+> **Hinweis:** Globale Optionen (Theme, Style, Syntax-Mappings)
+
+
+<a name="brewalias"></a>
+
+### brew.alias
+
+| Alias | Befehl | Beschreibung |
+|-------|--------|--------------|
+| `maso` | `mas outdated` | Zeige veraltete Mac App Store Apps |
+| `masu` | `mas upgrade` | Alle Mac App Store Apps aktualisieren |
+| `mass` | `mas search` | Im Mac App Store nach Apps suchen (gibt ID zurück) |
+| `masi` | `mas install` | App aus Mac App Store installieren (benötigt ID) |
+| `masl` | `mas list` | Alle installierten Mac App Store Apps auflisten |
+**Interaktive Funktionen (mit fzf):**
+
+| Funktion | Beschreibung |
+|----------|--------------|
+| `brewup` | Homebrew Komplett-Update (update, upgrade, autoremove, cleanup, mas) |
+| `brewv` | Brewfile Versionsübersicht (zeigt installierte Versionen aller Pakete) |
+| `bip` | Brew Install Browser (Enter=Installieren, Tab=Mehrfach) |
+| `brp` | Brew Remove Browser (Enter=Entfernen, Tab=Mehrfach) |
+> **Hinweis:** Kein Guard für brew – ohne Homebrew ist dieses
+
+
+<a name="btopalias"></a>
+
+### btop.alias
+
+| Alias | Befehl | Beschreibung |
+|-------|--------|--------------|
+| `top` | `btop` | Systemmonitor mit modernem Interface |
+| `htop` | `btop` | Bessere Alternative zu htop |
+> **Hinweis:** Konfiguration in ~/.config/btop/btop.conf
+
+
+<a name="ezaalias"></a>
+
+### eza.alias
+
+| Alias | Befehl | Beschreibung |
+|-------|--------|--------------|
+| `ls` | `eza --group-directories-first` | Verzeichnisse zuerst anzeigen mit Icons |
+| `ll` | `eza -l --group-directories-first --header` | Lange Listenansicht mit Details |
+| `la` | `eza -la --group-directories-first --header` | Alle Dateien inklusive versteckte |
+| `llg` | `eza -l --git --group-directories-first --header` | Lange Liste mit Git-Status |
+| `lag` | `eza -la --git --group-directories-first --header` | Alle Dateien mit Git-Status |
+| `lt` | `eza --tree --level=2` | Verzeichnisbaum bis Tiefe 2 |
+| `lt3` | `eza --tree --level=3` | Verzeichnisbaum bis Tiefe 3 |
+| `lss` | `eza -l --sort=size --reverse --header` | Nach Größe sortieren (größte zuerst) |
+| `lst` | `eza -l --sort=modified --reverse --header` | Nach Änderungsdatum sortieren (neueste zuerst) |
+> **Hinweis:** EZA_ICONS_AUTO=1 ist in .zshrc gesetzt, daher kein
+
+
+<a name="fastfetchalias"></a>
+
+### fastfetch.alias
+
+| Alias | Befehl | Beschreibung |
+|-------|--------|--------------|
+| `ff` | `fastfetch` | Schnelle System-Info (Standardanzeige) |
+| `neofetch` | `fastfetch` | Neofetch-Kompatibilität |
+> **Hinweis:** Konfiguration in ~/.config/fastfetch/config.jsonc
+
+
+<a name="fdalias"></a>
+
+### fd.alias
+
+| Alias | Befehl | Beschreibung |
+|-------|--------|--------------|
+| `fdf` | `fd --type f` | Nur Dateien suchen |
+| `fdd` | `fd --type d` | Nur Verzeichnisse suchen |
+| `fdh` | `fd --hidden` | Inklusive versteckte Dateien |
+| `fda` | `fd -u` | Uneingeschränkt: alle Dateien inklusive .gitignore |
+| `fdsh` | `fd --extension sh` | Shell-Skripte finden |
+| `fdpy` | `fd --extension py` | Python-Dateien finden |
+| `fdjs` | `fd -e js -e ts` | JavaScript/TypeScript Dateien |
+| `fdmd` | `fd --extension md` | Markdown-Dateien finden |
+| `fdjson` | `fd --extension json` | JSON-Dateien finden |
+| `fdyaml` | `fd -e yaml -e yml` | YAML-Dateien finden |
+**Interaktive Funktionen (mit fzf):**
+
+| Funktion | Beschreibung |
+|----------|--------------|
+| `cdf` | Verzeichnis wechseln (Enter=Wechseln, Ctrl+Y=Pfad kopieren) |
+| `fo` | Datei öffnen (Enter=Öffnen, Ctrl+Y=Pfad kopieren) |
+> **Hinweis:** Globale Ignore-Patterns (.git/, node_modules/, etc.)
+
+
+<a name="fzfalias"></a>
+
+### fzf.alias
 
 **Interaktive Funktionen (mit fzf):**
 
 | Funktion | Beschreibung |
 |----------|--------------|
-| `ghpr` | PRs durchsuchen: Enter=Checkout, Ctrl+D=Diff, Ctrl+O=Browser |
-| `ghis` | Issues durchsuchen: Enter=Browser, Ctrl+E=Bearbeiten |
-| `ghrun` | Actions Runs: Enter=Logs, Ctrl+R=Rerun, Ctrl+O=Browser |
-| `ghrepo` | Repositories: Enter=Klonen, Ctrl+O=Browser |
-| `ghgist` | Gists durchsuchen: Enter=Anzeigen, Ctrl+E=Bearbeiten, Ctrl+O=Browser |
+| `zf` | zoxide Browser (Enter=Wechseln, Ctrl+D=Löschen, Ctrl+Y=Kopieren) |
+| `fkill` | Prozess Browser (Enter=Beenden, Tab=Mehrfach, Ctrl+S=Apps↔Alle) |
+| `fman` | Man/tldr Browser (Ctrl+S=Modus wechseln, Enter=je nach Modus öffnen) |
+| `fa` | fa Browser (Enter=Übernehmen, Ctrl+S=tldr↔Code) |
+| `fenv` | Env Browser (Enter=Export→Edit, Ctrl+Y=Kopieren) |
+> **Hinweis:** Shell-Keybindings via Ctrl+X Prefix (in init.zsh):
 
-> **Hinweis:** Alle interaktiven gh-Funktionen benötigen sowohl gh CLI als auch fzf. Die Aliase `gho` und `ghst` funktionieren auch ohne fzf.
 
-<a name="fzfalias--generische-utilities"></a>
+<a name="ghalias"></a>
 
-### fzf.alias – Generische Utilities
+### gh.alias
 
-fzf ist als "Enhancer" in die jeweiligen Tool-Alias-Dateien integriert. Diese Datei enthält nur generische Funktionen:
-
-**Zoxide + fzf:**
-
-| Funktion | Beschreibung |
-|----------|--------------|
-| `zf` | zoxide + fzf mit eza-Vorschau, Enter=Wechseln, Ctrl+D=Löschen, Ctrl+Y=Kopieren |
-
-> **`zi` vs `zf` – Wann welches verwenden?**
->
-> `zi` ist ein zoxide built-in (keine eigene Funktion in fzf.alias).
->
-> | Befehl | Quelle | Vorschau | Lösch-Option | Empfehlung |
-> |--------|--------|----------|--------------|------------|
-> | `zi` | zoxide (built-in) | Keine | Nein | Schnelle Navigation zu bekannten Verzeichnissen |
-> | `zf` | fzf.alias (custom) | eza-Baumansicht | Ctrl+D | Exploration mit visueller Vorschau, Aufräumen alter Einträge |
->
-> **Faustregel:** `zi` für Geschwindigkeit, `zf` für Übersicht.
-
-**System-Utilities:**
+| Alias | Befehl | Beschreibung |
+|-------|--------|--------------|
+| `gho` | `gh browse` | Repository im Browser öffnen |
+| `ghst` | `gh status` | GitHub Status: Zugewiesene Issues, PRs, Mentions |
+**Interaktive Funktionen (mit fzf):**
 
 | Funktion | Beschreibung |
 |----------|--------------|
-| `fa` | **Fuzzy Alias**: Aliase/Funktionen durchsuchen, Enter=Übernehmen, Ctrl+S=tldr↔Code |
-| `fkill` | **Fuzzy Kill**: Prozesse beenden. Enter=Beenden, Tab=Mehrfach, Ctrl+S=Apps/Alle. Optional: `fkill 9` für SIGKILL |
-| `fman` | **Fuzzy Man**: Man-Pages mit bat-Vorschau. Enter=Öffnen, Ctrl+S=man↔tldr |
-| `fenv` | **Fuzzy Env**: Umgebungsvariablen durchsuchen mit Farbkodierung. Enter=Export→Edit, Ctrl+Y=Wert kopieren |
-
-**Shell-Keybindings (Ctrl+X Prefix):**
-
-| Keybinding | Beschreibung |
-|------------|--------------|
-| `Ctrl+X 1` | **History-Suche**: Shell-History mit fzf, Enter=Edit-Buffer, Ctrl+Y=Kopieren |
-| `Ctrl+X 2` | **Datei-Suche**: Dateien mit bat-Vorschau, Enter=Pfad einfügen |
-| `Ctrl+X 3` | **Verzeichnis-Wechsel**: Verzeichnisse mit eza-Vorschau, Enter=Wechseln |
-
-**Tool-spezifische fzf-Funktionen:**
-
-Die folgenden Funktionen nutzen fzf, sind aber nach ihrem primären Zweck in den jeweiligen Tool-Dateien organisiert:
-
-- **rg.alias**: `rgf`
-- **fd.alias**: `cdf`, `fo`
-- **git.alias**: `glog`, `gbr`, `gst`, `gstash`
-- **brew.alias**: `bip`, `brp`, `brewv`
-- **gh.alias**: `ghpr`, `ghis`, `ghrun`, `ghrepo`, `ghgist`
-
-> **Design-Prinzip:** Aliase werden nach ihrem primären Zweck organisiert, nicht nach den verwendeten Tools. `rgf` nutzt fzf+bat, ist aber primär eine Suche – daher in `rg.alias`.
-
-### Verwendung
-
-```zsh
-# System aktualisieren
-brewup
-
-# Was wird aktualisiert? (Vorschau)
-brew outdated
-```
-
----
-
-## Tool-Nutzung
-
-### eza – Moderner ls-Ersatz
-
-```zsh
-# Basis-Auflistung (Ordner zuerst, Icons automatisch)
-ls                 # eza --icons=auto --group-directories-first
-
-# Ausführliche Auflistung
-ll                 # Long-Format mit Header
-la                 # Alle Dateien inkl. versteckter
-
-# Mit Git-Integration (in Git-Repos)
-llg                # Long-Format mit Git-Status
-lag                # Alle Dateien mit Git-Status
-
-# Baumansicht
-lt                 # 2 Ebenen tief
-lt3                # 3 Ebenen tief
-
-# Sortierung
-lss                # Nach Größe (größte zuerst)
-lst                # Nach Änderungsdatum (neueste zuerst)
-```
-
-> **Hinweis:** `--icons=auto` erkennt automatisch ob das Terminal Nerd Font Icons unterstützt.
-
----
-
-### bat – cat mit Syntax-Highlighting
-
-```zsh
-# cat-Ersatz (Plain, kein Pager)
-cat README.md          # bat -pp
-
-# Mit Zeilennummern
-catn config.yaml       # bat --style=numbers --paging=never
-
-# Git-Diff hervorheben
-git diff | bat
-
-# Man-Pages mit Syntax-Highlighting
-man ls                 # Automatisch via MANPAGER
-
-# Theme temporär wechseln
-bat --theme="Dracula" file.py
-
-# Theme interaktiv auswählen
-bat-theme
-```
-
-> **Hinweis:** `-pp` = `--style=plain --paging=never` – verhält sich wie echtes `cat`. bat ist automatisch als `MANPAGER` konfiguriert für Syntax-Highlighting in Man-Pages.
-
----
-
-### ripgrep (rg) – Schnelle Textsuche
-
-```zsh
-# Smart-Case Suche (Standard, da in ~/.config/ripgrep/config)
-rg "TODO"              # case-insensitive da alles klein
-rg "MyClass"           # case-sensitive da Großbuchstaben
-
-# Mit Kontext (3 Zeilen vor/nach)
-rgc "error"            # rg -C 3
-
-# Nur in bestimmten Dateitypen
-rgts "function"        # TypeScript/JavaScript
-rgpy "def "            # Python
-rgmd "##"              # Markdown
-
-# Alle Dateien durchsuchen (ignoriert nichts)
-rga "password"         # rg -uuu
-
-# Nur Dateinamen mit Treffern
-rgl "TODO"             # rg --files-with-matches
-```
-
-> **Hinweis:** `--smart-case` ist Standard in den Dateityp-Aliassen.
-
----
-
-### fd – Schneller find-Ersatz
-
-```zsh
-# Datei nach Name suchen
-fd readme               # Findet README.md, readme.txt, etc.
-
-# Nur Dateien oder Verzeichnisse
-fdf config              # Nur Dateien
-fdd src                 # Nur Verzeichnisse
-
-# Inkl. versteckter Dateien
-fdh .env                # Findet .env, .envrc, etc.
-
-# Nach Erweiterung (mit Aliassen)
-fdmd                    # Alle Markdown-Dateien
-fdpy                    # Alle Python-Dateien
-fdjs                    # JavaScript + TypeScript
-
-# Nach Erweiterung (direkt)
-fd -e yaml              # Alle YAML-Dateien
-fd -e json -e yaml      # JSON und YAML
-
-# Mit Ausführung
-fd -e json -x jq . {}   # Alle JSON-Dateien formatieren
-fd -e md -x bat {}      # Alle Markdown mit bat anzeigen
-
-# Alles suchen (ignoriert nichts)
-fda password            # Durchsucht auch .git/, node_modules/, etc.
-```
-
-> **Hinweis:** fd ist das Standard-Backend für fzf (konfiguriert in `.zshrc`). Alle fzf-Suchen nutzen automatisch fd.
-
----
-
-### btop – Ressourcen-Monitor
-
-```zsh
-# Monitor starten (ersetzt top/htop)
-top                    # Startet btop
-btop                   # Direkt aufrufen
-
-# Für einfache Terminals
-btop --low-color       # Weniger Farben
-
-# Navigation in btop:
-# m         → Menü
-# Esc       → Zurück
-# q         → Beenden
-# f         → Filter (Prozesse)
-# k         → Kill (Prozess)
-# +/-       → Sortierung ändern
-```
-
-> **Hinweis:** btop zeigt CPU, RAM, Disk, Netzwerk und Prozesse in einer ansprechenden TUI mit Graphen.
-
----
-
-### mas – Mac App Store CLI
-
-```zsh
-# Veraltete Apps anzeigen
-maso                   # mas outdated
-
-# Alle Apps aktualisieren
-masu                   # mas upgrade
-
-# App suchen
-mass "Xcode"           # Zeigt App-ID und Name
-
-# App installieren (benötigt App-ID)
-masi 497799835         # Installiert Xcode
-
-# Installierte Apps auflisten
-masl                   # Zeigt ID und Name
-```
-
-> **Hinweis:** `brewup` aktualisiert automatisch auch App Store Apps wenn mas installiert ist.
-
----
-
-### fzf – Fuzzy Finder
-
-**Tastenkombinationen:**
-
-| Taste | Funktion | Vorschau |
-|-------|----------|----------|
-| `Ctrl+X 1` | History durchsuchen | – |
-| `Ctrl+Y` | (in Ctrl+X 1) Befehl ins Clipboard kopieren | – |
-| `Ctrl+X 2` | Datei suchen und einfügen | bat (Syntax-Highlighting) |
-| `Ctrl+X 3` | Verzeichnis wechseln (cd) | eza (Tree-Ansicht) |
-
-**fd-Integration:**
-
-fzf nutzt automatisch fd als Backend (konfiguriert in `.zshrc`):
-- Schneller als Standard-`find`
-- Respektiert `.gitignore`
-- Zeigt versteckte Dateien (außer `.git/`)
-
-```zsh
-# Datei suchen und öffnen
-vim $(fzf)
-
-# History durchsuchen
-# Ctrl+X 1 drücken, tippen, Enter
-# Ctrl+Y kopiert den Befehl ins Clipboard ohne Ausführung
-
-# Live-Grep (interaktive Suche in Dateien)
-rgf                # Startet interaktive Suche
-rgf "TODO"         # Startet mit Suchbegriff
-
-# Datei suchen und in Kommandozeile einfügen
-# Ctrl+X 2 drücken → Vorschau mit bat
-
-# Verzeichnis wechseln
-# Ctrl+X 3 drücken → Vorschau mit eza Tree
-cdf                # Alternative: cd mit fzf-Auswahl
-
-# In Pipe verwenden
-cat file.txt | fzf
-```
-
-> **Hinweis:** Die Vorschau-Funktionen benötigen bat und eza (via Brewfile installiert).
-
-### gh – GitHub CLI
-
-Die GitHub CLI wird mit Tab-Completion geladen (konfiguriert in `.zshrc`).
-
-**Tab-Completion:** Drücke `Tab` nach `gh` für Befehls-Vorschläge. Dies erfordert das ZSH Completion-System (`compinit`), das automatisch in `.zshrc` initialisiert wird.
-
-```zsh
-# Authentifizieren (einmalig)
-gh auth login
-
-# Repository klonen
-gh repo clone owner/repo
-
-# Issue erstellen
-gh issue create
-
-# Pull Request erstellen
-gh pr create
-
-# Status prüfen
-gh pr status
-
-# Tab-Completion nutzen
-gh <Tab>              # Zeigt alle Befehle
-gh pr <Tab>           # Zeigt PR-Unterbefehle
-```
-
-### zoxide – Smarter cd
-
-**Befehle:**
-
-| Befehl | Funktion | Vorschau |
-|--------|----------|----------|
-| `z <query>` | Zu Verzeichnis springen | – |
-| `zi` | Interaktive Auswahl (zoxide built-in) | – |
-| `zf` | Erweitertes zi mit fzf | eza (Baumansicht) |
-
-```zsh
-# Verzeichnis wechseln (lernt mit der Zeit)
-z dotfiles         # Springt zu ~/dotfiles
-z doc              # Springt zu häufig besuchtem Verzeichnis mit "doc"
-
-# Interaktive Auswahl (zoxide built-in)
-zi                 # fzf-Auswahl ohne Vorschau
-
-# Erweiterte Auswahl mit eza-Vorschau
-zf                 # fzf mit Baumansicht, Ctrl+D zum Löschen
-```
-
-> **Hinweis:** `zi` ist das zoxide built-in. Für visuelle Vorschau und Löschfunktion verwende `zf` (aus fzf.alias).
-
-### starship – Shell Prompt
-
-Starship läuft automatisch. Konfiguration erfolgt über `~/.config/starship.toml`.
-
-```zsh
-# Preset wechseln
-starship preset tokyo-night -o ~/.config/starship.toml
-
-# Verfügbare Presets
-starship preset --list
-
-# Config editieren
-$EDITOR ~/.config/starship.toml
-```
-
-<a name="preset-kompatibilität"></a>
-
-### Preset-Kompatibilität
-
-| Preset | Nerd Font erforderlich? | Beschreibung |
-|--------|------------------------|---------------|
-| `catppuccin-powerline` | ✅ Ja | Standard-Preset dieses Setups |
-| `gruvbox-rainbow` | ✅ Ja | Retro-Farbschema mit Icons |
-| `tokyo-night` | ✅ Ja | Dunkles Theme mit Powerline |
-| `no-nerd-font` | ❌ Nein | Für Terminals ohne Nerd Font |
-| `plain-text-symbols` | ❌ Nein | ASCII-only, keine Spezialzeichen |
-
-> 📖 Vollständige Liste: [starship.rs/presets](https://starship.rs/presets/)
->
-> ⚠️ Bei Presets mit Nerd Font-Anforderung müssen Font und Terminal-Profil korrekt konfiguriert sein. Siehe [Architektur → Komponenten-Abhängigkeiten](architecture.md#komponenten-abhängigkeiten).
-
----
-
-## Font
-
-### MesloLG Nerd Font
-
-| Eigenschaft | Wert |
-|-------------|------|
-| **Name** | MesloLGLDZ Nerd Font (Dotted Zero Variante) |
-| **Installiert via** | `brew install --cask font-meslo-lg-nerd-font` |
-| **Speicherort** | `~/Library/Fonts/` |
-| **Zweck** | Icons und Powerline-Symbole im Terminal |
-
-> **Hinweis:** MesloLG gibt es in mehreren Varianten: `NFM` (Mono), `NF`, `NFP` (Propo). Das Terminal-Profil verwendet die `LDZNF`-Variante (L = Large, DZ = Dotted Zero).
-
-### Warum Nerd Fonts?
-
-Nerd Fonts sind gepatchte Schriftarten mit zusätzlichen Glyphen:
-
-- **Powerline-Symbole** – für Prompt-Segmente
-- **Devicons** – Sprach- und Framework-Icons
-- **Font Awesome** – Allgemeine Icons
-- **Octicons** – GitHub-Icons
-
-Diese werden von Starship und anderen modernen CLI-Tools verwendet.
-
-### Alternative Fonts
-
-Falls MesloLG nicht gefällt, andere Nerd Fonts installieren:
-
-```zsh
-# Suche verfügbare Nerd Fonts
-brew search nerd-font
-
-# Beispiele
-brew install --cask font-fira-code-nerd-font
-brew install --cask font-jetbrains-mono-nerd-font
-brew install --cask font-hack-nerd-font
-```
-
-> **Hinweis:** Nach Font-Änderung muss das Terminal-Profil angepasst werden:
-> Terminal.app → Einstellungen → Profile → Text → Schrift ändern
-
----
-
-## ZSH-Plugins
-
-### zsh-autosuggestions
-
-Zeigt Befehlsvorschläge basierend auf der History beim Tippen an.
-
-```zsh
-# Vorschlag akzeptieren
-# → (Pfeil rechts) oder End-Taste
-
-# Vorschlag teilweise akzeptieren (Wort für Wort)
-# Alt+→ (Option + Pfeil rechts)
-
-# Vorschlag ignorieren
-# Weiterschreiben oder Escape
-```
-
-### zsh-syntax-highlighting
-
-Färbt Kommandos während der Eingabe ein:
-- **Grün:** Gültiger Befehl
-- **Rot:** Ungültiger Befehl oder Datei nicht gefunden
-- **Unterstrichen:** Existierende Datei/Verzeichnis
-
-> **Hinweis:** Diese Plugins werden automatisch geladen wenn installiert. Sie beeinträchtigen die Shell-Startzeit minimal (~20ms).
-
----
-
-## Eigene Tools hinzufügen
-
-### Brewfile erweitern
-
-```zsh
-# Brewfile editieren
-$EDITOR ~/dotfiles/setup/Brewfile
-
-# Beispiel: bat (besseres cat) hinzufügen
-echo 'brew "bat"' >> ~/dotfiles/setup/Brewfile
-
-# Installieren (HOMEBREW_BUNDLE_FILE ist in .zprofile gesetzt)
-brew bundle
-```
-
-### Eigene Aliase
-
-Siehe [Konfiguration → Aliase erweitern](configuration.md#aliase-erweitern).
-
----
-
-## Weiterführende Links
-
-- [Homebrew Formulae](https://formulae.brew.sh/)
-- [Nerd Fonts](https://www.nerdfonts.com/)
-- [Starship Presets](https://starship.rs/presets/)
-
----
-
-[← Zurück zur Übersicht](../README.md)
+| `ghpr` | PRs durchsuchen (Enter=Checkout, Ctrl+D=Diff, Ctrl+O=Browser) |
+| `ghis` | Issues durchsuchen (Enter=Browser, Ctrl+E=Bearbeiten) |
+| `ghrun` | Actions Runs (Enter=Logs, Ctrl+R=Rerun, Ctrl+O=Browser) |
+| `ghrepo` | Repo Browser (Enter=Klonen, Ctrl+O=Browser) |
+| `ghgist` | Gists durchsuchen (Enter=Anzeigen, Ctrl+E=Bearbeiten, Ctrl+O=Browser) |
+> **Hinweis:** Erfordert gh auth login für Authentifizierung.
+
+
+<a name="gitalias"></a>
+
+### git.alias
+
+| Alias | Befehl | Beschreibung |
+|-------|--------|--------------|
+| `ga` | `git add` | Dateien zum Staging hinzufügen |
+| `gc` | `git commit` | Einen neuen Commit erstellen |
+| `gcm` | `git commit -m` | Commit mit Nachricht |
+| `gacm` | `git add --all && git commit -m` | Alle Änderungen stagen und einen Commit erstellen |
+| `gp` | `git push` | Änderungen pushen |
+| `gpl` | `git pull` | Änderungen pullen |
+| `gco` | `git checkout` | Branch wechseln oder Datei zurücksetzen |
+| `gs` | `git status` | Status des Repositories anzeigen |
+| `gd` | `git diff` | Änderungen anzeigen |
+| `lg` | `lazygit` | Terminal-UI für Git (lazygit) |
+**Interaktive Funktionen (mit fzf):**
+
+| Funktion | Beschreibung |
+|----------|--------------|
+| `glog` | Commit-History mit bat-Vorschau (Enter=Anzeigen, Ctrl+Y=SHA kopieren) |
+| `gbr` | Branch wechseln mit Log-Vorschau (Enter=Checkout, Ctrl+D=Löschen) |
+| `gst` | Status mit Diff-Vorschau (Enter=Add, Tab=Mehrfach, Ctrl+R=Reset) |
+| `gstash` | Stash-Browser (Enter=Apply, Ctrl+P=Pop, Ctrl+D=Drop) |
+> **Hinweis:** Interaktive Git-Funktionen (mit fzf) sind unten
+
+
+<a name="rgalias"></a>
+
+### rg.alias
+
+| Alias | Befehl | Beschreibung |
+|-------|--------|--------------|
+| `rgc` | `rg -C 3` | Suche mit 3 Zeilen Kontext vor und nach Treffer |
+| `rgi` | `rg --ignore-case` | Suche ohne Berücksichtigung von Groß-/Kleinschreibung |
+| `rga` | `rg -uuu` | Suche in allen Dateien ohne Einschränkungen |
+| `rgh` | `rg --hidden` | Suche inklusive versteckter Dateien |
+| `rgl` | `rg --files-with-matches` | Zeige nur Dateinamen mit Treffern |
+| `rgn` | `rg --count` | Zähle Treffer pro Datei |
+| `rgts` | `rg -t ts -t js` | Suche in TypeScript/JavaScript Dateien |
+| `rgpy` | `rg -t py` | Suche in Python-Dateien |
+| `rgmd` | `rg -t md` | Suche in Markdown-Dateien |
+| `rgsh` | `rg -t sh` | Suche in Shell-Skripten |
+| `rgrb` | `rg -t ruby` | Suche in Ruby-Dateien |
+| `rggo` | `rg -t go` | Suche in Go-Dateien |
+**Interaktive Funktionen (mit fzf):**
+
+| Funktion | Beschreibung |
+|----------|--------------|
+| `rgf` | Live-Grep (Enter=Datei öffnen, Ctrl+Y=Pfad kopieren) |
+> **Hinweis:** Globale Optionen (--smart-case, --line-number, --heading)

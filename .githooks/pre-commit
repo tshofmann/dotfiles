@@ -2,10 +2,12 @@
 # ============================================================
 # pre-commit - Git Hook für Validierung vor Commits
 # ============================================================
-# Prüft:
+# Aktionen:
 #   1. Syntax-Check für ZSH-Dateien (zsh -n)
 #      - *.sh, *.alias, .zshrc, .zshenv, .zprofile, .zlogin, pre-commit
-#   2. Doku-Konsistenz bei relevanten Änderungen
+#   2. Dokumentations-Generierung bei relevanten Änderungen
+#      - Generiert Docs aus Code (Single Source of Truth)
+#      - Staged generierte Dateien automatisch
 #
 # Install : git config core.hooksPath .githooks
 # ============================================================
@@ -48,21 +50,32 @@ if [[ -n "$zsh_files" ]]; then
 fi
 
 # ------------------------------------------------------------
-# 2. Dokumentations-Konsistenz
+# 2. Dokumentations-Generierung
 # ------------------------------------------------------------
-# Trigger bei: docs/, Brewfile, terminal/.config/, CONTRIBUTING.md, terminal/.zsh*, .github/copilot-instructions.md
-if echo "$changed_files" | grep -qE '^(docs/|setup/Brewfile|terminal/\.config/|CONTRIBUTING\.md|terminal/\.zsh|\.github/copilot-instructions\.md)'; then
-    echo "📖 Prüfe Dokumentations-Konsistenz..."
+# Trigger bei: Alias-Dateien, Brewfile, Configs, Bootstrap
+# Generator erzeugt Docs neu und staged sie automatisch
+if echo "$changed_files" | grep -qE '^(terminal/\.config/alias/|setup/Brewfile|setup/bootstrap\.sh|terminal/\.config/fzf/)'; then
+    echo "📖 Generiere Dokumentation..."
     
-    if ! "$DOTFILES_DIR/scripts/validate-docs.sh"; then
+    if ! "$DOTFILES_DIR/scripts/generate-docs.sh" --generate; then
         echo ""
-        echo "❌ Commit abgebrochen: Dokumentation stimmt nicht mit Code überein!"
+        echo "❌ Commit abgebrochen: Dokumentations-Generator fehlgeschlagen!"
         echo ""
         echo "Optionen:"
-        echo "  1. Dokumentation aktualisieren und erneut committen"
+        echo "  1. Fehler beheben und erneut committen"
         echo "  2. Hook überspringen: git commit --no-verify"
         exit 1
     fi
+    
+    # Generierte Dateien automatisch stagen
+    git add "$DOTFILES_DIR/README.md" \
+            "$DOTFILES_DIR/docs/tools.md" \
+            "$DOTFILES_DIR/docs/installation.md" \
+            "$DOTFILES_DIR/docs/architecture.md" \
+            "$DOTFILES_DIR/docs/configuration.md" \
+            "$DOTFILES_DIR/terminal/.config/tealdeer/pages/"*.patch.md 2>/dev/null || true
+    
+    echo "✔ Dokumentation generiert und gestaged"
 fi
 
 exit 0
