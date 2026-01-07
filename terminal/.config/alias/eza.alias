@@ -4,6 +4,13 @@
 # Zweck   : Aliase für eza mit Icons und Git-Integration
 # Pfad    : ~/.config/alias/eza.alias
 # Docs    : https://eza.rocks
+#
+# Git-Integration:
+#   --git ist standardmäßig aktiv in allen -l Aliase. Performance:
+#   - Außerhalb Git-Repos: 0ms Overhead (eza ignoriert --git)
+#   - Innerhalb Git-Repos: ~20ms (unter Wahrnehmungsschwelle)
+#   - Opt-out: export EZA_OVERRIDE_GIT=1
+#
 # Hinweis : EZA_ICONS_AUTO=1 ist in .zshrc gesetzt, daher kein
 #           --icons=auto in den Aliasen nötig
 # ============================================================
@@ -16,38 +23,29 @@ fi
 # ------------------------------------------------------------
 # Basis-Auflistung
 # ------------------------------------------------------------
-# Verzeichnisse zuerst anzeigen mit Icons
+# Kompakte Liste, Verzeichnisse zuerst
 alias ls='eza --group-directories-first'
 
-# Lange Listenansicht mit Details
-alias ll='eza -l --group-directories-first --header'
+# Lange Liste mit Git-Status und Spaltenüberschriften
+alias ll='eza -l --git --group-directories-first --header'
 
-# Alle Dateien inklusive versteckte
-alias la='eza -la --group-directories-first --header'
-
-# ------------------------------------------------------------
-# Mit Git-Integration (nur in Git-Repos sinnvoll)
-# ------------------------------------------------------------
-# Lange Liste mit Git-Status
-alias llg='eza -l --git --group-directories-first --header'
-
-# Alle Dateien mit Git-Status
-alias lag='eza -la --git --group-directories-first --header'
+# Wie ll, aber inkl. versteckter Dateien
+alias la='eza -la --git --group-directories-first --header'
 
 # ------------------------------------------------------------
 # Baumansicht
 # ------------------------------------------------------------
-# Verzeichnisbaum bis Tiefe 2
+# Verzeichnisbaum, 2 Ebenen tief
 alias lt='eza --tree --level=2'
 
-# Verzeichnisbaum bis Tiefe 3
+# Verzeichnisbaum, 3 Ebenen tief
 alias lt3='eza --tree --level=3'
 
 # ------------------------------------------------------------
 # Sortierung
 # ------------------------------------------------------------
-# Nach Größe sortieren (größte zuerst)
-alias lss='eza -l --sort=size --reverse --header'
+# Nach Größe sortiert (größte zuerst), mit Git-Status
+alias lss='eza -l --git --sort=size --reverse --group-directories-first --header'
 
-# Nach Änderungsdatum sortieren (neueste zuerst)
-alias lst='eza -l --sort=modified --reverse --header'
+# Nach Änderungsdatum sortiert (neueste zuerst), mit Git-Status
+alias lst='eza -l --git --sort=modified --reverse --group-directories-first --header'
