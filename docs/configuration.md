@@ -128,17 +128,18 @@ brew install --cask font-meslo-lg-nerd-font
 
 ### Schritt 3: Exportiertes Profil ins Repository
 
-> **Hinweis:** Der Dateiname muss `catppuccin-mocha.terminal` bleiben – bootstrap.sh erwartet diesen Namen.
-
 ```zsh
-# Altes Profil ersetzen (Dateiname beibehalten!)
-mv ~/Downloads/catppuccin-mocha.terminal ~/dotfiles/setup/
+# Altes Profil ersetzen
+mv ~/Downloads/<profilname>.terminal ~/dotfiles/setup/
 
 # Änderung committen
 cd ~/dotfiles
-git add setup/catppuccin-mocha.terminal
+git add setup/*.terminal
 git commit -m "Terminal-Profil: <Neuer Font Name>"
 ```
+
+> **Hinweis:** Der Dateiname ist frei wählbar – bootstrap.sh findet automatisch die erste `.terminal`-Datei in `setup/`.
+
 
 ---
 

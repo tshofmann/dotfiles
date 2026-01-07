@@ -53,8 +53,22 @@ trap cleanup EXIT
 # ------------------------------------------------------------
 readonly SCRIPT_DIR="${0:A:h}"
 readonly DOTFILES_DIR="${SCRIPT_DIR:h}"
-readonly PROFILE_FILE="$SCRIPT_DIR/catppuccin-mocha.terminal"
-readonly PROFILE_NAME="catppuccin-mocha"
+
+# Terminal-Profil dynamisch ermitteln (erste .terminal-Datei in setup/)
+PROFILE_FILE=$(find "$SCRIPT_DIR" -maxdepth 1 -name "*.terminal" -type f 2>/dev/null | head -1)
+if [[ -z "$PROFILE_FILE" ]]; then
+  echo "FEHLER: Keine .terminal-Datei in setup/ gefunden" >&2
+  exit 1
+fi
+# Warnung wenn mehrere .terminal-Dateien existieren
+TERMINAL_COUNT=$(find "$SCRIPT_DIR" -maxdepth 1 -name "*.terminal" -type f 2>/dev/null | wc -l | tr -d ' ')
+if (( TERMINAL_COUNT > 1 )); then
+  echo "WARNUNG: Mehrere .terminal-Dateien gefunden, verwende: ${PROFILE_FILE:t}" >&2
+fi
+readonly PROFILE_FILE
+# Profil-Name aus Dateiname extrahieren (ohne .terminal-Endung)
+readonly PROFILE_NAME="${${PROFILE_FILE:t}%.terminal}"
+
 readonly FONT_GLOB="MesloLG*NerdFont*"
 readonly BREWFILE="$SCRIPT_DIR/Brewfile"
 
@@ -340,22 +354,32 @@ else
 fi
 
 # ------------------------------------------------------------
-# Xcode Catppuccin Mocha Theme installieren
+# Xcode Theme installieren (dynamisch ermittelt)
 # ------------------------------------------------------------
 # Xcode verwendet .xccolortheme Dateien für Syntax-Highlighting.
 # Das Theme wird nach ~/Library/Developer/Xcode/UserData/FontAndColorThemes/ kopiert.
-# Nach Installation muss das Theme manuell in Xcode aktiviert werden:
-#   Xcode > Settings (⌘,) > Themes > "Catppuccin Mocha"
+# Nach Installation muss das Theme manuell in Xcode aktiviert werden.
 print ""
 CURRENT_STEP="Xcode Theme Installation"
-XCODE_THEME_FILE="$SCRIPT_DIR/Catppuccin Mocha.xccolortheme"
+
+# Xcode-Theme dynamisch ermitteln (erste .xccolortheme-Datei in setup/)
+XCODE_THEME_FILE=$(find "$SCRIPT_DIR" -maxdepth 1 -name "*.xccolortheme" -type f 2>/dev/null | head -1)
 XCODE_THEMES_DIR="$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
+
+# Warnung wenn mehrere .xccolortheme-Dateien existieren
+XCODE_THEME_COUNT=$(find "$SCRIPT_DIR" -maxdepth 1 -name "*.xccolortheme" -type f 2>/dev/null | wc -l | tr -d ' ')
+if (( XCODE_THEME_COUNT > 1 )); then
+  warn "Mehrere .xccolortheme-Dateien gefunden, verwende: ${XCODE_THEME_FILE:t}"
+fi
+
+# Theme-Name aus Dateiname extrahieren (für Log-Meldungen)
+XCODE_THEME_NAME="${${XCODE_THEME_FILE:t}%.xccolortheme}"
 
 # Prüfe ob Xcode.app installiert ist (nicht nur Command Line Tools)
 if [[ -d "/Applications/Xcode.app" ]]; then
   log "Prüfe Xcode Theme-Installation"
 
-  if [[ -f "$XCODE_THEME_FILE" ]]; then
+  if [[ -n "$XCODE_THEME_FILE" && -f "$XCODE_THEME_FILE" ]]; then
     # Zielverzeichnis erstellen falls nicht vorhanden
     if [[ ! -d "$XCODE_THEMES_DIR" ]]; then
       log "Erstelle Xcode Themes-Verzeichnis"
@@ -364,13 +388,13 @@ if [[ -d "/Applications/Xcode.app" ]]; then
 
     # Theme kopieren (überschreibt existierende Version)
     if cp "$XCODE_THEME_FILE" "$XCODE_THEMES_DIR/"; then
-      ok "Xcode Catppuccin Mocha Theme installiert"
-      log "Aktivierung: Xcode → Settings (⌘,) → Themes → 'Catppuccin Mocha'"
+      ok "Xcode Theme '$XCODE_THEME_NAME' installiert"
+      log "Aktivierung: Xcode → Settings (⌘,) → Themes → '$XCODE_THEME_NAME'"
     else
       warn "Konnte Xcode Theme nicht kopieren"
     fi
   else
-    warn "Xcode Theme-Datei nicht gefunden: $XCODE_THEME_FILE"
+    warn "Keine .xccolortheme-Datei in setup/ gefunden"
   fi
 else
   log "Xcode.app nicht installiert, überspringe Theme-Installation"
