@@ -305,11 +305,25 @@ extract_usage_codeblock() {
             
             # Alignment (max 18 Zeichen)
             local padding=$((18 - ${#alias_name}))
-            (( padding < 1 )) && padding=1
+            [[ $padding -lt 1 ]] && padding=1
             local spaces=""
             for ((i=0; i<padding; i++)); do spaces+=" "; done
             
             output+="${alias_name}${spaces}# ${desc}\n"
+        fi
+        
+        # Funktion mit vorheriger Beschreibung: name() {
+        if [[ "$trimmed" == [a-z]*"() "* && "$prev_line" == "# "* && "$prev_line" != "# ----"* ]]; then
+            local func_name="${trimmed%%\(*}"
+            local desc="${prev_line#\# }"
+            
+            # Alignment (max 18 Zeichen)
+            local padding=$((18 - ${#func_name}))
+            [[ $padding -lt 1 ]] && padding=1
+            local spaces=""
+            for ((i=0; i<padding; i++)); do spaces+=" "; done
+            
+            output+="${func_name}${spaces}# ${desc}\n"
         fi
         
         prev_prev_line="$prev_line"
