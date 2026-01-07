@@ -173,14 +173,18 @@ generate_patch_for_alias() {
             
             if [[ "$content" == *" – "* || "$content" == *" - "* ]]; then
                 case "$first_word" in
-                    Zweck|Hinweis|Pfad|Docs|Guard|Voraussetzung) prev_comment="" ;;
-                    *) prev_comment="$trimmed" ;;
+                    Zweck|Hinweis|Pfad|Docs|Guard|Voraussetzung|Nutzt) prev_comment="" ;;
+                    *) prev_comment="$content" ;;
                 esac
+            else
+                # Einfacher Kommentar ohne Trennzeichen
+                prev_comment="$content"
             fi
             continue
         fi
         
-        if [[ "$trimmed" =~ "^[a-zA-Z][a-zA-Z0-9_-]*\(\) \{" ]]; then
+        # Funktionen: func() {
+        if [[ "$trimmed" =~ ^[a-zA-Z][a-zA-Z0-9_-]*\(\)\ \{ ]]; then
             local func_name="${trimmed%%\(*}"
             
             [[ "$func_name" == _* ]] && { prev_comment=""; continue; }
@@ -202,6 +206,19 @@ generate_patch_for_alias() {
                 output+="\`${func_name}"
                 [[ -n "$tldr_param" ]] && output+=" ${tldr_param}"
                 output+="\`\n\n"
+            fi
+            
+            prev_comment=""
+        fi
+        
+        # Aliase: alias name='command'
+        if [[ "$trimmed" =~ ^alias[[:space:]]+[a-zA-Z][a-zA-Z0-9_-]*= ]]; then
+            local alias_def="${trimmed#alias }"
+            local alias_name="${alias_def%%=*}"
+            
+            if [[ -n "$prev_comment" ]]; then
+                output+="- dotfiles: ${prev_comment}:\n\n"
+                output+="\`${alias_name}\`\n\n"
             fi
             
             prev_comment=""

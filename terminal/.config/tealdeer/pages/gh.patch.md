@@ -1,19 +1,7 @@
-- dotfiles: PRs durchsuchen (`<Enter>` Checkout, `<Ctrl d>` Diff, `<Ctrl o>` Browser):
+- dotfiles: Repository im Browser öffnen:
 
-`ghpr`
+`gho`
 
-- dotfiles: Issues durchsuchen (`<Enter>` Browser, `<Ctrl e>` Bearbeiten):
+- dotfiles: GitHub Status: Zugewiesene Issues, PRs, Mentions:
 
-`ghis`
-
-- dotfiles: Actions Runs (`<Enter>` Logs, `<Ctrl r>` Rerun, `<Ctrl o>` Browser):
-
-`ghrun`
-
-- dotfiles: Repo Browser (`<Enter>` Klonen, `<Ctrl o>` Browser):
-
-`ghrepo {{suche}}`
-
-- dotfiles: Gists durchsuchen (`<Enter>` Anzeigen, `<Ctrl e>` Bearbeiten, `<Ctrl o>` Browser):
-
-`ghgist`
+`ghst`
