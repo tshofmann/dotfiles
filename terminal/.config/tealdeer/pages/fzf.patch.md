@@ -28,9 +28,3 @@
 
 `<Ctrl x> 3`
 # dotfiles: Tool-spezifische fzf-Funktionen
-
-- dotfiles: Siehe `tldr fd` für `cdf`, `fo`
-- dotfiles: Siehe `tldr rg` für `rgf`
-- dotfiles: Siehe `tldr git` für `glog`, `gbr`, `gst`, `gstash`
-- dotfiles: Siehe `tldr brew` für `bip`, `brp`
-- dotfiles: Siehe `tldr gh` für `ghpr`, `ghis`, `ghrun`, `ghrepo`, `ghgist`

@@ -5,17 +5,9 @@
 # Pfad    : ~/.config/alias/fzf.alias
 # Docs    : https://github.com/junegunn/fzf
 # ============================================================
-# Hinweis : Shell-Keybindings via Ctrl+X Prefix (in init.zsh):
-#           Ctrl+X 1=History, Ctrl+X 2=Dateisuche, Ctrl+X 3=Verzeichnis
-#
-#           Globale fzf-Optionen in ~/.config/fzf/config
-#
-#           Tool-spezifische fzf-Funktionen:
-#           - fd.alias   → cdf (Verzeichnis), fo (Datei öffnen)
-#           - rg.alias   → rgf (Live-Grep)
-#           - git.alias  → glog, gbr, gst, gstash
-#           - brew.alias → bip, brp
-#           - gh.alias   → ghpr, ghis, ghrun, ghrepo, ghgist
+# Hinweis : Konfiguration in ~/.config/fzf/ (config, init.zsh,
+#           *-preview Helper). Keybindings: Ctrl+X 1/2/3.
+#           Tool-spezifische Funktionen in fd/rg/git/brew/gh.alias.
 # ============================================================
 
 # Guard   : Nur wenn fzf installiert ist

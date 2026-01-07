@@ -215,7 +215,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `lt` | `eza --tree --level=2` | Verzeichnisbaum, 2 Ebenen tief |
 | `lt3` | `eza --tree --level=3` | Verzeichnisbaum, 3 Ebenen tief |
 | `lss` | `eza -l --git --sort=size --reverse --group-directories-first --header` | Nach Größe sortiert (größte zuerst), mit Git-Status |
-| `lst` | `eza -l --git --sort=modified --reverse --group-directories-first --header` | Nach Änderungsdatum sortiert (neueste zuerst), mit Git-Status |> **Hinweis:** EZA_ICONS_AUTO=1 ist in .zshrc gesetzt, daher kein --icons=auto in den Aliasen nötig
+| `lst` | `eza -l --git --sort=modified --reverse --group-directories-first --header` | Nach Änderungsdatum sortiert (neueste zuerst), mit Git-Status |> **Hinweis:** EZA_ICONS_AUTO=1 ist in .zshrc gesetzt. Farbschema in ~/.config/eza/theme.yml (Catppuccin Mocha)
 
 
 <a name="fastfetchalias"></a>
@@ -269,7 +269,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `fman` | Man/tldr Browser (Ctrl+S=Modus wechseln, Enter=je nach Modus öffnen) |
 | `fa` | fa Browser (Enter=Übernehmen, Ctrl+S=tldr↔Code) |
 | `fenv` | Env Browser (Enter=Export→Edit, Ctrl+Y=Kopieren) |
-> **Hinweis:** Shell-Keybindings via Ctrl+X Prefix (in init.zsh): Ctrl+X 1=History, Ctrl+X 2=Dateisuche, Ctrl+X 3=Verzeichnis
+> **Hinweis:** Konfiguration in ~/.config/fzf/ (config, init.zsh, *-preview Helper). Keybindings: Ctrl+X 1/2/3. Tool-spezifische Funktionen in fd/rg/git/brew/gh.alias.
 
 
 <a name="ghalias"></a>
@@ -345,7 +345,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | Funktion | Beschreibung |
 |----------|--------------|
 | `rgf` | Live-Grep (Enter=Datei öffnen, Ctrl+Y=Pfad kopieren) |
-> **Hinweis:** Globale Optionen (--smart-case, --line-number, --heading) sind in ~/.config/ripgrep/config definiert.
+> **Hinweis:** Globale Optionen (--smart-case, --line-number, --heading) und Excludes (Library/, Music/, Pictures/, Movies/) sind in ~/.config/ripgrep/config definiert.
 
 
 ---
@@ -387,7 +387,7 @@ lss               # Nach Größe sortiert (größte zuerst), mit Git-Status
 lst               # Nach Änderungsdatum sortiert (neueste zuerst), mit Git-Status
 ```
 
-> **Hinweis:** EZA_ICONS_AUTO=1 ist in .zshrc gesetzt, daher kein --icons=auto in den Aliasen nötig
+> **Hinweis:** EZA_ICONS_AUTO=1 ist in .zshrc gesetzt. Farbschema in ~/.config/eza/theme.yml (Catppuccin Mocha)
 
 ---
 
@@ -470,7 +470,7 @@ rggo              # Suche in Go-Dateien
 rgf               # Live-Grep(suche?) – Enter=Datei öffnen, Ctrl+Y=Pfad kopieren
 ```
 
-> **Hinweis:** Globale Optionen (--smart-case, --line-number, --heading) sind in ~/.config/ripgrep/config definiert.
+> **Hinweis:** Globale Optionen (--smart-case, --line-number, --heading) und Excludes (Library/, Music/, Pictures/, Movies/) sind in ~/.config/ripgrep/config definiert.
 
 ---
 ## Font
