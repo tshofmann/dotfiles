@@ -105,7 +105,7 @@ Das Terminal-Profil, der Nerd Font und das Starship-Preset sind eng gekoppelt. W
 
 ### Voraussetzung
 
-Bei Starship-Presets mit Powerline-Symbolen (wie `catppuccin-powerline`) muss die neue Schriftart ein **Nerd Font** sein. Siehe [Tools → Preset-Kompatibilität](tools.md#preset-kompatibilität) für Details.
+Bei Starship-Presets mit Powerline-Symbolen (wie `catppuccin-powerline`) muss die neue Schriftart ein **Nerd Font** sein. Siehe [Tools → Warum Nerd Fonts?](tools.md#warum-nerd-fonts) für Details.
 
 ### Schritt 1: Neuen Nerd Font installieren
 
@@ -113,18 +113,18 @@ Bei Starship-Presets mit Powerline-Symbolen (wie `catppuccin-powerline`) muss di
 # Verfügbare Nerd Fonts suchen
 brew search nerd-font
 
-# Beispiel: FiraCode Nerd Font installieren
-brew install --cask font-fira-code-nerd-font
+# Beispiel: Nerd Font installieren (z.B. font-meslo-lg-nerd-font)
+brew install --cask font-meslo-lg-nerd-font
 ```
 
 ### Schritt 2: Terminal.app Profil anpassen
 
 1. Terminal.app öffnen
-2. `Terminal → Einstellungen → Profile → catppuccin-mocha`
-3. Tab "Text" → "Schrift" → "Ändern…"
-4. Neuen Nerd Font auswählen (z.B. "FiraCode Nerd Font Mono")
+2. **Terminal** → **Einstellungen** → **Profile** → **catppuccin-mocha**
+3. Tab **Text** → **Schrift** → **Ändern…**
+4. Neuen Nerd Font auswählen (z.B. "MesloLG Nerd Font Mono")
 5. Größe anpassen (empfohlen: 13-14pt)
-6. Profil exportieren: `Einstellungen → Profile → Zahnrad → "...exportieren"`
+6. Profil exportieren: **Einstellungen** → **Profile** → **Zahnrad** → **"...exportieren"**
 
 ### Schritt 3: Exportiertes Profil ins Repository
 
@@ -135,7 +135,7 @@ mv ~/Downloads/catppuccin-mocha.terminal ~/dotfiles/setup/
 # Änderung committen
 cd ~/dotfiles
 git add setup/catppuccin-mocha.terminal
-git commit -m "Terminal-Profil: FiraCode Nerd Font"
+git commit -m "Terminal-Profil: <Neuer Font Name>"
 ```
 
 ---
@@ -178,7 +178,8 @@ Die fzf-Konfiguration liegt in `terminal/.config/fzf/config`:
 
 ```zsh
 # Catppuccin Mocha Farben (bereits konfiguriert)
---color=bg+:#313244,bg:#1e1e2e,...
+--color=bg+:#313244,spinner:#F5E0DC,hl:#F38BA8
+--color=fg:#CDD6F4,header:#F38BA8,info:#CBA6F7,pointer:#F5E0DC
 
 # Layout
 --height=~50%
@@ -192,9 +193,9 @@ Shell-Keybindings für fzf werden in `terminal/.config/fzf/init.zsh` definiert:
 
 ```zsh
 # Ctrl+X Prefix für dotfiles-Keybindings
-bindkey '^X1' fzf-history-widget
-bindkey '^X2' fzf-file-widget
-bindkey '^X3' fzf-cd-widget
+bindkey '^X1' fzf-history-widget         # Ctrl+X 1 = History
+bindkey '^X2' fzf-file-widget            # Ctrl+X 2 = Dateien
+bindkey '^X3' fzf-cd-widget              # Ctrl+X 3 = Verzeichnisse
 ```
 
 ---

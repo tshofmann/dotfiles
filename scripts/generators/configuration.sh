@@ -9,6 +9,62 @@
 source "${0:A:h}/lib.sh"
 
 # ------------------------------------------------------------
+# Extraktionsfunktionen (Single Source of Truth)
+# ------------------------------------------------------------
+
+# Extrahiert fzf-Farben aus der echten Config
+extract_fzf_colors() {
+    local config="$DOTFILES_DIR/terminal/.config/fzf/config"
+    [[ -f "$config" ]] || return 1
+    
+    # Erste 2 --color Zeilen + Layout-Optionen
+    echo '```zsh'
+    echo '# Catppuccin Mocha Farben (bereits konfiguriert)'
+    grep '^--color=' "$config" | head -2
+    echo ''
+    echo '# Layout'
+    grep -E '^--(height|layout|border)=' "$config" | head -3
+    echo '```'
+}
+
+# Extrahiert fzf-Keybindings aus init.zsh
+extract_fzf_keybindings() {
+    local init="$DOTFILES_DIR/terminal/.config/fzf/init.zsh"
+    [[ -f "$init" ]] || return 1
+    
+    echo '```zsh'
+    echo '# Ctrl+X Prefix für dotfiles-Keybindings'
+    grep "^bindkey '\^X[0-9]'" "$init"
+    echo '```'
+}
+
+# Extrahiert den installierten Nerd Font aus Brewfile
+extract_installed_nerd_font() {
+    local brewfile="$DOTFILES_DIR/setup/Brewfile"
+    [[ -f "$brewfile" ]] || return 1
+    
+    # Findet: cask "font-xyz-nerd-font"
+    grep -o 'cask "font-[^"]*-nerd-font"' "$brewfile" | head -1 | sed 's/cask "\(.*\)"/\1/'
+}
+
+# Generiert Font-Anzeigename aus Cask-Name
+# font-meslo-lg-nerd-font → MesloLG Nerd Font Mono
+font_display_name() {
+    local cask="$1"
+    # Entferne "font-" Prefix und "-nerd-font" Suffix
+    local base="${cask#font-}"
+    base="${base%-nerd-font}"
+    
+    # Mapping bekannter Fonts
+    case "$base" in
+        meslo-lg)      echo "MesloLG Nerd Font Mono" ;;
+        jetbrains-mono) echo "JetBrainsMono Nerd Font Mono" ;;
+        fira-code)     echo "FiraCode Nerd Font Mono" ;;
+        *)             echo "${(C)base} Nerd Font Mono" ;;  # Fallback: Capitalize
+    esac
+}
+
+# ------------------------------------------------------------
 # Theme-Konfigurationen sammeln
 # ------------------------------------------------------------
 # Durchsucht bekannte Konfigurationspfade nach Theme-Einstellungen
@@ -70,7 +126,7 @@ HEADER
     # Theme-Tabelle
     collect_theme_configs
     
-    cat << 'REST'
+    cat << 'FONT_SECTION'
 
 ### Xcode Theme aktivieren
 
@@ -155,38 +211,50 @@ Das Terminal-Profil, der Nerd Font und das Starship-Preset sind eng gekoppelt. W
 
 ### Voraussetzung
 
-Bei Starship-Presets mit Powerline-Symbolen (wie `catppuccin-powerline`) muss die neue Schriftart ein **Nerd Font** sein. Siehe [Tools → Preset-Kompatibilität](tools.md#preset-kompatibilität) für Details.
+Bei Starship-Presets mit Powerline-Symbolen (wie `catppuccin-powerline`) muss die neue Schriftart ein **Nerd Font** sein. Siehe [Tools → Warum Nerd Fonts?](tools.md#warum-nerd-fonts) für Details.
 
 ### Schritt 1: Neuen Nerd Font installieren
 
-```zsh
+FONT_SECTION
+
+    # Font-Beispiel dynamisch generieren
+    local installed_font
+    installed_font=$(extract_installed_nerd_font)
+    local display_name
+    display_name=$(font_display_name "$installed_font")
+    
+    cat << FONT_EXAMPLE
+\`\`\`zsh
 # Verfügbare Nerd Fonts suchen
 brew search nerd-font
 
-# Beispiel: FiraCode Nerd Font installieren
-brew install --cask font-fira-code-nerd-font
-```
+# Beispiel: Nerd Font installieren (z.B. $installed_font)
+brew install --cask $installed_font
+\`\`\`
 
 ### Schritt 2: Terminal.app Profil anpassen
 
 1. Terminal.app öffnen
-2. `Terminal → Einstellungen → Profile → catppuccin-mocha`
-3. Tab "Text" → "Schrift" → "Ändern…"
-4. Neuen Nerd Font auswählen (z.B. "FiraCode Nerd Font Mono")
+2. **Terminal** → **Einstellungen** → **Profile** → **catppuccin-mocha**
+3. Tab **Text** → **Schrift** → **Ändern…**
+4. Neuen Nerd Font auswählen (z.B. "$display_name")
 5. Größe anpassen (empfohlen: 13-14pt)
-6. Profil exportieren: `Einstellungen → Profile → Zahnrad → "...exportieren"`
+6. Profil exportieren: **Einstellungen** → **Profile** → **Zahnrad** → **"...exportieren"**
 
 ### Schritt 3: Exportiertes Profil ins Repository
 
-```zsh
+\`\`\`zsh
 # Altes Profil ersetzen
 mv ~/Downloads/catppuccin-mocha.terminal ~/dotfiles/setup/
 
 # Änderung committen
 cd ~/dotfiles
 git add setup/catppuccin-mocha.terminal
-git commit -m "Terminal-Profil: FiraCode Nerd Font"
-```
+git commit -m "Terminal-Profil: <Neuer Font Name>"
+\`\`\`
+FONT_EXAMPLE
+
+    cat << 'ALIASES_SECTION'
 
 ---
 
@@ -226,26 +294,23 @@ alias ls='eza --no-icons'
 
 Die fzf-Konfiguration liegt in `terminal/.config/fzf/config`:
 
-```zsh
-# Catppuccin Mocha Farben (bereits konfiguriert)
---color=bg+:#313244,bg:#1e1e2e,...
+ALIASES_SECTION
 
-# Layout
---height=~50%
---layout=reverse
---border=rounded
-```
+    # fzf-Farben dynamisch extrahieren
+    extract_fzf_colors
+
+    cat << 'FZF_KEYBINDINGS'
 
 ### Keybindings ändern
 
 Shell-Keybindings für fzf werden in `terminal/.config/fzf/init.zsh` definiert:
 
-```zsh
-# Ctrl+X Prefix für dotfiles-Keybindings
-bindkey '^X1' fzf-history-widget
-bindkey '^X2' fzf-file-widget
-bindkey '^X3' fzf-cd-widget
-```
+FZF_KEYBINDINGS
+
+    # fzf-Keybindings dynamisch extrahieren
+    extract_fzf_keybindings
+
+    cat << 'FOOTER'
 
 ---
 
@@ -259,7 +324,7 @@ bindkey '^X3' fzf-cd-widget
 | lazygit Keybindings | `~/.config/lazygit/config.yml` | YAML |
 | fastfetch Modules | `~/.config/fastfetch/config.jsonc` | JSONC |
 
-REST
+FOOTER
 }
 
 # Nur ausführen wenn direkt aufgerufen (nicht gesourct)
