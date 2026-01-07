@@ -2,9 +2,6 @@
 
 Diese Anleitung erklärt, wie du die dotfiles an deine Bedürfnisse anpassen kannst.
 
-> Diese Dokumentation wird automatisch aus dem Code generiert.
-> Änderungen direkt in den Config-Dateien vornehmen.
-
 ---
 
 ## Catppuccin Mocha Theme
