@@ -98,6 +98,22 @@ alias x='command'
 
 ---
 
+## GitHub PRs
+
+| Regel | Begründung |
+|-------|------------|
+| **Review-Threads einzeln beantworten** | Erklärung im Thread dokumentiert, nicht nur global |
+| **Dann erst resolven** | Thread-Historie bleibt nachvollziehbar |
+| **Alle Kommentare prüfen** | `get_review_comments` nicht nur `get_reviews` |
+| **Outdated ≠ Resolved** | Auch veraltete Threads explizit auflösen |
+
+```zsh
+# Review-Threads auflösen via gh CLI:
+gh api graphql -f query='mutation { resolveReviewThread(input: {threadId: "PRRT_..."}) { thread { isResolved } } }'
+```
+
+---
+
 ## Verweise
 
 | Thema | Datei |
