@@ -9,33 +9,151 @@
 source "${0:A:h}/lib.sh"
 
 # ------------------------------------------------------------
-# Verzeichnisbaum generieren
+# Beschreibung aus Datei-Header extrahieren
 # ------------------------------------------------------------
-# Vereinfachter tree-Output ohne externe Abhängigkeit
-generate_tree() {
-    local dir="$1"
-    local prefix="${2:-}"
-    local output=""
+get_file_description() {
+    local file="$1"
+    local name="${file:t}"
+    local desc=""
     
-    # Ignorierte Verzeichnisse/Dateien
-    local -a ignore_patterns=('.git' '.DS_Store' 'node_modules' '__pycache__')
-    
-    local -a items=()
-    for item in "$dir"/*(.N) "$dir"/*(/.N); do
-        local name="${item:t}"
-        local skip=false
+    # Versuche Beschreibung aus Header zu extrahieren
+    if [[ -f "$file" ]]; then
+        # Zweck-Feld aus Header
+        desc=$(grep -m1 "^# Zweck" "$file" 2>/dev/null | sed 's/^# Zweck[[:space:]]*:[[:space:]]*//')
         
-        for pattern in "${ignore_patterns[@]}"; do
+        # Oder erste Kommentarzeile nach Shebang
+        if [[ -z "$desc" ]]; then
+            desc=$(sed -n '2{s/^#[[:space:]]*//p;q}' "$file" 2>/dev/null | grep -v '^=')
+        fi
+    fi
+    
+    # Fallback: Bekannte Dateien
+    if [[ -z "$desc" ]]; then
+        case "$name" in
+            README.md)           desc="Kurzübersicht & Quickstart" ;;
+            LICENSE)             desc="MIT Lizenz" ;;
+            CONTRIBUTING.md)     desc="Entwickler-Richtlinien" ;;
+            .stowrc)             desc="Stow-Konfiguration" ;;
+            .gitignore)          desc="Git-Ignore-Patterns" ;;
+            .gitattributes)      desc="Git-Attribute" ;;
+            pre-commit)          desc="Docs-Generierung vor Commit" ;;
+            Brewfile)            desc="Homebrew-Abhängigkeiten" ;;
+            bootstrap.sh)        desc="Automatisiertes Setup-Skript" ;;
+            *.terminal)          desc="Terminal.app Profil" ;;
+            *.xccolortheme)      desc="Xcode Theme" ;;
+            .zshenv)             desc="Umgebungsvariablen (wird zuerst geladen)" ;;
+            .zprofile)           desc="Login-Shell Konfiguration" ;;
+            .zshrc)              desc="Interactive Shell Konfiguration" ;;
+            .zlogin)             desc="Post-Login (Background-Optimierungen)" ;;
+            shell-colors)        desc="Catppuccin Mocha ANSI-Farbvariablen" ;;
+            config)              desc="Tool-Konfiguration" ;;
+            config.toml)         desc="Tool-Konfiguration" ;;
+            config.yml)          desc="Tool-Konfiguration" ;;
+            config.jsonc)        desc="Tool-Konfiguration" ;;
+            *.conf)              desc="Konfiguration" ;;
+            *.theme)             desc="Theme-Datei" ;;
+            theme.yml)           desc="Catppuccin Theme" ;;
+            ignore)              desc="Ignore-Patterns" ;;
+            init.zsh)            desc="Shell-Integration" ;;
+            *.alias)             desc="${name%.alias}-Aliase" ;;
+            *.sh)                desc="Shell-Skript" ;;
+            *.md)                desc="Dokumentation" ;;
+            *.patch.md)          desc="tldr-Patch" ;;
+            lib.sh)              desc="Gemeinsame Bibliothek" ;;
+            *)                   desc="" ;;
+        esac
+    fi
+    
+    echo "$desc"
+}
+
+# ------------------------------------------------------------
+# Verzeichnis-Beschreibung
+# ------------------------------------------------------------
+get_dir_description() {
+    local dir="$1"
+    local name="${dir:t}"
+    
+    case "$name" in
+        .githooks)    echo "Git Hooks" ;;
+        .github)      echo "GitHub-Konfiguration" ;;
+        ISSUE_TEMPLATE) echo "Issue-Templates" ;;
+        workflows)    echo "GitHub Actions" ;;
+        docs)         echo "Dokumentation" ;;
+        scripts)      echo "Utility-Scripts" ;;
+        generators)   echo "Generator-Module" ;;
+        tests)        echo "Unit-Tests" ;;
+        setup)        echo "Installation & Themes" ;;
+        terminal)     echo "Shell-Konfiguration" ;;
+        .config)      echo "XDG-Configs" ;;
+        alias)        echo "Tool-Aliase" ;;
+        themes)       echo "Theme-Dateien" ;;
+        pages)        echo "tldr-Patches" ;;
+        bat)          echo "bat Config" ;;
+        btop)         echo "btop Config" ;;
+        eza)          echo "eza Config" ;;
+        fd)           echo "fd Config" ;;
+        fzf)          echo "fzf Config & Helper" ;;
+        fastfetch)    echo "fastfetch Config" ;;
+        lazygit)      echo "lazygit Config" ;;
+        ripgrep)      echo "ripgrep Config" ;;
+        tealdeer)     echo "tealdeer Config" ;;
+        zsh)          echo "ZSH-spezifisch" ;;
+        *)            echo "" ;;
+    esac
+}
+
+# ------------------------------------------------------------
+# Dynamischer Verzeichnisbaum
+# ------------------------------------------------------------
+generate_dynamic_tree() {
+    local base_dir="$1"
+    local prefix="${2:-}"
+    local max_depth="${3:-99}"
+    local current_depth="${4:-0}"
+    
+    # Tiefenlimit erreicht
+    (( current_depth >= max_depth )) && return
+    
+    # Ignorierte Einträge
+    local -a ignore=('.git' '.DS_Store' 'node_modules' '__pycache__' '.gitkeep')
+    
+    # Sammle alle Einträge (Dateien und Verzeichnisse)
+    local -a entries=()
+    
+    # Versteckte Dateien zuerst, dann normale (sortiert)
+    for item in "$base_dir"/.(N) "$base_dir"/.*(N) "$base_dir"/*(N); do
+        [[ -e "$item" ]] || continue
+        local name="${item:t}"
+        
+        # Ignorieren?
+        local skip=false
+        for pattern in "${ignore[@]}"; do
             [[ "$name" == "$pattern" ]] && skip=true && break
         done
+        [[ "$skip" == true ]] && continue
         
-        [[ "$skip" == false ]] && items+=("$item")
+        # Keine . und .. 
+        [[ "$name" == "." || "$name" == ".." ]] && continue
+        
+        entries+=("$item")
     done
     
-    local count=${#items[@]}
+    # Sortieren: Versteckte zuerst, dann alphabetisch
+    local -a sorted_entries=()
+    # Versteckte Verzeichnisse
+    for e in "${entries[@]}"; do [[ -d "$e" && "${e:t}" == .* ]] && sorted_entries+=("$e"); done
+    # Versteckte Dateien
+    for e in "${entries[@]}"; do [[ -f "$e" && "${e:t}" == .* ]] && sorted_entries+=("$e"); done
+    # Normale Verzeichnisse
+    for e in "${entries[@]}"; do [[ -d "$e" && "${e:t}" != .* ]] && sorted_entries+=("$e"); done
+    # Normale Dateien
+    for e in "${entries[@]}"; do [[ -f "$e" && "${e:t}" != .* ]] && sorted_entries+=("$e"); done
+    
+    local count=${#sorted_entries[@]}
     local i=0
     
-    for item in "${items[@]}"; do
+    for item in "${sorted_entries[@]}"; do
         (( i++ )) || true
         local name="${item:t}"
         local connector="├──"
@@ -44,33 +162,38 @@ generate_tree() {
         (( i == count )) && connector="└──" && next_prefix="${prefix}    "
         
         if [[ -d "$item" ]]; then
-            output+="${prefix}${connector} ${name}/\n"
-            output+=$(generate_tree "$item" "$next_prefix")
+            local dir_desc=$(get_dir_description "$item")
+            [[ -n "$dir_desc" ]] && dir_desc=" # $dir_desc"
+            echo "${prefix}${connector} ${name}/${dir_desc}"
+            
+            # Rekursiv, aber manche Verzeichnisse nur oberflächlich
+            local child_depth=$max_depth
+            case "$name" in
+                themes|pages) child_depth=$((current_depth + 2)) ;;  # Nur 1 Ebene tief
+            esac
+            generate_dynamic_tree "$item" "$next_prefix" "$child_depth" $((current_depth + 1))
         else
-            output+="${prefix}${connector} ${name}\n"
+            local file_desc=$(get_file_description "$item")
+            [[ -n "$file_desc" ]] && file_desc=" # $file_desc"
+            echo "${prefix}${connector} ${name}${file_desc}"
         fi
     done
-    
-    echo -e "$output"
 }
 
 # ------------------------------------------------------------
 # Setup-Datei-Erkennung aus bootstrap.sh extrahieren
 # ------------------------------------------------------------
-# Extrahiert die Dateiendungen und das Erkennungs-Pattern dynamisch
 generate_setup_file_detection() {
     local bootstrap="$DOTFILES_DIR/setup/bootstrap.sh"
     [[ -f "$bootstrap" ]] || return 1
     
-    # Extrahiere Dateiendungen aus find-Befehlen (z.B. "*.terminal")
+    # Extrahiere Dateiendungen aus find-Befehlen
     local -a extensions
     extensions=($(grep -o 'find.*-name "\*\.[^"]*"' "$bootstrap" | grep -o '\*\.[^"]*' | sort -u))
     
-    # Prüfe ob sort verwendet wird (deterministisch)
     local has_sort="Nein"
     grep -q 'find.*| sort |' "$bootstrap" && has_sort="Ja"
     
-    # Prüfe ob Warnung bei mehreren existiert
     local has_warning="Nein"
     grep -q 'TERMINAL_COUNT\|XCODE_THEME_COUNT' "$bootstrap" && has_warning="Ja"
     
@@ -84,13 +207,11 @@ Bootstrap erkennt Theme-Dateien automatisch nach Dateiendung:
 DETECTION_HEADER
 
     for ext in "${extensions[@]}"; do
-        # Entferne * am Anfang für Anzeige
         local display_ext="${ext#\*}"
         echo "| \`$display_ext\` | $has_sort | $has_warning |"
     done
     
-    # Beispiel mit tatsächlichen Dateien aus setup/
-    local example_ext="${extensions[1]#\*}"  # Erste Endung (z.B. .terminal)
+    local example_ext="${extensions[1]#\*}"
     local -a example_files
     example_files=($(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*$example_ext" 2>/dev/null | sort | xargs -I{} basename {}))
     
@@ -120,7 +241,7 @@ generate_architecture_md() {
 Technische Details zur Struktur und Funktionsweise dieses dotfiles-Repositories.
 
 > Diese Dokumentation wird automatisch aus dem Code generiert.
-> Änderungen an der Verzeichnisstruktur werden automatisch reflektiert.
+> Die Verzeichnisstruktur wird dynamisch aus dem Dateisystem erzeugt.
 
 ---
 
@@ -128,119 +249,12 @@ Technische Details zur Struktur und Funktionsweise dieses dotfiles-Repositories.
 
 ```
 dotfiles/
-├── README.md                    # Kurzübersicht & Quickstart
-├── LICENSE                      # MIT Lizenz
-├── .stowrc                      # Stow-Konfiguration
-├── .gitignore                   # Git-Ignore-Patterns
-├── .githooks/                   # Git Hooks (GitHub-Standard)
-│   └── pre-commit               # Docs-Generierung vor Commit
-├── docs/                        # Dokumentation
-│   ├── installation.md          # Installationsanleitung
-│   ├── configuration.md         # Anpassungen
-│   ├── architecture.md          # Diese Datei
-│   └── tools.md                 # Tool-Übersicht
-├── scripts/                     # Utility-Scripts
-│   ├── health-check.sh          # Validierung der Installation
-│   ├── generate-docs.sh         # Dokumentations-Generator
-│   ├── generators/              # Generator-Module
-│   │   ├── lib.sh               # Gemeinsame Bibliothek
-│   │   ├── tools.sh             # tools.md Generator
-│   │   ├── installation.sh      # installation.md Generator
-│   │   ├── architecture.sh      # architecture.md Generator
-│   │   ├── configuration.sh     # configuration.md Generator
-│   │   ├── readme.sh            # README.md Generator
-│   │   └── tldr.sh              # tldr-Patches Generator
-│   └── tests/                   # Unit-Tests
 HEADER
 
-    # Test-Dateien dynamisch auflisten
-    local test_dir="$DOTFILES_DIR/scripts/tests"
-    local test_count=0
-    local -a test_files=()
+    # Dynamisch generierter Baum
+    generate_dynamic_tree "$DOTFILES_DIR" ""
     
-    for test_file in "$test_dir"/*.sh(N); do
-        [[ -f "$test_file" ]] || continue
-        test_files+=("$test_file")
-        (( test_count++ )) || true
-    done
-    
-    local i=0
-    for test_file in "${test_files[@]}"; do
-        (( i++ )) || true
-        local name="${test_file:t}"
-        local desc=""
-        # Beschreibung aus Header extrahieren
-        desc=$(grep "^# Zweck" "$test_file" 2>/dev/null | head -1 | sed 's/^# Zweck[[:space:]]*:[[:space:]]*//')
-        [[ -z "$desc" ]] && desc="Tests"
-        
-        local connector="│       ├──"
-        (( i == test_count )) && connector="│       └──"
-        
-        echo "$connector $name"
-    done
-    
-    cat << 'REST'
-├── setup/
-│   ├── bootstrap.sh             # Automatisiertes Setup-Skript
-│   ├── Brewfile                 # Homebrew-Abhängigkeiten
-│   ├── catppuccin-mocha.terminal  # Terminal.app Profil
-│   └── Catppuccin Mocha.xccolortheme  # Xcode Theme
-└── terminal/
-    ├── .zshenv                  # Umgebungsvariablen (wird zuerst geladen)
-    ├── .zprofile                # Login-Shell Konfiguration
-    ├── .zshrc                   # Interactive Shell Konfiguration
-    ├── .zlogin                  # Post-Login (Background-Optimierungen)
-    └── .config/
-REST
-
-    # Alias-Dateien dynamisch auflisten
-    echo "        ├── alias/               # Tool-Aliase"
-    local alias_count=0
-    for alias_file in "$ALIAS_DIR"/*.alias(N); do
-        (( alias_count++ )) || true
-    done
-    
-    local i=0
-    for alias_file in "$ALIAS_DIR"/*.alias(N); do
-        (( i++ )) || true
-        local name="${alias_file:t}"
-        local desc=$(parse_header_field "$alias_file" "Zweck")
-        [[ -z "$desc" ]] && desc="${name%.alias}-Aliase"
-        
-        local connector="│   ├──"
-        (( i == alias_count )) && connector="│   └──"
-        
-        echo "        $connector $name"
-    done
-    
-    cat << 'REST'
-        ├── shell-colors         # Catppuccin Mocha ANSI-Farbvariablen
-        ├── bat/
-        │   ├── config           # bat native Config
-        │   └── themes/          # Catppuccin Mocha Theme
-        ├── btop/
-        │   ├── btop.conf        # btop Konfiguration
-        │   └── themes/          # Catppuccin Mocha Theme
-        ├── eza/
-        │   └── theme.yml        # eza Catppuccin Theme
-        ├── fd/
-        │   └── ignore           # fd globale Ignore-Patterns
-        ├── fastfetch/
-        │   └── config.jsonc     # fastfetch System-Info Konfiguration
-        ├── fzf/
-        │   ├── config           # fzf globale Optionen
-        │   ├── init.zsh         # fzf Shell-Integration
-        │   └── ...              # Helper-Skripte
-        ├── lazygit/
-        │   └── config.yml       # lazygit Config mit Catppuccin
-        ├── ripgrep/
-        │   └── config           # ripgrep globale Optionen
-        ├── starship.toml        # Starship Prompt-Konfiguration
-        ├── tealdeer/
-        │   ├── config.toml      # tealdeer Konfiguration
-        │   └── pages/           # Custom tldr-Patches
-        └── zsh/
-            └── catppuccin_mocha-zsh-syntax-highlighting.zsh
+    cat << 'MIDDLE'
 ```
 
 ---
@@ -314,7 +328,7 @@ Vorteile:
 
 ---
 
-REST
+MIDDLE
     
     # Setup-Datei-Erkennung dynamisch aus bootstrap.sh extrahieren
     generate_setup_file_detection
