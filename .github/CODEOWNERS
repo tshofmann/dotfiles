@@ -7,6 +7,21 @@
 # Standard: Repository-Owner für alle Änderungen
 * @tshofmann
 
-# Sicherheitsrelevante Dateien erfordern besondere Aufmerksamkeit
+# ------------------------------------------------------------
+# Sicherheitsrelevante Dateien (erfordern besondere Aufmerksamkeit)
+# ------------------------------------------------------------
+
+# Installations-Skript – führt System-Änderungen durch
 setup/bootstrap.sh @tshofmann
+
+# CI/CD-Pipelines – können beliebigen Code ausführen
+.github/workflows/ @tshofmann
+
+# Git Hooks – werden automatisch bei Commits ausgeführt
+.githooks/ @tshofmann
+
+# Dependency-Management – steuert automatische Updates
+.github/dependabot.yml @tshofmann
+
+# Sicherheitsrichtlinie – definiert Vulnerability-Handling
 .github/SECURITY.md @tshofmann
