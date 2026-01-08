@@ -21,8 +21,7 @@ dotfiles/
 │   ├── installation.md          # Installationsanleitung
 │   ├── configuration.md         # Anpassungen
 │   ├── architecture.md          # Diese Datei
-│   ├── tools.md                 # Tool-Übersicht
-│   └── review-checklist.md      # Review-Prompt für Copilot
+│   └── tools.md                 # Tool-Übersicht
 ├── scripts/                     # Utility-Scripts
 │   ├── health-check.sh          # Validierung der Installation
 │   ├── generate-docs.sh         # Dokumentations-Generator
