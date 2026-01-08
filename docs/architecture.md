@@ -158,6 +158,24 @@ Vorteile:
 
 ---
 
+## Setup-Datei-Erkennung
+
+Bootstrap erkennt Theme-Dateien automatisch nach Dateiendung:
+
+| Dateiendung | Erkennung | Verhalten bei mehreren |
+|-------------|-----------|------------------------|
+| `.terminal` | `find \| sort \| head -1` | Alphabetisch erste + Warnung |
+| `.xccolortheme` | `find \| sort \| head -1` | Alphabetisch erste + Warnung |
+
+**Beispiel:** Bei `a-profile.terminal` und `z-profile.terminal` wird `a-profile.terminal` verwendet.
+
+Dies ermöglicht:
+- Freie Benennung der Theme-Dateien
+- Deterministisches Verhalten auf allen Systemen
+- Explizite Warnung wenn mehrere Dateien existieren
+
+---
+
 ## Komponenten-Abhängigkeiten
 
 ```
