@@ -12,6 +12,35 @@ source "${0:A:h}/lib.sh"
 # Extraktionsfunktionen (Single Source of Truth)
 # ------------------------------------------------------------
 
+# Extrahiert Farbpalette aus shell-colors und generiert Markdown-Tabelle
+# Konvertiert RGB zu Hex und gruppiert nach Kategorie
+generate_color_palette_table() {
+    local colors_file="$DOTFILES_DIR/terminal/.config/shell-colors"
+    [[ -f "$colors_file" ]] || return 1
+    
+    echo "| Farbe | Hex | Variable |"
+    echo "|-------|-----|----------|"
+    
+    # Regex: typeset -gx C_NAME=$'\033[38;2;R;G;Bm'  # #HEX
+    while IFS= read -r line; do
+        # Nur Farbdefinitionen (nicht Aliase wie C_DIM="$C_OVERLAY0")
+        [[ "$line" =~ ^typeset.*C_([A-Z0-9]+).*38\;2\;([0-9]+)\;([0-9]+)\;([0-9]+) ]] || continue
+        
+        local name="${match[1]}"
+        local r="${match[2]}"
+        local g="${match[3]}"
+        local b="${match[4]}"
+        
+        # RGB zu Hex
+        local hex=$(printf "#%02X%02X%02X" "$r" "$g" "$b")
+        
+        # Name formatieren (SUBTEXT1 → Subtext1)
+        local display_name="${(C)name:l}"
+        
+        echo "| $display_name | \`$hex\` | \`C_$name\` |"
+    done < "$colors_file"
+}
+
 # Extrahiert fzf-Farben aus der echten Config
 # Zeigt alle --color Zeilen + die wichtigsten Layout-Optionen als Beispiel
 extract_fzf_colors() {
@@ -174,23 +203,22 @@ XCODE_SECTION
 
     cat << 'FONT_SECTION'
 
-### Farbpalette (Referenz)
+### Farbpalette (Catppuccin Mocha)
 
-Die wichtigsten Farben der Catppuccin Mocha Palette:
+Alle verfügbaren Shell-Farbvariablen aus `~/.config/shell-colors`:
 
-| Farbe | Hex | Verwendung |
-|-------|-----|------------|
-| Base | `#1E1E2E` | Hintergrund |
-| Text | `#CDD6F4` | Haupttext |
-| Subtext0 | `#A6ADC8` | Beschreibungen |
-| Surface0 | `#313244` | Selection Background |
-| Surface1 | `#45475A` | Selected Background |
-| Overlay0 | `#6C7086` | Borders |
-| Red | `#F38BA8` | Fehler, Highlights |
-| Green | `#A6E3A1` | Erfolg, Befehle |
-| Yellow | `#F9E2AF` | Warnungen |
-| Blue | `#89B4FA` | Info, Links |
-| Mauve | `#CBA6F7` | Akzente, Prompt |
+FONT_SECTION
+
+    # Dynamisch aus shell-colors generieren
+    generate_color_palette_table
+    
+    cat << 'AFTER_COLORS'
+
+> **Verwendung in Skripten:**
+> ```zsh
+> source ~/.config/shell-colors
+> echo "${C_GREEN}Erfolg${C_RESET}"
+> ```
 
 Vollständige Palette: [catppuccin.com/palette](https://catppuccin.com/palette)
 
@@ -241,7 +269,7 @@ Bei einem ungültigen Preset-Namen zeigt das Skript eine Warnung und verwendet `
 ## Schriftart wechseln
 
 Das Terminal-Profil, der Nerd Font und das Starship-Preset sind eng gekoppelt. Wenn du die Schriftart ändern möchtest, musst du alle drei Komponenten berücksichtigen.
-FONT_SECTION
+AFTER_COLORS
 
     # Terminal-Profilname für die Warnung dynamisch ermitteln
     local profile_for_warning
