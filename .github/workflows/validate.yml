@@ -1,3 +1,10 @@
+# ============================================================
+# validate.yml - GitHub Actions Workflow
+# ============================================================
+# Zweck   : Validiert Shell-Syntax, Dokumentation und Alias-Format
+# Trigger : Push auf main/feature/**, PRs nach main, manuell
+# ============================================================
+
 name: Dokumentation validieren
 
 on:

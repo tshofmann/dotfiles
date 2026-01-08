@@ -15,25 +15,25 @@ dotfiles/
 │   └── pre-commit # Verhindert Commits mit veralteter Dokumentation
 ├── .github/ # GitHub-Konfiguration
 │   ├── ISSUE_TEMPLATE/ # Issue-Templates
-│   │   ├── bug_report.md # Dokumentation
-│   │   ├── config.yml # Tool-Konfiguration
-│   │   └── feature_request.md # Dokumentation
+│   │   ├── bug_report.md
+│   │   ├── config.yml
+│   │   └── feature_request.md
 │   ├── workflows/ # GitHub Actions
-│   │   └── validate.yml
+│   │   └── validate.yml # Validiert Shell-Syntax, Dokumentation und Alias-Format
 │   ├── CODEOWNERS
-│   ├── CODE_OF_CONDUCT.md # Dokumentation
-│   ├── PULL_REQUEST_TEMPLATE.md # Dokumentation
-│   ├── SECURITY.md # Dokumentation
+│   ├── CODE_OF_CONDUCT.md # Verhaltenskodex
+│   ├── PULL_REQUEST_TEMPLATE.md
+│   ├── SECURITY.md # Sicherheitsrichtlinie
 │   ├── copilot-instructions.md # Was macht diese Datei
 │   └── dependabot.yml # Hält GitHub Actions automatisch aktuell
 ├── .gitattributes # Zeilenenden und Dateibehandlung normalisieren
 ├── .gitignore # Dateien von Versionskontrolle ausschließen
 ├── .stowrc # Ignore-Patterns und Standard-Optionen für GNU Stow
 ├── docs/ # Dokumentation
-│   ├── architecture.md # Dokumentation
-│   ├── configuration.md # Dokumentation
-│   ├── installation.md # Dokumentation
-│   └── tools.md # Dokumentation
+│   ├── architecture.md # Architektur
+│   ├── configuration.md # Konfiguration
+│   ├── installation.md # Installation
+│   └── tools.md # Tools
 ├── scripts/ # Utility-Scripts
 │   ├── generators/ # Generator-Module
 │   │   ├── architecture.sh # Generiert Architektur-Dokumentation aus Verzeichnisstruktur
@@ -67,16 +67,16 @@ dotfiles/
 │   │   │   └── rg.alias # Aliase für ripgrep mit häufig genutzten Optionen
 │   │   ├── bat/ # bat Config
 │   │   │   ├── themes/ # Theme-Dateien
-│   │   │   │   └── Catppuccin Mocha.tmTheme
+│   │   │   │   └── Catppuccin Mocha.tmTheme # Syntax-Theme (XML)
 │   │   │   └── config # Native bat-Konfiguration (cat mit Syntax-Highlighting)
 │   │   ├── btop/ # btop Config
 │   │   │   ├── themes/ # Theme-Dateien
-│   │   │   │   └── catppuccin_mocha.theme # Theme-Datei
-│   │   │   └── btop.conf # Konfiguration
+│   │   │   │   └── catppuccin_mocha.theme
+│   │   │   └── btop.conf
 │   │   ├── eza/ # eza Config
 │   │   │   └── theme.yml # Dateityp-Farben für eza (ls-Ersatz)
 │   │   ├── fastfetch/ # fastfetch Config
-│   │   │   └── config.jsonc # Tool-Konfiguration
+│   │   │   └── config.jsonc
 │   │   ├── fd/ # fd Config
 │   │   │   └── ignore # Globale Ausschlüsse für fd (auch bei --hidden)
 │   │   ├── fzf/ # fzf Config & Helper
@@ -95,16 +95,16 @@ dotfiles/
 │   │   │   └── config # Native ripgrep-Konfiguration (RIPGREP_CONFIG_PATH)
 │   │   ├── tealdeer/ # tealdeer Config
 │   │   │   ├── pages/ # tldr-Patches
-│   │   │   │   ├── bat.patch.md # Dokumentation
-│   │   │   │   ├── brew.patch.md # Dokumentation
-│   │   │   │   ├── btop.patch.md # Dokumentation
-│   │   │   │   ├── eza.patch.md # Dokumentation
-│   │   │   │   ├── fastfetch.patch.md # Dokumentation
-│   │   │   │   ├── fd.patch.md # Dokumentation
-│   │   │   │   ├── fzf.patch.md # Dokumentation
-│   │   │   │   ├── gh.patch.md # Dokumentation
-│   │   │   │   ├── git.patch.md # Dokumentation
-│   │   │   │   └── rg.patch.md # Dokumentation
+│   │   │   │   ├── bat.patch.md # tldr-Patch (auto-generiert)
+│   │   │   │   ├── brew.patch.md # tldr-Patch (auto-generiert)
+│   │   │   │   ├── btop.patch.md # tldr-Patch (auto-generiert)
+│   │   │   │   ├── eza.patch.md # tldr-Patch (auto-generiert)
+│   │   │   │   ├── fastfetch.patch.md # tldr-Patch (auto-generiert)
+│   │   │   │   ├── fd.patch.md # tldr-Patch (auto-generiert)
+│   │   │   │   ├── fzf.patch.md # Globale Tastenkürzel (in allen fzf-Dialogen)
+│   │   │   │   ├── gh.patch.md # tldr-Patch (auto-generiert)
+│   │   │   │   ├── git.patch.md # tldr-Patch (auto-generiert)
+│   │   │   │   └── rg.patch.md # tldr-Patch (auto-generiert)
 │   │   │   └── config.toml # Vereinfachte Man-Pages mit Beispielen (tldr)
 │   │   ├── zsh/ # ZSH-spezifisch
 │   │   │   └── catppuccin_mocha-zsh-syntax-highlighting.zsh
@@ -115,7 +115,7 @@ dotfiles/
 │   └── .zshrc # Hauptkonfiguration für interaktive ZSH Shells
 ├── CONTRIBUTING.md # Ausführliche Beschreibung des Datei-Zwecks
 ├── LICENSE # MIT Lizenz
-└── README.md # Kurzübersicht & Quickstart
+└── README.md # dotfiles
 ```
 
 ---

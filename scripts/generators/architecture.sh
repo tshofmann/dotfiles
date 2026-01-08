@@ -18,48 +18,43 @@ get_file_description() {
     
     # Versuche Beschreibung aus Header zu extrahieren
     if [[ -f "$file" ]]; then
-        # Zweck-Feld aus Header
+        # 1. Shell/YAML: # Zweck : ...
         desc=$(grep -m1 "^# Zweck" "$file" 2>/dev/null | sed 's/^# Zweck[[:space:]]*:[[:space:]]*//')
         
-        # Oder erste Kommentarzeile nach Shebang
+        # 2. Shell: Zweite Zeile nach Shebang (z.B. "# description.sh - Beschreibung")
         if [[ -z "$desc" ]]; then
-            desc=$(sed -n '2{s/^#[[:space:]]*//p;q}' "$file" 2>/dev/null | grep -v '^=')
+            desc=$(sed -n '2{s/^#[[:space:]]*//p;q}' "$file" 2>/dev/null | grep -v '^=' | grep -v '^!')
+            # Extrahiere Teil nach " - " wenn vorhanden
+            [[ "$desc" == *" - "* ]] && desc="${desc#* - }"
+        fi
+        
+        # 3. Markdown: Erste Überschrift (# Titel)
+        if [[ -z "$desc" && "$name" == *.md ]]; then
+            desc=$(grep -m1 "^# " "$file" 2>/dev/null | sed 's/^# //')
+            # Emoji am Anfang entfernen
+            desc=$(echo "$desc" | sed 's/^[^ ]* //' | head -c 50)
         fi
     fi
     
-    # Fallback: Bekannte Dateien
+    # Fallback: Nur für Dateien die KEINEN Header haben können
+    # (binär, auto-generiert, oder festes Format)
     if [[ -z "$desc" ]]; then
         case "$name" in
-            README.md)           desc="Kurzübersicht & Quickstart" ;;
-            LICENSE)             desc="MIT Lizenz" ;;
-            CONTRIBUTING.md)     desc="Entwickler-Richtlinien" ;;
-            .stowrc)             desc="Stow-Konfiguration" ;;
-            .gitignore)          desc="Git-Ignore-Patterns" ;;
-            .gitattributes)      desc="Git-Attribute" ;;
-            pre-commit)          desc="Docs-Generierung vor Commit" ;;
-            Brewfile)            desc="Homebrew-Abhängigkeiten" ;;
-            bootstrap.sh)        desc="Automatisiertes Setup-Skript" ;;
+            # Binäre/Plist-Dateien (nicht editierbar)
             *.terminal)          desc="Terminal.app Profil" ;;
             *.xccolortheme)      desc="Xcode Theme" ;;
-            .zshenv)             desc="Umgebungsvariablen (wird zuerst geladen)" ;;
-            .zprofile)           desc="Login-Shell Konfiguration" ;;
-            .zshrc)              desc="Interactive Shell Konfiguration" ;;
-            .zlogin)             desc="Post-Login (Background-Optimierungen)" ;;
-            shell-colors)        desc="Catppuccin Mocha ANSI-Farbvariablen" ;;
-            config)              desc="Tool-Konfiguration" ;;
-            config.toml)         desc="Tool-Konfiguration" ;;
-            config.yml)          desc="Tool-Konfiguration" ;;
-            config.jsonc)        desc="Tool-Konfiguration" ;;
-            *.conf)              desc="Konfiguration" ;;
-            *.theme)             desc="Theme-Datei" ;;
-            theme.yml)           desc="Catppuccin Theme" ;;
-            ignore)              desc="Ignore-Patterns" ;;
-            init.zsh)            desc="Shell-Integration" ;;
-            *.alias)             desc="${name%.alias}-Aliase" ;;
-            *.sh)                desc="Shell-Skript" ;;
-            *.md)                desc="Dokumentation" ;;
-            *.patch.md)          desc="tldr-Patch" ;;
-            lib.sh)              desc="Gemeinsame Bibliothek" ;;
+            *.tmTheme)           desc="Syntax-Theme (XML)" ;;
+            
+            # Standard-Dateien mit festem Format
+            LICENSE)             desc="MIT Lizenz" ;;
+            
+            # Auto-generierte Dateien
+            *.patch.md)          desc="tldr-Patch (auto-generiert)" ;;
+            
+            # Generische Fallbacks nach Endung
+            *.md)                desc="" ;;  # Sollte Header haben
+            *.sh)                desc="" ;;  # Sollte Header haben
+            *.alias)             desc="" ;;  # Sollte Header haben
             *)                   desc="" ;;
         esac
     fi
