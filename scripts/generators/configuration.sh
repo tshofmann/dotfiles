@@ -114,6 +114,9 @@ collect_theme_configs() {
         local file="${info%%|*}"
         local stat="${info##*|}"
         
+        # Überspringen wenn Datei leer (z.B. kein Xcode-Theme vorhanden)
+        [[ -z "$file" && "$tool" == "Xcode" ]] && continue
+        
         # Datei/Verzeichnis kürzen für Anzeige
         local display_file="$file"
         if [[ "$file" == "$DOTFILES_DIR"* ]]; then
@@ -149,18 +152,27 @@ HEADER
     # Theme-Tabelle
     collect_theme_configs
     
-    cat << 'FONT_SECTION'
+    # Xcode-Sektion nur wenn .xccolortheme existiert
+    local xcode_theme
+    xcode_theme=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.xccolortheme" | head -1)
+    if [[ -n "$xcode_theme" ]]; then
+        local xcode_name="${xcode_theme:t}"  # Dateiname mit Endung
+        cat << XCODE_SECTION
 
 ### Xcode Theme aktivieren
 
-Das Catppuccin Mocha Theme für Xcode wird automatisch vom Bootstrap-Skript nach `~/Library/Developer/Xcode/UserData/FontAndColorThemes/` kopiert, muss aber einmalig manuell aktiviert werden:
+Das Catppuccin Mocha Theme für Xcode wird automatisch vom Bootstrap-Skript nach \`~/Library/Developer/Xcode/UserData/FontAndColorThemes/\` kopiert, muss aber einmalig manuell aktiviert werden:
 
 1. **Xcode** öffnen
 2. **Xcode** → **Settings** (⌘,)
 3. Tab **Themes** auswählen
 4. **Catppuccin Mocha** anklicken
 
-> **Hinweis:** Änderungen am Original in `setup/Catppuccin Mocha.xccolortheme` werden bei erneutem Bootstrap-Lauf übernommen.
+> **Hinweis:** Änderungen am Original in \`setup/$xcode_name\` werden bei erneutem Bootstrap-Lauf übernommen.
+XCODE_SECTION
+    fi
+
+    cat << 'FONT_SECTION'
 
 ### Farbpalette (Referenz)
 
