@@ -287,10 +287,11 @@ Bei Starship-Presets mit Powerline-Symbolen (wie \`catppuccin-powerline\`) muss 
 
 FONT_WARNING
 
-    # Font-Beispiel dynamisch generieren (Fallback wenn Brewfile fehlt)
+    # Font-Beispiel dynamisch generieren
+    # Fallback: Generischer Platzhalter statt konkretem Font (ehrlicher bei fehlendem Brewfile)
     local installed_font
     installed_font=$(extract_installed_nerd_font)
-    [[ -z "$installed_font" ]] && installed_font="font-meslo-lg-nerd-font"
+    [[ -z "$installed_font" ]] && installed_font="font-<name>-nerd-font"
     local display_name
     display_name=$(font_display_name "$installed_font")
     
