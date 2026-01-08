@@ -54,18 +54,19 @@ trap cleanup EXIT
 readonly SCRIPT_DIR="${0:A:h}"
 readonly DOTFILES_DIR="${SCRIPT_DIR:h}"
 
-# Terminal-Profil dynamisch ermitteln (erste .terminal-Datei in setup/)
-PROFILE_FILE=$(find "$SCRIPT_DIR" -maxdepth 1 -name "*.terminal" -type f 2>/dev/null | head -1)
+# Terminal-Profil dynamisch ermitteln (alphabetisch erste .terminal-Datei in setup/)
+PROFILE_FILE=$(find "$SCRIPT_DIR" -maxdepth 1 -name "*.terminal" -type f 2>/dev/null | sort | head -1)
 if [[ -z "$PROFILE_FILE" ]]; then
   echo "FEHLER: Keine .terminal-Datei in setup/ gefunden" >&2
   exit 1
 fi
+readonly PROFILE_FILE
+
 # Warnung wenn mehrere .terminal-Dateien existieren
 TERMINAL_COUNT=$(find "$SCRIPT_DIR" -maxdepth 1 -name "*.terminal" -type f 2>/dev/null | wc -l | tr -d ' ')
 if (( TERMINAL_COUNT > 1 )); then
   warn "Mehrere .terminal-Dateien gefunden, verwende: ${PROFILE_FILE:t}"
 fi
-readonly PROFILE_FILE
 # Profil-Name aus Dateiname extrahieren (ohne .terminal-Endung)
 readonly PROFILE_NAME="${${PROFILE_FILE:t}%.terminal}"
 
@@ -362,8 +363,8 @@ fi
 print ""
 CURRENT_STEP="Xcode Theme Installation"
 
-# Xcode-Theme dynamisch ermitteln (erste .xccolortheme-Datei in setup/)
-XCODE_THEME_FILE=$(find "$SCRIPT_DIR" -maxdepth 1 -name "*.xccolortheme" -type f 2>/dev/null | head -1)
+# Xcode-Theme dynamisch ermitteln (alphabetisch erste .xccolortheme-Datei in setup/)
+XCODE_THEME_FILE=$(find "$SCRIPT_DIR" -maxdepth 1 -name "*.xccolortheme" -type f 2>/dev/null | sort | head -1)
 XCODE_THEMES_DIR="$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
 
 # Warnung wenn mehrere .xccolortheme-Dateien existieren

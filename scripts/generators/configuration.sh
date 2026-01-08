@@ -42,7 +42,7 @@ extract_fzf_keybindings() {
 # Gibt Dateinamen ohne Endung zurück (z.B. "catppuccin-mocha")
 extract_terminal_profile_name() {
     local terminal_file
-    terminal_file=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.terminal" | head -1)
+    terminal_file=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.terminal" | sort | head -1)
     [[ -f "$terminal_file" ]] || return 1
     
     # Dateiname ohne Pfad und ohne .terminal-Endung
@@ -87,12 +87,12 @@ font_display_name() {
 collect_theme_configs() {
     local output=""
     
-    # Terminal-Profil und Xcode-Theme dynamisch ermitteln
+    # Terminal-Profil und Xcode-Theme dynamisch ermitteln (alphabetisch erste)
     local terminal_file
-    terminal_file=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.terminal" | head -1)
+    terminal_file=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.terminal" | sort | head -1)
     
     local xcode_file
-    xcode_file=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.xccolortheme" | head -1)
+    xcode_file=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.xccolortheme" | sort | head -1)
     
     # Bekannte Theme-Dateien
     local -A theme_files=(
@@ -154,7 +154,7 @@ HEADER
     
     # Xcode-Sektion nur wenn .xccolortheme existiert
     local xcode_theme
-    xcode_theme=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.xccolortheme" | head -1)
+    xcode_theme=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.xccolortheme" | sort | head -1)
     if [[ -n "$xcode_theme" ]]; then
         local xcode_name="${xcode_theme:t}"  # Dateiname mit Endung
         cat << XCODE_SECTION
@@ -292,9 +292,14 @@ brew install --cask $installed_font
 ### Schritt 3: Exportiertes Profil ins Repository
 
 \`\`\`zsh
-# Altes Profil löschen und neues verschieben
-rm ~/dotfiles/setup/*.terminal
+# Optional: Altes Profil sichern
+mv ~/dotfiles/setup/*.terminal ~/dotfiles/setup/old-profile.terminal.bak
+
+# Neues Profil verschieben
 mv ~/Downloads/<profilname>.terminal ~/dotfiles/setup/
+
+# Backup entfernen (wenn nicht mehr benötigt)
+rm ~/dotfiles/setup/*.bak
 
 # Änderung committen
 cd ~/dotfiles
@@ -302,7 +307,7 @@ git add setup/*.terminal
 git commit -m "Terminal-Profil: <Neuer Font Name>"
 \`\`\`
 
-> **Hinweis:** Der Dateiname ist frei wählbar – bootstrap.sh findet automatisch die erste \`.terminal\`-Datei in \`setup/\`. Bei mehreren Dateien erscheint eine Warnung.
+> **Hinweis:** Der Dateiname ist frei wählbar – bootstrap.sh findet automatisch die alphabetisch erste \`.terminal\`-Datei in \`setup/\`. Bei mehreren Dateien erscheint eine Warnung.
 
 FONT_EXAMPLE
 

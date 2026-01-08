@@ -128,9 +128,14 @@ brew install --cask font-meslo-lg-nerd-font
 ### Schritt 3: Exportiertes Profil ins Repository
 
 ```zsh
-# Altes Profil löschen und neues verschieben
-rm ~/dotfiles/setup/*.terminal
+# Optional: Altes Profil sichern
+mv ~/dotfiles/setup/*.terminal ~/dotfiles/setup/old-profile.terminal.bak
+
+# Neues Profil verschieben
 mv ~/Downloads/<profilname>.terminal ~/dotfiles/setup/
+
+# Backup entfernen (wenn nicht mehr benötigt)
+rm ~/dotfiles/setup/*.bak
 
 # Änderung committen
 cd ~/dotfiles
@@ -138,7 +143,7 @@ git add setup/*.terminal
 git commit -m "Terminal-Profil: <Neuer Font Name>"
 ```
 
-> **Hinweis:** Der Dateiname ist frei wählbar – bootstrap.sh findet automatisch die erste `.terminal`-Datei in `setup/`. Bei mehreren Dateien erscheint eine Warnung.
+> **Hinweis:** Der Dateiname ist frei wählbar – bootstrap.sh findet automatisch die alphabetisch erste `.terminal`-Datei in `setup/`. Bei mehreren Dateien erscheint eine Warnung.
 
 
 ---
