@@ -24,7 +24,7 @@ dotfiles/
 │   ├── CODE_OF_CONDUCT.md # Verhaltenskodex
 │   ├── PULL_REQUEST_TEMPLATE.md
 │   ├── SECURITY.md # Sicherheitsrichtlinie
-│   ├── copilot-instructions.md # Was macht diese Datei
+│   ├── copilot-instructions.md # Instructions für dotfiles
 │   └── dependabot.yml # Hält GitHub Actions automatisch aktuell
 ├── .gitattributes # Zeilenenden und Dateibehandlung normalisieren
 ├── .gitignore # Dateien von Versionskontrolle ausschließen
@@ -113,7 +113,7 @@ dotfiles/
 │   ├── .zprofile # Umgebungsvariablen für Login-Shells (einmalig)
 │   ├── .zshenv # Umgebungsvariablen die VOR allen anderen Configs geladen werden
 │   └── .zshrc # Hauptkonfiguration für interaktive ZSH Shells
-├── CONTRIBUTING.md # Ausführliche Beschreibung des Datei-Zwecks
+├── CONTRIBUTING.md # Contributing
 ├── LICENSE # MIT Lizenz
 └── README.md # dotfiles
 ```

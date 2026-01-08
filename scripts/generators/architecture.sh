@@ -18,8 +18,10 @@ get_file_description() {
     
     # Versuche Beschreibung aus Header zu extrahieren
     if [[ -f "$file" ]]; then
-        # 1. Shell/YAML: # Zweck : ...
-        desc=$(grep -m1 "^# Zweck" "$file" 2>/dev/null | sed 's/^# Zweck[[:space:]]*:[[:space:]]*//')
+        # 1. Shell/YAML: # Zweck : ... (nicht für Markdown, da Codeblock-Beispiele matchen könnten)
+        if [[ "$name" != *.md ]]; then
+            desc=$(grep -m1 "^# Zweck" "$file" 2>/dev/null | sed 's/^# Zweck[[:space:]]*:[[:space:]]*//')
+        fi
         
         # 2. Shell: Zweite Zeile nach Shebang (z.B. "# description.sh - Beschreibung")
         if [[ -z "$desc" ]]; then
@@ -138,7 +140,7 @@ generate_dynamic_tree() {
             # Rekursiv, aber manche Verzeichnisse nur oberflächlich
             local child_depth=$max_depth
             case "$name" in
-                themes|pages) child_depth=$((current_depth + 2)) ;;  # Nur 1 Ebene tief
+                themes|pages) child_depth=$((current_depth + 2)) ;;  # +2 Ebenen unter diesem Verzeichnis
             esac
             generate_dynamic_tree "$item" "$next_prefix" "$child_depth" $((current_depth + 1))
         else
