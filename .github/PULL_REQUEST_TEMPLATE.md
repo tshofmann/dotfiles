@@ -4,6 +4,8 @@
 
 ## Art der Änderung
 
+<!-- Passendes Label setzen: bug, enhancement, documentation, refactoring, chore, configuration -->
+
 - [ ] 🐛 Bugfix
 - [ ] ✨ Neues Feature
 - [ ] 📝 Dokumentation

@@ -347,6 +347,28 @@ git push -u origin feature/beschreibung
 gh pr create
 ```
 
+### 6. Labels setzen
+
+Nach PR-Erstellung das passende Label hinzufügen:
+
+| Label | Verwendung |
+|-------|------------|
+| `bug` | Fehler, etwas funktioniert nicht |
+| `enhancement` | Neues Feature oder Verbesserung |
+| `documentation` | Nur Doku-Änderungen |
+| `refactoring` | Code-Verbesserung ohne Funktionsänderung |
+| `chore` | Routineaufgaben, Wartung |
+| `configuration` | Config-Änderungen |
+| `theming` | Catppuccin, visuelle Anpassungen |
+| `setup` | Installation, Bootstrap |
+
+**Zusatz-Labels bei Bedarf:**
+- `breaking-change` – Ändert bestehendes Verhalten
+- `needs-review` – Bereit für Review
+- `blocked` – Wartet auf externe Abhängigkeit
+
+> 💡 **Tipp:** Bei Issues werden Labels automatisch durch Templates gesetzt.
+
 ---
 
 ## Häufige Aufgaben

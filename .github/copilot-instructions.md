@@ -152,27 +152,9 @@ gh api graphql -f query='mutation { resolveReviewThread(input: {threadId: "PRRT_
 - Checkliste durchgehen (generate-docs, health-check)
 - Art der Änderung markieren
 - Zusammenhängende Issues verlinken
+- **Label setzen** (siehe CONTRIBUTING.md)
 
-### Labels
-
-**Primäre Labels (Typ):**
-| Label | Verwendung |
-|-------|------------|
-| `bug` | Fehler, etwas funktioniert nicht |
-| `enhancement` | Neues Feature oder Verbesserung |
-| `documentation` | Nur Doku-Änderungen |
-| `refactoring` | Code-Verbesserung ohne Funktionsänderung |
-| `chore` | Routineaufgaben, Wartung |
-| `configuration` | Config-Änderungen |
-
-**Zusätzliche Labels:**
-| Label | Verwendung |
-|-------|------------|
-| `theming` | Catppuccin, visuelle Anpassungen |
-| `setup` | Installation, Bootstrap |
-| `breaking-change` | Ändert bestehendes Verhalten |
-| `needs-review` | Bereit für Review |
-| `blocked` | Wartet auf externe Abhängigkeit |
+> 💡 Issue-Labels werden automatisch durch Templates gesetzt. PR-Labels manuell hinzufügen.
 
 ---
 
@@ -183,6 +165,7 @@ gh api graphql -f query='mutation { resolveReviewThread(input: {threadId: "PRRT_
 | Code-Konventionen | `CONTRIBUTING.md#code-konventionen` |
 | Funktions-Syntax | `CONTRIBUTING.md#funktions-syntax` |
 | Kommentar-Format | `CONTRIBUTING.md#beschreibungskommentar-format-für-fzf-funktionen` |
+| **Labels** | `CONTRIBUTING.md#6-labels-setzen` |
 | Verzeichnisstruktur | `docs/architecture.md#verzeichnisstruktur` |
 | PR-Template | `.github/PULL_REQUEST_TEMPLATE.md` |
 | Issue-Templates | `.github/ISSUE_TEMPLATE/` |
