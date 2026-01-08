@@ -12,36 +12,42 @@ source "${0:A:h}/lib.sh"
 # Haupt-Generator für README.md
 # ------------------------------------------------------------
 generate_readme_md() {
-    cat << 'EOF'
+    local macos_min macos_tested macos_min_name macos_tested_name
+    macos_min=$(extract_macos_min_version)
+    macos_tested=$(extract_macos_tested_version)
+    macos_min_name=$(get_macos_codename "$macos_min")
+    macos_tested_name=$(get_macos_codename "$macos_tested")
+    
+    cat << EOF
 # 🍎 dotfiles
 
 [![CI](https://github.com/tshofmann/dotfiles/actions/workflows/validate.yml/badge.svg)](https://github.com/tshofmann/dotfiles/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![macOS](https://img.shields.io/badge/macOS-14%2B-black?logo=apple)](https://www.apple.com/macos/)
+[![macOS](https://img.shields.io/badge/macOS-${macos_min}%2B-black?logo=apple)](https://www.apple.com/macos/)
 [![Shell: zsh](https://img.shields.io/badge/Shell-zsh-green?logo=gnubash)](https://www.zsh.org/)
 
 > macOS Setup für Apple Silicon (arm64) – automatisiert, idempotent, minimal.
 
 ## Quickstart
 
-```zsh
+\`\`\`zsh
 curl -fsSL https://github.com/tshofmann/dotfiles/archive/refs/heads/main.tar.gz | tar -xz -C ~ && mv ~/dotfiles-main ~/dotfiles && ~/dotfiles/setup/bootstrap.sh
-```
+\`\`\`
 
 Nach Terminal-Neustart:
 
-```zsh
+\`\`\`zsh
 cd ~/dotfiles && stow --adopt -R terminal && git reset --hard HEAD && bat cache --build && tldr --update
-```
+\`\`\`
 
-> ⚠️ **Achtung:** `git reset --hard` verwirft lokale Änderungen. Siehe [Installation](docs/installation.md) für Details.
+> ⚠️ **Achtung:** \`git reset --hard\` verwirft lokale Änderungen. Siehe [Installation](docs/installation.md) für Details.
 
-> 💡 **Tipp:** Nach der Installation `fa` eingeben für eine interaktive Übersicht aller Aliase und Funktionen.
+> 💡 **Tipp:** Nach der Installation \`fa\` eingeben für eine interaktive Übersicht aller Aliase und Funktionen.
 
 ## Voraussetzungen
 
 - **Apple Silicon Mac** (arm64)
-- **macOS 14+** (Sonoma oder neuer)
+- **macOS ${macos_min}+** (${macos_min_name}) – getestet auf macOS ${macos_tested} (${macos_tested_name})
 - **Internetverbindung** & Admin-Rechte
 
 ## Dokumentation

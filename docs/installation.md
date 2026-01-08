@@ -10,7 +10,7 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles au
 | Anforderung | Details |
 |-------------|---------|
 | **Apple Silicon Mac** | M1, M2, … (arm64) – Intel-Macs werden nicht unterstützt |
-| **macOS 14+** | Sonoma oder neuer – entspricht [Homebrew Tier 1](https://docs.brew.sh/Support-Tiers) |
+| **macOS 26+** | Tahoe oder neuer – getestet auf 26 (Tahoe) |
 | **Internetverbindung** | Für Homebrew-Installation und Download der Formulae/Casks |
 | **Admin-Rechte** | `sudo`-Passwort erforderlich (siehe unten) |
 
@@ -42,7 +42,7 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 | Aktion | Beschreibung | Bei Fehler |
 |--------|--------------|------------|
 | Architektur-Check | Prüft ob arm64 (Apple Silicon) | ❌ Exit |
-| macOS-Version-Check | Prüft ob macOS 14+ (Sonoma) | ❌ Exit |
+| macOS-Version-Check | Prüft ob macOS 26+ (Tahoe) | ❌ Exit |
 | Netzwerk-Check | Prüft Internetverbindung | ❌ Exit |
 | Schreibrechte-Check | Prüft ob `$HOME` schreibbar ist | ❌ Exit |
 | Xcode CLI Tools | Installiert/prüft Developer Tools | ❌ Exit |
@@ -52,7 +52,6 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 | Terminal-Profil | Importiert `catppuccin-mocha.terminal` als Standard | ⚠️ Warnung |
 | Starship-Theme | Generiert `~/.config/starship.toml` | ⚠️ Warnung |
 | ZSH-Sessions | Prüft SHELL_SESSIONS_DISABLE in ~/.zshenv | ⚠️ Warnung |
-
 > **Idempotenz:** Das Skript kann beliebig oft ausgeführt werden – bereits installierte Komponenten werden erkannt und übersprungen.
 
 > **⏱️ Timeout-Konfiguration:** Der Terminal-Profil-Import wartet standardmäßig 20 Sekunden auf Registrierung im System. Bei langsamen Systemen oder VMs kann dies erhöht werden:
@@ -137,37 +136,15 @@ ff
 
 | Paket | Beschreibung |
 |-------|--------------|
-| `fzf` | Fuzzy Finder |
-| `gh` | GitHub CLI |
-| `stow` | Symlink-Manager |
-| `starship` | Shell-Prompt |
-| `tealdeer` | tldr-Client für vereinfachte Man-Pages |
-| `zoxide` | Smartes cd |
-| `mas` | Mac App Store CLI |
-| `eza` | Moderner ls-Ersatz mit Icons |
-| `bat` | cat mit Syntax-Highlighting |
-| `ripgrep` | Ultraschneller grep-Ersatz |
-| `fd` | Schneller find-Ersatz |
-| `btop` | Ressourcen-Monitor (top-Ersatz) |
-| `fastfetch` | Schnelle System-Info (neofetch-Ersatz) |
-| `lazygit` | Terminal-UI für Git |
-| `zsh-syntax-highlighting` | Syntax-Highlighting für Kommandos |
-| `zsh-autosuggestions` | History-basierte Vorschläge |
 
 ### Apps & Fonts (via Cask)
 
 | Paket | Beschreibung |
 |-------|--------------|
-| `font-meslo-lg-nerd-font` | Nerd Font für Terminal-Icons |
-| `claude-code` | Terminal-basierter KI-Coding-Assistent |
 
 ### Mac App Store Apps (via mas)
 
 | App | Beschreibung |
 |-----|--------------|
-| Xcode | Apple IDE für iOS/macOS |
-| Pages | Textverarbeitung |
-| Numbers | Tabellenkalkulation |
-| Keynote | Präsentationen |
 
 > **Hinweis:** Die Anmeldung im App Store muss manuell erfolgen – die Befehle `mas account` und `mas signin` sind auf macOS 12+ nicht verfügbar.

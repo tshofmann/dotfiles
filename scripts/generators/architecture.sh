@@ -55,6 +55,62 @@ generate_tree() {
 }
 
 # ------------------------------------------------------------
+# Setup-Datei-Erkennung aus bootstrap.sh extrahieren
+# ------------------------------------------------------------
+# Extrahiert die Dateiendungen und das Erkennungs-Pattern dynamisch
+generate_setup_file_detection() {
+    local bootstrap="$DOTFILES_DIR/setup/bootstrap.sh"
+    [[ -f "$bootstrap" ]] || return 1
+    
+    # Extrahiere Dateiendungen aus find-Befehlen (z.B. "*.terminal")
+    local -a extensions
+    extensions=($(grep -o 'find.*-name "\*\.[^"]*"' "$bootstrap" | grep -o '\*\.[^"]*' | sort -u))
+    
+    # Prüfe ob sort verwendet wird (deterministisch)
+    local has_sort="Nein"
+    grep -q 'find.*| sort |' "$bootstrap" && has_sort="Ja"
+    
+    # Prüfe ob Warnung bei mehreren existiert
+    local has_warning="Nein"
+    grep -q 'TERMINAL_COUNT\|XCODE_THEME_COUNT' "$bootstrap" && has_warning="Ja"
+    
+    cat << 'DETECTION_HEADER'
+## Setup-Datei-Erkennung
+
+Bootstrap erkennt Theme-Dateien automatisch nach Dateiendung:
+
+| Dateiendung | Sortiert | Warnung bei mehreren |
+|-------------|----------|----------------------|
+DETECTION_HEADER
+
+    for ext in "${extensions[@]}"; do
+        # Entferne * am Anfang für Anzeige
+        local display_ext="${ext#\*}"
+        echo "| \`$display_ext\` | $has_sort | $has_warning |"
+    done
+    
+    # Beispiel mit tatsächlichen Dateien aus setup/
+    local example_ext="${extensions[1]#\*}"  # Erste Endung (z.B. .terminal)
+    local -a example_files
+    example_files=($(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*$example_ext" 2>/dev/null | sort | xargs -I{} basename {}))
+    
+    if (( ${#example_files[@]} > 0 )); then
+        cat << EXAMPLE
+
+**Aktuell in \`setup/\`:** \`${example_files[1]}\`
+EXAMPLE
+    fi
+    
+    cat << 'DETECTION_FOOTER'
+
+Dies ermöglicht:
+- Freie Benennung der Theme-Dateien
+- Deterministisches Verhalten (alphabetisch erste bei mehreren)
+- Explizite Warnung wenn mehrere Dateien existieren
+DETECTION_FOOTER
+}
+
+# ------------------------------------------------------------
 # Haupt-Generator für architecture.md
 # ------------------------------------------------------------
 generate_architecture_md() {
@@ -259,6 +315,15 @@ Vorteile:
 
 ---
 
+REST
+    
+    # Setup-Datei-Erkennung dynamisch aus bootstrap.sh extrahieren
+    generate_setup_file_detection
+    
+    cat << 'DEPENDENCIES'
+
+---
+
 ## Komponenten-Abhängigkeiten
 
 ```
@@ -297,7 +362,7 @@ Bei Icon-Problemen (□ oder ?) prüfen:
                     │
                     └── .zlogin (Background-Tasks)
 ```
-REST
+DEPENDENCIES
 }
 
 # Nur ausführen wenn direkt aufgerufen (nicht gesourct)

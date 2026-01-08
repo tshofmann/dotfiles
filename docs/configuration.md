@@ -33,23 +33,44 @@ Das Catppuccin Mocha Theme für Xcode wird automatisch vom Bootstrap-Skript nach
 
 > **Hinweis:** Änderungen am Original in `setup/Catppuccin Mocha.xccolortheme` werden bei erneutem Bootstrap-Lauf übernommen.
 
-### Farbpalette (Referenz)
+### Farbpalette (Catppuccin Mocha)
 
-Die wichtigsten Farben der Catppuccin Mocha Palette:
+Alle verfügbaren Shell-Farbvariablen aus `~/.config/shell-colors`:
 
-| Farbe | Hex | Verwendung |
-|-------|-----|------------|
-| Base | `#1E1E2E` | Hintergrund |
-| Text | `#CDD6F4` | Haupttext |
-| Subtext0 | `#A6ADC8` | Beschreibungen |
-| Surface0 | `#313244` | Selection Background |
-| Surface1 | `#45475A` | Selected Background |
-| Overlay0 | `#6C7086` | Borders |
-| Red | `#F38BA8` | Fehler, Highlights |
-| Green | `#A6E3A1` | Erfolg, Befehle |
-| Yellow | `#F9E2AF` | Warnungen |
-| Blue | `#89B4FA` | Info, Links |
-| Mauve | `#CBA6F7` | Akzente, Prompt |
+| Farbe | Hex | Variable |
+|-------|-----|----------|
+| Rosewater | `#F5E0DC` | `C_ROSEWATER` |
+| Flamingo | `#F2CDCD` | `C_FLAMINGO` |
+| Pink | `#F5C2E7` | `C_PINK` |
+| Mauve | `#CBA6F7` | `C_MAUVE` |
+| Red | `#F38BA8` | `C_RED` |
+| Maroon | `#EBA0AC` | `C_MAROON` |
+| Peach | `#FAB387` | `C_PEACH` |
+| Yellow | `#F9E2AF` | `C_YELLOW` |
+| Green | `#A6E3A1` | `C_GREEN` |
+| Teal | `#94E2D5` | `C_TEAL` |
+| Sky | `#89DCEB` | `C_SKY` |
+| Sapphire | `#74C7EC` | `C_SAPPHIRE` |
+| Blue | `#89B4FA` | `C_BLUE` |
+| Lavender | `#B4BEFE` | `C_LAVENDER` |
+| Text | `#CDD6F4` | `C_TEXT` |
+| Subtext1 | `#BAC2DE` | `C_SUBTEXT1` |
+| Subtext0 | `#A6ADC8` | `C_SUBTEXT0` |
+| Overlay2 | `#9399B2` | `C_OVERLAY2` |
+| Overlay1 | `#7F849C` | `C_OVERLAY1` |
+| Overlay0 | `#6C7086` | `C_OVERLAY0` |
+| Surface2 | `#585B70` | `C_SURFACE2` |
+| Surface1 | `#45475A` | `C_SURFACE1` |
+| Surface0 | `#313244` | `C_SURFACE0` |
+| Base | `#1E1E2E` | `C_BASE` |
+| Mantle | `#181825` | `C_MANTLE` |
+| Crust | `#11111B` | `C_CRUST` |
+
+> **Verwendung in Skripten:**
+> ```zsh
+> source ~/.config/shell-colors
+> echo "${C_GREEN}Erfolg${C_RESET}"
+> ```
 
 Vollständige Palette: [catppuccin.com/palette](https://catppuccin.com/palette)
 
@@ -100,12 +121,11 @@ Bei einem ungültigen Preset-Namen zeigt das Skript eine Warnung und verwendet `
 ## Schriftart wechseln
 
 Das Terminal-Profil, der Nerd Font und das Starship-Preset sind eng gekoppelt. Wenn du die Schriftart ändern möchtest, musst du alle drei Komponenten berücksichtigen.
-
 > **⚠️ Wichtig:** Die Datei `catppuccin-mocha.terminal` enthält binäre NSArchiver-Daten. **Niemals direkt editieren** – nur über die Terminal.app GUI ändern und neu exportieren.
 
 ### Voraussetzung
 
-Bei Starship-Presets mit Powerline-Symbolen (wie `catppuccin-powerline`) muss die neue Schriftart ein **Nerd Font** sein. Siehe [Tools → Preset-Kompatibilität](tools.md#preset-kompatibilität) für Details.
+Bei Starship-Presets mit Powerline-Symbolen (wie `catppuccin-powerline`) muss die neue Schriftart ein **Nerd Font** sein. Siehe [Tools → Warum Nerd Fonts?](tools.md#warum-nerd-fonts) für Details.
 
 ### Schritt 1: Neuen Nerd Font installieren
 
@@ -113,30 +133,39 @@ Bei Starship-Presets mit Powerline-Symbolen (wie `catppuccin-powerline`) muss di
 # Verfügbare Nerd Fonts suchen
 brew search nerd-font
 
-# Beispiel: FiraCode Nerd Font installieren
-brew install --cask font-fira-code-nerd-font
+# Beispiel: Nerd Font installieren (z.B. font-meslo-lg-nerd-font)
+brew install --cask font-meslo-lg-nerd-font
 ```
 
 ### Schritt 2: Terminal.app Profil anpassen
 
 1. Terminal.app öffnen
-2. `Terminal → Einstellungen → Profile → catppuccin-mocha`
-3. Tab "Text" → "Schrift" → "Ändern…"
-4. Neuen Nerd Font auswählen (z.B. "FiraCode Nerd Font Mono")
+2. **Terminal** → **Einstellungen** → **Profile** → **catppuccin-mocha**
+3. Tab **Text** → **Schrift** → **Ändern…**
+4. Neuen Nerd Font auswählen (z.B. "MesloLG Nerd Font Mono")
 5. Größe anpassen (empfohlen: 13-14pt)
-6. Profil exportieren: `Einstellungen → Profile → Zahnrad → "...exportieren"`
+6. Profil exportieren: **Einstellungen** → **Profile** → **Zahnrad** → **"...exportieren"**
 
 ### Schritt 3: Exportiertes Profil ins Repository
 
 ```zsh
-# Altes Profil ersetzen
-mv ~/Downloads/catppuccin-mocha.terminal ~/dotfiles/setup/
+# Optional: Altes Profil sichern
+mv ~/dotfiles/setup/*.terminal ~/dotfiles/setup/old-profile.terminal.bak
+
+# Neues Profil verschieben
+mv ~/Downloads/<profilname>.terminal ~/dotfiles/setup/
+
+# Backup entfernen (wenn nicht mehr benötigt)
+rm ~/dotfiles/setup/*.bak
 
 # Änderung committen
 cd ~/dotfiles
-git add setup/catppuccin-mocha.terminal
-git commit -m "Terminal-Profil: FiraCode Nerd Font"
+git add setup/*.terminal
+git commit -m "Terminal-Profil: <Neuer Font Name>"
 ```
+
+> **Hinweis:** Der Dateiname ist frei wählbar – bootstrap.sh findet automatisch die alphabetisch erste `.terminal`-Datei in `setup/`. Bei mehreren Dateien erscheint eine Warnung.
+
 
 ---
 
@@ -178,9 +207,15 @@ Die fzf-Konfiguration liegt in `terminal/.config/fzf/config`:
 
 ```zsh
 # Catppuccin Mocha Farben (bereits konfiguriert)
---color=bg+:#313244,bg:#1e1e2e,...
+--color=bg+:#313244,spinner:#F5E0DC,hl:#F38BA8
+--color=fg:#CDD6F4,header:#F38BA8,info:#CBA6F7,pointer:#F5E0DC
+--color=marker:#B4BEFE,fg+:#CDD6F4,prompt:#CBA6F7,hl+:#F38BA8
+--color=selected-bg:#45475A
+--color=border:#6C7086,label:#CDD6F4
+--color=header:italic
+--color=prompt:bold
 
-# Layout
+# Layout (Auszug)
 --height=~50%
 --layout=reverse
 --border=rounded
@@ -192,9 +227,9 @@ Shell-Keybindings für fzf werden in `terminal/.config/fzf/init.zsh` definiert:
 
 ```zsh
 # Ctrl+X Prefix für dotfiles-Keybindings
-bindkey '^X1' fzf-history-widget
-bindkey '^X2' fzf-file-widget
-bindkey '^X3' fzf-cd-widget
+bindkey '^X1' fzf-history-widget         # Ctrl+X 1 = History
+bindkey '^X2' fzf-file-widget            # Ctrl+X 2 = Dateien
+bindkey '^X3' fzf-cd-widget              # Ctrl+X 3 = Verzeichnisse
 ```
 
 ---

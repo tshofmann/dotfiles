@@ -102,20 +102,20 @@ Diese Tools werden via Brewfile installiert:
 |------|--------------|---------------|
 | **fzf** | Fuzzy Finder | [github.com/junegunn/fzf](https://github.com/junegunn/fzf) |
 | **gh** | GitHub CLI | [cli.github.com](https://cli.github.com/) |
-| **stow** | Symlink-Manager | [gnu.org/software/stow](https://www.gnu.org/software/stow/) |
+| **stow** | Symlink-Manager | [www.gnu.org/software/stow](https://www.gnu.org/software/stow/) |
 | **starship** | Shell-Prompt | [starship.rs](https://starship.rs/) |
-| **tealdeer** | tldr-Client für vereinfachte Man-Pages | [github.com/tealdeer-rs/tealdeer](https://github.com/tealdeer-rs/tealdeer) |
+| **tealdeer** | tldr-Client | [tealdeer-rs.github.io/tealdeer](https://tealdeer-rs.github.io/tealdeer/) |
 | **zoxide** | Smartes cd | [github.com/ajeetdsouza/zoxide](https://github.com/ajeetdsouza/zoxide) |
 | **mas** | Mac App Store CLI | [github.com/mas-cli/mas](https://github.com/mas-cli/mas) |
-| **eza** | Moderner ls-Ersatz mit Icons | [github.com/eza-community/eza](https://github.com/eza-community/eza) |
+| **eza** | Moderner ls-Ersatz | [github.com/eza-community/eza](https://github.com/eza-community/eza) |
 | **bat** | cat mit Syntax-Highlighting | [github.com/sharkdp/bat](https://github.com/sharkdp/bat) |
 | **ripgrep** | Ultraschneller grep-Ersatz | [github.com/BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep) |
 | **fd** | Schneller find-Ersatz | [github.com/sharkdp/fd](https://github.com/sharkdp/fd) |
-| **btop** | Ressourcen-Monitor (top-Ersatz) | [github.com/aristocratos/btop](https://github.com/aristocratos/btop) |
-| **fastfetch** | Schnelle System-Info (neofetch-Ersatz) | [github.com/fastfetch-cli/fastfetch](https://github.com/fastfetch-cli/fastfetch) |
+| **btop** | Ressourcen-Monitor | [github.com/aristocratos/btop](https://github.com/aristocratos/btop) |
+| **fastfetch** | Schnelle System-Info | [github.com/fastfetch-cli/fastfetch](https://github.com/fastfetch-cli/fastfetch) |
 | **lazygit** | Terminal-UI für Git | [github.com/jesseduffield/lazygit](https://github.com/jesseduffield/lazygit) |
-| **zsh-syntax-highlighting** | Syntax-Highlighting für Kommandos | [github.com/zsh-users/zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) |
-| **zsh-autosuggestions** | History-basierte Vorschläge | [github.com/zsh-users/zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) |
+| **zsh-syntax-highlighting** | Syntax-Highlighting | [github.com/zsh-users/zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) |
+| **zsh-autosuggestions** | History-Vorschläge | [github.com/zsh-users/zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) |
 ### ZSH-Plugins
 
 | Plugin | Beschreibung | Dokumentation |
@@ -129,19 +129,40 @@ Diese Pakete werden via `brew install --cask` installiert:
 
 | App | Beschreibung | Dokumentation |
 |-----|--------------|---------------|
-| **font-meslo-lg-nerd-font** | Nerd Font für Terminal-Icons | [github.com/ryanoasis/nerd-fonts](https://github.com/ryanoasis/nerd-fonts) |
-| **claude-code** | Terminal-basierter KI-Coding-Assistent | [github.com/anthropics/claude-code](https://github.com/anthropics/claude-code) |
+| **font-meslo-lg-nerd-font** | Nerd Font für Terminal | [github.com/ryanoasis/nerd-fonts](https://github.com/ryanoasis/nerd-fonts) |
+| **claude-code** | KI-Coding-Assistent | [www.anthropic.com/claude-code](https://www.anthropic.com/claude-code) |
 ### Mac App Store Apps
 
 Diese Apps werden via `mas` installiert (Benutzer muss im App Store angemeldet sein):
 
-| App | Beschreibung |
-|-----|--------------|
-| **Xcode** | Apple IDE für iOS/macOS |
-| **Pages** | Textverarbeitung |
-| **Numbers** | Tabellenkalkulation |
-| **Keynote** | Präsentationen |
+| App | Beschreibung | Dokumentation |
+|-----|--------------|--------------|
+| **Xcode** | Apple IDE | [apps.apple.com/app/id497799835](https://apps.apple.com/app/id497799835) |
+| **Pages** | Textverarbeitung | [apps.apple.com/app/id409201541](https://apps.apple.com/app/id409201541) |
+| **Numbers** | Tabellenkalkulation | [apps.apple.com/app/id409203825](https://apps.apple.com/app/id409203825) |
+| **Keynote** | Präsentationen | [apps.apple.com/app/id409183694](https://apps.apple.com/app/id409183694) |
 > **Hinweis:** Die Anmeldung im App Store muss manuell über App Store.app erfolgen – die Befehle `mas account` und `mas signin` sind auf macOS 12+ nicht verfügbar.
+
+---
+
+## Theming
+
+Alle Tools nutzen das **Catppuccin Mocha** Farbschema für ein einheitliches Erscheinungsbild:
+
+| Tool | Lokale Konfiguration | Upstream-Quelle |
+|------|----------------------|-----------------|
+| **bat** | `~/.config/bat/themes/Catppuccin Mocha.tmTheme` | [github.com/catppuccin/bat](https://github.com/catppuccin/bat) |
+| **btop** | `~/.config/btop/themes/catppuccin_mocha.theme` | [github.com/catppuccin/btop](https://github.com/catppuccin/btop) |
+| **eza** | `~/.config/eza/theme.yml` | [github.com/catppuccin/eza](https://github.com/catppuccin/eza) |
+| **fzf** | `~/.config/fzf/config` | [github.com/catppuccin/fzf](https://github.com/catppuccin/fzf) |
+| **lazygit** | `~/.config/lazygit/config.yml` | [github.com/catppuccin/lazygit](https://github.com/catppuccin/lazygit) |
+| **tealdeer** | `~/.config/tealdeer/config.toml` | manuell (Catppuccin Palette) |
+| **zsh-syntax-highlighting** | `~/.config/zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh` | [github.com/catppuccin/zsh-syntax-highlighting](https://github.com/catppuccin/zsh-syntax-highlighting) |
+| **Terminal.app** | `setup/catppuccin-mocha.terminal` | [github.com/catppuccin/Terminal.app](https://github.com/catppuccin/Terminal.app) |
+| **Xcode** | `setup/Catppuccin Mocha.xccolortheme` | [github.com/catppuccin/xcode](https://github.com/catppuccin/xcode) |
+
+> **Hinweis:** Shell-Farben sind zentral in `terminal/.config/shell-colors` definiert.
+> Die vollständige Palette findest du unter [catppuccin.com/palette](https://catppuccin.com/palette).
 
 ---
 
@@ -561,7 +582,7 @@ Kurzfassung:
 - [Homebrew Formulae](https://formulae.brew.sh/)
 - [Nerd Fonts](https://www.nerdfonts.com/)
 - [Starship Presets](https://starship.rs/presets/)
-- [Catppuccin Theme](https://catppuccin.com/)
+- [Catppuccin Ports](https://github.com/catppuccin/catppuccin#-ports-and-more) – Themes für weitere Tools
 ---
 
 [← Zurück zur Übersicht](../README.md)

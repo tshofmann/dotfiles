@@ -5,24 +5,28 @@
 # Verwendung: brew bundle --file=setup/Brewfile
 # Docs      : https://github.com/Homebrew/homebrew-bundle
 # ============================================================
+# Format für Doku-Generierung:
+#   brew/cask: # Beschreibung | https://docs-url
+#   mas:       # Beschreibung (URL wird aus ID generiert → apps.apple.com)
+# ============================================================
 
 # CLI-Tools
-brew "fzf"                                  # Fuzzy Finder
-brew "gh"                                   # GitHub CLI
-brew "stow"                                 # Symlink-Manager
-brew "starship"                             # Shell-Prompt
-brew "tealdeer"                             # tldr-Client für vereinfachte Man-Pages
-brew "zoxide"                               # Smartes cd
-brew "mas"                                  # Mac App Store CLI
+brew "fzf"                                  # Fuzzy Finder | https://github.com/junegunn/fzf
+brew "gh"                                   # GitHub CLI | https://cli.github.com/
+brew "stow"                                 # Symlink-Manager | https://www.gnu.org/software/stow/
+brew "starship"                             # Shell-Prompt | https://starship.rs/
+brew "tealdeer"                             # tldr-Client | https://tealdeer-rs.github.io/tealdeer/
+brew "zoxide"                               # Smartes cd | https://github.com/ajeetdsouza/zoxide
+brew "mas"                                  # Mac App Store CLI | https://github.com/mas-cli/mas
 
 # Moderne CLI-Ersetzungen
-brew "eza"                                  # Moderner ls-Ersatz mit Icons
-brew "bat"                                  # cat mit Syntax-Highlighting
-brew "ripgrep"                              # Ultraschneller grep-Ersatz
-brew "fd"                                   # Schneller find-Ersatz
-brew "btop"                                 # Ressourcen-Monitor (top-Ersatz)
-brew "fastfetch"                            # Schnelle System-Info (neofetch-Ersatz)
-brew "lazygit"                              # Terminal-UI für Git
+brew "eza"                                  # Moderner ls-Ersatz | https://github.com/eza-community/eza
+brew "bat"                                  # cat mit Syntax-Highlighting | https://github.com/sharkdp/bat
+brew "ripgrep"                              # Ultraschneller grep-Ersatz | https://github.com/BurntSushi/ripgrep
+brew "fd"                                   # Schneller find-Ersatz | https://github.com/sharkdp/fd
+brew "btop"                                 # Ressourcen-Monitor | https://github.com/aristocratos/btop
+brew "fastfetch"                            # Schnelle System-Info | https://github.com/fastfetch-cli/fastfetch
+brew "lazygit"                              # Terminal-UI für Git | https://github.com/jesseduffield/lazygit
 
 # ZSH-Plugins
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -37,8 +41,8 @@ brew "lazygit"                              # Terminal-UI für Git
 #     Unterstrichen       Existierende Datei/Verzeichnis
 # Hinweis: Startzeit-Impact minimal (~20ms)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-brew "zsh-syntax-highlighting"              # Syntax-Highlighting für Kommandos
-brew "zsh-autosuggestions"                  # History-basierte Vorschläge
+brew "zsh-syntax-highlighting"              # Syntax-Highlighting | https://github.com/zsh-users/zsh-syntax-highlighting
+brew "zsh-autosuggestions"                  # History-Vorschläge | https://github.com/zsh-users/zsh-autosuggestions
 
 # Casks (Fonts & Tools)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -48,12 +52,12 @@ brew "zsh-autosuggestions"                  # History-basierte Vorschläge
 #   Zweck: Icons (Powerline, Devicons, Font Awesome, Octicons)
 #   Alternativen: brew search nerd-font
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-cask "font-meslo-lg-nerd-font"              # Nerd Font für Terminal-Icons
-cask "claude-code"                          # Terminal-basierter KI-Coding-Assistent
+cask "font-meslo-lg-nerd-font"              # Nerd Font für Terminal | https://github.com/ryanoasis/nerd-fonts
+cask "claude-code"                          # KI-Coding-Assistent | https://www.anthropic.com/claude-code
 
 # Mac App Store Apps (via mas)
 # Hinweis: Benutzer muss im App Store angemeldet sein
-mas "Xcode", id: 497799835                  # Apple IDE für iOS/macOS
+mas "Xcode", id: 497799835                  # Apple IDE
 mas "Pages", id: 409201541                  # Textverarbeitung
 mas "Numbers", id: 409203825                # Tabellenkalkulation
 mas "Keynote", id: 409183694                # Präsentationen

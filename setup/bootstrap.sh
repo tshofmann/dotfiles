@@ -12,6 +12,8 @@ set -euo pipefail
 # ------------------------------------------------------------
 # Farben (Catppuccin Mocha)
 # ------------------------------------------------------------
+# WICHTIG: Synchron halten mit terminal/.config/shell-colors!
+#          Nur Subset hier, da bootstrap.sh vor stow läuft.
 C_RESET='\033[0m'
 C_MAUVE='\033[38;2;203;166;247m'
 C_GREEN='\033[38;2;166;227;161m'
@@ -28,6 +30,62 @@ log()  { echo -e "${C_BLUE}→${C_RESET} $*"; }
 ok()   { echo -e "${C_GREEN}✔${C_RESET} $*"; }
 err()  { echo -e "${C_RED}✖${C_RESET} $*" >&2; }
 warn() { echo -e "${C_YELLOW}⚠${C_RESET} $*"; }
+
+# ------------------------------------------------------------
+# Defensive Helper für Dateioperationen
+# ------------------------------------------------------------
+# Prüft ob ein Verzeichnis erstellt werden kann (oder bereits existiert und schreibbar ist)
+# Rückgabe: 0 = OK, 1 = Fehler
+ensure_dir_writable() {
+  local dir="$1"
+  local description="${2:-Verzeichnis}"
+  
+  # Falls Verzeichnis existiert, prüfe ob schreibbar
+  if [[ -d "$dir" ]]; then
+    if [[ -w "$dir" ]]; then
+      return 0
+    else
+      err "$description nicht schreibbar: $dir"
+      return 1
+    fi
+  fi
+  
+  # Verzeichnis existiert nicht, prüfe ob Elternverzeichnis schreibbar ist
+  local parent="${dir:h}"
+  if [[ ! -w "$parent" ]]; then
+    err "Kann $description nicht erstellen, Elternverzeichnis nicht schreibbar: $parent"
+    return 1
+  fi
+  
+  # Versuche Verzeichnis zu erstellen
+  if ! mkdir -p "$dir" 2>/dev/null; then
+    err "Konnte $description nicht erstellen: $dir"
+    return 1
+  fi
+  
+  return 0
+}
+
+# Prüft ob eine Datei geschrieben werden kann (Verzeichnis existiert und ist schreibbar)
+# Rückgabe: 0 = OK, 1 = Fehler
+ensure_file_writable() {
+  local file="$1"
+  local description="${2:-Datei}"
+  local dir="${file:h}"
+  
+  # Prüfe ob Zielverzeichnis schreibbar ist
+  if ! ensure_dir_writable "$dir" "Zielverzeichnis für $description"; then
+    return 1
+  fi
+  
+  # Falls Datei existiert, prüfe ob überschreibbar
+  if [[ -e "$file" && ! -w "$file" ]]; then
+    err "$description existiert aber ist nicht schreibbar: $file"
+    return 1
+  fi
+  
+  return 0
+}
 
 # ------------------------------------------------------------
 # Trap-Handler für Abbruch/Fehler
@@ -53,8 +111,23 @@ trap cleanup EXIT
 # ------------------------------------------------------------
 readonly SCRIPT_DIR="${0:A:h}"
 readonly DOTFILES_DIR="${SCRIPT_DIR:h}"
-readonly PROFILE_FILE="$SCRIPT_DIR/catppuccin-mocha.terminal"
-readonly PROFILE_NAME="catppuccin-mocha"
+
+# Terminal-Profil dynamisch ermitteln (alphabetisch erste .terminal-Datei in setup/)
+PROFILE_FILE=$(find "$SCRIPT_DIR" -maxdepth 1 -name "*.terminal" -type f 2>/dev/null | sort | head -1)
+if [[ -z "$PROFILE_FILE" ]]; then
+  echo "FEHLER: Keine .terminal-Datei in setup/ gefunden" >&2
+  exit 1
+fi
+readonly PROFILE_FILE
+
+# Warnung wenn mehrere .terminal-Dateien existieren
+TERMINAL_COUNT=$(find "$SCRIPT_DIR" -maxdepth 1 -name "*.terminal" -type f 2>/dev/null | wc -l | tr -d ' ')
+if (( TERMINAL_COUNT > 1 )); then
+  warn "Mehrere .terminal-Dateien gefunden, verwende: ${PROFILE_FILE:t}"
+fi
+# Profil-Name aus Dateiname extrahieren (ohne .terminal-Endung)
+readonly PROFILE_NAME="${${PROFILE_FILE:t}%.terminal}"
+
 readonly FONT_GLOB="MesloLG*NerdFont*"
 readonly BREWFILE="$SCRIPT_DIR/Brewfile"
 
@@ -88,17 +161,17 @@ if [[ $(uname -m) != "arm64" ]]; then
   exit 1
 fi
 
-# macOS-Version prüfen (mindestens macOS 14 Sonoma erforderlich)
+# macOS-Version prüfen
 # Homebrew Tier 1 Support: macOS 14+, siehe https://docs.brew.sh/Support-Tiers
-# Extrahiert Major-Version aus ProductVersion (z.B. "26.2" → "26")
 readonly MACOS_VERSION=$(sw_vers -productVersion)
 readonly MACOS_MAJOR=${MACOS_VERSION%%.*}
-readonly MACOS_MIN_VERSION=14
+readonly MACOS_MIN_VERSION=26     # Unterstützt ab (ändert sich selten)
+readonly MACOS_TESTED_VERSION=26  # Zuletzt getestet auf (ändert sich bei Upgrade)
 
 if (( MACOS_MAJOR < MACOS_MIN_VERSION )); then
   err "macOS $MACOS_VERSION wird nicht unterstützt"
-  err "Mindestversion: macOS $MACOS_MIN_VERSION (Sonoma)"
-  err "Aktuelle Version: macOS $MACOS_VERSION"
+  err "Unterstützt ab: macOS $MACOS_MIN_VERSION"
+  err "Getestet auf: macOS $MACOS_TESTED_VERSION"
   exit 1
 fi
 
@@ -299,15 +372,19 @@ else
     # Config existiert bereits
     if [[ "$preset_from_env" == "true" ]]; then
       # Nutzer hat explizit ein Preset gesetzt → überschreiben (mit Fallback)
-      log "Überschreibe $STARSHIP_CONFIG mit Preset '$STARSHIP_PRESET'"
-      if starship preset "$STARSHIP_PRESET" -o "$STARSHIP_CONFIG" 2>/dev/null; then
-        ok "Starship-Theme '$STARSHIP_PRESET' gesetzt → $STARSHIP_CONFIG"
+      if ! ensure_file_writable "$STARSHIP_CONFIG" "Starship-Config"; then
+        warn "Kann Starship-Config nicht überschreiben, überspringe"
       else
-        warn "Starship-Preset '$STARSHIP_PRESET' ungültig, nutze Fallback '$STARSHIP_PRESET_DEFAULT'"
-        if starship preset "$STARSHIP_PRESET_DEFAULT" -o "$STARSHIP_CONFIG" 2>/dev/null; then
-          ok "Fallback-Theme '$STARSHIP_PRESET_DEFAULT' gesetzt → $STARSHIP_CONFIG"
+        log "Überschreibe $STARSHIP_CONFIG mit Preset '$STARSHIP_PRESET'"
+        if starship preset "$STARSHIP_PRESET" -o "$STARSHIP_CONFIG" 2>/dev/null; then
+          ok "Starship-Theme '$STARSHIP_PRESET' gesetzt → $STARSHIP_CONFIG"
         else
-          warn "Auch Fallback-Preset konnte nicht gesetzt werden"
+          warn "Starship-Preset '$STARSHIP_PRESET' ungültig, nutze Fallback '$STARSHIP_PRESET_DEFAULT'"
+          if starship preset "$STARSHIP_PRESET_DEFAULT" -o "$STARSHIP_CONFIG" 2>/dev/null; then
+            ok "Fallback-Theme '$STARSHIP_PRESET_DEFAULT' gesetzt → $STARSHIP_CONFIG"
+          else
+            warn "Auch Fallback-Preset konnte nicht gesetzt werden"
+          fi
         fi
       fi
     else
@@ -321,56 +398,71 @@ else
       exit 1
     fi
 
-    if [[ ! -d "$HOME/.config" ]]; then
-      log "Erstelle Verzeichnis ~/.config"
-      mkdir -p "$HOME/.config"
-    fi
-
-    if starship preset "$STARSHIP_PRESET" -o "$STARSHIP_CONFIG" 2>/dev/null; then
-      ok "Starship-Theme '$STARSHIP_PRESET' gesetzt → $STARSHIP_CONFIG"
+    # Defensiv: Prüfe ob wir Config-Datei erstellen können
+    if ! ensure_file_writable "$STARSHIP_CONFIG" "Starship-Config"; then
+      warn "Kann Starship-Config nicht erstellen, überspringe"
     else
-      warn "Starship-Preset '$STARSHIP_PRESET' ungültig, nutze Fallback '$STARSHIP_PRESET_DEFAULT'"
-      if starship preset "$STARSHIP_PRESET_DEFAULT" -o "$STARSHIP_CONFIG" 2>/dev/null; then
-        ok "Fallback-Theme '$STARSHIP_PRESET_DEFAULT' gesetzt → $STARSHIP_CONFIG"
+      if starship preset "$STARSHIP_PRESET" -o "$STARSHIP_CONFIG" 2>/dev/null; then
+        ok "Starship-Theme '$STARSHIP_PRESET' gesetzt → $STARSHIP_CONFIG"
       else
-        warn "Auch Fallback-Preset konnte nicht gesetzt werden"
+        warn "Starship-Preset '$STARSHIP_PRESET' ungültig, nutze Fallback '$STARSHIP_PRESET_DEFAULT'"
+        if starship preset "$STARSHIP_PRESET_DEFAULT" -o "$STARSHIP_CONFIG" 2>/dev/null; then
+          ok "Fallback-Theme '$STARSHIP_PRESET_DEFAULT' gesetzt → $STARSHIP_CONFIG"
+        else
+          warn "Auch Fallback-Preset konnte nicht gesetzt werden"
+        fi
       fi
     fi
   fi
 fi
 
 # ------------------------------------------------------------
-# Xcode Catppuccin Mocha Theme installieren
+# Xcode Theme installieren (dynamisch ermittelt)
 # ------------------------------------------------------------
 # Xcode verwendet .xccolortheme Dateien für Syntax-Highlighting.
 # Das Theme wird nach ~/Library/Developer/Xcode/UserData/FontAndColorThemes/ kopiert.
-# Nach Installation muss das Theme manuell in Xcode aktiviert werden:
-#   Xcode > Settings (⌘,) > Themes > "Catppuccin Mocha"
+# Nach Installation muss das Theme manuell in Xcode aktiviert werden.
 print ""
 CURRENT_STEP="Xcode Theme Installation"
-XCODE_THEME_FILE="$SCRIPT_DIR/Catppuccin Mocha.xccolortheme"
+
+# Xcode-Theme dynamisch ermitteln (alphabetisch erste .xccolortheme-Datei in setup/)
+XCODE_THEME_FILE=$(find "$SCRIPT_DIR" -maxdepth 1 -name "*.xccolortheme" -type f 2>/dev/null | sort | head -1)
 XCODE_THEMES_DIR="$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
+
+# Warnung wenn mehrere .xccolortheme-Dateien existieren
+XCODE_THEME_COUNT=$(find "$SCRIPT_DIR" -maxdepth 1 -name "*.xccolortheme" -type f 2>/dev/null | wc -l | tr -d ' ')
+if (( XCODE_THEME_COUNT > 1 )); then
+  warn "Mehrere .xccolortheme-Dateien gefunden, verwende: ${XCODE_THEME_FILE:t}"
+fi
+
+# Theme-Name aus Dateiname extrahieren (für Log-Meldungen)
+XCODE_THEME_NAME="${${XCODE_THEME_FILE:t}%.xccolortheme}"
 
 # Prüfe ob Xcode.app installiert ist (nicht nur Command Line Tools)
 if [[ -d "/Applications/Xcode.app" ]]; then
   log "Prüfe Xcode Theme-Installation"
 
-  if [[ -f "$XCODE_THEME_FILE" ]]; then
-    # Zielverzeichnis erstellen falls nicht vorhanden
-    if [[ ! -d "$XCODE_THEMES_DIR" ]]; then
-      log "Erstelle Xcode Themes-Verzeichnis"
-      mkdir -p "$XCODE_THEMES_DIR"
-    fi
-
-    # Theme kopieren (überschreibt existierende Version)
-    if cp "$XCODE_THEME_FILE" "$XCODE_THEMES_DIR/"; then
-      ok "Xcode Catppuccin Mocha Theme installiert"
-      log "Aktivierung: Xcode → Settings (⌘,) → Themes → 'Catppuccin Mocha'"
+  if [[ -n "$XCODE_THEME_FILE" && -f "$XCODE_THEME_FILE" ]]; then
+    # Defensiv: Prüfe ob Zielverzeichnis erstellt/beschrieben werden kann
+    if ! ensure_dir_writable "$XCODE_THEMES_DIR" "Xcode Themes-Verzeichnis"; then
+      warn "Kann Xcode Theme nicht installieren, Verzeichnis nicht schreibbar"
     else
-      warn "Konnte Xcode Theme nicht kopieren"
+      # Prüfe ob Theme-Datei geschrieben werden kann
+      local theme_dest="$XCODE_THEMES_DIR/${XCODE_THEME_FILE:t}"
+      if ! ensure_file_writable "$theme_dest" "Xcode Theme"; then
+        warn "Kann Xcode Theme nicht installieren, Zieldatei nicht schreibbar"
+      else
+        # Theme kopieren (überschreibt existierende Version)
+        if cp "$XCODE_THEME_FILE" "$XCODE_THEMES_DIR/"; then
+          ok "Xcode Theme '$XCODE_THEME_NAME' installiert"
+          log "Aktivierung: Xcode → Settings (⌘,) → Themes → '$XCODE_THEME_NAME'"
+        else
+          warn "Konnte Xcode Theme nicht kopieren (unbekannter Fehler)"
+        fi
+      fi
     fi
   else
-    warn "Xcode Theme-Datei nicht gefunden: $XCODE_THEME_FILE"
+    warn "Keine .xccolortheme-Datei in setup/ gefunden"
   fi
 else
   log "Xcode.app nicht installiert, überspringe Theme-Installation"

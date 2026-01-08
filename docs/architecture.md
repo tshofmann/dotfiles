@@ -158,6 +158,24 @@ Vorteile:
 
 ---
 
+## Setup-Datei-Erkennung
+
+Bootstrap erkennt Theme-Dateien automatisch nach Dateiendung:
+
+| Dateiendung | Sortiert | Warnung bei mehreren |
+|-------------|----------|----------------------|
+| `.terminal` | Ja | Ja |
+| `.xccolortheme` | Ja | Ja |
+
+**Aktuell in `setup/`:** `catppuccin-mocha.terminal`
+
+Dies ermöglicht:
+- Freie Benennung der Theme-Dateien
+- Deterministisches Verhalten (alphabetisch erste bei mehreren)
+- Explizite Warnung wenn mehrere Dateien existieren
+
+---
+
 ## Komponenten-Abhängigkeiten
 
 ```

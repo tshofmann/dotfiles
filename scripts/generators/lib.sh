@@ -24,6 +24,37 @@ SHELL_COLORS="$DOTFILES_DIR/terminal/.config/shell-colors"
 [[ -f "$SHELL_COLORS" ]] && source "$SHELL_COLORS"
 
 # ------------------------------------------------------------
+# macOS Version Helper
+# ------------------------------------------------------------
+# Mapping: Major-Version → Codename
+get_macos_codename() {
+    local version="${1:-14}"
+    case "$version" in
+        11) echo "Big Sur" ;;
+        12) echo "Monterey" ;;
+        13) echo "Ventura" ;;
+        14) echo "Sonoma" ;;
+        15) echo "Sequoia" ;;
+        26) echo "Tahoe" ;;  # macOS 26 (2025)
+        *)  echo "macOS $version" ;;
+    esac
+}
+
+# Extrahiert MACOS_MIN_VERSION aus bootstrap.sh (unterstützt ab)
+extract_macos_min_version() {
+    [[ -f "$BOOTSTRAP" ]] || { echo "26"; return; }
+    local version=$(grep "^readonly MACOS_MIN_VERSION=" "$BOOTSTRAP" | sed 's/.*=\([0-9]*\).*/\1/')
+    echo "${version:-26}"
+}
+
+# Extrahiert MACOS_TESTED_VERSION aus bootstrap.sh (zuletzt getestet auf)
+extract_macos_tested_version() {
+    [[ -f "$BOOTSTRAP" ]] || { echo "26"; return; }
+    local version=$(grep "^readonly MACOS_TESTED_VERSION=" "$BOOTSTRAP" | sed 's/.*=\([0-9]*\).*/\1/')
+    echo "${version:-26}"
+}
+
+# ------------------------------------------------------------
 # Logging
 # ------------------------------------------------------------
 log()  { echo -e "${C_BLUE}→${C_RESET} $1"; }
@@ -209,12 +240,13 @@ parse_alias_command() {
 # ------------------------------------------------------------
 # Parser: Brewfile
 # ------------------------------------------------------------
-# Extrahiert Tool-Name und Beschreibung
-# Format: brew "name"                # Beschreibung
-# Rückgabe: name|beschreibung|typ (brew/cask/mas)
+# Extrahiert Tool-Name, Beschreibung und URL
+# Format: brew "name"                # Beschreibung | URL
+#         mas "name", id: 123456     # Beschreibung (URL wird aus ID generiert)
+# Rückgabe: name|beschreibung|typ|url (brew/cask/mas)
 parse_brewfile_entry() {
     local line="$1"
-    local name description typ
+    local name description typ url
     
     case "$line" in
         brew\ *)
@@ -231,20 +263,33 @@ parse_brewfile_entry() {
             typ="mas"
             name="${line#mas \"}"
             name="${name%%\"*}"
+            # ID extrahieren und App Store URL generieren
+            if [[ "$line" =~ id:[[:space:]]*([0-9]+) ]]; then
+                url="https://apps.apple.com/app/id${match[1]}"
+            fi
             ;;
         *)
             return 1
             ;;
     esac
     
-    # Beschreibung aus Kommentar
+    # Beschreibung und URL aus Kommentar (Format: # Beschreibung | URL)
+    # MAS-Apps haben bereits URL aus ID, überschreibe nur wenn explizit angegeben
     if [[ "$line" == *"#"* ]]; then
-        description="${line#*# }"
+        local comment="${line#*# }"
+        if [[ "$comment" == *" | "* ]]; then
+            description="${comment%% | *}"
+            # Explizite URL überschreibt generierte
+            url="${comment##* | }"
+        else
+            description="$comment"
+            # url bleibt wie gesetzt (leer oder aus MAS-ID)
+        fi
     else
         description=""
     fi
     
-    echo "${name}|${description}|${typ}"
+    echo "${name}|${description}|${typ}|${url}"
 }
 
 # ------------------------------------------------------------

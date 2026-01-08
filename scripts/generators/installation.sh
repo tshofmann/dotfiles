@@ -35,6 +35,13 @@ extract_bootstrap_steps() {
 # Haupt-Generator für installation.md
 # ------------------------------------------------------------
 generate_installation_md() {
+    # Dynamische macOS-Versionen aus bootstrap.sh
+    local macos_min macos_tested macos_min_name macos_tested_name
+    macos_min=$(extract_macos_min_version)
+    macos_tested=$(extract_macos_tested_version)
+    macos_min_name=$(get_macos_codename "$macos_min")
+    macos_tested_name=$(get_macos_codename "$macos_tested")
+    
     cat << 'HEADER'
 # 🚀 Installation
 
@@ -48,7 +55,10 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles au
 | Anforderung | Details |
 |-------------|---------|
 | **Apple Silicon Mac** | M1, M2, … (arm64) – Intel-Macs werden nicht unterstützt |
-| **macOS 14+** | Sonoma oder neuer – entspricht [Homebrew Tier 1](https://docs.brew.sh/Support-Tiers) |
+HEADER
+    # Dynamische macOS-Zeile mit min und tested
+    echo "| **macOS ${macos_min}+** | ${macos_min_name} oder neuer – getestet auf ${macos_tested} (${macos_tested_name}) |"
+    cat << 'PART2'
 | **Internetverbindung** | Für Homebrew-Installation und Download der Formulae/Casks |
 | **Admin-Rechte** | `sudo`-Passwort erforderlich (siehe unten) |
 
@@ -80,7 +90,10 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 | Aktion | Beschreibung | Bei Fehler |
 |--------|--------------|------------|
 | Architektur-Check | Prüft ob arm64 (Apple Silicon) | ❌ Exit |
-| macOS-Version-Check | Prüft ob macOS 14+ (Sonoma) | ❌ Exit |
+PART2
+    # Dynamische macOS-Version-Check Zeile
+    echo "| macOS-Version-Check | Prüft ob macOS ${macos_min}+ (${macos_min_name}) | ❌ Exit |"
+    cat << 'PART3'
 | Netzwerk-Check | Prüft Internetverbindung | ❌ Exit |
 | Schreibrechte-Check | Prüft ob `$HOME` schreibbar ist | ❌ Exit |
 | Xcode CLI Tools | Installiert/prüft Developer Tools | ❌ Exit |
@@ -90,7 +103,9 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 | Terminal-Profil | Importiert `catppuccin-mocha.terminal` als Standard | ⚠️ Warnung |
 | Starship-Theme | Generiert `~/.config/starship.toml` | ⚠️ Warnung |
 | ZSH-Sessions | Prüft SHELL_SESSIONS_DISABLE in ~/.zshenv | ⚠️ Warnung |
+PART3
 
+    cat << 'REST'
 > **Idempotenz:** Das Skript kann beliebig oft ausgeführt werden – bereits installierte Komponenten werden erkannt und übersprungen.
 
 > **⏱️ Timeout-Konfiguration:** Der Terminal-Profil-Import wartet standardmäßig 20 Sekunden auf Registrierung im System. Bei langsamen Systemen oder VMs kann dies erhöht werden:
@@ -171,7 +186,7 @@ ff
 
 ## Installierte Pakete
 
-HEADER
+REST
 
     # CLI-Tools aus Brewfile
     echo "### CLI-Tools (via Homebrew)"
