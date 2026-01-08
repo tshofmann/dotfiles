@@ -11,24 +11,64 @@ source "${0:A:h}/lib.sh"
 # ------------------------------------------------------------
 # Bootstrap-Schritte extrahieren
 # ------------------------------------------------------------
-# Parst CURRENT_STEP Zuweisungen und Aktionen aus bootstrap.sh
+# Parst CURRENT_STEP Zuweisungen aus bootstrap.sh
+# Gibt Schritt-Namen zurück (einen pro Zeile)
 extract_bootstrap_steps() {
-    local output=""
-    local step_count=0
-    
     while IFS= read -r line; do
-        # CURRENT_STEP="..." Zuweisungen
         if [[ "$line" == *'CURRENT_STEP='* ]]; then
             local step="${line#*CURRENT_STEP=}"
             step="${step#\"}"
             step="${step%\"}"
-            [[ -n "$step" && "$step" != "Initialisierung" ]] && {
-                (( step_count++ )) || true
-            }
+            # Leere und Initialisierung überspringen
+            [[ -n "$step" && "$step" != "Initialisierung" ]] && echo "$step"
         fi
     done < "$BOOTSTRAP"
+}
+
+# ------------------------------------------------------------
+# Bootstrap-Schritte Tabelle generieren
+# ------------------------------------------------------------
+# Kombiniert dynamisch extrahierte Schritte mit Beschreibungen
+generate_bootstrap_steps_table() {
+    # Beschreibungen und Fehlerverhalten pro Schritt
+    # Schlüssel = CURRENT_STEP Name aus bootstrap.sh
+    typeset -A step_desc step_error
+    step_desc=(
+        ["Netzwerk-Prüfung"]="Prüft Internetverbindung"
+        ["Schreibrechte-Prüfung"]="Prüft ob \`\$HOME\` schreibbar ist"
+        ["Homebrew Installation"]="Installiert/prüft Homebrew unter \`/opt/homebrew\`"
+        ["Brewfile Installation (brew bundle)"]="Installiert CLI-Tools via \`brew bundle\`"
+        ["Font-Verifikation"]="Prüft MesloLG Nerd Font Installation"
+        ["Terminal-Profil Import"]="Importiert Terminal-Profil als Standard"
+        ["Starship-Theme Konfiguration"]="Generiert \`~/.config/starship.toml\`"
+        ["Xcode Theme Installation"]="Kopiert Catppuccin Theme nach Xcode"
+        ["ZSH-Sessions Konfiguration"]="Prüft SHELL_SESSIONS_DISABLE in ~/.zshenv"
+    )
+    step_error=(
+        ["Netzwerk-Prüfung"]="❌ Exit"
+        ["Schreibrechte-Prüfung"]="❌ Exit"
+        ["Homebrew Installation"]="❌ Exit"
+        ["Brewfile Installation (brew bundle)"]="❌ Exit"
+        ["Font-Verifikation"]="❌ Exit"
+        ["Terminal-Profil Import"]="⚠️ Warnung"
+        ["Starship-Theme Konfiguration"]="⚠️ Warnung"
+        ["Xcode Theme Installation"]="⏭️ Übersprungen"
+        ["ZSH-Sessions Konfiguration"]="⚠️ Warnung"
+    )
     
-    echo "$step_count"
+    echo "| Schritt | Beschreibung | Bei Fehler |"
+    echo "|---------|--------------|------------|"
+    
+    # Zusätzlich statische Architektur/macOS-Checks (vor CURRENT_STEP)
+    echo "| Architektur-Check | Prüft ob arm64 (Apple Silicon) | ❌ Exit |"
+    echo "| macOS-Version-Check | Prüft ob macOS 14+ (Sonoma) | ❌ Exit |"
+    
+    # Dynamisch aus bootstrap.sh
+    extract_bootstrap_steps | while read -r step; do
+        local desc="${step_desc[$step]:-$step}"
+        local error="${step_error[$step]:-⚠️ Warnung}"
+        echo "| $step | $desc | $error |"
+    done
 }
 
 # ------------------------------------------------------------
@@ -77,19 +117,12 @@ curl -fsSL https://github.com/tshofmann/dotfiles/archive/refs/heads/main.tar.gz 
 
 Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 
-| Aktion | Beschreibung | Bei Fehler |
-|--------|--------------|------------|
-| Architektur-Check | Prüft ob arm64 (Apple Silicon) | ❌ Exit |
-| macOS-Version-Check | Prüft ob macOS 14+ (Sonoma) | ❌ Exit |
-| Netzwerk-Check | Prüft Internetverbindung | ❌ Exit |
-| Schreibrechte-Check | Prüft ob `$HOME` schreibbar ist | ❌ Exit |
-| Xcode CLI Tools | Installiert/prüft Developer Tools | ❌ Exit |
-| Homebrew | Installiert/prüft Homebrew unter `/opt/homebrew` | ❌ Exit |
-| Brewfile | Installiert CLI-Tools via `brew bundle` | ❌ Exit |
-| Font-Verifikation | Prüft MesloLG Nerd Font Installation | ❌ Exit |
-| Terminal-Profil | Importiert `catppuccin-mocha.terminal` als Standard | ⚠️ Warnung |
-| Starship-Theme | Generiert `~/.config/starship.toml` | ⚠️ Warnung |
-| ZSH-Sessions | Prüft SHELL_SESSIONS_DISABLE in ~/.zshenv | ⚠️ Warnung |
+HEADER
+
+    # Dynamische Tabelle einfügen
+    generate_bootstrap_steps_table
+    
+    cat << 'REST'
 
 > **Idempotenz:** Das Skript kann beliebig oft ausgeführt werden – bereits installierte Komponenten werden erkannt und übersprungen.
 
@@ -171,7 +204,7 @@ ff
 
 ## Installierte Pakete
 
-HEADER
+REST
 
     # CLI-Tools aus Brewfile
     echo "### CLI-Tools (via Homebrew)"
