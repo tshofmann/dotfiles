@@ -150,6 +150,31 @@ generate_font_section() {
 }
 
 # ------------------------------------------------------------
+# Theming-Abschnitt generieren
+# ------------------------------------------------------------
+generate_theming_section() {
+    local output=""
+    
+    output+="Alle Tools nutzen das **Catppuccin Mocha** Farbschema für ein einheitliches Erscheinungsbild:\n\n"
+    output+="| Tool | Lokale Konfiguration | Upstream-Quelle |\n"
+    output+="|------|----------------------|-----------------|\n"
+    output+="| **bat** | \`~/.config/bat/themes/Catppuccin Mocha.tmTheme\` | [github.com/catppuccin/bat](https://github.com/catppuccin/bat) |\n"
+    output+="| **btop** | \`~/.config/btop/themes/catppuccin_mocha.theme\` | [github.com/catppuccin/btop](https://github.com/catppuccin/btop) |\n"
+    output+="| **eza** | \`~/.config/eza/theme.yml\` | [github.com/catppuccin/eza](https://github.com/catppuccin/eza) |\n"
+    output+="| **fzf** | \`~/.config/fzf/config\` | [github.com/catppuccin/fzf](https://github.com/catppuccin/fzf) |\n"
+    output+="| **lazygit** | \`~/.config/lazygit/config.yml\` | [github.com/catppuccin/lazygit](https://github.com/catppuccin/lazygit) |\n"
+    output+="| **tealdeer** | \`~/.config/tealdeer/config.toml\` | manuell (Catppuccin Palette) |\n"
+    output+="| **zsh-syntax-highlighting** | \`~/.config/zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh\` | [github.com/catppuccin/zsh-syntax-highlighting](https://github.com/catppuccin/zsh-syntax-highlighting) |\n"
+    output+="| **Terminal.app** | \`setup/catppuccin-mocha.terminal\` | [github.com/catppuccin/Terminal.app](https://github.com/catppuccin/Terminal.app) |\n"
+    output+="| **Xcode** | \`setup/Catppuccin Mocha.xccolortheme\` | [github.com/catppuccin/xcode](https://github.com/catppuccin/xcode) |\n"
+    output+="\n"
+    output+="> **Hinweis:** Shell-Farben sind zentral in \`terminal/.config/shell-colors\` definiert.\n"
+    output+="> Die vollständige Palette findest du unter [catppuccin.com/palette](https://catppuccin.com/palette).\n"
+    
+    echo -e "$output"
+}
+
+# ------------------------------------------------------------
 # Weiterführende Links sammeln
 # ------------------------------------------------------------
 generate_links_section() {
@@ -158,7 +183,7 @@ generate_links_section() {
     output+="- [Homebrew Formulae](https://formulae.brew.sh/)\n"
     output+="- [Nerd Fonts](https://www.nerdfonts.com/)\n"
     output+="- [Starship Presets](https://starship.rs/presets/)\n"
-    output+="- [Catppuccin Theme](https://catppuccin.com/)\n"
+    output+="- [Catppuccin Ports](https://github.com/catppuccin/catppuccin#-ports-and-more) – Themes für weitere Tools\n"
     
     echo -e "$output"
 }
@@ -532,6 +557,15 @@ Diese Apps werden via `mas` installiert (Benutzer muss im App Store angemeldet s
     
     output+='
 > **Hinweis:** Die Anmeldung im App Store muss manuell über App Store.app erfolgen – die Befehle `mas account` und `mas signin` sind auf macOS 12+ nicht verfügbar.
+
+---
+
+## Theming
+
+'
+    output+=$(generate_theming_section)
+
+    output+='
 
 ---
 

@@ -145,6 +145,27 @@ Diese Apps werden via `mas` installiert (Benutzer muss im App Store angemeldet s
 
 ---
 
+## Theming
+
+Alle Tools nutzen das **Catppuccin Mocha** Farbschema für ein einheitliches Erscheinungsbild:
+
+| Tool | Lokale Konfiguration | Upstream-Quelle |
+|------|----------------------|-----------------|
+| **bat** | `~/.config/bat/themes/Catppuccin Mocha.tmTheme` | [github.com/catppuccin/bat](https://github.com/catppuccin/bat) |
+| **btop** | `~/.config/btop/themes/catppuccin_mocha.theme` | [github.com/catppuccin/btop](https://github.com/catppuccin/btop) |
+| **eza** | `~/.config/eza/theme.yml` | [github.com/catppuccin/eza](https://github.com/catppuccin/eza) |
+| **fzf** | `~/.config/fzf/config` | [github.com/catppuccin/fzf](https://github.com/catppuccin/fzf) |
+| **lazygit** | `~/.config/lazygit/config.yml` | [github.com/catppuccin/lazygit](https://github.com/catppuccin/lazygit) |
+| **tealdeer** | `~/.config/tealdeer/config.toml` | manuell (Catppuccin Palette) |
+| **zsh-syntax-highlighting** | `~/.config/zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh` | [github.com/catppuccin/zsh-syntax-highlighting](https://github.com/catppuccin/zsh-syntax-highlighting) |
+| **Terminal.app** | `setup/catppuccin-mocha.terminal` | [github.com/catppuccin/Terminal.app](https://github.com/catppuccin/Terminal.app) |
+| **Xcode** | `setup/Catppuccin Mocha.xccolortheme` | [github.com/catppuccin/xcode](https://github.com/catppuccin/xcode) |
+
+> **Hinweis:** Shell-Farben sind zentral in `terminal/.config/shell-colors` definiert.
+> Die vollständige Palette findest du unter [catppuccin.com/palette](https://catppuccin.com/palette).
+
+---
+
 ## Aliase
 
 Verfügbare Aliase aus `~/.config/alias/`:
@@ -561,7 +582,7 @@ Kurzfassung:
 - [Homebrew Formulae](https://formulae.brew.sh/)
 - [Nerd Fonts](https://www.nerdfonts.com/)
 - [Starship Presets](https://starship.rs/presets/)
-- [Catppuccin Theme](https://catppuccin.com/)
+- [Catppuccin Ports](https://github.com/catppuccin/catppuccin#-ports-and-more) – Themes für weitere Tools
 ---
 
 [← Zurück zur Übersicht](../README.md)
