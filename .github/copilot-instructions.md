@@ -86,6 +86,7 @@ Format für `terminal/.config/alias/*.alias`:
 # tool.alias - Beschreibung
 # ============================================================
 # Zweck   : Was macht diese Datei
+# Pfad    : ~/.config/alias/tool.alias
 # Docs    : https://...
 # ============================================================
 
@@ -94,7 +95,14 @@ if ! command -v tool >/dev/null 2>&1; then return 0; fi
 
 # Beschreibung für fa/tldr
 alias x='command'
+
+# Funktion(param?) – Enter=Aktion, Ctrl+Y=Kopieren
+func() {
+    # Implementation
+}
 ```
+
+**Wichtig:** Funktionen als `name() {` schreiben – nicht `function name`!
 
 ---
 
@@ -140,7 +148,9 @@ gh api graphql -f query='mutation { resolveReviewThread(input: {threadId: "PRRT_
 
 | Thema | Datei |
 |-------|-------|
-| Header-Format | `CONTRIBUTING.md` |
-| Verzeichnisstruktur | `docs/architecture.md` |
+| Code-Konventionen | `CONTRIBUTING.md#code-konventionen` |
+| Funktions-Syntax | `CONTRIBUTING.md#funktions-syntax` |
+| Kommentar-Format | `CONTRIBUTING.md#beschreibungskommentar-format-für-fzf-funktionen` |
+| Verzeichnisstruktur | `docs/architecture.md#verzeichnisstruktur` |
 | Installierte Tools | `setup/Brewfile` |
 | Farb-Palette | [catppuccin.com/palette](https://catppuccin.com/palette) |

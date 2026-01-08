@@ -567,13 +567,7 @@ brew bundle
 
 ### Eigene Aliase
 
-Siehe [CONTRIBUTING.md → Aliase erweitern](../CONTRIBUTING.md#aliase-erweitern) für das vollständige Format.
-
-Kurzfassung:
-1. Neue Datei `terminal/.config/alias/toolname.alias` erstellen
-2. Header-Block mit Metadaten (`Zweck`, `Docs`, `Hinweis`)
-3. Guard-Check: `if ! command -v tool >/dev/null 2>&1; then return 0; fi`
-4. Aliase und Funktionen mit Beschreibungskommentaren
+Siehe [CONTRIBUTING.md → Neues Tool hinzufügen](../CONTRIBUTING.md#neues-tool-hinzufügen) für eine Anleitung zum Erstellen eigener Alias-Dateien.
 
 ---
 
