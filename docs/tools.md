@@ -102,20 +102,20 @@ Diese Tools werden via Brewfile installiert:
 |------|--------------|---------------|
 | **fzf** | Fuzzy Finder | [github.com/junegunn/fzf](https://github.com/junegunn/fzf) |
 | **gh** | GitHub CLI | [cli.github.com](https://cli.github.com/) |
-| **stow** | Symlink-Manager | [gnu.org/software/stow](https://www.gnu.org/software/stow/) |
+| **stow** | Symlink-Manager | [www.gnu.org/software/stow](https://www.gnu.org/software/stow/) |
 | **starship** | Shell-Prompt | [starship.rs](https://starship.rs/) |
-| **tealdeer** | tldr-Client für vereinfachte Man-Pages | [github.com/tealdeer-rs/tealdeer](https://github.com/tealdeer-rs/tealdeer) |
+| **tealdeer** | tldr-Client | [tealdeer-rs.github.io/tealdeer](https://tealdeer-rs.github.io/tealdeer/) |
 | **zoxide** | Smartes cd | [github.com/ajeetdsouza/zoxide](https://github.com/ajeetdsouza/zoxide) |
 | **mas** | Mac App Store CLI | [github.com/mas-cli/mas](https://github.com/mas-cli/mas) |
-| **eza** | Moderner ls-Ersatz mit Icons | [github.com/eza-community/eza](https://github.com/eza-community/eza) |
+| **eza** | Moderner ls-Ersatz | [github.com/eza-community/eza](https://github.com/eza-community/eza) |
 | **bat** | cat mit Syntax-Highlighting | [github.com/sharkdp/bat](https://github.com/sharkdp/bat) |
 | **ripgrep** | Ultraschneller grep-Ersatz | [github.com/BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep) |
 | **fd** | Schneller find-Ersatz | [github.com/sharkdp/fd](https://github.com/sharkdp/fd) |
-| **btop** | Ressourcen-Monitor (top-Ersatz) | [github.com/aristocratos/btop](https://github.com/aristocratos/btop) |
-| **fastfetch** | Schnelle System-Info (neofetch-Ersatz) | [github.com/fastfetch-cli/fastfetch](https://github.com/fastfetch-cli/fastfetch) |
+| **btop** | Ressourcen-Monitor | [github.com/aristocratos/btop](https://github.com/aristocratos/btop) |
+| **fastfetch** | Schnelle System-Info | [github.com/fastfetch-cli/fastfetch](https://github.com/fastfetch-cli/fastfetch) |
 | **lazygit** | Terminal-UI für Git | [github.com/jesseduffield/lazygit](https://github.com/jesseduffield/lazygit) |
-| **zsh-syntax-highlighting** | Syntax-Highlighting für Kommandos | [github.com/zsh-users/zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) |
-| **zsh-autosuggestions** | History-basierte Vorschläge | [github.com/zsh-users/zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) |
+| **zsh-syntax-highlighting** | Syntax-Highlighting | [github.com/zsh-users/zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) |
+| **zsh-autosuggestions** | History-Vorschläge | [github.com/zsh-users/zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) |
 ### ZSH-Plugins
 
 | Plugin | Beschreibung | Dokumentation |
@@ -129,18 +129,18 @@ Diese Pakete werden via `brew install --cask` installiert:
 
 | App | Beschreibung | Dokumentation |
 |-----|--------------|---------------|
-| **font-meslo-lg-nerd-font** | Nerd Font für Terminal-Icons | [github.com/ryanoasis/nerd-fonts](https://github.com/ryanoasis/nerd-fonts) |
-| **claude-code** | Terminal-basierter KI-Coding-Assistent | [github.com/anthropics/claude-code](https://github.com/anthropics/claude-code) |
+| **font-meslo-lg-nerd-font** | Nerd Font für Terminal | [github.com/ryanoasis/nerd-fonts](https://github.com/ryanoasis/nerd-fonts) |
+| **claude-code** | KI-Coding-Assistent | [www.anthropic.com/claude-code](https://www.anthropic.com/claude-code) |
 ### Mac App Store Apps
 
 Diese Apps werden via `mas` installiert (Benutzer muss im App Store angemeldet sein):
 
-| App | Beschreibung |
-|-----|--------------|
-| **Xcode** | Apple IDE für iOS/macOS |
-| **Pages** | Textverarbeitung |
-| **Numbers** | Tabellenkalkulation |
-| **Keynote** | Präsentationen |
+| App | Beschreibung | Dokumentation |
+|-----|--------------|--------------|
+| **Xcode** | Apple IDE | [developer.apple.com/xcode](https://developer.apple.com/xcode/) |
+| **Pages** | Textverarbeitung | [www.apple.com/pages](https://www.apple.com/pages/) |
+| **Numbers** | Tabellenkalkulation | [www.apple.com/numbers](https://www.apple.com/numbers/) |
+| **Keynote** | Präsentationen | [www.apple.com/keynote](https://www.apple.com/keynote/) |
 > **Hinweis:** Die Anmeldung im App Store muss manuell über App Store.app erfolgen – die Befehle `mas account` und `mas signin` sind auf macOS 12+ nicht verfügbar.
 
 ---

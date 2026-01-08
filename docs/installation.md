@@ -137,37 +137,15 @@ ff
 
 | Paket | Beschreibung |
 |-------|--------------|
-| `fzf` | Fuzzy Finder |
-| `gh` | GitHub CLI |
-| `stow` | Symlink-Manager |
-| `starship` | Shell-Prompt |
-| `tealdeer` | tldr-Client für vereinfachte Man-Pages |
-| `zoxide` | Smartes cd |
-| `mas` | Mac App Store CLI |
-| `eza` | Moderner ls-Ersatz mit Icons |
-| `bat` | cat mit Syntax-Highlighting |
-| `ripgrep` | Ultraschneller grep-Ersatz |
-| `fd` | Schneller find-Ersatz |
-| `btop` | Ressourcen-Monitor (top-Ersatz) |
-| `fastfetch` | Schnelle System-Info (neofetch-Ersatz) |
-| `lazygit` | Terminal-UI für Git |
-| `zsh-syntax-highlighting` | Syntax-Highlighting für Kommandos |
-| `zsh-autosuggestions` | History-basierte Vorschläge |
 
 ### Apps & Fonts (via Cask)
 
 | Paket | Beschreibung |
 |-------|--------------|
-| `font-meslo-lg-nerd-font` | Nerd Font für Terminal-Icons |
-| `claude-code` | Terminal-basierter KI-Coding-Assistent |
 
 ### Mac App Store Apps (via mas)
 
 | App | Beschreibung |
 |-----|--------------|
-| Xcode | Apple IDE für iOS/macOS |
-| Pages | Textverarbeitung |
-| Numbers | Tabellenkalkulation |
-| Keynote | Präsentationen |
 
 > **Hinweis:** Die Anmeldung im App Store muss manuell erfolgen – die Befehle `mas account` und `mas signin` sind auf macOS 12+ nicht verfügbar.

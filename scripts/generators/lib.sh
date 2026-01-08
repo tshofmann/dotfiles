@@ -209,12 +209,12 @@ parse_alias_command() {
 # ------------------------------------------------------------
 # Parser: Brewfile
 # ------------------------------------------------------------
-# Extrahiert Tool-Name und Beschreibung
-# Format: brew "name"                # Beschreibung
-# Rückgabe: name|beschreibung|typ (brew/cask/mas)
+# Extrahiert Tool-Name, Beschreibung und URL
+# Format: brew "name"                # Beschreibung | URL
+# Rückgabe: name|beschreibung|typ|url (brew/cask/mas)
 parse_brewfile_entry() {
     local line="$1"
-    local name description typ
+    local name description typ url
     
     case "$line" in
         brew\ *)
@@ -237,14 +237,22 @@ parse_brewfile_entry() {
             ;;
     esac
     
-    # Beschreibung aus Kommentar
+    # Beschreibung und URL aus Kommentar (Format: # Beschreibung | URL)
     if [[ "$line" == *"#"* ]]; then
-        description="${line#*# }"
+        local comment="${line#*# }"
+        if [[ "$comment" == *" | "* ]]; then
+            description="${comment%% | *}"
+            url="${comment##* | }"
+        else
+            description="$comment"
+            url=""
+        fi
     else
         description=""
+        url=""
     fi
     
-    echo "${name}|${description}|${typ}"
+    echo "${name}|${description}|${typ}|${url}"
 }
 
 # ------------------------------------------------------------

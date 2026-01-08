@@ -313,27 +313,6 @@ generate_installed_tools_table() {
     output+="| Tool | Beschreibung | Dokumentation |\n"
     output+="|------|--------------|---------------|\n"
     
-    # Bekannte Docs-URLs (aus bestehender tools.md extrahiert)
-    typeset -A docs_urls
-    docs_urls=(
-        [bat]="[github.com/sharkdp/bat](https://github.com/sharkdp/bat)"
-        [btop]="[github.com/aristocratos/btop](https://github.com/aristocratos/btop)"
-        [eza]="[github.com/eza-community/eza](https://github.com/eza-community/eza)"
-        [fastfetch]="[github.com/fastfetch-cli/fastfetch](https://github.com/fastfetch-cli/fastfetch)"
-        [fd]="[github.com/sharkdp/fd](https://github.com/sharkdp/fd)"
-        [fzf]="[github.com/junegunn/fzf](https://github.com/junegunn/fzf)"
-        [gh]="[cli.github.com](https://cli.github.com/)"
-        [lazygit]="[github.com/jesseduffield/lazygit](https://github.com/jesseduffield/lazygit)"
-        [mas]="[github.com/mas-cli/mas](https://github.com/mas-cli/mas)"
-        [ripgrep]="[github.com/BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep)"
-        [starship]="[starship.rs](https://starship.rs/)"
-        [stow]="[gnu.org/software/stow](https://www.gnu.org/software/stow/)"
-        [tealdeer]="[github.com/tealdeer-rs/tealdeer](https://github.com/tealdeer-rs/tealdeer)"
-        [zoxide]="[github.com/ajeetdsouza/zoxide](https://github.com/ajeetdsouza/zoxide)"
-        [zsh-autosuggestions]="[github.com/zsh-users/zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)"
-        [zsh-syntax-highlighting]="[github.com/zsh-users/zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)"
-    )
-    
     while IFS= read -r line; do
         [[ "$line" == \#* || -z "$line" ]] && continue
         
@@ -343,13 +322,21 @@ generate_installed_tools_table() {
         local name="${parsed%%|*}"
         local rest="${parsed#*|}"
         local desc="${rest%%|*}"
-        local typ="${rest##*|}"
+        rest="${rest#*|}"
+        local typ="${rest%%|*}"
+        local url="${rest#*|}"
         
         # Nur brew (CLI-Tools) und ZSH-Plugins
         [[ "$typ" != "brew" ]] && continue
         
-        local docs="${docs_urls[$name]:-}"
-        [[ -z "$docs" ]] && docs="-"
+        # URL als Markdown-Link formatieren
+        local docs="-"
+        if [[ -n "$url" ]]; then
+            local display="${url#https://}"
+            display="${display#http://}"
+            display="${display%/}"
+            docs="[$display]($url)"
+        fi
         
         output+="| **$name** | $desc | $docs |\n"
     done < "$BREWFILE"
@@ -366,12 +353,6 @@ generate_casks_table() {
     output+="| App | Beschreibung | Dokumentation |\n"
     output+="|-----|--------------|---------------|\n"
     
-    typeset -A cask_docs
-    cask_docs=(
-        [claude-code]="[github.com/anthropics/claude-code](https://github.com/anthropics/claude-code)"
-        [font-meslo-lg-nerd-font]="[github.com/ryanoasis/nerd-fonts](https://github.com/ryanoasis/nerd-fonts)"
-    )
-    
     while IFS= read -r line; do
         [[ "$line" == \#* || -z "$line" ]] && continue
         
@@ -381,12 +362,20 @@ generate_casks_table() {
         local name="${parsed%%|*}"
         local rest="${parsed#*|}"
         local desc="${rest%%|*}"
-        local typ="${rest##*|}"
+        rest="${rest#*|}"
+        local typ="${rest%%|*}"
+        local url="${rest#*|}"
         
         [[ "$typ" != "cask" ]] && continue
         
-        local docs="${cask_docs[$name]:-}"
-        [[ -z "$docs" ]] && docs="-"
+        # URL als Markdown-Link formatieren
+        local docs="-"
+        if [[ -n "$url" ]]; then
+            local display="${url#https://}"
+            display="${display#http://}"
+            display="${display%/}"
+            docs="[$display]($url)"
+        fi
         
         output+="| **$name** | $desc | $docs |\n"
     done < "$BREWFILE"
@@ -400,8 +389,8 @@ generate_casks_table() {
 generate_mas_table() {
     local output=""
     
-    output+="| App | Beschreibung |\n"
-    output+="|-----|--------------|\n"
+    output+="| App | Beschreibung | Dokumentation |\n"
+    output+="|-----|--------------|--------------|\n"
     
     while IFS= read -r line; do
         [[ "$line" == \#* || -z "$line" ]] && continue
@@ -412,11 +401,22 @@ generate_mas_table() {
         local name="${parsed%%|*}"
         local rest="${parsed#*|}"
         local desc="${rest%%|*}"
-        local typ="${rest##*|}"
+        rest="${rest#*|}"
+        local typ="${rest%%|*}"
+        local url="${rest#*|}"
         
         [[ "$typ" != "mas" ]] && continue
         
-        output+="| **$name** | $desc |\n"
+        # URL als Markdown-Link formatieren
+        local docs="-"
+        if [[ -n "$url" ]]; then
+            local display="${url#https://}"
+            display="${display#http://}"
+            display="${display%/}"
+            docs="[$display]($url)"
+        fi
+        
+        output+="| **$name** | $desc | $docs |\n"
     done < "$BREWFILE"
     
     echo -e "$output"
