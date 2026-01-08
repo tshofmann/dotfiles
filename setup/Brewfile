@@ -5,6 +5,10 @@
 # Verwendung: brew bundle --file=setup/Brewfile
 # Docs      : https://github.com/Homebrew/homebrew-bundle
 # ============================================================
+# Format für Doku-Generierung:
+#   brew/cask: # Beschreibung | https://docs-url
+#   mas:       # Beschreibung (URL wird aus ID generiert → apps.apple.com)
+# ============================================================
 
 # CLI-Tools
 brew "fzf"                                  # Fuzzy Finder | https://github.com/junegunn/fzf
