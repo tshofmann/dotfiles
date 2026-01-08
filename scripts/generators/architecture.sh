@@ -71,6 +71,9 @@ generate_dynamic_tree() {
     local max_depth="${3:-99}"
     local current_depth="${4:-0}"
     
+    # Locale für konsistente Sortierung (CI vs lokal)
+    local LC_ALL=C
+    
     # Tiefenlimit erreicht
     (( current_depth >= max_depth )) && return
     
@@ -80,10 +83,13 @@ generate_dynamic_tree() {
     # Sammle alle Einträge (Dateien und Verzeichnisse)
     local -a entries=()
     
-    # Versteckte Dateien zuerst, dann normale (sortiert)
-    for item in "$base_dir"/.(N) "$base_dir"/.*(N) "$base_dir"/*(N); do
+    # Versteckte (.foo) und normale Einträge sammeln
+    for item in "$base_dir"/.*(N) "$base_dir"/*(N); do
         [[ -e "$item" ]] || continue
         local name="${item:t}"
+        
+        # Keine . und .. (ZSH glob kann diese matchen)
+        [[ "$name" == "." || "$name" == ".." ]] && continue
         
         # Ignorieren?
         local skip=false
@@ -92,22 +98,28 @@ generate_dynamic_tree() {
         done
         [[ "$skip" == true ]] && continue
         
-        # Keine . und .. 
-        [[ "$name" == "." || "$name" == ".." ]] && continue
-        
         entries+=("$item")
     done
     
-    # Sortieren: Versteckte zuerst, dann alphabetisch
+    # Sortieren: Versteckte zuerst, dann alphabetisch (explizit sortiert)
     local -a sorted_entries=()
-    # Versteckte Verzeichnisse
-    for e in "${entries[@]}"; do [[ -d "$e" && "${e:t}" == .* ]] && sorted_entries+=("$e"); done
-    # Versteckte Dateien
-    for e in "${entries[@]}"; do [[ -f "$e" && "${e:t}" == .* ]] && sorted_entries+=("$e"); done
-    # Normale Verzeichnisse
-    for e in "${entries[@]}"; do [[ -d "$e" && "${e:t}" != .* ]] && sorted_entries+=("$e"); done
-    # Normale Dateien
-    for e in "${entries[@]}"; do [[ -f "$e" && "${e:t}" != .* ]] && sorted_entries+=("$e"); done
+    local -a hidden_dirs=() hidden_files=() normal_dirs=() normal_files=()
+    
+    for e in "${entries[@]}"; do
+        if [[ -d "$e" ]]; then
+            [[ "${e:t}" == .* ]] && hidden_dirs+=("$e") || normal_dirs+=("$e")
+        else
+            [[ "${e:t}" == .* ]] && hidden_files+=("$e") || normal_files+=("$e")
+        fi
+    done
+    
+    # Explizit alphabetisch sortieren (locale-unabhängig)
+    sorted_entries=(
+        ${(o)hidden_dirs}
+        ${(o)hidden_files}
+        ${(o)normal_dirs}
+        ${(o)normal_files}
+    )
     
     local count=${#sorted_entries[@]}
     local i=0
