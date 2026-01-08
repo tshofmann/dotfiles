@@ -106,16 +106,16 @@ if [[ $(uname -m) != "arm64" ]]; then
 fi
 
 # macOS-Version prüfen
-# Getestet auf macOS 26 (Tahoe) – ältere Versionen könnten funktionieren, sind aber nicht getestet.
 # Homebrew Tier 1 Support: macOS 14+, siehe https://docs.brew.sh/Support-Tiers
 readonly MACOS_VERSION=$(sw_vers -productVersion)
 readonly MACOS_MAJOR=${MACOS_VERSION%%.*}
-readonly MACOS_MIN_VERSION=26  # Minimum = getestete Version (ehrlich)
+readonly MACOS_MIN_VERSION=26     # Unterstützt ab (ändert sich selten)
+readonly MACOS_TESTED_VERSION=26  # Zuletzt getestet auf (ändert sich bei Upgrade)
 
 if (( MACOS_MAJOR < MACOS_MIN_VERSION )); then
   err "macOS $MACOS_VERSION wird nicht unterstützt"
-  err "Getestet auf: macOS $MACOS_MIN_VERSION (Tahoe)"
-  err "Ältere Versionen könnten funktionieren, sind aber nicht getestet."
+  err "Unterstützt ab: macOS $MACOS_MIN_VERSION"
+  err "Getestet auf: macOS $MACOS_TESTED_VERSION"
   exit 1
 fi
 

@@ -10,7 +10,7 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles au
 | Anforderung | Details |
 |-------------|---------|
 | **Apple Silicon Mac** | M1, M2, … (arm64) – Intel-Macs werden nicht unterstützt |
-| **macOS 26** | Tahoe – ältere Versionen nicht getestet |
+| **macOS 26+** | Tahoe oder neuer – getestet auf 26 (Tahoe) |
 | **Internetverbindung** | Für Homebrew-Installation und Download der Formulae/Casks |
 | **Admin-Rechte** | `sudo`-Passwort erforderlich (siehe unten) |
 

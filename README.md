@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/tshofmann/dotfiles/actions/workflows/validate.yml/badge.svg)](https://github.com/tshofmann/dotfiles/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![macOS](https://img.shields.io/badge/macOS-26-black?logo=apple)](https://www.apple.com/macos/)
+[![macOS](https://img.shields.io/badge/macOS-26%2B-black?logo=apple)](https://www.apple.com/macos/)
 [![Shell: zsh](https://img.shields.io/badge/Shell-zsh-green?logo=gnubash)](https://www.zsh.org/)
 
 > macOS Setup für Apple Silicon (arm64) – automatisiert, idempotent, minimal.
@@ -26,7 +26,7 @@ cd ~/dotfiles && stow --adopt -R terminal && git reset --hard HEAD && bat cache 
 ## Voraussetzungen
 
 - **Apple Silicon Mac** (arm64)
-- **macOS 26** (Tahoe) – ältere Versionen nicht getestet
+- **macOS 26+** (Tahoe) – getestet auf macOS 26 (Tahoe)
 - **Internetverbindung** & Admin-Rechte
 
 ## Dokumentation

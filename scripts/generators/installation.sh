@@ -35,10 +35,12 @@ extract_bootstrap_steps() {
 # Haupt-Generator für installation.md
 # ------------------------------------------------------------
 generate_installation_md() {
-    # Dynamische macOS-Version aus bootstrap.sh
-    local macos_min macos_codename
+    # Dynamische macOS-Versionen aus bootstrap.sh
+    local macos_min macos_tested macos_min_name macos_tested_name
     macos_min=$(extract_macos_min_version)
-    macos_codename=$(get_macos_codename "$macos_min")
+    macos_tested=$(extract_macos_tested_version)
+    macos_min_name=$(get_macos_codename "$macos_min")
+    macos_tested_name=$(get_macos_codename "$macos_tested")
     
     cat << 'HEADER'
 # 🚀 Installation
@@ -54,8 +56,8 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles au
 |-------------|---------|
 | **Apple Silicon Mac** | M1, M2, … (arm64) – Intel-Macs werden nicht unterstützt |
 HEADER
-    # Dynamische macOS-Zeile
-    echo "| **macOS ${macos_min}** | ${macos_codename} – ältere Versionen nicht getestet |"
+    # Dynamische macOS-Zeile mit min und tested
+    echo "| **macOS ${macos_min}+** | ${macos_min_name} oder neuer – getestet auf ${macos_tested} (${macos_tested_name}) |"
     cat << 'PART2'
 | **Internetverbindung** | Für Homebrew-Installation und Download der Formulae/Casks |
 | **Admin-Rechte** | `sudo`-Passwort erforderlich (siehe unten) |
@@ -90,7 +92,7 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 | Architektur-Check | Prüft ob arm64 (Apple Silicon) | ❌ Exit |
 PART2
     # Dynamische macOS-Version-Check Zeile
-    echo "| macOS-Version-Check | Prüft ob macOS ${macos_min}+ (${macos_codename}) | ❌ Exit |"
+    echo "| macOS-Version-Check | Prüft ob macOS ${macos_min}+ (${macos_min_name}) | ❌ Exit |"
     cat << 'PART3'
 | Netzwerk-Check | Prüft Internetverbindung | ❌ Exit |
 | Schreibrechte-Check | Prüft ob `$HOME` schreibbar ist | ❌ Exit |
