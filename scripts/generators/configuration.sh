@@ -34,7 +34,7 @@ extract_fzf_keybindings() {
     
     echo '```zsh'
     echo '# Ctrl+X Prefix für dotfiles-Keybindings'
-    grep "^bindkey '\^X[0-9]'" "$init"
+    grep "^bindkey '\^X" "$init"
     echo '```'
 }
 
@@ -76,7 +76,7 @@ font_display_name() {
         meslo-lg)       echo "MesloLG Nerd Font Mono" ;;
         jetbrains-mono) echo "JetBrainsMono Nerd Font Mono" ;;
         fira-code)      echo "FiraCode Nerd Font Mono" ;;
-        *)              echo "${${(C)base}//-/} Nerd Font Mono" ;;  # Fallback: Bindestriche entfernen + Capitalize
+        *)              echo "${${(C)base}//-/} Nerd Font Mono" ;;  # Fallback: Capitalize + Bindestriche entfernen
     esac
 }
 
@@ -90,11 +90,9 @@ collect_theme_configs() {
     # Terminal-Profil und Xcode-Theme dynamisch ermitteln
     local terminal_file
     terminal_file=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.terminal" | head -1)
-    [[ -z "$terminal_file" ]] && terminal_file="$DOTFILES_DIR/setup/catppuccin-mocha.terminal"
     
     local xcode_file
     xcode_file=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.xccolortheme" | head -1)
-    [[ -z "$xcode_file" ]] && xcode_file="$DOTFILES_DIR/setup/Catppuccin Mocha.xccolortheme"
     
     # Bekannte Theme-Dateien
     local -A theme_files=(
