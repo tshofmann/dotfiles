@@ -11,19 +11,18 @@ source "${0:A:h}/lib.sh"
 # ------------------------------------------------------------
 # Haupt-Generator für README.md
 # ------------------------------------------------------------
-# Nutzt extract_macos_tested_version() und extract_macos_min_version()
-# aus lib.sh für dynamische macOS-Version im Badge
+# Nutzt extract_macos_min_version() aus lib.sh für dynamische macOS-Version
 generate_readme_md() {
-    local macos_tested macos_min
-    macos_tested=$(extract_macos_tested_version)
+    local macos_min macos_codename
     macos_min=$(extract_macos_min_version)
+    macos_codename=$(get_macos_codename "$macos_min")
     
     cat << EOF
 # 🍎 dotfiles
 
 [![CI](https://github.com/tshofmann/dotfiles/actions/workflows/validate.yml/badge.svg)](https://github.com/tshofmann/dotfiles/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![macOS](https://img.shields.io/badge/macOS-${macos_tested}-black?logo=apple)](https://www.apple.com/macos/)
+[![macOS](https://img.shields.io/badge/macOS-${macos_min}-black?logo=apple)](https://www.apple.com/macos/)
 [![Shell: zsh](https://img.shields.io/badge/Shell-zsh-green?logo=gnubash)](https://www.zsh.org/)
 
 > macOS Setup für Apple Silicon (arm64) – automatisiert, idempotent, minimal.
@@ -47,7 +46,7 @@ cd ~/dotfiles && stow --adopt -R terminal && git reset --hard HEAD && bat cache 
 ## Voraussetzungen
 
 - **Apple Silicon Mac** (arm64)
-- **macOS ${macos_min}+** (Sonoma oder neuer)
+- **macOS ${macos_min}** (${macos_codename}) – ältere Versionen nicht getestet
 - **Internetverbindung** & Admin-Rechte
 
 ## Dokumentation

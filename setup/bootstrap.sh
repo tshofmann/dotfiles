@@ -105,18 +105,17 @@ if [[ $(uname -m) != "arm64" ]]; then
   exit 1
 fi
 
-# macOS-Version prüfen (mindestens macOS 14 Sonoma erforderlich)
+# macOS-Version prüfen
+# Getestet auf macOS 26 (Tahoe) – ältere Versionen könnten funktionieren, sind aber nicht getestet.
 # Homebrew Tier 1 Support: macOS 14+, siehe https://docs.brew.sh/Support-Tiers
-# Extrahiert Major-Version aus ProductVersion (z.B. "15.2" → "15")
 readonly MACOS_VERSION=$(sw_vers -productVersion)
 readonly MACOS_MAJOR=${MACOS_VERSION%%.*}
-readonly MACOS_MIN_VERSION=14
-readonly MACOS_TESTED_VERSION=26  # Version auf der aktiv getestet wird
+readonly MACOS_MIN_VERSION=26  # Minimum = getestete Version (ehrlich)
 
 if (( MACOS_MAJOR < MACOS_MIN_VERSION )); then
   err "macOS $MACOS_VERSION wird nicht unterstützt"
-  err "Mindestversion: macOS $MACOS_MIN_VERSION (Sonoma)"
-  err "Aktuelle Version: macOS $MACOS_VERSION"
+  err "Getestet auf: macOS $MACOS_MIN_VERSION (Tahoe)"
+  err "Ältere Versionen könnten funktionieren, sind aber nicht getestet."
   exit 1
 fi
 

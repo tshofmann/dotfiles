@@ -41,16 +41,11 @@ get_macos_codename() {
 }
 
 # Extrahiert MACOS_MIN_VERSION aus bootstrap.sh
+# MIN_VERSION = getestete Version (ältere Versionen sind nicht getestet)
 extract_macos_min_version() {
-    [[ -f "$BOOTSTRAP" ]] || { echo "14"; return; }
-    local version=$(grep "^readonly MACOS_MIN_VERSION=" "$BOOTSTRAP" | sed 's/.*=//')
-    echo "${version:-14}"
-}
-
-# Extrahiert MACOS_TESTED_VERSION aus bootstrap.sh
-extract_macos_tested_version() {
     [[ -f "$BOOTSTRAP" ]] || { echo "26"; return; }
-    local version=$(grep "^readonly MACOS_TESTED_VERSION=" "$BOOTSTRAP" | sed 's/.*=\([0-9]*\).*/\1/')
+    # Extrahiert nur die Zahl, ignoriert Kommentare nach #
+    local version=$(grep "^readonly MACOS_MIN_VERSION=" "$BOOTSTRAP" | sed 's/.*=\([0-9]*\).*/\1/')
     echo "${version:-26}"
 }
 

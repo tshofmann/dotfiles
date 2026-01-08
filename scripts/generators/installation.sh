@@ -55,7 +55,7 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles au
 | **Apple Silicon Mac** | M1, M2, … (arm64) – Intel-Macs werden nicht unterstützt |
 HEADER
     # Dynamische macOS-Zeile
-    echo "| **macOS ${macos_min}+** | ${macos_codename} oder neuer – entspricht [Homebrew Tier 1](https://docs.brew.sh/Support-Tiers) |"
+    echo "| **macOS ${macos_min}** | ${macos_codename} – ältere Versionen nicht getestet |"
     cat << 'PART2'
 | **Internetverbindung** | Für Homebrew-Installation und Download der Formulae/Casks |
 | **Admin-Rechte** | `sudo`-Passwort erforderlich (siehe unten) |
