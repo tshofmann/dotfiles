@@ -114,8 +114,8 @@ collect_theme_configs() {
         local file="${info%%|*}"
         local stat="${info##*|}"
         
-        # Überspringen wenn Datei leer (z.B. kein Xcode-Theme vorhanden)
-        [[ -z "$file" && "$tool" == "Xcode" ]] && continue
+        # Überspringen wenn Datei leer (optionale Themes: Terminal.app, Xcode)
+        [[ -z "$file" && ( "$tool" == "Xcode" || "$tool" == "Terminal.app" ) ]] && continue
         
         # Datei/Verzeichnis kürzen für Anzeige
         local display_file="$file"
@@ -243,10 +243,10 @@ Bei einem ungültigen Preset-Namen zeigt das Skript eine Warnung und verwendet `
 Das Terminal-Profil, der Nerd Font und das Starship-Preset sind eng gekoppelt. Wenn du die Schriftart ändern möchtest, musst du alle drei Komponenten berücksichtigen.
 FONT_SECTION
 
-    # Terminal-Profilname für die Warnung dynamisch ermitteln (Fallback: catppuccin-mocha)
+    # Terminal-Profilname für die Warnung dynamisch ermitteln
     local profile_for_warning
     profile_for_warning=$(extract_terminal_profile_name)
-    [[ -z "$profile_for_warning" ]] && profile_for_warning="catppuccin-mocha"
+    [[ -z "$profile_for_warning" ]] && profile_for_warning="<profilname>"
 
     cat << FONT_WARNING
 > **⚠️ Wichtig:** Die Datei \`$profile_for_warning.terminal\` enthält binäre NSArchiver-Daten. **Niemals direkt editieren** – nur über die Terminal.app GUI ändern und neu exportieren.
@@ -266,10 +266,10 @@ FONT_WARNING
     local display_name
     display_name=$(font_display_name "$installed_font")
     
-    # Terminal-Profilname dynamisch aus .terminal-Datei (Fallback: catppuccin-mocha)
+    # Terminal-Profilname dynamisch aus .terminal-Datei
     local profile_name
     profile_name=$(extract_terminal_profile_name)
-    [[ -z "$profile_name" ]] && profile_name="catppuccin-mocha"
+    [[ -z "$profile_name" ]] && profile_name="<profilname>"
     
     cat << FONT_EXAMPLE
 \`\`\`zsh
