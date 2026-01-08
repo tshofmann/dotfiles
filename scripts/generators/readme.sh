@@ -9,39 +9,56 @@
 source "${0:A:h}/lib.sh"
 
 # ------------------------------------------------------------
+# Extraktionsfunktionen
+# ------------------------------------------------------------
+
+# Extrahiert minimale macOS-Version aus bootstrap.sh
+extract_macos_min_version() {
+    local bootstrap="$DOTFILES_DIR/setup/bootstrap.sh"
+    [[ -f "$bootstrap" ]] || { echo "14"; return; }
+    
+    # MACOS_MIN_VERSION=14
+    local version=$(grep "^readonly MACOS_MIN_VERSION=" "$bootstrap" | sed 's/.*=//')
+    echo "${version:-14}"
+}
+
+# ------------------------------------------------------------
 # Haupt-Generator für README.md
 # ------------------------------------------------------------
 generate_readme_md() {
-    cat << 'EOF'
+    local macos_version
+    macos_version=$(extract_macos_min_version)
+    
+    cat << EOF
 # 🍎 dotfiles
 
 [![CI](https://github.com/tshofmann/dotfiles/actions/workflows/validate.yml/badge.svg)](https://github.com/tshofmann/dotfiles/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![macOS](https://img.shields.io/badge/macOS-14%2B-black?logo=apple)](https://www.apple.com/macos/)
+[![macOS](https://img.shields.io/badge/macOS-${macos_version}%2B-black?logo=apple)](https://www.apple.com/macos/)
 [![Shell: zsh](https://img.shields.io/badge/Shell-zsh-green?logo=gnubash)](https://www.zsh.org/)
 
 > macOS Setup für Apple Silicon (arm64) – automatisiert, idempotent, minimal.
 
 ## Quickstart
 
-```zsh
+\`\`\`zsh
 curl -fsSL https://github.com/tshofmann/dotfiles/archive/refs/heads/main.tar.gz | tar -xz -C ~ && mv ~/dotfiles-main ~/dotfiles && ~/dotfiles/setup/bootstrap.sh
-```
+\`\`\`
 
 Nach Terminal-Neustart:
 
-```zsh
+\`\`\`zsh
 cd ~/dotfiles && stow --adopt -R terminal && git reset --hard HEAD && bat cache --build && tldr --update
-```
+\`\`\`
 
-> ⚠️ **Achtung:** `git reset --hard` verwirft lokale Änderungen. Siehe [Installation](docs/installation.md) für Details.
+> ⚠️ **Achtung:** \`git reset --hard\` verwirft lokale Änderungen. Siehe [Installation](docs/installation.md) für Details.
 
-> 💡 **Tipp:** Nach der Installation `fa` eingeben für eine interaktive Übersicht aller Aliase und Funktionen.
+> 💡 **Tipp:** Nach der Installation \`fa\` eingeben für eine interaktive Übersicht aller Aliase und Funktionen.
 
 ## Voraussetzungen
 
 - **Apple Silicon Mac** (arm64)
-- **macOS 14+** (Sonoma oder neuer)
+- **macOS ${macos_version}+** (Sonoma oder neuer)
 - **Internetverbindung** & Admin-Rechte
 
 ## Dokumentation
