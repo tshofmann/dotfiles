@@ -142,6 +142,17 @@ gh api repos/{owner}/{repo}/pulls/<nr>/reviews
 gh api graphql -f query='mutation { resolveReviewThread(input: {threadId: "PRRT_..."}) { thread { isResolved } } }'
 ```
 
+### Issues und PRs erstellen
+
+**Bei Issue-Erstellung:** Templates aus `.github/ISSUE_TEMPLATE/` verwenden:
+- `bug_report.md` – für Bugs (inkl. Health-Check Ausgabe)
+- `feature_request.md` – für Feature Requests
+
+**Bei PR-Erstellung:** Template aus `.github/PULL_REQUEST_TEMPLATE.md` verwenden:
+- Checkliste durchgehen (generate-docs, health-check)
+- Art der Änderung markieren
+- Zusammenhängende Issues verlinken
+
 ---
 
 ## Verweise
@@ -152,5 +163,7 @@ gh api graphql -f query='mutation { resolveReviewThread(input: {threadId: "PRRT_
 | Funktions-Syntax | `CONTRIBUTING.md#funktions-syntax` |
 | Kommentar-Format | `CONTRIBUTING.md#beschreibungskommentar-format-für-fzf-funktionen` |
 | Verzeichnisstruktur | `docs/architecture.md#verzeichnisstruktur` |
+| PR-Template | `.github/PULL_REQUEST_TEMPLATE.md` |
+| Issue-Templates | `.github/ISSUE_TEMPLATE/` |
 | Installierte Tools | `setup/Brewfile` |
 | Farb-Palette | [catppuccin.com/palette](https://catppuccin.com/palette) |
