@@ -32,6 +32,62 @@ err()  { echo -e "${C_RED}✖${C_RESET} $*" >&2; }
 warn() { echo -e "${C_YELLOW}⚠${C_RESET} $*"; }
 
 # ------------------------------------------------------------
+# Defensive Helper für Dateioperationen
+# ------------------------------------------------------------
+# Prüft ob ein Verzeichnis erstellt werden kann (oder bereits existiert und schreibbar ist)
+# Rückgabe: 0 = OK, 1 = Fehler
+ensure_dir_writable() {
+  local dir="$1"
+  local description="${2:-Verzeichnis}"
+  
+  # Falls Verzeichnis existiert, prüfe ob schreibbar
+  if [[ -d "$dir" ]]; then
+    if [[ -w "$dir" ]]; then
+      return 0
+    else
+      err "$description nicht schreibbar: $dir"
+      return 1
+    fi
+  fi
+  
+  # Verzeichnis existiert nicht, prüfe ob Elternverzeichnis schreibbar ist
+  local parent="${dir:h}"
+  if [[ ! -w "$parent" ]]; then
+    err "Kann $description nicht erstellen, Elternverzeichnis nicht schreibbar: $parent"
+    return 1
+  fi
+  
+  # Versuche Verzeichnis zu erstellen
+  if ! mkdir -p "$dir" 2>/dev/null; then
+    err "Konnte $description nicht erstellen: $dir"
+    return 1
+  fi
+  
+  return 0
+}
+
+# Prüft ob eine Datei geschrieben werden kann (Verzeichnis existiert und ist schreibbar)
+# Rückgabe: 0 = OK, 1 = Fehler
+ensure_file_writable() {
+  local file="$1"
+  local description="${2:-Datei}"
+  local dir="${file:h}"
+  
+  # Prüfe ob Zielverzeichnis schreibbar ist
+  if ! ensure_dir_writable "$dir" "Zielverzeichnis für $description"; then
+    return 1
+  fi
+  
+  # Falls Datei existiert, prüfe ob überschreibbar
+  if [[ -e "$file" && ! -w "$file" ]]; then
+    err "$description existiert aber ist nicht schreibbar: $file"
+    return 1
+  fi
+  
+  return 0
+}
+
+# ------------------------------------------------------------
 # Trap-Handler für Abbruch/Fehler
 # ------------------------------------------------------------
 # Trackt den aktuellen Schritt für aussagekräftiges Feedback
@@ -316,15 +372,19 @@ else
     # Config existiert bereits
     if [[ "$preset_from_env" == "true" ]]; then
       # Nutzer hat explizit ein Preset gesetzt → überschreiben (mit Fallback)
-      log "Überschreibe $STARSHIP_CONFIG mit Preset '$STARSHIP_PRESET'"
-      if starship preset "$STARSHIP_PRESET" -o "$STARSHIP_CONFIG" 2>/dev/null; then
-        ok "Starship-Theme '$STARSHIP_PRESET' gesetzt → $STARSHIP_CONFIG"
+      if ! ensure_file_writable "$STARSHIP_CONFIG" "Starship-Config"; then
+        warn "Kann Starship-Config nicht überschreiben, überspringe"
       else
-        warn "Starship-Preset '$STARSHIP_PRESET' ungültig, nutze Fallback '$STARSHIP_PRESET_DEFAULT'"
-        if starship preset "$STARSHIP_PRESET_DEFAULT" -o "$STARSHIP_CONFIG" 2>/dev/null; then
-          ok "Fallback-Theme '$STARSHIP_PRESET_DEFAULT' gesetzt → $STARSHIP_CONFIG"
+        log "Überschreibe $STARSHIP_CONFIG mit Preset '$STARSHIP_PRESET'"
+        if starship preset "$STARSHIP_PRESET" -o "$STARSHIP_CONFIG" 2>/dev/null; then
+          ok "Starship-Theme '$STARSHIP_PRESET' gesetzt → $STARSHIP_CONFIG"
         else
-          warn "Auch Fallback-Preset konnte nicht gesetzt werden"
+          warn "Starship-Preset '$STARSHIP_PRESET' ungültig, nutze Fallback '$STARSHIP_PRESET_DEFAULT'"
+          if starship preset "$STARSHIP_PRESET_DEFAULT" -o "$STARSHIP_CONFIG" 2>/dev/null; then
+            ok "Fallback-Theme '$STARSHIP_PRESET_DEFAULT' gesetzt → $STARSHIP_CONFIG"
+          else
+            warn "Auch Fallback-Preset konnte nicht gesetzt werden"
+          fi
         fi
       fi
     else
@@ -338,19 +398,19 @@ else
       exit 1
     fi
 
-    if [[ ! -d "$HOME/.config" ]]; then
-      log "Erstelle Verzeichnis ~/.config"
-      mkdir -p "$HOME/.config"
-    fi
-
-    if starship preset "$STARSHIP_PRESET" -o "$STARSHIP_CONFIG" 2>/dev/null; then
-      ok "Starship-Theme '$STARSHIP_PRESET' gesetzt → $STARSHIP_CONFIG"
+    # Defensiv: Prüfe ob wir Config-Datei erstellen können
+    if ! ensure_file_writable "$STARSHIP_CONFIG" "Starship-Config"; then
+      warn "Kann Starship-Config nicht erstellen, überspringe"
     else
-      warn "Starship-Preset '$STARSHIP_PRESET' ungültig, nutze Fallback '$STARSHIP_PRESET_DEFAULT'"
-      if starship preset "$STARSHIP_PRESET_DEFAULT" -o "$STARSHIP_CONFIG" 2>/dev/null; then
-        ok "Fallback-Theme '$STARSHIP_PRESET_DEFAULT' gesetzt → $STARSHIP_CONFIG"
+      if starship preset "$STARSHIP_PRESET" -o "$STARSHIP_CONFIG" 2>/dev/null; then
+        ok "Starship-Theme '$STARSHIP_PRESET' gesetzt → $STARSHIP_CONFIG"
       else
-        warn "Auch Fallback-Preset konnte nicht gesetzt werden"
+        warn "Starship-Preset '$STARSHIP_PRESET' ungültig, nutze Fallback '$STARSHIP_PRESET_DEFAULT'"
+        if starship preset "$STARSHIP_PRESET_DEFAULT" -o "$STARSHIP_CONFIG" 2>/dev/null; then
+          ok "Fallback-Theme '$STARSHIP_PRESET_DEFAULT' gesetzt → $STARSHIP_CONFIG"
+        else
+          warn "Auch Fallback-Preset konnte nicht gesetzt werden"
+        fi
       fi
     fi
   fi
@@ -383,18 +443,23 @@ if [[ -d "/Applications/Xcode.app" ]]; then
   log "Prüfe Xcode Theme-Installation"
 
   if [[ -n "$XCODE_THEME_FILE" && -f "$XCODE_THEME_FILE" ]]; then
-    # Zielverzeichnis erstellen falls nicht vorhanden
-    if [[ ! -d "$XCODE_THEMES_DIR" ]]; then
-      log "Erstelle Xcode Themes-Verzeichnis"
-      mkdir -p "$XCODE_THEMES_DIR"
-    fi
-
-    # Theme kopieren (überschreibt existierende Version)
-    if cp "$XCODE_THEME_FILE" "$XCODE_THEMES_DIR/"; then
-      ok "Xcode Theme '$XCODE_THEME_NAME' installiert"
-      log "Aktivierung: Xcode → Settings (⌘,) → Themes → '$XCODE_THEME_NAME'"
+    # Defensiv: Prüfe ob Zielverzeichnis erstellt/beschrieben werden kann
+    if ! ensure_dir_writable "$XCODE_THEMES_DIR" "Xcode Themes-Verzeichnis"; then
+      warn "Kann Xcode Theme nicht installieren, Verzeichnis nicht schreibbar"
     else
-      warn "Konnte Xcode Theme nicht kopieren"
+      # Prüfe ob Theme-Datei geschrieben werden kann
+      local theme_dest="$XCODE_THEMES_DIR/${XCODE_THEME_FILE:t}"
+      if ! ensure_file_writable "$theme_dest" "Xcode Theme"; then
+        warn "Kann Xcode Theme nicht installieren, Zieldatei nicht schreibbar"
+      else
+        # Theme kopieren (überschreibt existierende Version)
+        if cp "$XCODE_THEME_FILE" "$XCODE_THEMES_DIR/"; then
+          ok "Xcode Theme '$XCODE_THEME_NAME' installiert"
+          log "Aktivierung: Xcode → Settings (⌘,) → Themes → '$XCODE_THEME_NAME'"
+        else
+          warn "Konnte Xcode Theme nicht kopieren (unbekannter Fehler)"
+        fi
+      fi
     fi
   else
     warn "Keine .xccolortheme-Datei in setup/ gefunden"
