@@ -53,7 +53,7 @@ cask "claude-code"                          # KI-Coding-Assistent | https://www.
 
 # Mac App Store Apps (via mas)
 # Hinweis: Benutzer muss im App Store angemeldet sein
-mas "Xcode", id: 497799835                  # Apple IDE | https://developer.apple.com/xcode/
-mas "Pages", id: 409201541                  # Textverarbeitung | https://www.apple.com/pages/
-mas "Numbers", id: 409203825                # Tabellenkalkulation | https://www.apple.com/numbers/
-mas "Keynote", id: 409183694                # Präsentationen | https://www.apple.com/keynote/
+mas "Xcode", id: 497799835                  # Apple IDE
+mas "Pages", id: 409201541                  # Textverarbeitung
+mas "Numbers", id: 409203825                # Tabellenkalkulation
+mas "Keynote", id: 409183694                # Präsentationen

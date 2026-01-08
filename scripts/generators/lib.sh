@@ -211,6 +211,7 @@ parse_alias_command() {
 # ------------------------------------------------------------
 # Extrahiert Tool-Name, Beschreibung und URL
 # Format: brew "name"                # Beschreibung | URL
+#         mas "name", id: 123456     # Beschreibung (URL wird aus ID generiert)
 # Rückgabe: name|beschreibung|typ|url (brew/cask/mas)
 parse_brewfile_entry() {
     local line="$1"
@@ -231,6 +232,10 @@ parse_brewfile_entry() {
             typ="mas"
             name="${line#mas \"}"
             name="${name%%\"*}"
+            # ID extrahieren und App Store URL generieren
+            if [[ "$line" =~ id:[[:space:]]*([0-9]+) ]]; then
+                url="https://apps.apple.com/app/id${match[1]}"
+            fi
             ;;
         *)
             return 1
@@ -238,18 +243,19 @@ parse_brewfile_entry() {
     esac
     
     # Beschreibung und URL aus Kommentar (Format: # Beschreibung | URL)
+    # MAS-Apps haben bereits URL aus ID, überschreibe nur wenn explizit angegeben
     if [[ "$line" == *"#"* ]]; then
         local comment="${line#*# }"
         if [[ "$comment" == *" | "* ]]; then
             description="${comment%% | *}"
+            # Explizite URL überschreibt generierte
             url="${comment##* | }"
         else
             description="$comment"
-            url=""
+            # url bleibt wie gesetzt (leer oder aus MAS-ID)
         fi
     else
         description=""
-        url=""
     fi
     
     echo "${name}|${description}|${typ}|${url}"

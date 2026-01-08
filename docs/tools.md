@@ -137,10 +137,10 @@ Diese Apps werden via `mas` installiert (Benutzer muss im App Store angemeldet s
 
 | App | Beschreibung | Dokumentation |
 |-----|--------------|--------------|
-| **Xcode** | Apple IDE | [developer.apple.com/xcode](https://developer.apple.com/xcode/) |
-| **Pages** | Textverarbeitung | [www.apple.com/pages](https://www.apple.com/pages/) |
-| **Numbers** | Tabellenkalkulation | [www.apple.com/numbers](https://www.apple.com/numbers/) |
-| **Keynote** | Präsentationen | [www.apple.com/keynote](https://www.apple.com/keynote/) |
+| **Xcode** | Apple IDE | [apps.apple.com/app/id497799835](https://apps.apple.com/app/id497799835) |
+| **Pages** | Textverarbeitung | [apps.apple.com/app/id409201541](https://apps.apple.com/app/id409201541) |
+| **Numbers** | Tabellenkalkulation | [apps.apple.com/app/id409203825](https://apps.apple.com/app/id409203825) |
+| **Keynote** | Präsentationen | [apps.apple.com/app/id409183694](https://apps.apple.com/app/id409183694) |
 > **Hinweis:** Die Anmeldung im App Store muss manuell über App Store.app erfolgen – die Befehle `mas account` und `mas signin` sind auf macOS 12+ nicht verfügbar.
 
 ---
