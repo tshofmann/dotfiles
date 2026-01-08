@@ -11,14 +11,14 @@ Technische Details zur Struktur und Funktionsweise dieses dotfiles-Repositories.
 
 ```
 dotfiles/
-├── .githooks/ # Git Hooks
+├── .githooks/
 │   └── pre-commit # Verhindert Commits mit veralteter Dokumentation
-├── .github/ # GitHub-Konfiguration
-│   ├── ISSUE_TEMPLATE/ # Issue-Templates
+├── .github/
+│   ├── ISSUE_TEMPLATE/
 │   │   ├── bug_report.md
 │   │   ├── config.yml
 │   │   └── feature_request.md
-│   ├── workflows/ # GitHub Actions
+│   ├── workflows/
 │   │   └── validate.yml # Validiert Shell-Syntax, Dokumentation und Alias-Format
 │   ├── CODEOWNERS
 │   ├── CODE_OF_CONDUCT.md # Verhaltenskodex
@@ -29,13 +29,13 @@ dotfiles/
 ├── .gitattributes # Zeilenenden und Dateibehandlung normalisieren
 ├── .gitignore # Dateien von Versionskontrolle ausschließen
 ├── .stowrc # Ignore-Patterns und Standard-Optionen für GNU Stow
-├── docs/ # Dokumentation
+├── docs/
 │   ├── architecture.md # Architektur
 │   ├── configuration.md # Konfiguration
 │   ├── installation.md # Installation
 │   └── tools.md # Tools
-├── scripts/ # Utility-Scripts
-│   ├── generators/ # Generator-Module
+├── scripts/
+│   ├── generators/
 │   │   ├── architecture.sh # Generiert Architektur-Dokumentation aus Verzeichnisstruktur
 │   │   ├── configuration.sh # Generiert Konfigurations-Dokumentation aus Config-Dateien
 │   │   ├── installation.sh # Generiert Installationsdokumentation aus bootstrap.sh
@@ -43,18 +43,18 @@ dotfiles/
 │   │   ├── readme.sh # Generiert Haupt-README aus Template + dynamischen Daten
 │   │   ├── tldr.sh # Generiert tldr-Patches aus .alias-Dateien
 │   │   └── tools.sh # Generiert Tool-Dokumentation aus .alias-Dateien
-│   ├── tests/ # Unit-Tests
+│   ├── tests/
 │   │   └── test_generators.sh # Testet Parser-Funktionen aus scripts/generators/lib.sh
 │   ├── generate-docs.sh # Generiert alle Dokumentation aus Code-Kommentaren
 │   └── health-check.sh # Prüft ob alle Komponenten korrekt INSTALLIERT sind
-├── setup/ # Installation & Themes
+├── setup/
 │   ├── Brewfile # Deklarative Homebrew-Abhängigkeiten (CLI-Tools & Font)
 │   ├── Catppuccin Mocha.xccolortheme # Xcode Theme
 │   ├── bootstrap.sh # Homebrew, CLI-Tools, Nerd Font & Terminal-Profil
 │   └── catppuccin-mocha.terminal # Terminal.app Profil
-├── terminal/ # Shell-Konfiguration
-│   ├── .config/ # XDG-Configs
-│   │   ├── alias/ # Tool-Aliase
+├── terminal/
+│   ├── .config/
+│   │   ├── alias/
 │   │   │   ├── bat.alias # Aliase für bat mit verschiedenen Ausgabe-Stilen
 │   │   │   ├── brew.alias # Aliase für Homebrew Paketverwaltung
 │   │   │   ├── btop.alias # Aliase für btop – moderner top/htop-Ersatz
@@ -65,21 +65,21 @@ dotfiles/
 │   │   │   ├── gh.alias # Interaktive GitHub-Workflows mit gh CLI
 │   │   │   ├── git.alias # Aliase für häufige Git-Operationen
 │   │   │   └── rg.alias # Aliase für ripgrep mit häufig genutzten Optionen
-│   │   ├── bat/ # bat Config
-│   │   │   ├── themes/ # Theme-Dateien
+│   │   ├── bat/
+│   │   │   ├── themes/
 │   │   │   │   └── Catppuccin Mocha.tmTheme # Syntax-Theme (XML)
 │   │   │   └── config # Native bat-Konfiguration (cat mit Syntax-Highlighting)
-│   │   ├── btop/ # btop Config
-│   │   │   ├── themes/ # Theme-Dateien
+│   │   ├── btop/
+│   │   │   ├── themes/
 │   │   │   │   └── catppuccin_mocha.theme
 │   │   │   └── btop.conf
-│   │   ├── eza/ # eza Config
+│   │   ├── eza/
 │   │   │   └── theme.yml # Dateityp-Farben für eza (ls-Ersatz)
-│   │   ├── fastfetch/ # fastfetch Config
+│   │   ├── fastfetch/
 │   │   │   └── config.jsonc
-│   │   ├── fd/ # fd Config
+│   │   ├── fd/
 │   │   │   └── ignore # Globale Ausschlüsse für fd (auch bei --hidden)
-│   │   ├── fzf/ # fzf Config & Helper
+│   │   ├── fzf/
 │   │   │   ├── config # Native fzf-Konfiguration (FZF_DEFAULT_OPTS_FILE)
 │   │   │   ├── fa-preview # Preview-Befehle für fa (Alias-Browser) in fzf
 │   │   │   ├── fkill-list # Generiert Prozessliste für fzf (Apps oder Alle)
@@ -89,12 +89,12 @@ dotfiles/
 │   │   │   ├── preview-dir # Zeigt Verzeichnisinhalt mit eza/ls (Shell-Injection-sicher)
 │   │   │   ├── preview-file # Zeigt Dateiinhalt mit bat/cat (Shell-Injection-sicher)
 │   │   │   └── safe-action # Führt Aktionen Shell-Injection-sicher aus
-│   │   ├── lazygit/ # lazygit Config
+│   │   ├── lazygit/
 │   │   │   └── config.yml # lazygit Konfiguration mit Catppuccin Mocha Theme
-│   │   ├── ripgrep/ # ripgrep Config
+│   │   ├── ripgrep/
 │   │   │   └── config # Native ripgrep-Konfiguration (RIPGREP_CONFIG_PATH)
-│   │   ├── tealdeer/ # tealdeer Config
-│   │   │   ├── pages/ # tldr-Patches
+│   │   ├── tealdeer/
+│   │   │   ├── pages/
 │   │   │   │   ├── bat.patch.md # tldr-Patch (auto-generiert)
 │   │   │   │   ├── brew.patch.md # tldr-Patch (auto-generiert)
 │   │   │   │   ├── btop.patch.md # tldr-Patch (auto-generiert)
@@ -106,7 +106,7 @@ dotfiles/
 │   │   │   │   ├── git.patch.md # tldr-Patch (auto-generiert)
 │   │   │   │   └── rg.patch.md # tldr-Patch (auto-generiert)
 │   │   │   └── config.toml # Vereinfachte Man-Pages mit Beispielen (tldr)
-│   │   ├── zsh/ # ZSH-spezifisch
+│   │   ├── zsh/
 │   │   │   └── catppuccin_mocha-zsh-syntax-highlighting.zsh
 │   │   └── shell-colors # Zentrale ANSI-Farbvariablen für Shell-Funktionen
 │   ├── .zlogin # Aufgaben nach dem Login (läuft nach .zshrc)

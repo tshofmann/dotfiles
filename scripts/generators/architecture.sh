@@ -63,42 +63,6 @@ get_file_description() {
 }
 
 # ------------------------------------------------------------
-# Verzeichnis-Beschreibung
-# ------------------------------------------------------------
-get_dir_description() {
-    local dir="$1"
-    local name="${dir:t}"
-    
-    case "$name" in
-        .githooks)    echo "Git Hooks" ;;
-        .github)      echo "GitHub-Konfiguration" ;;
-        ISSUE_TEMPLATE) echo "Issue-Templates" ;;
-        workflows)    echo "GitHub Actions" ;;
-        docs)         echo "Dokumentation" ;;
-        scripts)      echo "Utility-Scripts" ;;
-        generators)   echo "Generator-Module" ;;
-        tests)        echo "Unit-Tests" ;;
-        setup)        echo "Installation & Themes" ;;
-        terminal)     echo "Shell-Konfiguration" ;;
-        .config)      echo "XDG-Configs" ;;
-        alias)        echo "Tool-Aliase" ;;
-        themes)       echo "Theme-Dateien" ;;
-        pages)        echo "tldr-Patches" ;;
-        bat)          echo "bat Config" ;;
-        btop)         echo "btop Config" ;;
-        eza)          echo "eza Config" ;;
-        fd)           echo "fd Config" ;;
-        fzf)          echo "fzf Config & Helper" ;;
-        fastfetch)    echo "fastfetch Config" ;;
-        lazygit)      echo "lazygit Config" ;;
-        ripgrep)      echo "ripgrep Config" ;;
-        tealdeer)     echo "tealdeer Config" ;;
-        zsh)          echo "ZSH-spezifisch" ;;
-        *)            echo "" ;;
-    esac
-}
-
-# ------------------------------------------------------------
 # Dynamischer Verzeichnisbaum
 # ------------------------------------------------------------
 generate_dynamic_tree() {
@@ -157,9 +121,7 @@ generate_dynamic_tree() {
         (( i == count )) && connector="└──" && next_prefix="${prefix}    "
         
         if [[ -d "$item" ]]; then
-            local dir_desc=$(get_dir_description "$item")
-            [[ -n "$dir_desc" ]] && dir_desc=" # $dir_desc"
-            echo "${prefix}${connector} ${name}/${dir_desc}"
+            echo "${prefix}${connector} ${name}/"
             
             # Rekursiv, aber manche Verzeichnisse nur oberflächlich
             local child_depth=$max_depth
