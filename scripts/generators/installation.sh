@@ -11,70 +11,35 @@ source "${0:A:h}/lib.sh"
 # ------------------------------------------------------------
 # Bootstrap-Schritte extrahieren
 # ------------------------------------------------------------
-# Parst CURRENT_STEP Zuweisungen aus bootstrap.sh
-# Gibt Schritt-Namen zurück (einen pro Zeile)
+# Parst CURRENT_STEP Zuweisungen und Aktionen aus bootstrap.sh
 extract_bootstrap_steps() {
+    local output=""
+    local step_count=0
+    
     while IFS= read -r line; do
+        # CURRENT_STEP="..." Zuweisungen
         if [[ "$line" == *'CURRENT_STEP='* ]]; then
             local step="${line#*CURRENT_STEP=}"
             step="${step#\"}"
             step="${step%\"}"
-            # Leere und Initialisierung überspringen
-            [[ -n "$step" && "$step" != "Initialisierung" ]] && echo "$step"
+            [[ -n "$step" && "$step" != "Initialisierung" ]] && {
+                (( step_count++ )) || true
+            }
         fi
     done < "$BOOTSTRAP"
-}
-
-# ------------------------------------------------------------
-# Bootstrap-Schritte Tabelle generieren
-# ------------------------------------------------------------
-# Kombiniert dynamisch extrahierte Schritte mit Beschreibungen
-generate_bootstrap_steps_table() {
-    # Beschreibungen und Fehlerverhalten pro Schritt
-    # Schlüssel = CURRENT_STEP Name aus bootstrap.sh
-    typeset -A step_desc step_error
-    step_desc=(
-        ["Netzwerk-Prüfung"]="Prüft Internetverbindung"
-        ["Schreibrechte-Prüfung"]="Prüft ob \`\$HOME\` schreibbar ist"
-        ["Homebrew Installation"]="Installiert/prüft Homebrew unter \`/opt/homebrew\`"
-        ["Brewfile Installation (brew bundle)"]="Installiert CLI-Tools via \`brew bundle\`"
-        ["Font-Verifikation"]="Prüft MesloLG Nerd Font Installation"
-        ["Terminal-Profil Import"]="Importiert Terminal-Profil als Standard"
-        ["Starship-Theme Konfiguration"]="Generiert \`~/.config/starship.toml\`"
-        ["Xcode Theme Installation"]="Kopiert Catppuccin Theme nach Xcode"
-        ["ZSH-Sessions Konfiguration"]="Prüft SHELL_SESSIONS_DISABLE in ~/.zshenv"
-    )
-    step_error=(
-        ["Netzwerk-Prüfung"]="❌ Exit"
-        ["Schreibrechte-Prüfung"]="❌ Exit"
-        ["Homebrew Installation"]="❌ Exit"
-        ["Brewfile Installation (brew bundle)"]="❌ Exit"
-        ["Font-Verifikation"]="❌ Exit"
-        ["Terminal-Profil Import"]="⚠️ Warnung"
-        ["Starship-Theme Konfiguration"]="⚠️ Warnung"
-        ["Xcode Theme Installation"]="⏭️ Übersprungen"
-        ["ZSH-Sessions Konfiguration"]="⚠️ Warnung"
-    )
     
-    echo "| Schritt | Beschreibung | Bei Fehler |"
-    echo "|---------|--------------|------------|"
-    
-    # Zusätzlich statische Architektur/macOS-Checks (vor CURRENT_STEP)
-    echo "| Architektur-Check | Prüft ob arm64 (Apple Silicon) | ❌ Exit |"
-    echo "| macOS-Version-Check | Prüft ob macOS 14+ (Sonoma) | ❌ Exit |"
-    
-    # Dynamisch aus bootstrap.sh
-    extract_bootstrap_steps | while read -r step; do
-        local desc="${step_desc[$step]:-$step}"
-        local error="${step_error[$step]:-⚠️ Warnung}"
-        echo "| $step | $desc | $error |"
-    done
+    echo "$step_count"
 }
 
 # ------------------------------------------------------------
 # Haupt-Generator für installation.md
 # ------------------------------------------------------------
 generate_installation_md() {
+    # Dynamische macOS-Version aus bootstrap.sh
+    local macos_min macos_codename
+    macos_min=$(extract_macos_min_version)
+    macos_codename=$(get_macos_codename "$macos_min")
+    
     cat << 'HEADER'
 # 🚀 Installation
 
@@ -88,7 +53,10 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles au
 | Anforderung | Details |
 |-------------|---------|
 | **Apple Silicon Mac** | M1, M2, … (arm64) – Intel-Macs werden nicht unterstützt |
-| **macOS 14+** | Sonoma oder neuer – entspricht [Homebrew Tier 1](https://docs.brew.sh/Support-Tiers) |
+HEADER
+    # Dynamische macOS-Zeile
+    echo "| **macOS ${macos_min}+** | ${macos_codename} oder neuer – entspricht [Homebrew Tier 1](https://docs.brew.sh/Support-Tiers) |"
+    cat << 'PART2'
 | **Internetverbindung** | Für Homebrew-Installation und Download der Formulae/Casks |
 | **Admin-Rechte** | `sudo`-Passwort erforderlich (siehe unten) |
 
@@ -117,13 +85,25 @@ curl -fsSL https://github.com/tshofmann/dotfiles/archive/refs/heads/main.tar.gz 
 
 Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 
-HEADER
+| Aktion | Beschreibung | Bei Fehler |
+|--------|--------------|------------|
+| Architektur-Check | Prüft ob arm64 (Apple Silicon) | ❌ Exit |
+PART2
+    # Dynamische macOS-Version-Check Zeile
+    echo "| macOS-Version-Check | Prüft ob macOS ${macos_min}+ (${macos_codename}) | ❌ Exit |"
+    cat << 'PART3'
+| Netzwerk-Check | Prüft Internetverbindung | ❌ Exit |
+| Schreibrechte-Check | Prüft ob `$HOME` schreibbar ist | ❌ Exit |
+| Xcode CLI Tools | Installiert/prüft Developer Tools | ❌ Exit |
+| Homebrew | Installiert/prüft Homebrew unter `/opt/homebrew` | ❌ Exit |
+| Brewfile | Installiert CLI-Tools via `brew bundle` | ❌ Exit |
+| Font-Verifikation | Prüft MesloLG Nerd Font Installation | ❌ Exit |
+| Terminal-Profil | Importiert `catppuccin-mocha.terminal` als Standard | ⚠️ Warnung |
+| Starship-Theme | Generiert `~/.config/starship.toml` | ⚠️ Warnung |
+| ZSH-Sessions | Prüft SHELL_SESSIONS_DISABLE in ~/.zshenv | ⚠️ Warnung |
+PART3
 
-    # Dynamische Tabelle einfügen
-    generate_bootstrap_steps_table
-    
     cat << 'REST'
-
 > **Idempotenz:** Das Skript kann beliebig oft ausgeführt werden – bereits installierte Komponenten werden erkannt und übersprungen.
 
 > **⏱️ Timeout-Konfiguration:** Der Terminal-Profil-Import wartet standardmäßig 20 Sekunden auf Registrierung im System. Bei langsamen Systemen oder VMs kann dies erhöht werden:

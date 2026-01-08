@@ -39,20 +39,19 @@ curl -fsSL https://github.com/tshofmann/dotfiles/archive/refs/heads/main.tar.gz 
 
 Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 
-| Schritt | Beschreibung | Bei Fehler |
-|---------|--------------|------------|
+| Aktion | Beschreibung | Bei Fehler |
+|--------|--------------|------------|
 | Architektur-Check | Prüft ob arm64 (Apple Silicon) | ❌ Exit |
 | macOS-Version-Check | Prüft ob macOS 14+ (Sonoma) | ❌ Exit |
-| Netzwerk-Prüfung | Prüft Internetverbindung | ❌ Exit |
-| Schreibrechte-Prüfung | Prüft ob `$HOME` schreibbar ist | ❌ Exit |
-| Homebrew Installation | Installiert/prüft Homebrew unter `/opt/homebrew` | ❌ Exit |
-| Brewfile Installation (brew bundle) | Installiert CLI-Tools via `brew bundle` | ❌ Exit |
+| Netzwerk-Check | Prüft Internetverbindung | ❌ Exit |
+| Schreibrechte-Check | Prüft ob `$HOME` schreibbar ist | ❌ Exit |
+| Xcode CLI Tools | Installiert/prüft Developer Tools | ❌ Exit |
+| Homebrew | Installiert/prüft Homebrew unter `/opt/homebrew` | ❌ Exit |
+| Brewfile | Installiert CLI-Tools via `brew bundle` | ❌ Exit |
 | Font-Verifikation | Prüft MesloLG Nerd Font Installation | ❌ Exit |
-| Terminal-Profil Import | Importiert Terminal-Profil als Standard | ⚠️ Warnung |
-| Starship-Theme Konfiguration | Generiert `~/.config/starship.toml` | ⚠️ Warnung |
-| Xcode Theme Installation | Kopiert Catppuccin Theme nach Xcode | ⏭️ Übersprungen |
-| ZSH-Sessions Konfiguration | Prüft SHELL_SESSIONS_DISABLE in ~/.zshenv | ⚠️ Warnung |
-
+| Terminal-Profil | Importiert `catppuccin-mocha.terminal` als Standard | ⚠️ Warnung |
+| Starship-Theme | Generiert `~/.config/starship.toml` | ⚠️ Warnung |
+| ZSH-Sessions | Prüft SHELL_SESSIONS_DISABLE in ~/.zshenv | ⚠️ Warnung |
 > **Idempotenz:** Das Skript kann beliebig oft ausgeführt werden – bereits installierte Komponenten werden erkannt und übersprungen.
 
 > **⏱️ Timeout-Konfiguration:** Der Terminal-Profil-Import wartet standardmäßig 20 Sekunden auf Registrierung im System. Bei langsamen Systemen oder VMs kann dies erhöht werden:

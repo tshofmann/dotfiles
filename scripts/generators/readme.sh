@@ -9,32 +9,21 @@
 source "${0:A:h}/lib.sh"
 
 # ------------------------------------------------------------
-# Extraktionsfunktionen
-# ------------------------------------------------------------
-
-# Extrahiert minimale macOS-Version aus bootstrap.sh
-extract_macos_min_version() {
-    local bootstrap="$DOTFILES_DIR/setup/bootstrap.sh"
-    [[ -f "$bootstrap" ]] || { echo "14"; return; }
-    
-    # MACOS_MIN_VERSION=14
-    local version=$(grep "^readonly MACOS_MIN_VERSION=" "$bootstrap" | sed 's/.*=//')
-    echo "${version:-14}"
-}
-
-# ------------------------------------------------------------
 # Haupt-Generator für README.md
 # ------------------------------------------------------------
+# Nutzt extract_macos_tested_version() und extract_macos_min_version()
+# aus lib.sh für dynamische macOS-Version im Badge
 generate_readme_md() {
-    local macos_version
-    macos_version=$(extract_macos_min_version)
+    local macos_tested macos_min
+    macos_tested=$(extract_macos_tested_version)
+    macos_min=$(extract_macos_min_version)
     
     cat << EOF
 # 🍎 dotfiles
 
 [![CI](https://github.com/tshofmann/dotfiles/actions/workflows/validate.yml/badge.svg)](https://github.com/tshofmann/dotfiles/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![macOS](https://img.shields.io/badge/macOS-${macos_version}%2B-black?logo=apple)](https://www.apple.com/macos/)
+[![macOS](https://img.shields.io/badge/macOS-${macos_tested}-black?logo=apple)](https://www.apple.com/macos/)
 [![Shell: zsh](https://img.shields.io/badge/Shell-zsh-green?logo=gnubash)](https://www.zsh.org/)
 
 > macOS Setup für Apple Silicon (arm64) – automatisiert, idempotent, minimal.
@@ -58,7 +47,7 @@ cd ~/dotfiles && stow --adopt -R terminal && git reset --hard HEAD && bat cache 
 ## Voraussetzungen
 
 - **Apple Silicon Mac** (arm64)
-- **macOS ${macos_version}+** (Sonoma oder neuer)
+- **macOS ${macos_min}+** (Sonoma oder neuer)
 - **Internetverbindung** & Admin-Rechte
 
 ## Dokumentation

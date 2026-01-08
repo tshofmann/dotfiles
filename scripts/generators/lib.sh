@@ -24,6 +24,37 @@ SHELL_COLORS="$DOTFILES_DIR/terminal/.config/shell-colors"
 [[ -f "$SHELL_COLORS" ]] && source "$SHELL_COLORS"
 
 # ------------------------------------------------------------
+# macOS Version Helper
+# ------------------------------------------------------------
+# Mapping: Major-Version → Codename
+get_macos_codename() {
+    local version="${1:-14}"
+    case "$version" in
+        11) echo "Big Sur" ;;
+        12) echo "Monterey" ;;
+        13) echo "Ventura" ;;
+        14) echo "Sonoma" ;;
+        15) echo "Sequoia" ;;
+        26) echo "Tahoe" ;;  # macOS 26 (2025)
+        *)  echo "macOS $version" ;;
+    esac
+}
+
+# Extrahiert MACOS_MIN_VERSION aus bootstrap.sh
+extract_macos_min_version() {
+    [[ -f "$BOOTSTRAP" ]] || { echo "14"; return; }
+    local version=$(grep "^readonly MACOS_MIN_VERSION=" "$BOOTSTRAP" | sed 's/.*=//')
+    echo "${version:-14}"
+}
+
+# Extrahiert MACOS_TESTED_VERSION aus bootstrap.sh
+extract_macos_tested_version() {
+    [[ -f "$BOOTSTRAP" ]] || { echo "26"; return; }
+    local version=$(grep "^readonly MACOS_TESTED_VERSION=" "$BOOTSTRAP" | sed 's/.*=\([0-9]*\).*/\1/')
+    echo "${version:-26}"
+}
+
+# ------------------------------------------------------------
 # Logging
 # ------------------------------------------------------------
 log()  { echo -e "${C_BLUE}→${C_RESET} $1"; }
