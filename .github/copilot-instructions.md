@@ -153,6 +153,27 @@ gh api graphql -f query='mutation { resolveReviewThread(input: {threadId: "PRRT_
 - Art der Änderung markieren
 - Zusammenhängende Issues verlinken
 
+### Labels
+
+**Primäre Labels (Typ):**
+| Label | Verwendung |
+|-------|------------|
+| `bug` | Fehler, etwas funktioniert nicht |
+| `enhancement` | Neues Feature oder Verbesserung |
+| `documentation` | Nur Doku-Änderungen |
+| `refactoring` | Code-Verbesserung ohne Funktionsänderung |
+| `chore` | Routineaufgaben, Wartung |
+| `configuration` | Config-Änderungen |
+
+**Zusätzliche Labels:**
+| Label | Verwendung |
+|-------|------------|
+| `theming` | Catppuccin, visuelle Anpassungen |
+| `setup` | Installation, Bootstrap |
+| `breaking-change` | Ändert bestehendes Verhalten |
+| `needs-review` | Bereit für Review |
+| `blocked` | Wartet auf externe Abhängigkeit |
+
 ---
 
 ## Verweise
