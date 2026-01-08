@@ -53,16 +53,23 @@ git config core.hooksPath .githooks
 
 | Hook | Zweck |
 |------|-------|
-| `pre-commit` | 1. ZSH-Syntax (`zsh -n`) für `.sh`, `.alias`, `.zshrc`, `.zshenv`, `.zprofile`, `.zlogin` |
-|              | 2. Doku-Konsistenz bei `docs/`, `Brewfile`, `terminal/.config/`, `CONTRIBUTING.md`, `terminal/.zsh*` |
+| `pre-commit` | 1. ZSH-Syntax (`zsh -n`) für `scripts/**/*.sh`, `terminal/.config/alias/*.alias`, `setup/bootstrap.sh` |
+|              | 2. Doku-Konsistenz (vergleicht generierte mit aktuellen Docs) |
+|              | 3. Alias-Format (Header-Block, Guard-Check) |
 
-### Hook überspringen (Notfall)
+### Hook schlägt fehl?
+
+Wenn der Pre-Commit Hook fehlschlägt:
 
 ```zsh
-git commit --no-verify -m "..."
+# Dokumentation neu generieren
+./scripts/generate-docs.sh --generate
+
+# Dann erneut committen
+git add . && git commit -m "..."
 ```
 
-> ⚠️ Nur nutzen wenn du weißt was du tust – Docs sollten immer synchron sein.
+> ⚠️ **Niemals** `--no-verify` verwenden – die Hooks existieren aus gutem Grund.
 
 ---
 
@@ -94,14 +101,7 @@ Die Test-Suite prüft:
 
 ### Was wird generiert?
 
-| Datei | Quelle |
-|-------|--------|
-| `README.md` | Template in `generators/readme.sh` |
-| `docs/tools.md` | `.alias`-Dateien + `Brewfile` |
-| `docs/installation.md` | `bootstrap.sh` |
-| `docs/architecture.md` | Verzeichnisstruktur + Configs |
-| `docs/configuration.md` | Config-Dateien |
-| `tealdeer/pages/*.patch.md` | Alias-Kommentare |
+Siehe [architecture.md → Single Source of Truth](docs/architecture.md#single-source-of-truth) für die vollständige Übersicht.
 
 ### Bei Fehlern
 
@@ -164,7 +164,7 @@ Alle Shell-Dateien (`.alias`, `.sh`, `.zsh*`) beginnen mit einem standardisierte
 **Jede Funktion und jeder Alias** benötigt einen Beschreibungskommentar direkt darüber:
 
 ```zsh
-# Verzeichnisse zuerst anzeigen mit Icons
+# Kompakte Liste, Verzeichnisse zuerst
 alias ls='eza --group-directories-first'
 
 # Man/tldr Browser – Ctrl+S=Modus wechseln, Enter=je nach Modus öffnen
@@ -211,20 +211,6 @@ rgf() { ... }
 > Der Generator `scripts/generators/tldr.sh` erzeugt die `.patch.md` Dateien
 > automatisch aus diesen Kommentaren.
 
-### tldr-Patches generieren
-
-Die `.patch.md` Dateien in `terminal/.config/tealdeer/pages/` werden **automatisch generiert**:
-
-```bash
-# Prüfen ob Patches aktuell sind (Teil von generate-docs.sh)
-./scripts/generate-docs.sh --check
-
-# Alle Docs inkl. Patches neu generieren
-./scripts/generate-docs.sh --generate
-```
-
-Der Pre-Commit Hook prüft automatisch ob die Patches aktuell sind.
-
 ### Ausnahmen vom Header-Format
 
 Einige Dateien folgen **nicht** dem Standard-Header-Format:
@@ -232,10 +218,10 @@ Einige Dateien folgen **nicht** dem Standard-Header-Format:
 | Datei | Grund |
 |-------|-------|
 | `btop/btop.conf` | Wird von btop generiert – `btop --write-config` überschreibt Änderungen |
-| `btop/themes/*.theme` | Third-Party Theme (Catppuccin) – bei Updates überschrieben |
-| `bat/themes/*.tmTheme` | Third-Party Theme (Catppuccin) – bei Updates überschrieben |
-| `zsh/catppuccin_*.zsh` | Third-Party Theme (Catppuccin) – bei Updates überschrieben |
-| `tealdeer/pages/*.patch.md` | Markdown-Format für tldr-Patches – eigenes Schema |
+| `btop/themes/catppuccin_mocha.theme` | Third-Party Theme (Catppuccin) – bei Updates überschrieben |
+| `bat/themes/Catppuccin Mocha.tmTheme` | Third-Party Theme (Catppuccin) – bei Updates überschrieben |
+| `zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh` | Third-Party Theme (Catppuccin) – bei Updates überschrieben |
+| `terminal/.config/tealdeer/pages/*.patch.md` | Markdown-Format für tldr-Patches – automatisch generiert |
 
 Diese Dateien werden vom Pre-Commit Hook nicht auf Header-Format geprüft.
 
@@ -249,11 +235,11 @@ Diese Dateien werden vom Pre-Commit Hook nicht auf Header-Format geprüft.
 #!/usr/bin/env zsh
 set -euo pipefail
 
-# Logging-Helper verwenden
-log()  { print "→ $*"; }
-ok()   { print "✔ $*"; }
-err()  { print "✖ $*" >&2; }
-warn() { print "⚠ $*"; }
+# Logging-Helper verwenden (siehe lib.sh)
+log()  { echo -e "${C_BLUE}→${C_RESET} $*"; }
+ok()   { echo -e "${C_GREEN}✔${C_RESET} $*"; }
+err()  { echo -e "${C_RED}✖${C_RESET} $*" >&2; }
+warn() { echo -e "${C_YELLOW}⚠${C_RESET} $*"; }
 ```
 
 ### Alias-Dateien
@@ -268,7 +254,7 @@ warn() { print "⚠ $*"; }
 
 ### Funktions-Syntax
 
-**Verwende die POSIX-kompatible Form:**
+**Verwende diese Form (von `fa()` erkannt):**
 
 ```zsh
 name() {
@@ -279,32 +265,33 @@ name() {
 **Nicht verwenden:**
 
 ```zsh
-function name {   # ❌ ksh-Style – nicht POSIX
-function name() { # ❌ Hybrid-Style
+function name {   # ❌ Korn-Shell-Style – nicht von fa() erkannt
+}
+function name() { # ❌ Hybrid-Style – redundant
+}
 ```
 
 | Syntax | Status | Grund |
 |--------|--------|-------|
-| `name() {` | ✅ Verwenden | POSIX-konform, von `fa()` erkannt |
-| `function name {` | ❌ Nicht verwenden | Nicht POSIX, von `fa()` nicht erkannt |
-| `function name() {` | ❌ Nicht verwenden | Redundant, Inkonsistenz |
+| `name() {` | ✅ Verwenden | Von `fa()` erkannt, konsistent |
+| `function name {` | ❌ Nicht verwenden | Nicht von `fa()` erkannt |
+| `function name() {` | ❌ Nicht verwenden | Redundant, inkonsistent |
 
-> **Hinweis:** Die `fa()`-Funktion (Alias-Browser) erkennt nur die POSIX-Syntax.
-> Diese Einschränkung ist beabsichtigt – siehe [Google Shell Style Guide](https://google.github.io/styleguide/shellguide.html#function-names):
-> *"The keyword `function` is optional, but must be used consistently throughout a project."*
+> **Hinweis:** Die `fa()`-Funktion (Alias-Browser) erkennt nur `name() {`-Syntax.
+> Diese Einschränkung ist beabsichtigt – Konsistenz im gesamten Projekt.
 
-### Stil-Regeln (automatisch geprüft)
+### Stil-Regeln
 
-Diese Regeln werden durch `style-consistency.sh` automatisch validiert:
+Diese Regeln gelten für alle Shell-Dateien:
 
 | Regel | Format | Beispiel |
 |-------|--------|----------|
 | **Metadaten-Felder** | 8 Zeichen + `:` | `# Docs    :`, `# Guard   :` |
-| **Guard-Kommentar** | Kurze Version | `# Guard   : Nur wenn X installiert ist` |
+| **Guard-Kommentar** | Mit Tool-Name | `# Guard   : Nur wenn X installiert ist` |
 | **Sektions-Trenner** | `----` (60 Zeichen) | `# ------------------------------------------------------------` |
 | **Header-Block** | `====` nur oben | Erste Zeilen der Datei |
-| **fzf-Header** | `Enter:` zuerst | `--header='Enter: Aktion \| Key: Aktion'` |
-| **Pipe-Zeichen** | ASCII `\|` | Kein Unicode `│` |
+| **fzf-Header** | `Enter:` zuerst | `--header='Enter: Aktion | Key: Aktion'` |
+| **Header Pipe-Zeichen** | ASCII `|` | Kein Unicode `│` in `--header` |
 
 ### Dokumentation
 
@@ -360,6 +347,28 @@ git push -u origin feature/beschreibung
 gh pr create
 ```
 
+### 6. Labels setzen
+
+Nach PR-Erstellung das passende Label hinzufügen:
+
+| Label | Verwendung |
+|-------|------------|
+| `bug` | Fehler, etwas funktioniert nicht |
+| `enhancement` | Neues Feature oder Verbesserung |
+| `documentation` | Nur Doku-Änderungen |
+| `refactoring` | Code-Verbesserung ohne Funktionsänderung |
+| `chore` | Routineaufgaben, Wartung |
+| `configuration` | Config-Änderungen |
+| `theming` | Catppuccin, visuelle Anpassungen |
+| `setup` | Installation, Bootstrap |
+
+**Zusatz-Labels bei Bedarf:**
+- `breaking-change` – Ändert bestehendes Verhalten
+- `needs-review` – Bereit für Review
+- `blocked` – Wartet auf externe Abhängigkeit
+
+> 💡 **Tipp:** Bei Issues werden Labels automatisch durch Templates gesetzt.
+
 ---
 
 ## Häufige Aufgaben
@@ -388,63 +397,19 @@ gh pr create
 
 > ⚠️ **Niemals** die `.terminal`-Datei direkt editieren – enthält binäre Daten.
 
-### Tealdeer-Patch erstellen
+### Tealdeer-Patches (Auto-Generiert)
 
-Patches erweitern die offizielle `tldr` Dokumentation mit dotfiles-spezifischen Aliasen und Funktionen.
+Die tldr-Patches in `terminal/.config/tealdeer/pages/` werden **automatisch** aus den Beschreibungskommentaren in `.alias`-Dateien generiert (siehe [Beschreibungskommentar-Format](#beschreibungskommentar-format-für-fzf-funktionen)).
 
-**1. Neue Patch-Datei anlegen:**
+**Workflow:**
 
-```zsh
-# Dateiname = Tool-Name (nicht Alias-Name!)
-touch ~/.config/tealdeer/pages/tool.patch.md
-```
+1. Kommentar über Alias/Funktion in `.alias`-Datei schreiben
+2. `./scripts/generate-docs.sh --generate` ausführen
+3. Patch wird automatisch erstellt/aktualisiert
 
-**2. Format:**
+> ⚠️ **Niemals** Patch-Dateien manuell editieren – Änderungen werden überschrieben!
 
-```markdown
-# dotfiles: Beschreibung der Kategorie
-
-- dotfiles: Was macht dieser Befehl:
-
-`befehlsname`
-
-- dotfiles: Mit Argument:
-
-`befehlsname {{argument}}`
-
-- dotfiles: Interaktiv mit fzf (`<Tab>` Mehrfach, `<Ctrl />` Vorschau):
-
-`funktionsname`
-```
-
-**3. Namenskonvention:**
-
-Alias-Dateiname = Patch-Dateiname = tldr-Befehlsname (z.B. `brew.alias` → `brew.patch.md` → `tldr brew`)
-
-**4. Tastenkürzel-Syntax:**
-
-| Taste | Syntax |
-|-------|--------|
-| Modifier + Taste | `<Ctrl c>`, `<Alt x>` |
-| Einzelne Taste | `<Tab>`, `<Enter>`, `<Esc>` |
-
-> **Wichtig**: Leerzeichen zwischen Modifier und Taste: `<Ctrl c>` (nicht `<Ctrl-c>`)
-
-**5. Validieren:**
-
-```zsh
-./scripts/generate-docs.sh --check
-```
-
-**6. Was wird validiert?**
-
-| Kategorie | Automatisch geprüft | Hinweis |
-|-----------|---------------------|---------|
-| Aliase | ✅ Ja | `alias name=...` aus `.alias` |
-| Funktionen | ✅ Ja | `name() {` aus `.alias` |
-| Tastenkürzel | ❌ Nein | Manuell pflegen in `fzf.patch.md` |
-
-> ⚠️ **Tastenkürzel-Einschränkung**: Globale fzf-Keybindings (`--bind` Optionen) werden nicht automatisch validiert. Die Dokumentation in `fzf.patch.md` muss manuell synchron gehalten werden. Das Parsen verschachtelter Shell-Strings in `--bind` ist fehleranfällig und der Aufwand übersteigt den Nutzen.
+**Namenskonvention:** `tool.alias` → `tool.patch.md` → `tldr tool`
 
 ---
 
@@ -453,6 +418,7 @@ Alias-Dateiname = Patch-Dateiname = tldr-Befehlsname (z.B. `brew.alias` → `bre
 - **Docs stimmen nicht mit Code überein?** → `./scripts/generate-docs.sh --check` zeigt Details
 - **Hook blockiert Commit?** → `./scripts/generate-docs.sh --generate` ausführen, dann committen
 - **Installation kaputt?** → `./scripts/health-check.sh` zur Diagnose
+- **Copilot/KI-Assistenten?** → Siehe [.github/copilot-instructions.md](.github/copilot-instructions.md) für projektspezifische Regeln
 
 ---
 

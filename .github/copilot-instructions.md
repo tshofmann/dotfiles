@@ -86,6 +86,7 @@ Format für `terminal/.config/alias/*.alias`:
 # tool.alias - Beschreibung
 # ============================================================
 # Zweck   : Was macht diese Datei
+# Pfad    : ~/.config/alias/tool.alias
 # Docs    : https://...
 # ============================================================
 
@@ -94,7 +95,14 @@ if ! command -v tool >/dev/null 2>&1; then return 0; fi
 
 # Beschreibung für fa/tldr
 alias x='command'
+
+# Funktion(param?) – Enter=Aktion, Ctrl+Y=Kopieren
+func() {
+    # Implementation
+}
 ```
+
+**Wichtig:** Funktionen als `name() {` schreiben – nicht `function name`!
 
 ---
 
@@ -134,13 +142,32 @@ gh api repos/{owner}/{repo}/pulls/<nr>/reviews
 gh api graphql -f query='mutation { resolveReviewThread(input: {threadId: "PRRT_..."}) { thread { isResolved } } }'
 ```
 
+### Issues und PRs erstellen
+
+**Bei Issue-Erstellung:** Templates aus `.github/ISSUE_TEMPLATE/` verwenden:
+- `bug_report.md` – für Bugs (inkl. Health-Check Ausgabe)
+- `feature_request.md` – für Feature Requests
+
+**Bei PR-Erstellung:** Template aus `.github/PULL_REQUEST_TEMPLATE.md` verwenden:
+- Checkliste durchgehen (generate-docs, health-check)
+- Art der Änderung markieren
+- Zusammenhängende Issues verlinken
+- **Label setzen** (siehe CONTRIBUTING.md)
+
+> 💡 Issue-Labels werden automatisch durch Templates gesetzt. PR-Labels manuell hinzufügen.
+
 ---
 
 ## Verweise
 
 | Thema | Datei |
 |-------|-------|
-| Header-Format | `CONTRIBUTING.md` |
-| Verzeichnisstruktur | `docs/architecture.md` |
+| Code-Konventionen | `CONTRIBUTING.md#code-konventionen` |
+| Funktions-Syntax | `CONTRIBUTING.md#funktions-syntax` |
+| Kommentar-Format | `CONTRIBUTING.md#beschreibungskommentar-format-für-fzf-funktionen` |
+| **Labels** | `CONTRIBUTING.md#6-labels-setzen` |
+| Verzeichnisstruktur | `docs/architecture.md#verzeichnisstruktur` |
+| PR-Template | `.github/PULL_REQUEST_TEMPLATE.md` |
+| Issue-Templates | `.github/ISSUE_TEMPLATE/` |
 | Installierte Tools | `setup/Brewfile` |
 | Farb-Palette | [catppuccin.com/palette](https://catppuccin.com/palette) |

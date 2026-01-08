@@ -3,7 +3,7 @@
 Technische Details zur Struktur und Funktionsweise dieses dotfiles-Repositories.
 
 > Diese Dokumentation wird automatisch aus dem Code generiert.
-> Änderungen an der Verzeichnisstruktur werden automatisch reflektiert.
+> Die Verzeichnisstruktur wird dynamisch aus dem Dateisystem erzeugt.
 
 ---
 
@@ -11,80 +11,111 @@ Technische Details zur Struktur und Funktionsweise dieses dotfiles-Repositories.
 
 ```
 dotfiles/
-├── README.md                    # Kurzübersicht & Quickstart
-├── LICENSE                      # MIT Lizenz
-├── .stowrc                      # Stow-Konfiguration
-├── .gitignore                   # Git-Ignore-Patterns
-├── .githooks/                   # Git Hooks (GitHub-Standard)
-│   └── pre-commit               # Docs-Generierung vor Commit
-├── docs/                        # Dokumentation
-│   ├── installation.md          # Installationsanleitung
-│   ├── configuration.md         # Anpassungen
-│   ├── architecture.md          # Diese Datei
-│   ├── tools.md                 # Tool-Übersicht
-│   └── review-checklist.md      # Review-Prompt für Copilot
-├── scripts/                     # Utility-Scripts
-│   ├── health-check.sh          # Validierung der Installation
-│   ├── generate-docs.sh         # Dokumentations-Generator
-│   ├── generators/              # Generator-Module
-│   │   ├── lib.sh               # Gemeinsame Bibliothek
-│   │   ├── tools.sh             # tools.md Generator
-│   │   ├── installation.sh      # installation.md Generator
-│   │   ├── architecture.sh      # architecture.md Generator
-│   │   ├── configuration.sh     # configuration.md Generator
-│   │   ├── readme.sh            # README.md Generator
-│   │   └── tldr.sh              # tldr-Patches Generator
-│   └── tests/                   # Unit-Tests
-│       └── test_generators.sh
+├── .githooks/
+│   └── pre-commit # Verhindert Commits mit veralteter Dokumentation
+├── .github/
+│   ├── ISSUE_TEMPLATE/
+│   │   ├── bug_report.md
+│   │   ├── config.yml
+│   │   └── feature_request.md
+│   ├── workflows/
+│   │   └── validate.yml # Validiert Shell-Syntax, Dokumentation und Alias-Format
+│   ├── CODEOWNERS
+│   ├── CODE_OF_CONDUCT.md # Verhaltenskodex
+│   ├── PULL_REQUEST_TEMPLATE.md
+│   ├── SECURITY.md # Sicherheitsrichtlinie
+│   ├── copilot-instructions.md # Instructions für dotfiles
+│   └── dependabot.yml # Hält GitHub Actions automatisch aktuell
+├── .gitattributes # Zeilenenden und Dateibehandlung normalisieren
+├── .gitignore # Dateien von Versionskontrolle ausschließen
+├── .stowrc # Ignore-Patterns und Standard-Optionen für GNU Stow
+├── docs/
+│   ├── architecture.md # Architektur
+│   ├── configuration.md # Konfiguration
+│   ├── installation.md # Installation
+│   └── tools.md # Tools
+├── scripts/
+│   ├── generators/
+│   │   ├── architecture.sh # Generiert Architektur-Dokumentation aus Verzeichnisstruktur
+│   │   ├── configuration.sh # Generiert Konfigurations-Dokumentation aus Config-Dateien
+│   │   ├── installation.sh # Generiert Installationsdokumentation aus bootstrap.sh
+│   │   ├── lib.sh # Parser, Hilfsfunktionen, Konfiguration
+│   │   ├── readme.sh # Generiert Haupt-README aus Template + dynamischen Daten
+│   │   ├── tldr.sh # Generiert tldr-Patches aus .alias-Dateien
+│   │   └── tools.sh # Generiert Tool-Dokumentation aus .alias-Dateien
+│   ├── tests/
+│   │   └── test_generators.sh # Testet Parser-Funktionen aus scripts/generators/lib.sh
+│   ├── generate-docs.sh # Generiert alle Dokumentation aus Code-Kommentaren
+│   └── health-check.sh # Prüft ob alle Komponenten korrekt INSTALLIERT sind
 ├── setup/
-│   ├── bootstrap.sh             # Automatisiertes Setup-Skript
-│   ├── Brewfile                 # Homebrew-Abhängigkeiten
-│   ├── catppuccin-mocha.terminal  # Terminal.app Profil
-│   └── Catppuccin Mocha.xccolortheme  # Xcode Theme
-└── terminal/
-    ├── .zshenv                  # Umgebungsvariablen (wird zuerst geladen)
-    ├── .zprofile                # Login-Shell Konfiguration
-    ├── .zshrc                   # Interactive Shell Konfiguration
-    ├── .zlogin                  # Post-Login (Background-Optimierungen)
-    └── .config/
-        ├── alias/               # Tool-Aliase
-        │   ├── bat.alias
-        │   ├── brew.alias
-        │   ├── btop.alias
-        │   ├── eza.alias
-        │   ├── fastfetch.alias
-        │   ├── fd.alias
-        │   ├── fzf.alias
-        │   ├── gh.alias
-        │   ├── git.alias
-        │   └── rg.alias
-        ├── shell-colors         # Catppuccin Mocha ANSI-Farbvariablen
-        ├── bat/
-        │   ├── config           # bat native Config
-        │   └── themes/          # Catppuccin Mocha Theme
-        ├── btop/
-        │   ├── btop.conf        # btop Konfiguration
-        │   └── themes/          # Catppuccin Mocha Theme
-        ├── eza/
-        │   └── theme.yml        # eza Catppuccin Theme
-        ├── fd/
-        │   └── ignore           # fd globale Ignore-Patterns
-        ├── fastfetch/
-        │   └── config.jsonc     # fastfetch System-Info Konfiguration
-        ├── fzf/
-        │   ├── config           # fzf globale Optionen
-        │   ├── init.zsh         # fzf Shell-Integration
-        │   └── ...              # Helper-Skripte
-        ├── lazygit/
-        │   └── config.yml       # lazygit Config mit Catppuccin
-        ├── ripgrep/
-        │   └── config           # ripgrep globale Optionen
-        ├── starship.toml        # Starship Prompt-Konfiguration
-        ├── tealdeer/
-        │   ├── config.toml      # tealdeer Konfiguration
-        │   └── pages/           # Custom tldr-Patches
-        └── zsh/
-            └── catppuccin_mocha-zsh-syntax-highlighting.zsh
+│   ├── Brewfile # Deklarative Homebrew-Abhängigkeiten (CLI-Tools & Font)
+│   ├── Catppuccin Mocha.xccolortheme # Xcode Theme
+│   ├── bootstrap.sh # Homebrew, CLI-Tools, Nerd Font & Terminal-Profil
+│   └── catppuccin-mocha.terminal # Terminal.app Profil
+├── terminal/
+│   ├── .config/
+│   │   ├── alias/
+│   │   │   ├── bat.alias # Aliase für bat mit verschiedenen Ausgabe-Stilen
+│   │   │   ├── brew.alias # Aliase für Homebrew Paketverwaltung
+│   │   │   ├── btop.alias # Aliase für btop – moderner top/htop-Ersatz
+│   │   │   ├── eza.alias # Aliase für eza mit Icons und Git-Integration
+│   │   │   ├── fastfetch.alias # Aliase für fastfetch – schnelle System-Übersicht
+│   │   │   ├── fd.alias # Aliase für fd – schnelle Alternative zu find
+│   │   │   ├── fzf.alias # Tool-unspezifische fzf-Utilities
+│   │   │   ├── gh.alias # Interaktive GitHub-Workflows mit gh CLI
+│   │   │   ├── git.alias # Aliase für häufige Git-Operationen
+│   │   │   └── rg.alias # Aliase für ripgrep mit häufig genutzten Optionen
+│   │   ├── bat/
+│   │   │   ├── themes/
+│   │   │   │   └── Catppuccin Mocha.tmTheme # Syntax-Theme (XML)
+│   │   │   └── config # Native bat-Konfiguration (cat mit Syntax-Highlighting)
+│   │   ├── btop/
+│   │   │   ├── themes/
+│   │   │   │   └── catppuccin_mocha.theme
+│   │   │   └── btop.conf
+│   │   ├── eza/
+│   │   │   └── theme.yml # Dateityp-Farben für eza (ls-Ersatz)
+│   │   ├── fastfetch/
+│   │   │   └── config.jsonc
+│   │   ├── fd/
+│   │   │   └── ignore # Globale Ausschlüsse für fd (auch bei --hidden)
+│   │   ├── fzf/
+│   │   │   ├── config # Native fzf-Konfiguration (FZF_DEFAULT_OPTS_FILE)
+│   │   │   ├── fa-preview # Preview-Befehle für fa (Alias-Browser) in fzf
+│   │   │   ├── fkill-list # Generiert Prozessliste für fzf (Apps oder Alle)
+│   │   │   ├── fman-preview # Generiert man oder tldr Preview für fzf
+│   │   │   ├── fzf-lib # Geteilte Utilities für fa-preview etc.
+│   │   │   ├── init.zsh # fzf Keybindings und fd-Backend aktivieren
+│   │   │   ├── preview-dir # Zeigt Verzeichnisinhalt mit eza/ls (Shell-Injection-sicher)
+│   │   │   ├── preview-file # Zeigt Dateiinhalt mit bat/cat (Shell-Injection-sicher)
+│   │   │   └── safe-action # Führt Aktionen Shell-Injection-sicher aus
+│   │   ├── lazygit/
+│   │   │   └── config.yml # lazygit Konfiguration mit Catppuccin Mocha Theme
+│   │   ├── ripgrep/
+│   │   │   └── config # Native ripgrep-Konfiguration (RIPGREP_CONFIG_PATH)
+│   │   ├── tealdeer/
+│   │   │   ├── pages/
+│   │   │   │   ├── bat.patch.md # tldr-Patch (auto-generiert)
+│   │   │   │   ├── brew.patch.md # tldr-Patch (auto-generiert)
+│   │   │   │   ├── btop.patch.md # tldr-Patch (auto-generiert)
+│   │   │   │   ├── eza.patch.md # tldr-Patch (auto-generiert)
+│   │   │   │   ├── fastfetch.patch.md # tldr-Patch (auto-generiert)
+│   │   │   │   ├── fd.patch.md # tldr-Patch (auto-generiert)
+│   │   │   │   ├── fzf.patch.md # Globale Tastenkürzel (in allen fzf-Dialogen)
+│   │   │   │   ├── gh.patch.md # tldr-Patch (auto-generiert)
+│   │   │   │   ├── git.patch.md # tldr-Patch (auto-generiert)
+│   │   │   │   └── rg.patch.md # tldr-Patch (auto-generiert)
+│   │   │   └── config.toml # Vereinfachte Man-Pages mit Beispielen (tldr)
+│   │   ├── zsh/
+│   │   │   └── catppuccin_mocha-zsh-syntax-highlighting.zsh
+│   │   └── shell-colors # Zentrale ANSI-Farbvariablen für Shell-Funktionen
+│   ├── .zlogin # Aufgaben nach dem Login (läuft nach .zshrc)
+│   ├── .zprofile # Umgebungsvariablen für Login-Shells (einmalig)
+│   ├── .zshenv # Umgebungsvariablen die VOR allen anderen Configs geladen werden
+│   └── .zshrc # Hauptkonfiguration für interaktive ZSH Shells
+├── CONTRIBUTING.md # Contributing
+├── LICENSE # MIT Lizenz
+└── README.md # dotfiles
 ```
 
 ---
