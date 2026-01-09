@@ -524,14 +524,14 @@ rgf               # Live-Grep(suche?) – Enter=Datei öffnen, Ctrl+Y=Pfad kopie
 ---
 ## Font
 
-### MesloLG Nerd Font
+### MesloLg Nerd Font
 
 | Eigenschaft | Wert |
 |-------------|------|
-| **Name** | MesloLGLDZNF (L=Large, DZ=Dotted Zero) |
+| **Name** | LDZNF (L=Large, DZ=Dotted Zero, NF=Nerd Font) |
 | **Installiert via** | `brew install --cask font-meslo-lg-nerd-font` |
 | **Speicherort** | `~/Library/Fonts/` |
-| **Zweck** | Icons und Powerline-Symbole im Terminal |
+| **Zweck** | Icons (Powerline, Devicons, Font Awesome, Octicons) |
 
 ### Warum Nerd Fonts?
 
@@ -561,7 +561,7 @@ Zeigt Befehlsvorschläge basierend auf der History beim Tippen an.
 
 | Taste | Aktion |
 |-------|--------|
-| `→` (Pfeil rechts) | Vorschlag komplett übernehmen |
+| `→ (Pfeil rechts)` | Vorschlag komplett übernehmen |
 | `Alt+→` | Wort für Wort übernehmen |
 | `Escape` | Vorschlag ignorieren |
 
@@ -572,10 +572,10 @@ Färbt Kommandos während der Eingabe ein:
 | Farbe | Bedeutung |
 |-------|--------|
 | **Grün** | Gültiger Befehl |
-| **Rot** | Ungültiger Befehl oder Datei nicht gefunden |
+| **Rot** | Ungültiger Befehl |
 | **Unterstrichen** | Existierende Datei/Verzeichnis |
 
-> **Hinweis:** Diese Plugins werden automatisch geladen wenn installiert. Startzeit-Impact minimal (~20ms).
+> **Hinweis:** Startzeit-Impact minimal (~20ms)
 ---
 
 ## Eigene Tools hinzufügen

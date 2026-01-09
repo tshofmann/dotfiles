@@ -51,10 +51,23 @@ generate_tool_usage_section() {
 # ------------------------------------------------------------
 # ZSH-Plugins Bedienung aus Brewfile extrahieren
 # ------------------------------------------------------------
+# Parst den ZSH-Plugins Kommentarblock im Brewfile:
+#   # ZSH-Plugins
+#   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#   # Bedienung:
+#   #   zsh-autosuggestions:
+#   #     → (Pfeil rechts)    Vorschlag komplett übernehmen
+#   #     Alt+→               Wort für Wort übernehmen
+#   #   zsh-syntax-highlighting:
+#   #     Grün                Gültiger Befehl
+#   # Hinweis: Startzeit-Impact minimal (~20ms)
+#   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 generate_zsh_plugins_usage() {
     local output=""
     local in_block=false
-    local block_content=""
+    local current_plugin=""
+    local -A plugin_entries  # plugin_name -> "key|value\nkey|value"
+    local hinweis=""
     
     while IFS= read -r line; do
         # Start des Blocks
@@ -63,42 +76,90 @@ generate_zsh_plugins_usage() {
             continue
         fi
         
-        # Ende des Blocks (nächste Hauptsektion oder brew-Zeile)
+        # Ende des Blocks (brew-Zeile)
         if $in_block && [[ "$line" == brew\ * ]]; then
             break
         fi
         
-        # Block-Inhalt sammeln (zwischen ~~~~)
-        if $in_block && [[ "$line" == "# ~"* ]]; then
+        # Trennzeilen überspringen
+        if [[ "$line" == "# ~"* ]]; then
             continue
         fi
         
-        if $in_block && [[ "$line" == "#   "* || "$line" == "# Bedienung:"* || "$line" == "# Hinweis:"* ]]; then
-            local content="${line#\# }"
-            content="${content#  }"  # Einrückung entfernen
-            block_content+="$content\n"
+        if $in_block; then
+            # Bedienung: Zeile überspringen (nur Marker)
+            if [[ "$line" == "# Bedienung:"* ]]; then
+                continue
+            fi
+            
+            # Hinweis extrahieren
+            if [[ "$line" == "# Hinweis:"* ]]; then
+                hinweis="${line#\# Hinweis: }"
+                continue
+            fi
+            
+            # Plugin-Name erkennen: "#   plugin-name:" (2 Leerzeichen nach #)
+            if [[ "$line" == "#   "* && "$line" == *":" && "$line" != *"    "* ]]; then
+                local stripped="${line#\#   }"
+                current_plugin="${stripped%:}"
+                continue
+            fi
+            
+            # Key-Value Paar: "#     key    value" (4 Leerzeichen nach #)
+            if [[ -n "$current_plugin" && "$line" == "#     "* ]]; then
+                local stripped="${line#\#     }"
+                # Trenne bei mehreren Leerzeichen
+                local key="${stripped%%  *}"
+                local rest="${stripped#*  }"
+                # Entferne führende Leerzeichen vom Value
+                local value="${rest##*([[:space:]])}"
+                value="${rest#"${rest%%[![:space:]]*}"}"
+                
+                if [[ -n "$key" && -n "$value" ]]; then
+                    plugin_entries[$current_plugin]+="${key}|${value}"$'\n'
+                fi
+            fi
         fi
     done < "$BREWFILE"
     
-    # Formatierte Ausgabe
-    if [[ -n "$block_content" ]]; then
+    # Ausgabe für zsh-autosuggestions
+    if [[ -n "${plugin_entries[zsh-autosuggestions]}" ]]; then
         output+="### zsh-autosuggestions\n\n"
         output+="Zeigt Befehlsvorschläge basierend auf der History beim Tippen an.\n\n"
         output+="| Taste | Aktion |\n"
         output+="|-------|--------|\n"
-        output+="| \`→\` (Pfeil rechts) | Vorschlag komplett übernehmen |\n"
-        output+="| \`Alt+→\` | Wort für Wort übernehmen |\n"
-        output+="| \`Escape\` | Vorschlag ignorieren |\n\n"
         
+        local entries="${plugin_entries[zsh-autosuggestions]}"
+        while IFS='|' read -r key value; do
+            [[ -z "$key" ]] && continue
+            # Trailing whitespace entfernen
+            key="${key%"${key##*[![:space:]]}"}"
+            value="${value%"${value##*[![:space:]]}"}"
+            output+="| \`$key\` | $value |\n"
+        done <<< "$entries"
+        output+="\n"
+    fi
+    
+    # Ausgabe für zsh-syntax-highlighting
+    if [[ -n "${plugin_entries[zsh-syntax-highlighting]}" ]]; then
         output+="### zsh-syntax-highlighting\n\n"
         output+="Färbt Kommandos während der Eingabe ein:\n\n"
         output+="| Farbe | Bedeutung |\n"
         output+="|-------|--------|\n"
-        output+="| **Grün** | Gültiger Befehl |\n"
-        output+="| **Rot** | Ungültiger Befehl oder Datei nicht gefunden |\n"
-        output+="| **Unterstrichen** | Existierende Datei/Verzeichnis |\n\n"
         
-        output+="> **Hinweis:** Diese Plugins werden automatisch geladen wenn installiert. Startzeit-Impact minimal (~20ms).\n"
+        local entries="${plugin_entries[zsh-syntax-highlighting]}"
+        while IFS='|' read -r key value; do
+            [[ -z "$key" ]] && continue
+            key="${key%"${key##*[![:space:]]}"}"
+            value="${value%"${value##*[![:space:]]}"}"
+            output+="| **$key** | $value |\n"
+        done <<< "$entries"
+        output+="\n"
+    fi
+    
+    # Hinweis
+    if [[ -n "$hinweis" ]]; then
+        output+="> **Hinweis:** $hinweis\n"
     fi
     
     echo -e "$output"
@@ -107,41 +168,104 @@ generate_zsh_plugins_usage() {
 # ------------------------------------------------------------
 # Font-Sektion aus Brewfile extrahieren
 # ------------------------------------------------------------
+# Parst den Casks-Kommentarblock im Brewfile:
+#   # Casks (Fonts & Tools)
+#   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#   # font-meslo-lg-nerd-font:
+#   #   Variante: LDZNF (L=Large, DZ=Dotted Zero, NF=Nerd Font)
+#   #   Speicherort: ~/Library/Fonts/
+#   #   Zweck: Icons (Powerline, Devicons, Font Awesome, Octicons)
+#   #   Alternativen: brew search nerd-font
+#   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 generate_font_section() {
     local output=""
     local in_block=false
+    local font_name=""
+    local font_variante=""
+    local font_speicherort=""
+    local font_zweck=""
+    local font_alternativen=""
     
     while IFS= read -r line; do
-        # Start des Cask-Blocks mit Font-Info
+        # Start des Blocks
         if [[ "$line" == "# Casks"* ]]; then
             in_block=true
             continue
         fi
         
+        # Ende des Blocks (cask-Zeile)
         if $in_block && [[ "$line" == cask\ * ]]; then
+            # Font-Name aus cask-Zeile extrahieren (erste Font-Zeile)
+            if [[ "$line" == *"font-"* && -z "$font_name" ]]; then
+                font_name="${line#cask \"}"
+                font_name="${font_name%%\"*}"
+            fi
             break
+        fi
+        
+        # Trennzeilen überspringen
+        if [[ "$line" == "# ~"* ]]; then
+            continue
+        fi
+        
+        if $in_block; then
+            # Font-spezifische Eigenschaften extrahieren
+            if [[ "$line" =~ ^"#   Variante: "(.+)$ ]]; then
+                font_variante="${match[1]}"
+            elif [[ "$line" =~ ^"#   Speicherort: "(.+)$ ]]; then
+                font_speicherort="${match[1]}"
+            elif [[ "$line" =~ ^"#   Zweck: "(.+)$ ]]; then
+                font_zweck="${match[1]}"
+            elif [[ "$line" =~ ^"#   Alternativen: "(.+)$ ]]; then
+                font_alternativen="${match[1]}"
+            fi
         fi
     done < "$BREWFILE"
     
-    output+="### MesloLG Nerd Font\n\n"
+    # Fallback wenn Font nicht im Brewfile gefunden
+    [[ -z "$font_name" ]] && font_name="font-meslo-lg-nerd-font"
+    [[ -z "$font_variante" ]] && font_variante="Nerd Font"
+    [[ -z "$font_speicherort" ]] && font_speicherort="~/Library/Fonts/"
+    [[ -z "$font_zweck" ]] && font_zweck="Icons im Terminal"
+    [[ -z "$font_alternativen" ]] && font_alternativen="brew search nerd-font"
+    
+    # Anzeigename aus font_name generieren (font-meslo-lg-nerd-font → MesloLG)
+    local display_name="${font_name#font-}"
+    display_name="${display_name%-nerd-font}"
+    # Bindestriche entfernen und Title Case
+    display_name=$(echo "$display_name" | sed 's/-/ /g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2)}1' | tr -d ' ')
+    
+    output+="### ${display_name} Nerd Font\n\n"
     output+="| Eigenschaft | Wert |\n"
     output+="|-------------|------|\n"
-    output+="| **Name** | MesloLGLDZNF (L=Large, DZ=Dotted Zero) |\n"
-    output+="| **Installiert via** | \`brew install --cask font-meslo-lg-nerd-font\` |\n"
-    output+="| **Speicherort** | \`~/Library/Fonts/\` |\n"
-    output+="| **Zweck** | Icons und Powerline-Symbole im Terminal |\n\n"
+    output+="| **Name** | $font_variante |\n"
+    output+="| **Installiert via** | \`brew install --cask $font_name\` |\n"
+    output+="| **Speicherort** | \`$font_speicherort\` |\n"
+    output+="| **Zweck** | $font_zweck |\n\n"
     
     output+="### Warum Nerd Fonts?\n\n"
     output+="Nerd Fonts sind gepatchte Schriftarten mit zusätzlichen Glyphen:\n\n"
-    output+="- **Powerline-Symbole** – für Prompt-Segmente (Starship)\n"
-    output+="- **Devicons** – Sprach- und Framework-Icons (eza)\n"
-    output+="- **Font Awesome** – Allgemeine Icons\n"
-    output+="- **Octicons** – GitHub-Icons\n\n"
+    
+    # Icons aus Zweck-Feld parsen (Format: "Icons (A, B, C)")
+    if [[ "$font_zweck" =~ "Icons" ]]; then
+        local icons="${font_zweck#*\(}"
+        icons="${icons%\)}"
+        local IFS=', '
+        for icon in ${(s/, /)icons}; do
+            case "$icon" in
+                Powerline) output+="- **Powerline-Symbole** – für Prompt-Segmente (Starship)\n" ;;
+                Devicons)  output+="- **Devicons** – Sprach- und Framework-Icons (eza)\n" ;;
+                "Font Awesome") output+="- **Font Awesome** – Allgemeine Icons\n" ;;
+                Octicons)  output+="- **Octicons** – GitHub-Icons\n" ;;
+            esac
+        done
+    fi
+    output+="\n"
     
     output+="### Alternative Fonts\n\n"
     output+="\`\`\`zsh\n"
     output+="# Verfügbare Nerd Fonts suchen\n"
-    output+="brew search nerd-font\n\n"
+    output+="$font_alternativen\n\n"
     output+="# Beispiel: JetBrains Mono installieren\n"
     output+="brew install --cask font-jetbrains-mono-nerd-font\n"
     output+="\`\`\`\n"
