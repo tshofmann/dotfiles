@@ -9,3 +9,7 @@
 - dotfiles: Zeigt Git-Diff-Markierungen an:
 
 `catd`
+
+- dotfiles: Theme Browser (`<Enter>` Aktivieren):
+
+`bat-theme`

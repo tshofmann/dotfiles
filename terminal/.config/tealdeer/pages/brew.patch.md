@@ -1,3 +1,7 @@
+- dotfiles: Homebrew Komplett-Update:
+
+`brewup`
+
 - dotfiles: Zeige veraltete Mac App Store Apps:
 
 `maso`
@@ -17,3 +21,15 @@
 - dotfiles: Alle installierten Mac App Store Apps auflisten:
 
 `masl`
+
+- dotfiles: Nutzt   : shell-colors:
+
+`brewv`
+
+- dotfiles: Brew Install Browser (`<Enter>` Installieren, `<Tab>` Mehrfach):
+
+`bip`
+
+- dotfiles: Brew Remove Browser (`<Enter>` Entfernen, `<Tab>` Mehrfach):
+
+`brp`

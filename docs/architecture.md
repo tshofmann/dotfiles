@@ -107,7 +107,8 @@ dotfiles/
 │   │   │   │   ├── fzf.patch.md # Globale Tastenkürzel (in allen fzf-Dialogen)
 │   │   │   │   ├── gh.patch.md # tldr-Patch (auto-generiert)
 │   │   │   │   ├── git.patch.md # tldr-Patch (auto-generiert)
-│   │   │   │   └── rg.patch.md # tldr-Patch (auto-generiert)
+│   │   │   │   ├── rg.patch.md # tldr-Patch (auto-generiert)
+│   │   │   │   └── zoxide.patch.md # tldr-Patch (auto-generiert)
 │   │   │   └── config.toml # Vereinfachte Man-Pages mit Beispielen (tldr)
 │   │   ├── zsh/
 │   │   │   └── catppuccin_mocha-zsh-syntax-highlighting.zsh

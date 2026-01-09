@@ -184,7 +184,7 @@ generate_patch_for_alias() {
         fi
         
         # Funktionen: func() {
-        if [[ "$trimmed" =~ ^[a-zA-Z][a-zA-Z0-9_-]*\(\)\ \{ ]]; then
+        if [[ "$trimmed" =~ "^[a-zA-Z][a-zA-Z0-9_-]*\(\) \{" ]]; then
             local func_name="${trimmed%%\(*}"
             
             [[ "$func_name" == _* ]] && { prev_comment=""; continue; }
@@ -212,7 +212,7 @@ generate_patch_for_alias() {
         fi
         
         # Aliase: alias name='command'
-        if [[ "$trimmed" =~ ^alias[[:space:]]+[a-zA-Z][a-zA-Z0-9_-]*= ]]; then
+        if [[ "$trimmed" =~ "^alias[[:space:]]+[a-zA-Z][a-zA-Z0-9_-]*=" ]]; then
             local alias_def="${trimmed#alias }"
             local alias_name="${alias_def%%=*}"
             
