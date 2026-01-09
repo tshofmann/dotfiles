@@ -1,9 +1,9 @@
 #!/usr/bin/env zsh
 # ============================================================
-# configuration.sh - Generator für docs/configuration.md
+# customization.sh - Generator für docs/customization.md
 # ============================================================
-# Zweck   : Generiert Konfigurations-Dokumentation aus Config-Dateien
-# Pfad    : scripts/generators/configuration.sh
+# Zweck   : Generiert Anpassungs-Dokumentation aus Config-Dateien
+# Pfad    : scripts/generators/customization.sh
 # ============================================================
 
 source "${0:A:h}/lib.sh"
@@ -160,9 +160,9 @@ collect_theme_configs() {
 }
 
 # ------------------------------------------------------------
-# Haupt-Generator für configuration.md
+# Haupt-Generator für customization.md
 # ------------------------------------------------------------
-generate_configuration_md() {
+generate_customization_md() {
     cat << 'HEADER'
 # ⚙️ Konfiguration
 
@@ -414,4 +414,4 @@ FOOTER
 }
 
 # Nur ausführen wenn direkt aufgerufen (nicht gesourct)
-[[ -z "${_SOURCED_BY_GENERATOR:-}" ]] && generate_configuration_md || true
+[[ -z "${_SOURCED_BY_GENERATOR:-}" ]] && generate_customization_md || true

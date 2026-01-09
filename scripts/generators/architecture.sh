@@ -238,10 +238,10 @@ Der Code ist die einzige Wahrheit. Alle Dokumentation wird automatisch generiert
 
 | Quelle | Generiert |
 |--------|-----------|
-| `.alias`-Dateien | tools.md, tldr-Patches |
-| `Brewfile` | tools.md (CLI-Tools), installation.md |
-| `bootstrap.sh` | installation.md |
-| Config-Dateien | configuration.md |
+| \`.alias\`-Dateien | tools.md, tldr-Patches |
+| \`Brewfile\` | tools.md (CLI-Tools), setup.md |
+| \`bootstrap.sh\` | setup.md |
+| Config-Dateien | customization.md |
 | Verzeichnisstruktur | architecture.md |
 
 ### Dokumentations-Generator

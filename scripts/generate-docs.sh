@@ -73,13 +73,13 @@ check_all() {
         ok "docs/tools.md ist aktuell"
     fi
     
-    # docs/installation.md
-    generated=$(run_generator "installation.sh" "generate_installation_md")
-    if ! compare_content "$DOCS_DIR/installation.md" "$generated"; then
-        err "docs/installation.md ist veraltet"
+    # docs/setup.md
+    generated=$(run_generator "setup.sh" "generate_setup_md")
+    if ! compare_content "$DOCS_DIR/setup.md" "$generated"; then
+        err "docs/setup.md ist veraltet"
         (( errors++ )) || true
     else
-        ok "docs/installation.md ist aktuell"
+        ok "docs/setup.md ist aktuell"
     fi
     
     # docs/architecture.md
@@ -91,13 +91,13 @@ check_all() {
         ok "docs/architecture.md ist aktuell"
     fi
     
-    # docs/configuration.md
-    generated=$(run_generator "configuration.sh" "generate_configuration_md")
-    if ! compare_content "$DOCS_DIR/configuration.md" "$generated"; then
-        err "docs/configuration.md ist veraltet"
+    # docs/customization.md
+    generated=$(run_generator "customization.sh" "generate_customization_md")
+    if ! compare_content "$DOCS_DIR/customization.md" "$generated"; then
+        err "docs/customization.md ist veraltet"
         (( errors++ )) || true
     else
-        ok "docs/configuration.md ist aktuell"
+        ok "docs/customization.md ist aktuell"
     fi
     
     # tldr-Patches
@@ -136,17 +136,17 @@ generate_all() {
     generated=$(run_generator "tools.sh" "generate_tools_md")
     write_if_changed "$DOCS_DIR/tools.md" "$generated"
     
-    # docs/installation.md
-    generated=$(run_generator "installation.sh" "generate_installation_md")
-    write_if_changed "$DOCS_DIR/installation.md" "$generated"
+    # docs/setup.md
+    generated=$(run_generator "setup.sh" "generate_setup_md")
+    write_if_changed "$DOCS_DIR/setup.md" "$generated"
     
     # docs/architecture.md
     generated=$(run_generator "architecture.sh" "generate_architecture_md")
     write_if_changed "$DOCS_DIR/architecture.md" "$generated"
     
-    # docs/configuration.md
-    generated=$(run_generator "configuration.sh" "generate_configuration_md")
-    write_if_changed "$DOCS_DIR/configuration.md" "$generated"
+    # docs/customization.md
+    generated=$(run_generator "customization.sh" "generate_customization_md")
+    write_if_changed "$DOCS_DIR/customization.md" "$generated"
     
     # tldr-Patches
     (
@@ -180,9 +180,9 @@ main() {
             echo "Generierte Dateien:"
             echo "  README.md"
             echo "  docs/tools.md"
-            echo "  docs/installation.md"
+            echo "  docs/setup.md"
             echo "  docs/architecture.md"
-            echo "  docs/configuration.md"
+            echo "  docs/customization.md"
             echo "  terminal/.config/tealdeer/pages/*.patch.md"
             ;;
         *)

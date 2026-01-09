@@ -1,9 +1,9 @@
 #!/usr/bin/env zsh
 # ============================================================
-# installation.sh - Generator für docs/installation.md
+# setup.sh - Generator für docs/setup.md
 # ============================================================
-# Zweck   : Generiert Installationsdokumentation aus bootstrap.sh
-# Pfad    : scripts/generators/installation.sh
+# Zweck   : Generiert Setup-Dokumentation aus bootstrap.sh
+# Pfad    : scripts/generators/setup.sh
 # ============================================================
 
 source "${0:A:h}/lib.sh"
@@ -32,9 +32,9 @@ extract_bootstrap_steps() {
 }
 
 # ------------------------------------------------------------
-# Haupt-Generator für installation.md
+# Haupt-Generator für setup.md
 # ------------------------------------------------------------
-generate_installation_md() {
+generate_setup_md() {
     # Dynamische macOS-Versionen aus bootstrap.sh
     local macos_min macos_tested macos_min_name macos_tested_name
     macos_min=$(extract_macos_min_version)
@@ -257,4 +257,4 @@ REST
 }
 
 # Nur ausführen wenn direkt aufgerufen (nicht gesourct)
-[[ -z "${_SOURCED_BY_GENERATOR:-}" ]] && generate_installation_md || true
+[[ -z "${_SOURCED_BY_GENERATOR:-}" ]] && generate_setup_md || true

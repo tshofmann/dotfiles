@@ -31,16 +31,16 @@ dotfiles/
 ├── .stowrc # Ignore-Patterns und Standard-Optionen für GNU Stow
 ├── docs/
 │   ├── architecture.md # Architektur
-│   ├── configuration.md # Konfiguration
-│   ├── installation.md # Installation
+│   ├── customization.md # Konfiguration
+│   ├── setup.md # Installation
 │   └── tools.md # Tools
 ├── scripts/
 │   ├── generators/
 │   │   ├── architecture.sh # Generiert Architektur-Dokumentation aus Verzeichnisstruktur
-│   │   ├── configuration.sh # Generiert Konfigurations-Dokumentation aus Config-Dateien
-│   │   ├── installation.sh # Generiert Installationsdokumentation aus bootstrap.sh
+│   │   ├── customization.sh # Generiert Anpassungs-Dokumentation aus Config-Dateien
 │   │   ├── lib.sh # Parser, Hilfsfunktionen, Konfiguration
 │   │   ├── readme.sh # Generiert Haupt-README aus Template + dynamischen Daten
+│   │   ├── setup.sh # Generiert Setup-Dokumentation aus bootstrap.sh
 │   │   ├── tldr.sh # Generiert tldr-Patches aus .alias-Dateien
 │   │   └── tools.sh # Generiert Tool-Dokumentation aus .alias-Dateien
 │   ├── tests/
@@ -100,6 +100,7 @@ dotfiles/
 │   │   │   │   ├── bat.patch.md # tldr-Patch (auto-generiert)
 │   │   │   │   ├── brew.patch.md # tldr-Patch (auto-generiert)
 │   │   │   │   ├── btop.patch.md # tldr-Patch (auto-generiert)
+│   │   │   │   ├── catppuccin.page.md # catppuccin
 │   │   │   │   ├── dotfiles.page.md # dotfiles
 │   │   │   │   ├── eza.patch.md # tldr-Patch (auto-generiert)
 │   │   │   │   ├── fastfetch.patch.md # tldr-Patch (auto-generiert)
@@ -132,10 +133,10 @@ Der Code ist die einzige Wahrheit. Alle Dokumentation wird automatisch generiert
 
 | Quelle | Generiert |
 |--------|-----------|
-| `.alias`-Dateien | tools.md, tldr-Patches |
-| `Brewfile` | tools.md (CLI-Tools), installation.md |
-| `bootstrap.sh` | installation.md |
-| Config-Dateien | configuration.md |
+| \`.alias\`-Dateien | tools.md, tldr-Patches |
+| \`Brewfile\` | tools.md (CLI-Tools), setup.md |
+| \`bootstrap.sh\` | setup.md |
+| Config-Dateien | customization.md |
 | Verzeichnisstruktur | architecture.md |
 
 ### Dokumentations-Generator
