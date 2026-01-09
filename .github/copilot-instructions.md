@@ -65,6 +65,8 @@ Doku wird automatisch aus Code generiert (Single Source of Truth):
 
 **Niemals Docs manuell editieren** – Änderungen im Code machen.
 
+**Einstiegspunkt:** `dothelp` zeigt alle verfügbaren tldr-Seiten mit dotfiles-Erweiterungen.
+
 ### Farben
 
 Zentrale Definition: `terminal/.config/shell-colors`
@@ -80,6 +82,10 @@ source "$DOTFILES_DIR/terminal/.config/shell-colors"
 ## Alias-Dateien
 
 Format für `terminal/.config/alias/*.alias`:
+
+**Regel:** Ein Alias/Funktion gehört in die `.alias`-Datei des Tools, das er **primär** repräsentiert.
+- `zf()` → `zoxide.alias` (zoxide-Workflow, fzf nur UI)
+- `fkill()` → `fzf.alias` (generische fzf-Funktion)
 
 ```zsh
 # ============================================================

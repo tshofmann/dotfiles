@@ -198,7 +198,7 @@ Funktionen mit fzf-UI nutzen ein erweitertes Format:
 **Beispiele:**
 ```zsh
 # zoxide Browser – Enter=Wechseln, Ctrl+D=Löschen, Ctrl+Y=Kopieren
-zf() { ... }
+zf() { ... }  # in zoxide.alias (Tool-Zuordnung!)
 
 # Verzeichnis wechseln(pfad=.) – Enter=Wechseln, Ctrl+Y=Pfad kopieren
 cdf() { ... }
@@ -210,6 +210,10 @@ rgf() { ... }
 > **Wichtig:** Diese Kommentare sind die Single Source of Truth für tldr-Patches.
 > Der Generator `scripts/generators/tldr.sh` erzeugt die `.patch.md` Dateien
 > automatisch aus diesen Kommentaren.
+>
+> **Sonderfall `.page.md`:** Für Tools ohne offizielle tldr-Seite (z.B. `dotfiles`)
+> wird eine vollständige `.page.md` manuell erstellt. Der Generator überspringt
+> Alias-Dateien, für die bereits eine `.page.md` existiert.
 
 ### Ausnahmen vom Header-Format
 
@@ -222,6 +226,7 @@ Einige Dateien folgen **nicht** dem Standard-Header-Format:
 | `bat/themes/Catppuccin Mocha.tmTheme` | Third-Party Theme (Catppuccin) – bei Updates überschrieben |
 | `zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh` | Third-Party Theme (Catppuccin) – bei Updates überschrieben |
 | `terminal/.config/tealdeer/pages/*.patch.md` | Markdown-Format für tldr-Patches – automatisch generiert |
+| `terminal/.config/tealdeer/pages/*.page.md` | Vollständige tldr-Seiten für Tools ohne offizielle Seite |
 
 Diese Dateien werden vom Pre-Commit Hook nicht auf Header-Format geprüft.
 
@@ -409,7 +414,11 @@ Die tldr-Patches in `terminal/.config/tealdeer/pages/` werden **automatisch** au
 
 > ⚠️ **Niemals** Patch-Dateien manuell editieren – Änderungen werden überschrieben!
 
-**Namenskonvention:** `tool.alias` → `tool.patch.md` → `tldr tool`
+**Namenskonvention:**
+- `tool.alias` → `tool.patch.md` → `tldr tool` (erweitert offizielle Seite)
+- `tool.alias` → `tool.page.md` → `tldr tool` (ersetzt fehlende offizielle Seite)
+
+> 💡 **Tipp:** `dothelp` zeigt alle verfügbaren tldr-Seiten mit dotfiles-Erweiterungen.
 
 ---
 
