@@ -91,7 +91,10 @@ fi
 # ------------------------------------------------------------
 # ZSH-Plugins (am Ende laden)
 # ------------------------------------------------------------
-# Autosuggestions: Zeigt Vorschläge aus History (→ zum Akzeptieren)
+# Autosuggestions: Zeigt Vorschläge aus History
+#   →        Vorschlag komplett übernehmen
+#   Alt+→    Wort für Wort übernehmen
+#   Escape   Vorschlag ignorieren
 [[ -f "${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \
     source "${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 
@@ -100,6 +103,10 @@ fi
 [[ -f "$HOME/.config/zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh" ]] && \
     source "$HOME/.config/zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh"
 
-# Syntax-Highlighting: Muss als letztes geladen werden
+# Syntax-Highlighting: Farben zeigen Befehlsgültigkeit
+#   Grün          Gültiger Befehl
+#   Rot           Ungültiger Befehl
+#   Unterstrichen Existierende Datei/Verzeichnis
+# WICHTIG: Muss als letztes Plugin geladen werden
 [[ -f "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
     source "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"

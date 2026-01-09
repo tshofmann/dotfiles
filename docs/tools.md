@@ -224,6 +224,22 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `htop` | `btop` | Bessere Alternative zu htop |> **Hinweis:** Konfiguration in ~/.config/btop/btop.conf Theme: Catppuccin Mocha
 
 
+<a name="dotfilesalias"></a>
+
+### dotfiles.alias
+
+| Alias | Befehl | Beschreibung |
+|-------|--------|--------------|
+| `dh` | `dothelp` | Kurzalias für schnellen Zugriff |
+
+**Interaktive Funktionen (mit fzf):**
+
+| Funktion | Beschreibung |
+|----------|--------------|
+| `dothelp` | dothelp (Zeigt alle verfügbaren tldr-Seiten mit dotfiles-Erweiterungen) |
+> **Hinweis:** dothelp listet alle verfügbaren Hilfe-Seiten auf. tldr-Patches erweitern offizielle Seiten mit dotfiles- spezifischen Funktionen, Aliases und Keybindings.
+
+
 <a name="ezaalias"></a>
 
 ### eza.alias
@@ -285,7 +301,6 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 | Funktion | Beschreibung |
 |----------|--------------|
-| `zf` | zoxide Browser (Enter=Wechseln, Ctrl+D=Löschen, Ctrl+Y=Kopieren) |
 | `fkill` | Prozess Browser (Enter=Beenden, Tab=Mehrfach, Ctrl+S=Apps↔Alle) |
 | `fman` | Man/tldr Browser (Ctrl+S=Modus wechseln, Enter=je nach Modus öffnen) |
 | `fa` | fa Browser (Enter=Übernehmen, Ctrl+S=tldr↔Code) |
@@ -367,6 +382,19 @@ Verfügbare Aliase aus `~/.config/alias/`:
 |----------|--------------|
 | `rgf` | Live-Grep (Enter=Datei öffnen, Ctrl+Y=Pfad kopieren) |
 > **Hinweis:** Globale Optionen (--smart-case, --line-number, --heading) und Excludes (Library/, Music/, Pictures/, Movies/) sind in ~/.config/ripgrep/config definiert.
+
+
+<a name="zoxidealias"></a>
+
+### zoxide.alias
+
+
+
+**Interaktive Funktionen (mit fzf):**
+
+| Funktion | Beschreibung |
+|----------|--------------|
+| `zf` | zoxide Browser (Enter=Wechseln, Ctrl+D=Löschen, Ctrl+Y=Kopieren) |
 
 
 ---

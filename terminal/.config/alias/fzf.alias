@@ -23,32 +23,6 @@ fi
 # Ctrl+X 3: Verzeichnis wechseln mit eza-Vorschau
 
 # ------------------------------------------------------------
-# ZOXIDE + FZF: Intelligente Directory-Jumps
-# ------------------------------------------------------------
-# zi ist bereits in zoxide eingebaut (zi = zoxide interactive)
-# Erweiterte Version mit Score-Anzeige, Lösch- und Kopier-Option
-# Community-Pattern: -n2.. für Pfade mit Leerzeichen
-if command -v zoxide >/dev/null 2>&1; then
-    # zoxide Browser – Enter=Wechseln, Ctrl+D=Löschen, Ctrl+Y=Kopieren
-    zf() {
-        local selection dir
-        local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
-        
-        # Mit Score anzeigen (Format: "1234.5 /path/to/dir")
-        # -n2.. durchsucht nur den Pfad (nicht den Score), unterstützt Leerzeichen
-        selection=$(zoxide query -l -s | \
-            fzf -n2.. \
-                --preview "$helper/preview-dir {2..} 2" \
-                --bind "ctrl-d:execute-silent($helper/safe-action zoxide-remove {2..})+reload(zoxide query -l -s)" \
-                --bind "ctrl-y:execute-silent($helper/safe-action copy {2..})" \
-                --header='Enter: Wechseln | Ctrl+D: Eintrag löschen | Ctrl+Y: Pfad kopieren')
-        
-        # Pfad extrahieren (alles nach dem Score)
-        [[ -n "$selection" ]] && dir="${selection#* }" && cd "$dir"
-    }
-fi
-
-# ------------------------------------------------------------
 # KILL + FZF: Prozess-Management
 # ------------------------------------------------------------
 # Prozesse interaktiv suchen und beenden (Tab für Mehrfachauswahl)

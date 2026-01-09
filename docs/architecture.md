@@ -58,13 +58,15 @@ dotfiles/
 │   │   │   ├── bat.alias # Aliase für bat mit verschiedenen Ausgabe-Stilen
 │   │   │   ├── brew.alias # Aliase für Homebrew Paketverwaltung
 │   │   │   ├── btop.alias # Aliase für btop – moderner top/htop-Ersatz
+│   │   │   ├── dotfiles.alias # Zentrale Einstiegspunkte für dotfiles-Hilfe
 │   │   │   ├── eza.alias # Aliase für eza mit Icons und Git-Integration
 │   │   │   ├── fastfetch.alias # Aliase für fastfetch – schnelle System-Übersicht
 │   │   │   ├── fd.alias # Aliase für fd – schnelle Alternative zu find
 │   │   │   ├── fzf.alias # Tool-unspezifische fzf-Utilities
 │   │   │   ├── gh.alias # Interaktive GitHub-Workflows mit gh CLI
 │   │   │   ├── git.alias # Aliase für häufige Git-Operationen
-│   │   │   └── rg.alias # Aliase für ripgrep mit häufig genutzten Optionen
+│   │   │   ├── rg.alias # Aliase für ripgrep mit häufig genutzten Optionen
+│   │   │   └── zoxide.alias # Funktionen für zoxide mit fzf-Integration
 │   │   ├── bat/
 │   │   │   ├── themes/
 │   │   │   │   └── Catppuccin Mocha.tmTheme # Syntax-Theme (XML)
@@ -98,6 +100,7 @@ dotfiles/
 │   │   │   │   ├── bat.patch.md # tldr-Patch (auto-generiert)
 │   │   │   │   ├── brew.patch.md # tldr-Patch (auto-generiert)
 │   │   │   │   ├── btop.patch.md # tldr-Patch (auto-generiert)
+│   │   │   │   ├── dotfiles.patch.md # tldr-Patch (auto-generiert)
 │   │   │   │   ├── eza.patch.md # tldr-Patch (auto-generiert)
 │   │   │   │   ├── fastfetch.patch.md # tldr-Patch (auto-generiert)
 │   │   │   │   ├── fd.patch.md # tldr-Patch (auto-generiert)

@@ -131,7 +131,25 @@ readonly PROFILE_NAME="${${PROFILE_FILE:t}%.terminal}"
 readonly FONT_GLOB="MesloLG*NerdFont*"
 readonly BREWFILE="$SCRIPT_DIR/Brewfile"
 
-# Starship-Konfiguration
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Starship Shell-Prompt Konfiguration
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Config:  ~/.config/starship.toml (NICHT versioniert)
+# Docs:    https://starship.rs/
+# Theme:   Catppuccin Mocha via catppuccin-powerline Preset
+#
+# Warum nicht versioniert?
+#   - Config wird via `starship preset` generiert
+#   - Nutzer können STARSHIP_PRESET überschreiben
+#   - Verhindert Konflikte bei Preset-Updates
+#
+# Anpassung:
+#   export STARSHIP_PRESET="gruvbox-rainbow"  # vor bootstrap.sh
+#   Oder: ~/.config/starship.toml direkt editieren (wird dann
+#         nicht mehr überschrieben, außer STARSHIP_PRESET gesetzt)
+#
+# Verfügbare Presets: starship preset --list
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Merke, ob der Nutzer STARSHIP_PRESET explizit gesetzt hat
 preset_from_env=false
 [[ -n "${STARSHIP_PRESET+x}" ]] && preset_from_env=true
