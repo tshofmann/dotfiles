@@ -24,10 +24,16 @@ dothelp() {
     local tools=()
     local tool
     
-    # Sammle alle Tools mit Patches
+    # Sammle alle Tools mit Patches und Pages
     if [[ -d "$pages_dir" ]]; then
+        # .patch.md = Erweiterungen zu offiziellen Seiten
         for patch in "$pages_dir"/*.patch.md(N); do
             tool="${patch:t:r:r}"  # Entferne .patch.md
+            tools+=("$tool")
+        done
+        # .page.md = vollständig eigene Seiten
+        for page in "$pages_dir"/*.page.md(N); do
+            tool="${page:t:r:r}"  # Entferne .page.md
             tools+=("$tool")
         done
     fi

@@ -100,7 +100,7 @@ dotfiles/
 │   │   │   │   ├── bat.patch.md # tldr-Patch (auto-generiert)
 │   │   │   │   ├── brew.patch.md # tldr-Patch (auto-generiert)
 │   │   │   │   ├── btop.patch.md # tldr-Patch (auto-generiert)
-│   │   │   │   ├── dotfiles.patch.md # tldr-Patch (auto-generiert)
+│   │   │   │   ├── dotfiles.page.md # dotfiles
 │   │   │   │   ├── eza.patch.md # tldr-Patch (auto-generiert)
 │   │   │   │   ├── fastfetch.patch.md # tldr-Patch (auto-generiert)
 │   │   │   │   ├── fd.patch.md # tldr-Patch (auto-generiert)

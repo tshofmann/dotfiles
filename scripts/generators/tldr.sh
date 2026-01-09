@@ -285,6 +285,10 @@ generate_tldr_patches() {
             for alias_file in "$ALIAS_DIR"/*.alias(N); do
                 local tool_name=$(basename "$alias_file" .alias)
                 local patch_file="$TEALDEER_DIR/${tool_name}.patch.md"
+                local page_file="$TEALDEER_DIR/${tool_name}.page.md"
+                
+                # Überspringe wenn eine .page.md existiert (vollständig eigene Seite)
+                [[ -f "$page_file" ]] && continue
                 
                 [[ ! -f "$patch_file" ]] && continue
                 
@@ -304,6 +308,10 @@ generate_tldr_patches() {
             for alias_file in "$ALIAS_DIR"/*.alias(N); do
                 local tool_name=$(basename "$alias_file" .alias)
                 local patch_file="$TEALDEER_DIR/${tool_name}.patch.md"
+                local page_file="$TEALDEER_DIR/${tool_name}.page.md"
+                
+                # Überspringe wenn eine .page.md existiert (vollständig eigene Seite)
+                [[ -f "$page_file" ]] && continue
                 
                 local generated=$(generate_complete_patch "$tool_name")
                 
