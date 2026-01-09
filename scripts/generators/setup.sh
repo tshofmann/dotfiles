@@ -203,7 +203,8 @@ REST
         local name="${parsed%%|*}"
         local rest="${parsed#*|}"
         local desc="${rest%%|*}"
-        local typ="${rest##*|}"
+        rest="${rest#*|}"
+        local typ="${rest%%|*}"
         
         [[ "$typ" == "brew" ]] && echo "| \`$name\` | $desc |"
     done < "$BREWFILE"
@@ -225,7 +226,8 @@ REST
         local name="${parsed%%|*}"
         local rest="${parsed#*|}"
         local desc="${rest%%|*}"
-        local typ="${rest##*|}"
+        rest="${rest#*|}"
+        local typ="${rest%%|*}"
         
         [[ "$typ" == "cask" ]] && echo "| \`$name\` | $desc |"
     done < "$BREWFILE"
@@ -247,7 +249,8 @@ REST
         local name="${parsed%%|*}"
         local rest="${parsed#*|}"
         local desc="${rest%%|*}"
-        local typ="${rest##*|}"
+        rest="${rest#*|}"
+        local typ="${rest%%|*}"
         
         [[ "$typ" == "mas" ]] && echo "| $name | $desc |"
     done < "$BREWFILE"
