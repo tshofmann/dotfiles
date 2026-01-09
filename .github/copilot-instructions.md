@@ -69,11 +69,11 @@ Doku wird automatisch aus Code generiert (Single Source of Truth):
 
 ### Farben
 
-Zentrale Definition: `terminal/.config/shell-colors`
+Zentrale Definition: `terminal/.config/theme-colors`
 
 In Skripten nutzen:
 ```zsh
-source "$DOTFILES_DIR/terminal/.config/shell-colors"
+source "$DOTFILES_DIR/terminal/.config/theme-colors"
 # Dann: $C_GREEN, $C_RED, $C_BLUE, etc.
 ```
 

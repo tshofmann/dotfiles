@@ -113,7 +113,7 @@ dotfiles/
 │   │   │   └── config.toml # Vereinfachte Man-Pages mit Beispielen (tldr)
 │   │   ├── zsh/
 │   │   │   └── catppuccin_mocha-zsh-syntax-highlighting.zsh
-│   │   └── shell-colors # Zentrale ANSI-Farbvariablen für Shell-Funktionen
+│   │   └── theme-colors # Zentrale Farbvariablen + Theme-Quellen-Dokumentation
 │   ├── .zlogin # Aufgaben nach dem Login (läuft nach .zshrc)
 │   ├── .zprofile # Umgebungsvariablen für Login-Shells (einmalig)
 │   ├── .zshenv # Umgebungsvariablen die VOR allen anderen Configs geladen werden

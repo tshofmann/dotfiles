@@ -22,7 +22,7 @@
 
 `masl`
 
-- dotfiles: Nutzt   : shell-colors:
+- dotfiles: Nutzt   : theme-colors:
 
 `brewv`
 

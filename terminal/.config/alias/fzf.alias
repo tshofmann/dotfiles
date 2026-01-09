@@ -140,7 +140,7 @@ fa() {
     # Sortieren und Duplikate entfernen
     entries=$(echo "$entries" | sort -t'|' -k1,1 -u)
     
-    # Formatierte Ausgabe für fzf (Farben aus shell-colors)
+    # Formatierte Ausgabe für fzf (Farben aus theme-colors)
     # Preview prüft Prompt für Toggle (wie fman-Pattern)
     selection=$(echo "$entries" | awk -F'|' \
         -v mauve="$C_MAUVE" -v green="$C_GREEN" -v blue="$C_BLUE" \

@@ -48,7 +48,7 @@ fi
 # Versionsübersicht
 # ------------------------------------------------------------
 # Brewfile Versionsübersicht – zeigt installierte Versionen aller Pakete
-# Nutzt   : shell-colors ($C_MAUVE, $C_GREEN, $C_TEXT, $C_RESET)
+# Nutzt   : theme-colors ($C_MAUVE, $C_GREEN, $C_TEXT, $C_RESET)
 brewv() {
     local brewfile="${DOTFILES_DIR:-$HOME/dotfiles}/setup/Brewfile"
     
@@ -66,7 +66,7 @@ brewv() {
         if [[ -n "$version" ]]; then
             printf "${C_GREEN}%-30s${C_RESET} ${C_TEXT}%s${C_RESET}\n" "$pkg" "$version"
         else
-            printf "${C_RED}%-30s${C_RESET} ${C_DIM}nicht installiert${C_RESET}\n" "$pkg"
+            printf "${C_RED}%-30s${C_RESET} ${C_OVERLAY0}nicht installiert${C_RESET}\n" "$pkg"
         fi
     done
     formula_count=$(grep -c '^brew "' "$brewfile")
@@ -78,7 +78,7 @@ brewv() {
         if [[ -n "$version" ]]; then
             printf "${C_BLUE}%-30s${C_RESET} ${C_TEXT}%s${C_RESET}\n" "$pkg" "$version"
         else
-            printf "${C_RED}%-30s${C_RESET} ${C_DIM}nicht installiert${C_RESET}\n" "$pkg"
+            printf "${C_RED}%-30s${C_RESET} ${C_OVERLAY0}nicht installiert${C_RESET}\n" "$pkg"
         fi
     done
     cask_count=$(grep -c '^cask "' "$brewfile")
@@ -93,15 +93,15 @@ brewv() {
             local installed=$(mas list | grep "^$id ")
             if [[ -n "$installed" ]]; then
                 local version=$(echo "$installed" | sed -n 's/.*(\(.*\))$/\1/p')
-                printf "${C_YELLOW}%-30s${C_RESET} ${C_TEXT}%-12s${C_RESET} ${C_DIM}#%s${C_RESET}\n" "$name" "$version" "$id"
+                printf "${C_YELLOW}%-30s${C_RESET} ${C_TEXT}%-12s${C_RESET} ${C_OVERLAY0}#%s${C_RESET}\n" "$name" "$version" "$id"
             else
-                printf "${C_RED}%-30s${C_RESET} ${C_DIM}nicht installiert${C_RESET} ${C_DIM}#%s${C_RESET}\n" "$name" "$id"
+                printf "${C_RED}%-30s${C_RESET} ${C_OVERLAY0}nicht installiert${C_RESET} ${C_OVERLAY0}#%s${C_RESET}\n" "$name" "$id"
             fi
         done
         mas_count=$(grep -c '^mas "' "$brewfile")
     fi
     
-    print "\n${C_DIM}Brewfile: $formula_count Formulae | $cask_count Casks | $mas_count MAS${C_RESET}"
+    print "\n${C_OVERLAY0}Brewfile: $formula_count Formulae | $cask_count Casks | $mas_count MAS${C_RESET}"
 }
 
 # ------------------------------------------------------------

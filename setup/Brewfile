@@ -29,18 +29,6 @@ brew "fastfetch"                            # Schnelle System-Info | https://git
 brew "lazygit"                              # Terminal-UI für Git | https://github.com/jesseduffield/lazygit
 
 # ZSH-Plugins
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Bedienung:
-#   zsh-autosuggestions:
-#     → (Pfeil rechts)    Vorschlag komplett übernehmen
-#     Alt+→               Wort für Wort übernehmen
-#     Escape              Vorschlag ignorieren
-#   zsh-syntax-highlighting:
-#     Grün                Gültiger Befehl
-#     Rot                 Ungültiger Befehl
-#     Unterstrichen       Existierende Datei/Verzeichnis
-# Hinweis: Startzeit-Impact minimal (~20ms)
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 brew "zsh-syntax-highlighting"              # Syntax-Highlighting | https://github.com/zsh-users/zsh-syntax-highlighting
 brew "zsh-autosuggestions"                  # History-Vorschläge | https://github.com/zsh-users/zsh-autosuggestions
 

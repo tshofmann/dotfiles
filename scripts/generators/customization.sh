@@ -12,10 +12,10 @@ source "${0:A:h}/lib.sh"
 # Extraktionsfunktionen (Single Source of Truth)
 # ------------------------------------------------------------
 
-# Extrahiert Farbpalette aus shell-colors und generiert Markdown-Tabelle
+# Extrahiert Farbpalette aus theme-colors und generiert Markdown-Tabelle
 # Konvertiert RGB zu Hex und gruppiert nach Kategorie
 generate_color_palette_table() {
-    local colors_file="$DOTFILES_DIR/terminal/.config/shell-colors"
+    local colors_file="$DOTFILES_DIR/terminal/.config/theme-colors"
     [[ -f "$colors_file" ]] || return 1
     
     echo "| Farbe | Hex | Variable |"
@@ -23,7 +23,7 @@ generate_color_palette_table() {
     
     # Regex: typeset -gx C_NAME=$'\033[38;2;R;G;Bm'  # #HEX
     while IFS= read -r line; do
-        # Nur Farbdefinitionen (nicht Aliase wie C_DIM="$C_OVERLAY0")
+        # Nur Farbdefinitionen mit RGB-Werten (keine Aliase)
         [[ "$line" =~ ^typeset.*C_([A-Z0-9]+).*38\;2\;([0-9]+)\;([0-9]+)\;([0-9]+) ]] || continue
         
         local name="${match[1]}"
@@ -205,18 +205,18 @@ XCODE_SECTION
 
 ### Farbpalette (Catppuccin Mocha)
 
-Alle verfügbaren Shell-Farbvariablen aus `~/.config/shell-colors`:
+Alle verfügbaren Shell-Farbvariablen aus `~/.config/theme-colors`:
 
 FONT_SECTION
 
-    # Dynamisch aus shell-colors generieren
+    # Dynamisch aus theme-colors generieren
     generate_color_palette_table
     
     cat << 'AFTER_COLORS'
 
 > **Verwendung in Skripten:**
 > ```zsh
-> source ~/.config/shell-colors
+> source ~/.config/theme-colors
 > echo "${C_GREEN}Erfolg${C_RESET}"
 > ```
 

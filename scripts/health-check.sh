@@ -36,7 +36,7 @@ set -uo pipefail
 # ------------------------------------------------------------
 readonly SCRIPT_DIR="${0:A:h}"
 readonly DOTFILES_DIR="${SCRIPT_DIR:h}"
-readonly SHELL_COLORS="$DOTFILES_DIR/terminal/.config/shell-colors"
+readonly SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-colors"
 
 # Farben (Catppuccin Mocha) – zentral definiert
 [[ -f "$SHELL_COLORS" ]] && source "$SHELL_COLORS"
@@ -291,6 +291,119 @@ else
   warn "SHELL_SESSIONS_DISABLE=1 nicht in ~/.zshenv (macOS Session-History aktiv)"
   warn "  → stow -R terminal ausführen oder ~/.zshenv manuell erstellen"
 fi
+
+# --- Catppuccin Theme-Registry ---
+section "Catppuccin Theme-Registry"
+
+# Bidirektionale Prüfung der Theme-Registry:
+# 1. IST → SOLL: Jede Config mit "catppuccin" muss in theme-colors dokumentiert sein
+# 2. SOLL → IST: Jeder Eintrag in theme-colors muss existierende Config haben
+check_theme_registry() {
+  local theme_colors="$DOTFILES_DIR/terminal/.config/theme-colors"
+  [[ -f "$theme_colors" ]] || { warn "theme-colors nicht gefunden"; return 1; }
+  
+  # Extrahiere dokumentierte Tools + Pfade aus theme-colors
+  # Format: #   tool   | config-path | upstream | status
+  # Tool-Zeilen: beginnen mit "#   " UND enthalten "|"
+  typeset -A documented_paths=()
+  local -a documented_tools=()
+  while IFS= read -r line; do
+    # Nur Zeilen die mit "#   " beginnen UND Pipes enthalten
+    [[ "$line" != "#   "*"|"* ]] && continue
+    
+    local tool_name="${line##\#}"
+    tool_name="${tool_name%%|*}"
+    tool_name="${tool_name// /}"
+    [[ -z "$tool_name" ]] && continue
+    
+    # Extrahiere config-path (zweite Spalte)
+    local cfg_path="${line#*|}"
+    cfg_path="${cfg_path%%|*}"
+    cfg_path="${cfg_path// /}"
+    
+    documented_tools+=("$tool_name")
+    documented_paths[$tool_name]="$cfg_path"
+  done < "$theme_colors"
+  
+  local has_errors=0
+  
+  # ━━━ Richtung 1: IST → SOLL ━━━
+  # Prüfe ob alle Config-Dateien mit "catppuccin" dokumentiert sind
+  local -a undocumented=()
+  while IFS= read -r file; do
+    [[ -z "$file" ]] && continue
+    
+    local tool=""
+    case "$file" in
+      */bat/themes/*|*/bat/config)     tool="bat" ;;
+      */zsh/*syntax*)                  tool="zsh-syntax" ;;
+      *catppuccin-mocha.terminal)      tool="Terminal.app" ;;
+      *Catppuccin\ Mocha.xccolortheme) tool="Xcode" ;;
+      */theme-colors)                  tool="theme-colors" ;;
+      */docs/*|*/tests/*|*.page.md|*.sh|*.alias) continue ;;
+      */.config/*/*)
+        tool="${file#*/.config/}"
+        tool="${tool%%/*}"
+        ;;
+    esac
+    
+    [[ -z "$tool" ]] && continue
+    
+    if ! (( ${documented_tools[(Ie)$tool]} )); then
+      undocumented+=("$tool")
+      has_errors=1
+    fi
+  done < <(grep -rlI -E "catppuccin|Catppuccin" "$DOTFILES_DIR" --include="*.yml" --include="*.yaml" --include="*.toml" --include="*.json" --include="*.jsonc" --include="*.theme" --include="*.tmTheme" --include="*.terminal" --include="*.xccolortheme" --include="config" --include="theme-colors" 2>/dev/null | grep -v ".git" | grep -v "node_modules")
+  
+  # ━━━ Richtung 2: SOLL → IST ━━━
+  # Prüfe ob alle dokumentierten Tools auch existieren
+  local -a missing_configs=()
+  for tool in "${documented_tools[@]}"; do
+    local config_path="${documented_paths[$tool]}"
+    [[ -z "$config_path" ]] && continue
+    
+    # Expandiere Pfad (~ → $HOME, ~/dotfiles → $DOTFILES_DIR)
+    local expanded_path="${config_path/#\~\/dotfiles/$DOTFILES_DIR}"
+    expanded_path="${expanded_path/#\~/$HOME}"
+    
+    # Prüfe ob Pfad existiert (Datei oder Verzeichnis)
+    if [[ ! -e "$expanded_path" ]] && [[ ! -d "$expanded_path" ]]; then
+      # Bei Glob-Pattern (*) prüfe ob mindestens eine Datei existiert
+      if [[ "$expanded_path" == *\** ]]; then
+        # Aktiviere Glob-Expansion und prüfe
+        setopt local_options nullglob
+        local -a glob_matches=($~expanded_path)
+        (( ${#glob_matches[@]} == 0 )) && missing_configs+=("$tool → $config_path") && has_errors=1
+      else
+        missing_configs+=("$tool → $config_path")
+        has_errors=1
+      fi
+    fi
+  done
+  
+  # ━━━ Ergebnis ausgeben ━━━
+  if (( ${#undocumented[@]} > 0 )); then
+    fail "Config mit Catppuccin aber nicht in theme-colors:"
+    for item in "${(@u)undocumented[@]}"; do  # (@u) = unique
+      print "       → $item"
+    done
+    print "       💡 Füge das Tool zu terminal/.config/theme-colors hinzu"
+  fi
+  
+  if (( ${#missing_configs[@]} > 0 )); then
+    fail "In theme-colors dokumentiert aber Config fehlt:"
+    for item in "${missing_configs[@]}"; do
+      print "       → $item"
+    done
+    print "       💡 Entferne veraltete Einträge aus theme-colors"
+  fi
+  
+  if (( has_errors == 0 )); then
+    pass "Theme-Registry konsistent (${#documented_tools[@]} Tools, bidirektional geprüft)"
+  fi
+}
+
+check_theme_registry
 
 # --- Brewfile Status ---
 section "Brewfile Status"

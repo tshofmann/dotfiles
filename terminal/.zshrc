@@ -4,12 +4,15 @@
 # Zweck   : Hauptkonfiguration für interaktive ZSH Shells
 # Pfad    : ~/.zshrc
 # Laden   : .zshenv → .zprofile → [.zshrc] → .zlogin
+# Theme   : ~/.config/theme-colors (tldr catppuccin)
 # Docs    : https://zsh.sourceforge.io/Doc/Release/Files.html#Startup_002fShutdown-Files
 # ============================================================
 
 # ------------------------------------------------------------
 # History-Konfiguration
 # ------------------------------------------------------------
+# Zentrale History-Datei mit Timestamps und Duplikat-Filterung
+
 HISTFILE="${HISTFILE:-$HOME/.zsh_history}"
 HISTSIZE=25000
 SAVEHIST=25000
@@ -28,7 +31,7 @@ setopt HIST_SAVE_NO_DUPS     # Keine Duplikate in Datei speichern
 # ------------------------------------------------------------
 # Completion-System initialisieren
 # ------------------------------------------------------------
-# compinit aktiviert Tab-Vervollständigung (z.B. git <Tab>)
+# Tab-Vervollständigung mit täglicher Cache-Erneuerung
 # Cache wird täglich erneuert, sonst schneller Start mit -C
 autoload -Uz compinit
 if [[ -n "${ZDOTDIR:-$HOME}/.zcompdump"(#qN.mh+24) ]]; then
@@ -40,8 +43,10 @@ fi
 # ------------------------------------------------------------
 # Aliase laden
 # ------------------------------------------------------------
-# Catppuccin Mocha ANSI-Farben für Shell-Funktionen
-[[ -f "$HOME/.config/shell-colors" ]] && source "$HOME/.config/shell-colors"
+# Farben und modulare Alias-Dateien aus ~/.config/alias/
+
+# Catppuccin Mocha ANSI-Farben ($C_GREEN, $C_RED, etc.)
+[[ -f "$HOME/.config/theme-colors" ]] && source "$HOME/.config/theme-colors"
 
 # Lädt alle .alias-Dateien aus ~/.config/alias/
 for alias_file in "$HOME/.config/alias"/*.alias(N-.on); do
@@ -51,7 +56,8 @@ done
 # ------------------------------------------------------------
 # Tool-Konfigurationen
 # ------------------------------------------------------------
-# Config-Dateien für fzf, ripgrep und bat liegen in ~/.config/
+# Umgebungsvariablen für XDG-konforme Config-Pfade
+
 export FZF_DEFAULT_OPTS_FILE="$HOME/.config/fzf/config"
 export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/config"
 # bat nutzt automatisch ~/.config/bat/config
@@ -62,7 +68,8 @@ export EZA_ICONS_AUTO=1
 # ------------------------------------------------------------
 # Tools initialisieren
 # ------------------------------------------------------------
-# fzf: Shell-Integration (Ctrl+X 1=History, Ctrl+X 2=Datei, Ctrl+X 3=Verzeichnis)
+# Shell-Integrationen für fzf, zoxide, gh, starship
+
 if command -v fzf >/dev/null 2>&1; then
     [[ -f "$HOME/.config/fzf/init.zsh" ]] && source "$HOME/.config/fzf/init.zsh"
 fi
@@ -91,6 +98,8 @@ fi
 # ------------------------------------------------------------
 # ZSH-Plugins (am Ende laden)
 # ------------------------------------------------------------
+# Autosuggestions und Syntax-Highlighting (Reihenfolge wichtig!)
+
 # Autosuggestions: Zeigt Vorschläge aus History
 #   →        Vorschlag komplett übernehmen
 #   Alt+→    Wort für Wort übernehmen
@@ -104,9 +113,9 @@ fi
     source "$HOME/.config/zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh"
 
 # Syntax-Highlighting: Farben zeigen Befehlsgültigkeit
-#   Grün          Gültiger Befehl
-#   Rot           Ungültiger Befehl
-#   Unterstrichen Existierende Datei/Verzeichnis
+#   Grün           Gültiger Befehl
+#   Rot            Ungültiger Befehl
+#   Unterstrichen  Existierende Datei/Verzeichnis
 # WICHTIG: Muss als letztes Plugin geladen werden
 [[ -f "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
     source "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"

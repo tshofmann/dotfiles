@@ -43,7 +43,7 @@ dothelp() {
         return 1
     fi
     
-    # Ausgabe mit Farben (falls shell-colors geladen)
+    # Ausgabe mit Farben (falls theme-colors geladen)
     local header="${C_BLUE:-}dotfiles Hilfe${C_RESET:-}"
     local hint="${C_SUBTEXT0:-}Tipp: tldr <tool> zeigt Hilfe mit dotfiles-Erweiterungen${C_RESET:-}"
     

@@ -161,7 +161,7 @@ Alle Tools nutzen das **Catppuccin Mocha** Farbschema für ein einheitliches Ers
 | **Terminal.app** | `setup/catppuccin-mocha.terminal` | [github.com/catppuccin/Terminal.app](https://github.com/catppuccin/Terminal.app) |
 | **Xcode** | `setup/Catppuccin Mocha.xccolortheme` | [github.com/catppuccin/xcode](https://github.com/catppuccin/xcode) |
 
-> **Hinweis:** Shell-Farben sind zentral in `terminal/.config/shell-colors` definiert.
+> **Hinweis:** Shell-Farben sind zentral in `terminal/.config/theme-colors` definiert.
 > Die vollständige Palette findest du unter [catppuccin.com/palette](https://catppuccin.com/palette).
 
 ---
@@ -561,7 +561,7 @@ Zeigt Befehlsvorschläge basierend auf der History beim Tippen an.
 
 | Taste | Aktion |
 |-------|--------|
-| `→ (Pfeil rechts)` | Vorschlag komplett übernehmen |
+| `→` | Vorschlag komplett übernehmen |
 | `Alt+→` | Wort für Wort übernehmen |
 | `Escape` | Vorschlag ignorieren |
 
@@ -574,8 +574,6 @@ Färbt Kommandos während der Eingabe ein:
 | **Grün** | Gültiger Befehl |
 | **Rot** | Ungültiger Befehl |
 | **Unterstrichen** | Existierende Datei/Verzeichnis |
-
-> **Hinweis:** Startzeit-Impact minimal (~20ms)
 ---
 
 ## Eigene Tools hinzufügen

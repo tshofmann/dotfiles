@@ -1,0 +1,82 @@
+# ============================================================
+# theme-colors - Catppuccin Mocha Theme-Registry
+# ============================================================
+# Zweck   : Zentrale Farbvariablen + Theme-Quellen-Dokumentation
+# Pfad    : ~/.config/theme-colors
+# Docs    : https://catppuccin.com/palette
+# ============================================================
+# WICHTIG: Bei Änderungen auch setup/bootstrap.sh aktualisieren!
+#          Bootstrap kann theme-colors nicht sourcen (läuft vor stow).
+# ============================================================
+
+# ------------------------------------------------------------
+# Theme-Quellen (für tldr catppuccin Generator)
+# ------------------------------------------------------------
+# Format: tool | config-pfad | upstream-repo | status
+#
+#   bat           | ~/.config/bat/themes/              | github.com/catppuccin/bat                   | upstream
+#   btop          | ~/.config/btop/themes/             | github.com/catppuccin/btop                  | upstream
+#   eza           | ~/.config/eza/theme.yml            | github.com/catppuccin/eza                   | upstream+header
+#   fastfetch     | ~/.config/fastfetch/config.jsonc   | manual                                      | manual
+#   fzf           | ~/.config/fzf/config               | github.com/catppuccin/fzf                   | upstream-bg
+#   lazygit       | ~/.config/lazygit/config.yml       | github.com/catppuccin/lazygit               | upstream
+#   starship      | ~/.config/starship.toml            | github.com/catppuccin/starship              | generated
+#   tealdeer      | ~/.config/tealdeer/config.toml     | manual                                      | manual
+#   zsh-syntax    | ~/.config/zsh/catppuccin_mocha-*   | github.com/catppuccin/zsh-syntax-highlighting | upstream
+#   Terminal.app  | ~/dotfiles/setup/                  | github.com/catppuccin/Terminal.app          | upstream
+#   Xcode         | ~/dotfiles/setup/                  | github.com/catppuccin/xcode                 | upstream
+#   theme-colors  | ~/.config/theme-colors             | manual                                      | manual
+#
+# Status-Legende:
+#   upstream      = Unverändert aus offiziellem Catppuccin-Repo
+#   upstream+X    = Aus Upstream mit Anpassung (X = was geändert)
+#   upstream-X    = Aus Upstream mit Entfernung (X = was entfernt)
+#   generated     = Wird bei bootstrap generiert (starship preset)
+#   manual        = Manuell basierend auf catppuccin.com/palette
+# ------------------------------------------------------------
+
+# ------------------------------------------------------------
+# ANSI-Farbvariablen für Shell-Skripte
+# ------------------------------------------------------------
+
+# True Color (24-bit) – Format: \033[38;2;R;G;Bm
+# Exportiert für Subshells (fzf-Preview, Scripts, etc.)
+typeset -gx C_RESET=$'\033[0m'
+
+# ---- Accent Colors ----
+typeset -gx C_ROSEWATER=$'\033[38;2;245;224;220m'  # #F5E0DC
+typeset -gx C_FLAMINGO=$'\033[38;2;242;205;205m'   # #F2CDCD
+typeset -gx C_PINK=$'\033[38;2;245;194;231m'       # #F5C2E7
+typeset -gx C_MAUVE=$'\033[38;2;203;166;247m'      # #CBA6F7
+typeset -gx C_RED=$'\033[38;2;243;139;168m'        # #F38BA8
+typeset -gx C_MAROON=$'\033[38;2;235;160;172m'     # #EBA0AC
+typeset -gx C_PEACH=$'\033[38;2;250;179;135m'      # #FAB387
+typeset -gx C_YELLOW=$'\033[38;2;249;226;175m'     # #F9E2AF
+typeset -gx C_GREEN=$'\033[38;2;166;227;161m'      # #A6E3A1
+typeset -gx C_TEAL=$'\033[38;2;148;226;213m'       # #94E2D5
+typeset -gx C_SKY=$'\033[38;2;137;220;235m'        # #89DCEB
+typeset -gx C_SAPPHIRE=$'\033[38;2;116;199;236m'   # #74C7EC
+typeset -gx C_BLUE=$'\033[38;2;137;180;250m'       # #89B4FA
+typeset -gx C_LAVENDER=$'\033[38;2;180;190;254m'   # #B4BEFE
+
+# ---- Text Colors ----
+typeset -gx C_TEXT=$'\033[38;2;205;214;244m'       # #CDD6F4
+typeset -gx C_SUBTEXT1=$'\033[38;2;186;194;222m'   # #BAC2DE
+typeset -gx C_SUBTEXT0=$'\033[38;2;166;173;200m'   # #A6ADC8
+
+# ---- Overlay Colors ----
+typeset -gx C_OVERLAY2=$'\033[38;2;147;153;178m'   # #9399B2
+typeset -gx C_OVERLAY1=$'\033[38;2;127;132;156m'   # #7F849C
+typeset -gx C_OVERLAY0=$'\033[38;2;108;112;134m'   # #6C7086
+
+# ---- Surface Colors ----
+typeset -gx C_SURFACE2=$'\033[38;2;88;91;112m'     # #585B70
+typeset -gx C_SURFACE1=$'\033[38;2;69;71;90m'      # #45475A
+typeset -gx C_SURFACE0=$'\033[38;2;49;50;68m'      # #313244
+
+# ---- Base Colors ----
+typeset -gx C_BASE=$'\033[38;2;30;30;46m'          # #1E1E2E
+typeset -gx C_MANTLE=$'\033[38;2;24;24;37m'        # #181825
+typeset -gx C_CRUST=$'\033[38;2;17;17;27m'         # #11111B
+
+# EOF

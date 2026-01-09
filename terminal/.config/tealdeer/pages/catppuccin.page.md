@@ -5,34 +5,41 @@
 
 - Zeige alle Theme-Dateien in diesem Repository:
 
-`fd -e theme -e yml -e toml catppuccin ~/dotfiles`
+`fd -HI -e theme -e tmTheme -e xccolortheme catppuccin ~/dotfiles`
 
-- Lokale Theme-Konfigurationen:
+- Themes aus offiziellen Catppuccin-Repositories (unverändert):
 
-`bat: ~/.config/bat/themes/Catppuccin Mocha.tmTheme`
-`btop: ~/.config/btop/themes/catppuccin_mocha.theme`
-`eza: ~/.config/eza/theme.yml`
-`fzf: ~/.config/fzf/config`
+`Terminal.app: ~/dotfiles/setup/`
+`Xcode: ~/dotfiles/setup/`
+`bat: ~/.config/bat/themes/`
+`btop: ~/.config/btop/themes/`
 `lazygit: ~/.config/lazygit/config.yml`
-`tealdeer: ~/.config/tealdeer/config.toml`
-`zsh: ~/.config/zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh`
-`Terminal.app: ~/dotfiles/setup/catppuccin-mocha.terminal`
-`Xcode: ~/dotfiles/setup/Catppuccin Mocha.xccolortheme`
+`zsh-syntax: ~/.config/zsh/catppuccin_mocha-*`
 
-- Zentrale Shell-Farbvariablen:
+- Themes aus Upstream mit lokalen Anpassungen:
 
-`source ~/.config/shell-colors`
+`eza: ~/.config/eza/theme.yml (header)`
+`fzf: ~/.config/fzf/config (bg)`
+`starship: ~/.config/starship.toml (generiert (bootstrap))`
 
-- Farbvariablen in Skripten nutzen:
+- Manuell konfiguriert (basierend auf catppuccin.com/palette):
 
-`echo "${C_GREEN}Erfolg${C_RESET}"`
+`fastfetch: ~/.config/fastfetch/config.jsonc (kein offizielles Repo)`
+`tealdeer: ~/.config/tealdeer/config.toml (kein offizielles Repo)`
+`theme-colors: ~/.config/theme-colors (kein offizielles Repo)`
+
+- Zentrale Shell-Farbvariablen in Skripten nutzen:
+
+`source ~/.config/theme-colors && echo "\${C_GREEN}Erfolg\${C_RESET}"`
 
 - Upstream Theme-Repositories:
 
+`Terminal.app: github.com/catppuccin/Terminal.app`
+`Xcode: github.com/catppuccin/xcode`
 `bat: github.com/catppuccin/bat`
 `btop: github.com/catppuccin/btop`
 `eza: github.com/catppuccin/eza`
 `fzf: github.com/catppuccin/fzf`
 `lazygit: github.com/catppuccin/lazygit`
-`Terminal.app: github.com/catppuccin/Terminal.app`
-`Xcode: github.com/catppuccin/xcode`
+`starship: github.com/catppuccin/starship`
+`zsh-syntax: github.com/catppuccin/zsh-syntax-highlighting`

@@ -10,7 +10,9 @@
 # ------------------------------------------------------------
 # XDG Base Directory Specification
 # ------------------------------------------------------------
-# Standard-Pfad für Konfigurationsdateien. Wichtig für:
+# Zentraler Config-Pfad ~/.config für alle Tools
+#
+# Wichtig für:
 # - bat (config)
 # - btop (btop.conf, themes)
 # - fzf (config)
@@ -30,6 +32,8 @@ export TEALDEER_CONFIG_DIR="$XDG_CONFIG_HOME/tealdeer"
 # ------------------------------------------------------------
 # macOS Session-Wiederherstellung deaktivieren
 # ------------------------------------------------------------
+# Eine zentrale ~/.zsh_history statt History pro Terminal-Tab
+#
 # Deaktiviert separate History pro Tab zugunsten einer zentralen
 # ~/.zsh_history. Muss hier stehen (vor /etc/zshrc_Apple_Terminal).
 SHELL_SESSIONS_DISABLE=1

@@ -1,8 +1,9 @@
 #!/usr/bin/env zsh
 # ============================================================
-# tldr.sh - Generator für tldr-Patches
+# tldr.sh - Generator für tldr-Patches und catppuccin.page.md
 # ============================================================
 # Zweck   : Generiert tldr-Patches aus .alias-Dateien
+#           und catppuccin.page.md aus Theme-Kommentaren
 # Pfad    : scripts/generators/tldr.sh
 # Hinweis : Ersetzt scripts/generate-tldr-patches.sh
 # ============================================================
@@ -246,7 +247,174 @@ generate_cross_references() {
 }
 
 # ------------------------------------------------------------
-# Generator: Kompletter Patch für ein Tool
+# Generator: catppuccin.page.md aus theme-colors
+# ------------------------------------------------------------
+# Parst Theme-Quellen aus ~/.config/theme-colors Header
+# Format: tool | config-pfad | upstream-repo | status
+# ------------------------------------------------------------
+generate_catppuccin_page() {
+    local -A themes_upstream=()      # unverändert aus Upstream
+    local -A themes_modified=()      # Upstream mit Anpassungen
+    local -A themes_manual=()        # manuell konfiguriert
+    local -A theme_paths=()          # Pfad zur Config
+    local -A theme_repos=()          # Upstream-Repo URL
+    
+    local theme_colors_file="$DOTFILES_DIR/terminal/.config/theme-colors"
+    [[ ! -f "$theme_colors_file" ]] && return 1
+    
+    # Parse Theme-Quellen Block aus theme-colors
+    local in_block=false
+    while IFS= read -r line; do
+        # Block-Start erkennen
+        if [[ "$line" == "# Format:"* ]]; then
+            in_block=true
+            continue
+        fi
+        [[ "$in_block" != true ]] && continue
+        
+        # Block-Ende bei Status-Legende oder leerem Kommentar
+        [[ "$line" == "# Status-Legende:"* ]] && break
+        [[ "$line" == "#" ]] && continue
+        
+        # Nur Zeilen mit "#   tool | ..." parsen
+        [[ "$line" != "#   "* ]] && continue
+        [[ "$line" != *"|"* ]] && continue
+        
+        # Parse: #   tool | path | source | status
+        line="${line#\#   }"
+        local tc_tool="${line%%|*}"
+        line="${line#*|}"
+        local tc_path="${line%%|*}"
+        line="${line#*|}"
+        local tc_repo="${line%%|*}"
+        local tc_status="${line#*|}"
+        
+        # Trim all leading/trailing whitespace
+        tc_tool="${tc_tool#"${tc_tool%%[![:space:]]*}"}"; tc_tool="${tc_tool%"${tc_tool##*[![:space:]]}"}"
+        tc_path="${tc_path#"${tc_path%%[![:space:]]*}"}"; tc_path="${tc_path%"${tc_path##*[![:space:]]}"}"
+        tc_repo="${tc_repo#"${tc_repo%%[![:space:]]*}"}"; tc_repo="${tc_repo%"${tc_repo##*[![:space:]]}"}"
+        tc_status="${tc_status#"${tc_status%%[![:space:]]*}"}"; tc_status="${tc_status%"${tc_status##*[![:space:]]}"}"
+        
+        [[ -z "$tc_tool" ]] && continue
+        
+        theme_paths[$tc_tool]="$tc_path"
+        theme_repos[$tc_tool]="$tc_repo"
+        
+        # Kategorisieren nach Status
+        case "$tc_status" in
+            upstream)
+                themes_upstream[$tc_tool]="$tc_repo"
+                ;;
+            upstream+*|upstream-*)
+                # Extrahiere Anpassungsbeschreibung
+                local mod="${tc_status#upstream}"
+                mod="${mod#+}"; mod="${mod#-}"
+                themes_modified[$tc_tool]="$tc_repo | $mod"
+                ;;
+            generated)
+                themes_modified[$tc_tool]="$tc_repo | generiert (bootstrap)"
+                ;;
+            manual)
+                themes_manual[$tc_tool]="kein offizielles Repo"
+                ;;
+        esac
+    done < "$theme_colors_file"
+    
+    # 3. Generiere Markdown
+    local output="# catppuccin
+
+> Catppuccin Mocha Theme-Konfiguration für alle Tools.
+> Mehr Informationen: https://catppuccin.com/palette
+
+- Zeige alle Theme-Dateien in diesem Repository:
+
+\`fd -HI -e theme -e tmTheme -e xccolortheme catppuccin ~/dotfiles\`
+
+- Themes aus offiziellen Catppuccin-Repositories (unverändert):
+
+"
+    # Sortierte Ausgabe der Upstream-Themes
+    local t p i n r
+    for t in ${(ko)themes_upstream}; do
+        p="${theme_paths[$t]}"
+        output+="\`${t}: ${p}\`\n"
+    done
+    
+    output+="
+- Themes aus Upstream mit lokalen Anpassungen:
+
+"
+    for t in ${(ko)themes_modified}; do
+        p="${theme_paths[$t]}"
+        i="${themes_modified[$t]}"
+        n="${i#*| }"
+        output+="\`${t}: ${p} (${n})\`\n"
+    done
+    
+    output+="
+- Manuell konfiguriert (basierend auf catppuccin.com/palette):
+
+"
+    for t in ${(ko)themes_manual}; do
+        p="${theme_paths[$t]}"
+        n="${themes_manual[$t]}"
+        output+="\`${t}: ${p} (${n})\`\n"
+    done
+    
+    output+="
+- Zentrale Shell-Farbvariablen in Skripten nutzen:
+
+\`source ~/.config/theme-colors && echo \"\\\${C_GREEN}Erfolg\\\${C_RESET}\"\`
+
+- Upstream Theme-Repositories:
+
+"
+    # Alle Upstream-Repos (aus beiden Kategorien)
+    local -A all_repos=()
+    for t in ${(k)themes_upstream}; do
+        all_repos[$t]="${themes_upstream[$t]}"
+    done
+    for t in ${(k)themes_modified}; do
+        i="${themes_modified[$t]}"
+        all_repos[$t]="${i%%|*}"
+    done
+    
+    for t in ${(ko)all_repos}; do
+        r="${all_repos[$t]}"
+        r="${r## }"; r="${r%% }"
+        output+="\`${t}: ${r}\`\n"
+    done
+    
+    echo -e "$output"
+}
+
+# ------------------------------------------------------------
+# Generator: catppuccin.page.md prüfen/generieren
+# ------------------------------------------------------------
+generate_catppuccin_tldr() {
+    local mode="${1:---check}"
+    local page_file="$TEALDEER_DIR/catppuccin.page.md"
+    
+    case "$mode" in
+        --check)
+            local generated=$(generate_catppuccin_page)
+            local current=""
+            [[ -f "$page_file" ]] && current=$(cat "$page_file")
+            
+            if [[ "$generated" != "$current" ]]; then
+                err "catppuccin.page.md ist veraltet"
+                return 1
+            fi
+            return 0
+            ;;
+        --generate)
+            local generated=$(generate_catppuccin_page)
+            write_if_changed "$page_file" "$generated"
+            ;;
+    esac
+}
+
+# ------------------------------------------------------------# Generator: Kompletter Patch für ein Tool
 # ------------------------------------------------------------
 generate_complete_patch() {
     local tool_name="$1"
@@ -301,6 +469,9 @@ generate_tldr_patches() {
                 fi
             done
             
+            # Prüfe catppuccin.page.md
+            generate_catppuccin_tldr --check || (( errors++ )) || true
+            
             return $errors
             ;;
             
@@ -323,6 +494,9 @@ generate_tldr_patches() {
                 
                 write_if_changed "$patch_file" "$generated"
             done
+            
+            # Generiere catppuccin.page.md
+            generate_catppuccin_tldr --generate
             ;;
     esac
 }

@@ -49,78 +49,53 @@ generate_tool_usage_section() {
 }
 
 # ------------------------------------------------------------
-# ZSH-Plugins Bedienung aus Brewfile extrahieren
+# ZSH-Plugins Bedienung aus .zshrc extrahieren
 # ------------------------------------------------------------
-# Parst den ZSH-Plugins Kommentarblock im Brewfile:
-#   # ZSH-Plugins
-#   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#   # Bedienung:
-#   #   zsh-autosuggestions:
-#   #     → (Pfeil rechts)    Vorschlag komplett übernehmen
-#   #     Alt+→               Wort für Wort übernehmen
-#   #   zsh-syntax-highlighting:
-#   #     Grün                Gültiger Befehl
-#   # Hinweis: Startzeit-Impact minimal (~20ms)
-#   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Parst die ZSH-Plugins Sektion in ~/.zshrc:
+#   # Autosuggestions: Zeigt Vorschläge aus History
+#   #   →        Vorschlag komplett übernehmen
+#   #   Alt+→    Wort für Wort übernehmen
+#   # Syntax-Highlighting: Farben zeigen Befehlsgültigkeit
+#   #   Grün          Gültiger Befehl
 generate_zsh_plugins_usage() {
     local output=""
-    local in_block=false
     local current_plugin=""
     local -A plugin_entries  # plugin_name -> "key|value\nkey|value"
-    local hinweis=""
+    local zshrc="$DOTFILES_DIR/terminal/.zshrc"
+    
+    [[ -f "$zshrc" ]] || return 1
     
     while IFS= read -r line; do
-        # Start des Blocks
-        if [[ "$line" == "# ZSH-Plugins" ]]; then
-            in_block=true
+        # Plugin-Block erkennen: "# Autosuggestions:" oder "# Syntax-Highlighting:"
+        if [[ "$line" == "# Autosuggestions:"* ]]; then
+            current_plugin="zsh-autosuggestions"
+            continue
+        fi
+        if [[ "$line" == "# Syntax-Highlighting:"* ]]; then
+            current_plugin="zsh-syntax-highlighting"
             continue
         fi
         
-        # Ende des Blocks (brew-Zeile)
-        if $in_block && [[ "$line" == brew\ * ]]; then
-            break
-        fi
-        
-        # Trennzeilen überspringen
-        if [[ "$line" == "# ~"* ]]; then
+        # Key-Value Paar: "#   key    value" (3 Leerzeichen nach #)
+        if [[ -n "$current_plugin" && "$line" == "#   "* ]]; then
+            local stripped="${line#\#   }"
+            # Trenne bei mehreren Leerzeichen
+            local key="${stripped%%  *}"
+            local rest="${stripped#*  }"
+            # Entferne führende Leerzeichen vom Value
+            local value="${rest#"${rest%%[![:space:]]*}"}"
+            
+            if [[ -n "$key" && -n "$value" ]]; then
+                plugin_entries[$current_plugin]+="${key}|${value}"$'\n'
+            fi
             continue
         fi
         
-        if $in_block; then
-            # Bedienung: Zeile überspringen (nur Marker)
-            if [[ "$line" == "# Bedienung:"* ]]; then
-                continue
-            fi
-            
-            # Hinweis extrahieren
-            if [[ "$line" == "# Hinweis:"* ]]; then
-                hinweis="${line#\# Hinweis: }"
-                continue
-            fi
-            
-            # Plugin-Name erkennen: "#   plugin-name:" (2 Leerzeichen nach #)
-            if [[ "$line" == "#   "* && "$line" == *":" && "$line" != *"    "* ]]; then
-                local stripped="${line#\#   }"
-                current_plugin="${stripped%:}"
-                continue
-            fi
-            
-            # Key-Value Paar: "#     key    value" (4 Leerzeichen nach #)
-            if [[ -n "$current_plugin" && "$line" == "#     "* ]]; then
-                local stripped="${line#\#     }"
-                # Trenne bei mehreren Leerzeichen
-                local key="${stripped%%  *}"
-                local rest="${stripped#*  }"
-                # Entferne führende Leerzeichen vom Value
-                local value="${rest##*([[:space:]])}"
-                value="${rest#"${rest%%[![:space:]]*}"}"
-                
-                if [[ -n "$key" && -n "$value" ]]; then
-                    plugin_entries[$current_plugin]+="${key}|${value}"$'\n'
-                fi
-            fi
+        # Block endet bei nicht-Kommentar oder source-Zeile
+        if [[ -n "$current_plugin" && ( "$line" != "#"* || "$line" == "[["* ) ]]; then
+            current_plugin=""
         fi
-    done < "$BREWFILE"
+    done < "$zshrc"
     
     # Ausgabe für zsh-autosuggestions
     if [[ -n "${plugin_entries[zsh-autosuggestions]}" ]]; then
@@ -132,7 +107,6 @@ generate_zsh_plugins_usage() {
         local entries="${plugin_entries[zsh-autosuggestions]}"
         while IFS='|' read -r key value; do
             [[ -z "$key" ]] && continue
-            # Trailing whitespace entfernen
             key="${key%"${key##*[![:space:]]}"}"
             value="${value%"${value##*[![:space:]]}"}"
             output+="| \`$key\` | $value |\n"
@@ -155,11 +129,6 @@ generate_zsh_plugins_usage() {
             output+="| **$key** | $value |\n"
         done <<< "$entries"
         output+="\n"
-    fi
-    
-    # Hinweis
-    if [[ -n "$hinweis" ]]; then
-        output+="> **Hinweis:** $hinweis\n"
     fi
     
     echo -e "$output"
@@ -292,7 +261,7 @@ generate_theming_section() {
     output+="| **Terminal.app** | \`setup/catppuccin-mocha.terminal\` | [github.com/catppuccin/Terminal.app](https://github.com/catppuccin/Terminal.app) |\n"
     output+="| **Xcode** | \`setup/Catppuccin Mocha.xccolortheme\` | [github.com/catppuccin/xcode](https://github.com/catppuccin/xcode) |\n"
     output+="\n"
-    output+="> **Hinweis:** Shell-Farben sind zentral in \`terminal/.config/shell-colors\` definiert.\n"
+    output+="> **Hinweis:** Shell-Farben sind zentral in \`terminal/.config/theme-colors\` definiert.\n"
     output+="> Die vollständige Palette findest du unter [catppuccin.com/palette](https://catppuccin.com/palette).\n"
     
     echo -e "$output"

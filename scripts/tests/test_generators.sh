@@ -15,7 +15,7 @@ set -euo pipefail
 SCRIPT_DIR="${0:A:h}"
 DOTFILES_DIR="${SCRIPT_DIR:h:h}"
 LIB_FILE="$DOTFILES_DIR/scripts/generators/lib.sh"
-SHELL_COLORS="$DOTFILES_DIR/terminal/.config/shell-colors"
+SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-colors"
 
 # Farben (Catppuccin Mocha) – zentral definiert
 [[ -f "$SHELL_COLORS" ]] && source "$SHELL_COLORS"
@@ -39,8 +39,8 @@ pass() {
 fail() {
     (( TESTS_FAILED++ )) || true
     echo -e "  ${C_RED}✖${C_RESET} $1"
-    [[ -n "${2:-}" ]] && echo -e "    ${C_DIM}Erwartet: $2${C_RESET}" || true
-    [[ -n "${3:-}" ]] && echo -e "    ${C_DIM}Erhalten: $3${C_RESET}" || true
+    [[ -n "${2:-}" ]] && echo -e "    ${C_OVERLAY0}Erwartet: $2${C_RESET}" || true
+    [[ -n "${3:-}" ]] && echo -e "    ${C_OVERLAY0}Erhalten: $3${C_RESET}" || true
 }
 
 assert_equals() {
@@ -380,7 +380,7 @@ main() {
     test_real_alias_files
     
     echo ""
-    echo -e "${C_DIM}────────────────────────────────────────${C_RESET}"
+    echo -e "${C_OVERLAY0}────────────────────────────────────────${C_RESET}"
     
     if (( TESTS_FAILED == 0 )); then
         echo -e "${C_GREEN}✔ Alle $TESTS_RUN Tests bestanden${C_RESET}"

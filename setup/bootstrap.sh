@@ -12,7 +12,7 @@ set -euo pipefail
 # ------------------------------------------------------------
 # Farben (Catppuccin Mocha)
 # ------------------------------------------------------------
-# WICHTIG: Synchron halten mit terminal/.config/shell-colors!
+# WICHTIG: Synchron halten mit terminal/.config/theme-colors!
 #          Nur Subset hier, da bootstrap.sh vor stow läuft.
 C_RESET='\033[0m'
 C_MAUVE='\033[38;2;203;166;247m'
@@ -21,7 +21,7 @@ C_RED='\033[38;2;243;139;168m'
 C_YELLOW='\033[38;2;249;226;175m'
 C_BLUE='\033[38;2;137;180;250m'
 C_TEXT='\033[38;2;205;214;244m'
-C_DIM='\033[38;2;108;112;134m'
+C_OVERLAY0='\033[38;2;108;112;134m'
 
 # ------------------------------------------------------------
 # Logging-Helper
