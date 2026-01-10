@@ -128,6 +128,9 @@ Nach der Installation kannst du die Einrichtung prüfen:
 # Interaktive Alias-Suche testen
 fa
 
+# Tool-Hilfe mit dotfiles-Erweiterungen
+dothelp
+
 # System-Info anzeigen
 ff
 ```
