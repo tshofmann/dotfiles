@@ -3,7 +3,7 @@
 ## DOs ✓
 
 | Regel | Beispiel |
-|-------|----------|
+| ------- | ---------- |
 | **Erst prüfen, dann handeln** | `git status`, `ls`, `cat` vor Änderungen |
 | **Terminal verifizieren** | Aussagen mit Output belegen |
 | **ZSH-Features nutzen** | `[[ ]]`, `${var##pattern}`, Arrays |
@@ -15,7 +15,7 @@
 ## DON'Ts ✗
 
 | Regel | Warum |
-|-------|-------|
+| ------- | ------- |
 | **Niemals `--no-verify`** | Hooks existieren aus gutem Grund |
 | **Niemals blind ändern** | Repository-Zustand ist die Wahrheit |
 | **Niemals statische Zahlen** | "X Tools installiert" veraltet sofort |
@@ -48,7 +48,7 @@
 > **Unix-Philosophie:** *"Do One Thing and Do It Well"*
 
 | Aspekt | Wert |
-|--------|------|
+| -------- | ------ |
 | **Plattform** | macOS Apple Silicon (arm64) |
 | **Shell** | ZSH (kein POSIX) |
 | **Theme** | Catppuccin Mocha |
@@ -59,6 +59,7 @@
 ### Dokumentation
 
 Doku wird automatisch aus Code generiert (Single Source of Truth):
+
 - `.alias`-Dateien → `docs/tools.md`, tldr-Patches
 - `Brewfile` → Tool-Listen
 - Verzeichnisse → `docs/architecture.md`
@@ -72,6 +73,7 @@ Doku wird automatisch aus Code generiert (Single Source of Truth):
 Zentrale Definition: `terminal/.config/theme-colors`
 
 In Skripten nutzen:
+
 ```zsh
 source "$DOTFILES_DIR/terminal/.config/theme-colors"
 # Dann: $C_GREEN, $C_RED, $C_BLUE, etc.
@@ -84,6 +86,7 @@ source "$DOTFILES_DIR/terminal/.config/theme-colors"
 Format für `terminal/.config/alias/*.alias`:
 
 **Regel:** Ein Alias/Funktion gehört in die `.alias`-Datei des Tools, das er **primär** repräsentiert.
+
 - `zf()` → `zoxide.alias` (zoxide-Workflow, fzf nur UI)
 - `fkill()` → `fzf.alias` (generische fzf-Funktion)
 
@@ -137,7 +140,7 @@ gh api repos/{owner}/{repo}/pulls/<nr>/reviews
 ### Review-Thread-Handling
 
 | Regel | Begründung |
-|-------|------------|
+| ------- | ------------ |
 | **Review-Threads einzeln beantworten** | Erklärung im Thread dokumentiert, nicht nur global |
 | **Dann erst resolven** | Thread-Historie bleibt nachvollziehbar |
 | **Alle Kommentare prüfen** | `get_review_comments` nicht nur `get_reviews` |
@@ -151,10 +154,12 @@ gh api graphql -f query='mutation { resolveReviewThread(input: {threadId: "PRRT_
 ### Issues und PRs erstellen
 
 **Bei Issue-Erstellung:** Templates aus `.github/ISSUE_TEMPLATE/` verwenden:
+
 - `bug_report.md` – für Bugs (inkl. Health-Check Ausgabe)
 - `feature_request.md` – für Feature Requests
 
 **Bei PR-Erstellung:** Template aus `.github/PULL_REQUEST_TEMPLATE.md` verwenden:
+
 - Checkliste durchgehen (generate-docs, health-check)
 - Art der Änderung markieren
 - Zusammenhängende Issues verlinken
@@ -167,7 +172,7 @@ gh api graphql -f query='mutation { resolveReviewThread(input: {threadId: "PRRT_
 ## Verweise
 
 | Thema | Datei |
-|-------|-------|
+| ------- | ------- |
 | Code-Konventionen | `CONTRIBUTING.md#code-konventionen` |
 | Funktions-Syntax | `CONTRIBUTING.md#funktions-syntax` |
 | Kommentar-Format | `CONTRIBUTING.md#beschreibungskommentar-format-für-fzf-funktionen` |

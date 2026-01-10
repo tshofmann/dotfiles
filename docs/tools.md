@@ -114,6 +114,7 @@ Diese Tools werden via Brewfile installiert:
 | **btop** | Ressourcen-Monitor | [github.com/aristocratos/btop](https://github.com/aristocratos/btop) |
 | **fastfetch** | Schnelle System-Info | [github.com/fastfetch-cli/fastfetch](https://github.com/fastfetch-cli/fastfetch) |
 | **lazygit** | Terminal-UI für Git | [github.com/jesseduffield/lazygit](https://github.com/jesseduffield/lazygit) |
+| **markdownlint-cli2** | Markdown-Linter | [github.com/DavidAnson/markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2) |
 | **zsh-syntax-highlighting** | Syntax-Highlighting | [github.com/zsh-users/zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) |
 | **zsh-autosuggestions** | History-Vorschläge | [github.com/zsh-users/zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) |
 
@@ -174,7 +175,6 @@ Alle Tools nutzen das **Catppuccin Mocha** Farbschema für ein einheitliches Ers
 Verfügbare Aliase aus `~/.config/alias/`:
 
 > **Guard-System:** Alle Tool-Aliase prüfen zuerst ob das jeweilige Tool installiert ist (`command -v`). Ist ein Tool nicht vorhanden, bleiben die originalen Befehle (`ls`, `cat`, `grep`) erhalten.
-
 
 ### bat.alias
 
@@ -285,7 +285,6 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 ### fzf.alias
 
-
 **Interaktive Funktionen (mit fzf):**
 
 | Funktion | Beschreibung |
@@ -342,6 +341,15 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 > **Hinweis:** Interaktive Git-Funktionen (mit fzf) sind unten definiert: glog, gbr, gst, gstash
 
+### markdownlint.alias
+
+| Alias | Befehl | Beschreibung |
+| ----- | ------ | ------------ |
+| `mdl` | `markdownlint-cli2` | Alle Markdown-Dateien im aktuellen Verzeichnis prüfen |
+| `mdla` | `markdownlint-cli2 "**/*.md"` | Alle Markdown-Dateien rekursiv prüfen |
+| `mdlf` | `markdownlint-cli2 --fix` | Mit Fix-Modus (automatische Korrekturen) |
+| `mdlaf` | `markdownlint-cli2 --fix "**/*.md"` | Alle Markdown-Dateien rekursiv fixen |
+
 ### rg.alias
 
 | Alias | Befehl | Beschreibung |
@@ -369,13 +377,11 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 ### zoxide.alias
 
-
 **Interaktive Funktionen (mit fzf):**
 
 | Funktion | Beschreibung |
 | -------- | ------------ |
 | `zf` | zoxide Browser (Enter=Wechseln, Ctrl+D=Löschen, Ctrl+Y=Kopieren) |
-
 
 ---
 
@@ -471,6 +477,18 @@ lg                # Terminal-UI für Git (lazygit)
 ```
 
 > **Hinweis:** Interaktive Git-Funktionen (mit fzf) sind unten definiert: glog, gbr, gst, gstash
+
+---
+
+### markdownlint – Shortcuts für markdownlint-cli2
+
+```zsh
+# Aliase
+mdl               # Alle Markdown-Dateien im aktuellen Verzeichnis prüfen
+mdla              # Alle Markdown-Dateien rekursiv prüfen
+mdlf              # Mit Fix-Modus (automatische Korrekturen)
+mdlaf             # Alle Markdown-Dateien rekursiv fixen
+```
 
 ---
 

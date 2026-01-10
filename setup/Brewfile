@@ -28,6 +28,9 @@ brew "btop"                                 # Ressourcen-Monitor | https://githu
 brew "fastfetch"                            # Schnelle System-Info | https://github.com/fastfetch-cli/fastfetch
 brew "lazygit"                              # Terminal-UI für Git | https://github.com/jesseduffield/lazygit
 
+# Linting
+brew "markdownlint-cli2"                    # Markdown-Linter | https://github.com/DavidAnson/markdownlint-cli2
+
 # ZSH-Plugins
 brew "zsh-syntax-highlighting"              # Syntax-Highlighting | https://github.com/zsh-users/zsh-syntax-highlighting
 brew "zsh-autosuggestions"                  # History-Vorschläge | https://github.com/zsh-users/zsh-autosuggestions

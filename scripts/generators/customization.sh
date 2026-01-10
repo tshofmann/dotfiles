@@ -187,7 +187,6 @@ HEADER
     if [[ -n "$xcode_theme" ]]; then
         local xcode_name="${xcode_theme:t}"  # Dateiname mit Endung
         cat << XCODE_SECTION
-
 ### Xcode Theme aktivieren
 
 Das Catppuccin Mocha Theme für Xcode wird automatisch vom Bootstrap-Skript nach \`~/Library/Developer/Xcode/UserData/FontAndColorThemes/\` kopiert, muss aber einmalig manuell aktiviert werden:
@@ -342,7 +341,6 @@ git commit -m "Terminal-Profil: <Neuer Font Name>"
 FONT_EXAMPLE
 
     cat << 'ALIASES_SECTION'
-
 ---
 
 ## Aliase anpassen

@@ -14,7 +14,6 @@ dotfiles/
 ├── .githooks/
 │   └── pre-commit # Verhindert Commits mit veralteter Dokumentation
 ├── .github/
-│   ├── .markdownlint.json
 │   ├── ISSUE_TEMPLATE/
 │   │   ├── bug_report.md
 │   │   ├── config.yml
@@ -27,8 +26,11 @@ dotfiles/
 │   ├── SECURITY.md # Sicherheitsrichtlinie
 │   ├── copilot-instructions.md # Instructions für dotfiles
 │   └── dependabot.yml # Hält GitHub Actions automatisch aktuell
+├── .vscode/
+│   └── settings.json
 ├── .gitattributes # Zeilenenden und Dateibehandlung normalisieren
 ├── .gitignore # Dateien von Versionskontrolle ausschließen
+├── .markdownlint-cli2.jsonc
 ├── .stowrc # Ignore-Patterns und Standard-Optionen für GNU Stow
 ├── docs/
 │   ├── architecture.md # Architektur
@@ -66,6 +68,7 @@ dotfiles/
 │   │   │   ├── fzf.alias # Tool-unspezifische fzf-Utilities
 │   │   │   ├── gh.alias # Interaktive GitHub-Workflows mit gh CLI
 │   │   │   ├── git.alias # Aliase für häufige Git-Operationen
+│   │   │   ├── markdownlint.alias # Shortcuts für markdownlint-cli2
 │   │   │   ├── rg.alias # Aliase für ripgrep mit häufig genutzten Optionen
 │   │   │   └── zoxide.alias # Funktionen für zoxide mit fzf-Integration
 │   │   ├── bat/
@@ -109,6 +112,7 @@ dotfiles/
 │   │   │   │   ├── fzf.patch.md # Globale Tastenkürzel (in allen fzf-Dialogen)
 │   │   │   │   ├── gh.patch.md # tldr-Patch (auto-generiert)
 │   │   │   │   ├── git.patch.md # tldr-Patch (auto-generiert)
+│   │   │   │   ├── markdownlint.patch.md # tldr-Patch (auto-generiert)
 │   │   │   │   ├── rg.patch.md # tldr-Patch (auto-generiert)
 │   │   │   │   └── zoxide.patch.md # tldr-Patch (auto-generiert)
 │   │   │   └── config.toml # Vereinfachte Man-Pages mit Beispielen (tldr)

@@ -1,0 +1,51 @@
+// ============================================================
+// .markdownlint-cli2.jsonc - Markdownlint Konfiguration
+// ============================================================
+// Zweck   : Einheitliche Markdown-Regeln für CLI, CI und VS Code
+// Docs    : https://github.com/DavidAnson/markdownlint-cli2
+// ============================================================
+// VS Code: Extension nutzt diese Datei automatisch
+// CLI:     markdownlint-cli2 '**/*.md'
+// ============================================================
+{
+  // Regeln (Basis: alle aktiviert)
+  "config": {
+    "default": true,
+
+    // MD013: Zeilenlänge – deaktiviert (Tabellen, URLs)
+    "MD013": false,
+
+    // MD033: Inline-HTML – erlaubte Elemente
+    "MD033": {
+      "allowed_elements": [
+        "a",
+        "br",
+        "details",
+        "img",
+        "kbd",
+        "picture",
+        "source",
+        "sub",
+        "sup",
+        "summary"
+      ]
+    },
+
+    // MD041: Erste Zeile muss Überschrift sein – deaktiviert (Frontmatter)
+    "MD041": false
+  },
+
+  // Dateien ignorieren
+  "ignores": [
+    "node_modules/**",
+    "**/node_modules/**",
+    // tldr-Patches haben spezielles Format (mehrere H1, kein Blank vor Heading)
+    "terminal/.config/tealdeer/pages/*.patch.md",
+    "terminal/.config/tealdeer/pages/*.page.md"
+  ],
+
+  // Globs für zu prüfende Dateien
+  "globs": [
+    "**/*.md"
+  ]
+}

@@ -687,35 +687,40 @@ Verfügbare Aliase aus `~/.config/alias/`:
         local docs_url=$(parse_header_field "$alias_file" "Docs")
         local hinweis=$(parse_header_field "$alias_file" "Hinweis")
         
-        output+="\n### ${tool_name}.alias\n\n"
+        output+="### ${tool_name}.alias\n\n"
         
         # Aliase
         local aliases=$(extract_aliases_from_file "$alias_file")
+        local has_aliases=false
         if [[ -n "${aliases// /}" ]]; then
             output+="| Alias | Befehl | Beschreibung |\n"
             output+="| ----- | ------ | ------------ |\n"
             output+="${aliases}\n"
+            has_aliases=true
         fi
         
         # Funktionen
         local funcs=$(extract_functions_from_file "$alias_file")
         if [[ -n "${funcs// /}" ]]; then
-            output+="\n**Interaktive Funktionen (mit fzf):**\n\n"
+            # Nur Leerzeile wenn vorher Aliase waren
+            [[ "$has_aliases" == true ]] && output+="\n"
+            output+="**Interaktive Funktionen (mit fzf):**\n\n"
             output+="| Funktion | Beschreibung |\n"
             output+="| -------- | ------------ |\n"
             output+="${funcs}\n"
         fi
         
-        # Hinweis (mit Leerzeile davor für Markdown-Konformität)
+        # Hinweis (mit Leerzeilen für Markdown-Konformität)
         if [[ -n "$hinweis" ]]; then
             output+="\n> **Hinweis:** $hinweis\n"
         fi
+        
+        # Leerzeile nach jedem Tool-Eintrag (für MD022/MD058)
+        output+="\n"
     done
     
     # Tool-Nutzung Sektion
-    output+='
-
----
+    output+='---
 
 ## Tool-Nutzung
 

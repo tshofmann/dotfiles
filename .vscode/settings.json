@@ -1,0 +1,28 @@
+{
+  // ============================================================
+  // VS Code Workspace Settings für dotfiles
+  // ============================================================
+  // Diese Einstellungen gelten nur für dieses Repository
+  // ============================================================
+
+  // Markdownlint: Nutzt .markdownlint-cli2.jsonc im Repo-Root
+  "markdownlint.config": {},
+  "markdownlint.run": "onSave",
+
+  // Shell-Dateien: ZSH als Standard
+  "files.associations": {
+    "*.alias": "shellscript",
+    "*.zsh*": "shellscript",
+    "theme-colors": "shellscript"
+  },
+
+  // Editor: Konsistente Formatierung
+  "editor.insertSpaces": true,
+  "editor.tabSize": 4,
+  "[shellscript]": {
+    "editor.tabSize": 4
+  },
+  "[markdown]": {
+    "editor.tabSize": 2
+  }
+}

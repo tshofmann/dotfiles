@@ -12,9 +12,9 @@ assignees: ''
 
 ## Schritte zum Reproduzieren
 
-1. 
-2. 
-3. 
+1.
+2.
+3.
 
 ## Erwartetes Verhalten
 
@@ -33,7 +33,7 @@ assignees: ''
 <details>
 <summary>Ausgabe von ./scripts/health-check.sh</summary>
 
-```
+```text
 <!-- Hier einfügen -->
 ```
 

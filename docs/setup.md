@@ -154,6 +154,7 @@ ff
 | `btop` | Ressourcen-Monitor |
 | `fastfetch` | Schnelle System-Info |
 | `lazygit` | Terminal-UI für Git |
+| `markdownlint-cli2` | Markdown-Linter |
 | `zsh-syntax-highlighting` | Syntax-Highlighting |
 | `zsh-autosuggestions` | History-Vorschläge |
 

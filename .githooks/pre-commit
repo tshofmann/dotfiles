@@ -106,22 +106,20 @@ check_alias_format() {
 }
 
 # ------------------------------------------------------------
-# 4. Markdown-Lint prüfen (optional - nur wenn npx verfügbar)
+# 4. Markdown-Lint prüfen
 # ------------------------------------------------------------
 check_markdown() {
     log "Prüfe Markdown-Dateien..."
     
-    # npx verfügbar?
-    if ! command -v npx >/dev/null 2>&1; then
-        warn "npx nicht gefunden – Markdownlint übersprungen"
-        warn "Installiere Node.js für lokale Markdown-Prüfung"
+    # markdownlint-cli2 verfügbar?
+    if ! command -v markdownlint-cli2 >/dev/null 2>&1; then
+        warn "markdownlint-cli2 nicht gefunden – übersprungen"
+        warn "Installieren mit: brew install markdownlint-cli2"
         return 0  # Kein Fehler, nur Warnung
     fi
     
-    # Markdownlint ausführen
-    if ! npx markdownlint-cli '**/*.md' \
-            --ignore node_modules \
-            --config "$DOTFILES_DIR/.github/.markdownlint.json" 2>/dev/null; then
+    # Markdownlint ausführen (config wird automatisch gefunden)
+    if ! markdownlint-cli2 '**/*.md' '#node_modules' 2>/dev/null; then
         err "Markdown-Fehler gefunden!"
         print ""
         print "  Fehler beheben oder Generatoren anpassen:"

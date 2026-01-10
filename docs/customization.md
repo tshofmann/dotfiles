@@ -21,7 +21,6 @@ Das gesamte Setup verwendet [Catppuccin Mocha](https://catppuccin.com/) als einh
 | **zsh-syntax-highlighting** | `terminal/.config/zsh/` | Via Stow verlinkt |
 | **Xcode** | `setup/Catppuccin Mocha.xccolortheme` | Via Bootstrap kopiert (manuelle Aktivierung) |
 
-
 ### Xcode Theme aktivieren
 
 Das Catppuccin Mocha Theme für Xcode wird automatisch vom Bootstrap-Skript nach `~/Library/Developer/Xcode/UserData/FontAndColorThemes/` kopiert, muss aber einmalig manuell aktiviert werden:
@@ -166,7 +165,6 @@ git commit -m "Terminal-Profil: <Neuer Font Name>"
 ```
 
 > **Hinweis:** Der Dateiname ist frei wählbar – bootstrap.sh findet automatisch die alphabetisch erste `.terminal`-Datei in `setup/`. Bei mehreren Dateien erscheint eine Warnung.
-
 
 ---
 

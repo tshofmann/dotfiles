@@ -84,7 +84,7 @@ jobs:
       - name: Markdown prüfen
         run: |
           echo "Prüfe Markdown-Dateien..."
-          npm install -g markdownlint-cli --silent
-          # Explizit nur .md Dateien – keine anderen Formate
-          markdownlint '**/*.md' --ignore node_modules --config .github/.markdownlint.json
+          brew install markdownlint-cli2
+          # Config wird automatisch aus .markdownlint-cli2.jsonc geladen
+          markdownlint-cli2 '**/*.md' '#node_modules'
           echo "✔ Markdown OK"

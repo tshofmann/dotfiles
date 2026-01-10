@@ -20,7 +20,7 @@ cd ~/dotfiles && stow --adopt -R terminal && git reset --hard HEAD && bat cache 
 ```
 
 > ⚠️ **Achtung:** `git reset --hard` verwirft lokale Änderungen. Siehe [Setup](docs/setup.md) für Details.
-
+>
 > 💡 **Tipp:** Nach der Installation `fa` eingeben für eine interaktive Übersicht aller Aliase und Funktionen. Oder `dothelp` für alle verfügbaren Hilfeseiten.
 
 ## Voraussetzungen
