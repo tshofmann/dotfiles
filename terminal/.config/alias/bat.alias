@@ -4,6 +4,8 @@
 # Zweck   : Aliase für bat mit verschiedenen Ausgabe-Stilen
 # Pfad    : ~/.config/alias/bat.alias
 # Docs    : https://github.com/sharkdp/bat
+# Ersetzt : cat (mit Syntax-Highlighting)
+# Aliase  : cat, catn, catd
 # ============================================================
 # Hinweis : Globale Optionen (Theme, Style, Syntax-Mappings)
 #           sind in ~/.config/bat/config definiert.

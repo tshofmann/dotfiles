@@ -4,6 +4,8 @@
 # Zweck   : Funktionen für zoxide mit fzf-Integration
 # Pfad    : ~/.config/alias/zoxide.alias
 # Docs    : https://github.com/ajeetdsouza/zoxide
+# Ersetzt : cd (lernt häufige Verzeichnisse)
+# Aliase  : z, zi, zf
 # ============================================================
 # Kommandos (via `zoxide init zsh`):
 #   z <query>    Wechsle zu Verzeichnis mit höchstem Score

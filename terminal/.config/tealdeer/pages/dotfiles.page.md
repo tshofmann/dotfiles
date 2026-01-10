@@ -1,16 +1,82 @@
 # dotfiles
 
-> Dotfiles Repository Hilfsfunktionen.
+> macOS-Konfiguration mit ZSH, Catppuccin und modernen CLI-Tools.
 > Mehr Informationen: <https://github.com/tshofmann/dotfiles>
 
-- Zeige alle verfügbaren Hilfeseiten mit dotfiles-Erweiterungen:
+- Diese Hilfe anzeigen:
 
 `dothelp`
 
-- Kurzalias für dothelp:
+- Aliase interaktiv durchsuchen (Enter=ausführen, Ctrl+Y=kopieren):
 
-`dh`
+`fa {{suche}}`
 
-- Zeige Hilfe für ein bestimmtes Tool (mit dotfiles-Patches):
+# Shell-Keybindings
 
-`tldr {{fzf}}`
+- Vorschlag komplett übernehmen:
+
+`→`
+
+- Wort für Wort übernehmen:
+
+`Alt+→`
+
+- Vorschlag ignorieren:
+
+`Escape`
+
+# fzf-Keybindings (Ctrl+X Prefix)
+
+- History:
+
+`Ctrl+X 1`
+
+- Dateien:
+
+`Ctrl+X 2`
+
+- Verzeichnisse:
+
+`Ctrl+X 3`
+
+# Moderne Ersetzungen
+
+- cat → bat (mit Syntax-Highlighting):
+
+`cat, catn, catd`
+
+- ls → eza (mit Icons und Git-Status):
+
+`ls, ll, la, tree`
+
+- find → fd (schneller, intuitive Syntax):
+
+`fd, fdf, fdd`
+
+- grep → rg (schneller, respektiert .gitignore):
+
+`rg, rgc, rgi`
+
+- cd → zoxide (lernt häufige Verzeichnisse):
+
+`z, zi, zf`
+
+# Homebrew
+
+- Homebrew Komplett-Update:
+
+`brewup`
+
+- Brewfile Versionsübersicht:
+
+`brewv`
+
+# Verfügbare Hilfeseiten
+
+- Tools mit dotfiles-Patches (tldr <tool>):
+
+`bat brew btop eza fastfetch fd fzf gh git markdownlint rg zoxide`
+
+- Eigene Seiten:
+
+`catppuccin, dotfiles`

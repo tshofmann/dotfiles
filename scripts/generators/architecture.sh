@@ -233,6 +233,25 @@ HEADER
 
 ## Kern-Konzepte
 
+### Unix-Philosophie
+
+> *"Do One Thing and Do It Well"*
+
+Dieses Repository folgt der Unix-Philosophie:
+
+- **Ein Tool = Eine Aufgabe** – Jede `.alias`-Datei gehört zu genau einem Tool
+- **Kleine, kombinierbare Einheiten** – Funktionen sind unabhängig und pipebar
+- **Text als universelles Interface** – Konfiguration in lesbaren Dateien
+
+### Modularität
+
+| Prinzip | Umsetzung |
+| ------- | --------- |
+| **Isolation** | Jedes Tool hat eigene Config in `~/.config/tool/` |
+| **Unabhängigkeit** | Guard-System erlaubt Teilinstallation |
+| **Erweiterbarkeit** | Neue Tools durch Hinzufügen einer `.alias`-Datei |
+| **Austauschbarkeit** | Aliase abstrahieren Tool-spezifische Syntax |
+
 ### Single Source of Truth
 
 Der Code ist die einzige Wahrheit. Alle Dokumentation wird automatisch generiert:

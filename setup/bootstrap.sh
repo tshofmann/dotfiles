@@ -520,3 +520,4 @@ log "  1. Terminal.app neu starten für vollständige Übernahme aller Einstellu
 log "  2. Konfigurationsdateien verlinken: cd $DOTFILES_DIR && stow --adopt -R terminal && git reset --hard HEAD"
 log "  3. bat Theme-Cache bauen: bat cache --build"
 log "  4. tldr-Pages herunterladen: tldr --update"
+log "  5. Schnellreferenz anzeigen: dothelp"

@@ -247,6 +247,206 @@ generate_cross_references() {
 }
 
 # ------------------------------------------------------------
+# Helper: Extrahiere erste N Alias-Namen aus einer .alias Datei
+# ------------------------------------------------------------
+extract_alias_names() {
+    local file="$1"
+    local max="${2:-3}"
+    local aliases=()
+    local count=0
+    
+    while IFS= read -r line; do
+        if [[ "$line" =~ "^alias ([a-zA-Z0-9_-]+)=" ]]; then
+            aliases+=("${match[1]}")
+            (( count++ ))
+            (( count >= max )) && break
+        fi
+    done < "$file"
+    
+    echo "${(j:, :)aliases}"
+}
+
+# ------------------------------------------------------------
+# Helper: Extrahiere Funktionsbeschreibung aus Kommentar
+# ------------------------------------------------------------
+# Format: # Beschreibung – Details (ignoriert # Nutzt, # Voraussetzung etc.)
+extract_function_desc() {
+    local file="$1"
+    local func_name="$2"
+    local desc_comment=""
+    local in_section=false
+    
+    while IFS= read -r line; do
+        # Sektionsheader gefunden
+        if [[ "$line" == "# ---"* ]]; then
+            in_section=true
+            desc_comment=""
+            continue
+        fi
+        
+        # Beschreibungskommentar (nicht Nutzt, Voraussetzung, Docs etc.)
+        if [[ "$line" == "# "* && "$line" != "# ==="* ]]; then
+            local content="${line#\# }"
+            local first_word="${content%% *}"
+            case "$first_word" in
+                Nutzt|Voraussetzung|Docs|Guard|Hinweis) ;;
+                *) [[ "$in_section" == true && -z "$desc_comment" ]] && desc_comment="$content" ;;
+            esac
+        elif [[ "$line" == "${func_name}() {" || "$line" == "${func_name}()"* ]]; then
+            # Fand die Funktion – gib Beschreibung zurück
+            echo "${desc_comment%% –*}"
+            return
+        fi
+    done < "$file"
+}
+
+# ------------------------------------------------------------
+# Generator: dotfiles.page.md Schnellreferenz
+# ------------------------------------------------------------
+# Quellen:
+#   - .zshrc: Shell-Keybindings (Tab, Autosuggestions)
+#   - fzf/init.zsh: Globale Ctrl+X Keybindings
+#   - *.alias Header: Ersetzt-Feld für moderne Ersetzungen
+#   - *.alias Header: Aliase-Feld für Beispiele
+#   - brew.alias: brewup/brewv Funktionsbeschreibungen
+#   - pages/*.patch.md, *.page.md: Verfügbare Hilfeseiten
+generate_dotfiles_page() {
+    local output=""
+    local zshrc="$DOTFILES_DIR/terminal/.zshrc"
+    local fzf_init="$DOTFILES_DIR/terminal/.config/fzf/init.zsh"
+    local brew_alias="$ALIAS_DIR/brew.alias"
+    
+    # Header
+    output+="# dotfiles\n\n"
+    output+="> macOS-Konfiguration mit ZSH, Catppuccin und modernen CLI-Tools.\n"
+    output+="> Mehr Informationen: <https://github.com/tshofmann/dotfiles>\n\n"
+    
+    # Einstiegspunkte
+    output+="- Diese Hilfe anzeigen:\n\n\`dothelp\`\n\n"
+    output+="- Aliase interaktiv durchsuchen (Enter=ausführen, Ctrl+Y=kopieren):\n\n\`fa {{suche}}\`\n"
+    
+    # Shell-Keybindings aus .zshrc (Format: #   Key   Beschreibung)
+    output+="\n# Shell-Keybindings\n\n"
+    if [[ -f "$zshrc" ]]; then
+        while IFS= read -r line; do
+            # Format: #   →        Vorschlag komplett übernehmen
+            if [[ "$line" == "#   →"* || "$line" == "#   Alt+"* || "$line" == "#   Escape"* ]]; then
+                local content="${line#\#   }"
+                # Spalte bei mehreren Spaces
+                local key="${content%%  *}"
+                local desc="${content#*  }"
+                # Führende Spaces entfernen
+                while [[ "$desc" == " "* ]]; do desc="${desc# }"; done
+                output+="- ${desc}:\n\n\`${key}\`\n\n"
+            fi
+        done < "$zshrc"
+    fi
+    
+    # Globale Keybindings aus fzf/init.zsh
+    output+="# fzf-Keybindings (Ctrl+X Prefix)\n\n"
+    if [[ -f "$fzf_init" ]]; then
+        while IFS= read -r line; do
+            if [[ "$line" == "bindkey '^X"*"'"*"# Ctrl+X"* ]]; then
+                # Extrahiere: bindkey '^X1' fzf-history-widget  # Ctrl+X 1 = History
+                local comment="${line#*\# }"
+                local key="${comment%% =*}"
+                local desc="${comment#*= }"
+                output+="- ${desc}:\n\n\`${key}\`\n\n"
+            fi
+        done < "$fzf_init"
+    fi
+    
+    # Moderne Ersetzungen aus *.alias Ersetzt-Feldern + Aliase-Feld
+    output+="# Moderne Ersetzungen\n\n"
+    local -A replacements=()
+    for alias_file in "$ALIAS_DIR"/*.alias(N); do
+        local tool_name=$(basename "$alias_file" .alias)
+        local ersetzt=$(parse_header_field "$alias_file" "Ersetzt")
+        if [[ -n "$ersetzt" && "$ersetzt" == *"("* ]]; then
+            local original="${ersetzt%% \(*}"
+            local desc="${ersetzt#*\(}"
+            desc="${desc%\)}"
+            # Bevorzuge explizites Aliase-Feld, sonst extrahiere aus Code
+            local examples=$(parse_header_field "$alias_file" "Aliase")
+            [[ -z "$examples" ]] && examples=$(extract_alias_names "$alias_file" 4)
+            replacements[$tool_name]="${original}|${desc}|${examples}"
+        fi
+    done
+    
+    # Sortierte Ausgabe mit dynamischen Beispielen
+    for tool in ${(ko)replacements}; do
+        local data="${replacements[$tool]}"
+        local original="${data%%|*}"
+        local rest="${data#*|}"
+        local desc="${rest%%|*}"
+        local examples="${rest#*|}"
+        output+="- ${original} → ${tool} (${desc}):\n\n"
+        if [[ -n "$examples" ]]; then
+            output+="\`${examples}\`\n\n"
+        else
+            output+="\`${tool}\`\n\n"
+        fi
+    done
+    
+    # Homebrew – Beschreibungen aus brew.alias
+    output+="# Homebrew\n\n"
+    if [[ -f "$brew_alias" ]]; then
+        local brewup_desc=$(extract_function_desc "$brew_alias" "brewup")
+        local brewv_desc=$(extract_function_desc "$brew_alias" "brewv")
+        [[ -n "$brewup_desc" ]] && output+="- ${brewup_desc}:\n\n\`brewup\`\n\n"
+        [[ -n "$brewv_desc" ]] && output+="- ${brewv_desc}:\n\n\`brewv\`\n"
+    fi
+    
+    # Verfügbare Hilfeseiten
+    output+="\n# Verfügbare Hilfeseiten\n\n"
+    local patches=()
+    local pages=()
+    for f in "$TEALDEER_DIR"/*.patch.md(N); do
+        patches+=("${${f:t}%.patch.md}")
+    done
+    for f in "$TEALDEER_DIR"/*.page.md(N); do
+        local name="${${f:t}%.page.md}"
+        [[ "$name" != "dotfiles" ]] && pages+=("$name")
+    done
+    
+    output+="- Tools mit dotfiles-Patches (tldr <tool>):\n\n"
+    output+="\`${(j:, :)${(o)patches}}\`\n\n"
+    
+    if (( ${#pages[@]} > 0 )); then
+        output+="- Eigene Seiten:\n\n"
+        output+="\`${(j:, :)${(o)pages}}, dotfiles\`\n"
+    fi
+    
+    echo -e "$output"
+}
+
+# ------------------------------------------------------------
+# Generator: dotfiles.page.md prüfen/generieren
+# ------------------------------------------------------------
+generate_dotfiles_tldr() {
+    local mode="${1:---check}"
+    local page_file="$TEALDEER_DIR/dotfiles.page.md"
+    
+    case "$mode" in
+        --check)
+            local generated=$(generate_dotfiles_page)
+            local current=""
+            [[ -f "$page_file" ]] && current=$(cat "$page_file")
+            
+            if [[ "$generated" != "$current" ]]; then
+                err "dotfiles.page.md ist veraltet"
+                return 1
+            fi
+            return 0
+            ;;
+        --generate)
+            local generated=$(generate_dotfiles_page)
+            write_if_changed "$page_file" "$generated"
+            ;;
+    esac
+}
+
+# ------------------------------------------------------------
 # Generator: catppuccin.page.md aus theme-colors
 # ------------------------------------------------------------
 # Parst Theme-Quellen aus ~/.config/theme-colors Header
@@ -469,6 +669,9 @@ generate_tldr_patches() {
                 fi
             done
             
+            # Prüfe dotfiles.page.md
+            generate_dotfiles_tldr --check || (( errors++ )) || true
+            
             # Prüfe catppuccin.page.md
             generate_catppuccin_tldr --check || (( errors++ )) || true
             
@@ -494,6 +697,9 @@ generate_tldr_patches() {
                 
                 write_if_changed "$patch_file" "$generated"
             done
+            
+            # Generiere dotfiles.page.md
+            generate_dotfiles_tldr --generate
             
             # Generiere catppuccin.page.md
             generate_catppuccin_tldr --generate

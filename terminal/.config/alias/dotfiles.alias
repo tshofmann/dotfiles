@@ -5,69 +5,12 @@
 # Pfad    : ~/.config/alias/dotfiles.alias
 # Docs    : https://github.com/tshofmann/dotfiles
 # ============================================================
-# Hinweis : dothelp listet alle verfügbaren Hilfe-Seiten auf.
-#           tldr-Patches erweitern offizielle Seiten mit dotfiles-
-#           spezifischen Funktionen, Aliases und Keybindings.
-# ============================================================
 
 # Guard: tldr (tealdeer) muss installiert sein für dothelp
 if ! command -v tldr >/dev/null 2>&1; then
     return 0
 fi
 
-# ------------------------------------------------------------
-# Hilfe-System
-# ------------------------------------------------------------
-# dothelp – Zeigt alle verfügbaren tldr-Seiten mit dotfiles-Erweiterungen
-dothelp() {
-    local pages_dir="${XDG_CONFIG_HOME:-$HOME/.config}/tealdeer/pages"
-    local tools=()
-    local tool
-    
-    # Sammle alle Tools mit Patches und Pages
-    if [[ -d "$pages_dir" ]]; then
-        # .patch.md = Erweiterungen zu offiziellen Seiten
-        for patch in "$pages_dir"/*.patch.md(N); do
-            tool="${patch:t:r:r}"  # Entferne .patch.md
-            tools+=("$tool")
-        done
-        # .page.md = vollständig eigene Seiten
-        for page in "$pages_dir"/*.page.md(N); do
-            tool="${page:t:r:r}"  # Entferne .page.md
-            tools+=("$tool")
-        done
-    fi
-    
-    if (( ${#tools[@]} == 0 )); then
-        echo "Keine dotfiles-Hilfeseiten gefunden."
-        return 1
-    fi
-    
-    # Ausgabe mit Farben (falls theme-colors geladen)
-    local header="${C_BLUE:-}dotfiles Hilfe${C_RESET:-}"
-    local hint="${C_SUBTEXT0:-}Tipp: tldr <tool> zeigt Hilfe mit dotfiles-Erweiterungen${C_RESET:-}"
-    
-    echo "$header"
-    echo "═══════════════════════════════════════════════════════════"
-    echo ""
-    echo "Verfügbare Hilfeseiten (tldr + dotfiles-Patches):"
-    echo ""
-    
-    # Tools als Tabelle ausgeben
-    printf "  "
-    local count=0
-    for tool in "${(@o)tools}"; do
-        printf "%-12s" "$tool"
-        (( count++ ))
-        (( count % 5 == 0 )) && printf "\n  "
-    done
-    (( count % 5 != 0 )) && echo ""
-    
-    echo ""
-    echo "$hint"
-    echo ""
-    echo "Beispiel: tldr fzf"
-}
-
-# Kurzalias für schnellen Zugriff
+# Schnellreferenz anzeigen (zeigt tldr dotfiles)
+alias dothelp='tldr dotfiles'
 alias dh='dothelp'

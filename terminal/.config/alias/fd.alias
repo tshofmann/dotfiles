@@ -4,6 +4,8 @@
 # Zweck   : Aliase für fd – schnelle Alternative zu find
 # Pfad    : ~/.config/alias/fd.alias
 # Docs    : https://github.com/sharkdp/fd
+# Ersetzt : find (schneller, intuitive Syntax)
+# Aliase  : fd, fdf, fdd
 # ============================================================
 # Hinweis : Globale Ignore-Patterns (.git/, node_modules/, etc.)
 #           sind in ~/.config/fd/ignore definiert.
