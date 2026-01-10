@@ -612,7 +612,16 @@ generate_catppuccin_tldr() {
             ;;
         --generate)
             local generated=$(generate_catppuccin_page)
-            write_if_changed "$page_file" "$generated"
+            local current=""
+            [[ -f "$page_file" ]] && current=$(cat "$page_file")
+            
+            if [[ "$generated" == "$current" ]]; then
+                dim "  Unverändert: catppuccin.page.md"
+            else
+                # Schreibe ohne trailing newline (konsistent mit Check)
+                printf '%s' "$generated" > "$page_file"
+                ok "Generiert: catppuccin.page.md"
+            fi
             ;;
     esac
 }
