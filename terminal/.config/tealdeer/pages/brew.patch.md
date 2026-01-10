@@ -1,4 +1,4 @@
-- dotfiles: Nutzt `fzf (Interactive)`
+- dotfiles: Nutzt `fzf (Interactive), theme-colors (Farben für brewv)`
 
 - dotfiles: Homebrew Komplett-Update:
 
