@@ -26,8 +26,6 @@ dotfiles/
 │   ├── SECURITY.md # Sicherheitsrichtlinie
 │   ├── copilot-instructions.md # Instructions für dotfiles
 │   └── dependabot.yml # Hält GitHub Actions automatisch aktuell
-├── .vscode/
-│   └── settings.json
 ├── .gitattributes # Zeilenenden und Dateibehandlung normalisieren
 ├── .gitignore # Dateien von Versionskontrolle ausschließen
 ├── .markdownlint-cli2.jsonc
