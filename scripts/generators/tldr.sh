@@ -590,7 +590,7 @@ generate_catppuccin_page() {
         output+="\`${t}: ${r}\`\n"
     done
     
-    # Entferne trailing newline
+    # Entferne trailing newline für konsistente Ausgabe (echo -e fügt eines hinzu)
     output="${output%\\n}"
     
     echo -e "$output"
@@ -623,8 +623,8 @@ generate_catppuccin_tldr() {
             if [[ "$generated" == "$current" ]]; then
                 dim "  Unverändert: catppuccin.page.md"
             else
-                # Schreibe ohne trailing newline (konsistent mit Check)
-                printf '%s' "$generated" > "$page_file"
+                # echo -e fügt newline hinzu, printf '%s\n' ist konsistenter
+                printf '%s\n' "$generated" > "$page_file"
                 ok "Generiert: catppuccin.page.md"
             fi
             ;;
