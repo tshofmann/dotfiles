@@ -22,7 +22,7 @@
 
 `masl`
 
-- dotfiles: Nutzt   : theme-colors:
+- dotfiles: Brewfile Versionsübersicht:
 
 `brewv`
 

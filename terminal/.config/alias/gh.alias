@@ -21,7 +21,7 @@ fi
 # Repository im Browser öffnen
 alias gho='gh browse'
 
-# GitHub Status: Zugewiesene Issues, PRs, Mentions
+# GitHub Status – zugewiesene Issues, PRs, Mentions
 alias ghst='gh status'
 
 # ------------------------------------------------------------

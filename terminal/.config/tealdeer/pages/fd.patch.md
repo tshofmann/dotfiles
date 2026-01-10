@@ -10,7 +10,7 @@
 
 `fdh`
 
-- dotfiles: Uneingeschränkt: alle Dateien inklusive .gitignore:
+- dotfiles: Uneingeschränkt – alle Dateien inklusive .gitignore:
 
 `fda`
 

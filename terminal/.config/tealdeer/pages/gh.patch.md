@@ -2,7 +2,7 @@
 
 `gho`
 
-- dotfiles: GitHub Status: Zugewiesene Issues, PRs, Mentions:
+- dotfiles: GitHub Status – zugewiesene Issues, PRs, Mentions:
 
 `ghst`
 

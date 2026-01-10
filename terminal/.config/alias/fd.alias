@@ -29,7 +29,7 @@ alias fdd='fd --type d'
 # Inklusive versteckte Dateien
 alias fdh='fd --hidden'
 
-# Uneingeschränkt: alle Dateien inklusive .gitignore
+# Uneingeschränkt – alle Dateien inklusive .gitignore
 alias fda='fd -u'
 
 # ------------------------------------------------------------

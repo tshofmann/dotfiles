@@ -190,16 +190,25 @@ generate_patch_for_alias() {
 
         if [[ "$trimmed" == \#* && "$trimmed" != \#\ ----* && "$trimmed" != \#\ ====* ]]; then
             local content="${trimmed#\# }"
-            local first_word="${content%% *}"
+            local first_word="${content%%[[:space:]]*}"
 
+            # Ignorieren: Header-Felder und Meta-Kommentare (behalten prev_comment)
+            case "$first_word" in
+                Zweck|Hinweis|Pfad|Docs|Guard|Voraussetzung|Nutzt|Ersetzt|Aliase|Kommandos|Umgebungsvariablen|Datenbank)
+                    # Nicht überschreiben, einfach weiter
+                    continue
+                    ;;
+            esac
+
+            # Gültige Beschreibung: enthält Trennzeichen (– oder -)
             if [[ "$content" == *" – "* || "$content" == *" - "* ]]; then
-                case "$first_word" in
-                    Zweck|Hinweis|Pfad|Docs|Guard|Voraussetzung|Nutzt) prev_comment="" ;;
-                    *) prev_comment="$content" ;;
-                esac
-            else
-                # Einfacher Kommentar ohne Trennzeichen
                 prev_comment="$content"
+            else
+                # Einfacher Kommentar ohne Trennzeichen – nur übernehmen wenn kein Doppelpunkt
+                if [[ "$content" != *":"* ]]; then
+                    prev_comment="$content"
+                fi
+                # Bei Doppelpunkt: prev_comment behalten
             fi
             continue
         fi
@@ -232,7 +241,7 @@ generate_patch_for_alias() {
             prev_comment=""
         fi
 
-        # Aliase: alias name='command'
+        # Aliase: alias name='command' (auch eingerückte)
         if [[ "$trimmed" =~ "^alias[[:space:]]+[a-zA-Z][a-zA-Z0-9_-]*=" ]]; then
             local alias_def="${trimmed#alias }"
             local alias_name="${alias_def%%=*}"

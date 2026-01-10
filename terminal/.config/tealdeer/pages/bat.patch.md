@@ -1,4 +1,4 @@
-- dotfiles: Ersetzt cat mit Syntax-Highlighting (plain style):
+- dotfiles: Dateiansicht:
 
 `cat`
 
