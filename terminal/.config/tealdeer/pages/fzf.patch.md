@@ -1,4 +1,4 @@
-- dotfiles: Nutzt `bat (Preview), eza (Verzeichnis-Preview)`
+- dotfiles: Nutzt `bat (Preview), eza (Verzeichnis-Preview), fd (Default-Command), tldr (fman)`
 
 # dotfiles: Globale Tastenkürzel (in allen fzf-Dialogen)
 

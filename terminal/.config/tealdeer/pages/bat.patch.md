@@ -1,3 +1,5 @@
+- dotfiles: Nutzt `fzf (Theme-Browser)`
+
 - dotfiles: Dateiansicht:
 
 `cat`

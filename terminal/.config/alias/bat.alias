@@ -4,6 +4,7 @@
 # Zweck   : Aliase für bat mit verschiedenen Ausgabe-Stilen
 # Pfad    : ~/.config/alias/bat.alias
 # Docs    : https://github.com/sharkdp/bat
+# Nutzt   : fzf (Theme-Browser)
 # Ersetzt : cat (mit Syntax-Highlighting)
 # Aliase  : cat, catn, catd
 # ============================================================

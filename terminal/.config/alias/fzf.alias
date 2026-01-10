@@ -4,7 +4,7 @@
 # Zweck   : Tool-unspezifische fzf-Utilities
 # Pfad    : ~/.config/alias/fzf.alias
 # Docs    : https://github.com/junegunn/fzf
-# Nutzt   : bat (Preview), eza (Verzeichnis-Preview)
+# Nutzt   : bat (Preview), eza (Verzeichnis-Preview), fd (Default-Command), tldr (fman)
 # ============================================================
 # Hinweis : Konfiguration in ~/.config/fzf/ (config, init.zsh,
 #           *-preview Helper). Keybindings: Ctrl+X 1/2/3.
