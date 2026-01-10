@@ -206,9 +206,24 @@ Alle Shell-Dateien (`.alias`, `.sh`, `.zsh*`) beginnen mit einem standardisierte
 | `Hinweis` | ⚪ | Nur für **einzigartige** kontextuelle Info (siehe SSOT) |
 | `Config` | ⚪ | Nur wenn Config-Datei keine Header unterstützt |
 
-> ⚠️ **SSOT-Regel für `# Hinweis`:** Nur Informationen eintragen, die **nirgendwo anders** dokumentiert sind.
-> Informationen aus Config-Dateien, `.zshrc` oder anderen Quellen gehören **dort** – nicht im Alias-Header.
-> Der tldr-Generator extrahiert Config-Pfade automatisch aus `# Pfad :` in Config-Dateien.
+### Config-Pfad Ermittlung (SSOT)
+
+Der tldr-Generator sucht Config-Pfade in dieser Reihenfolge:
+
+```text
+1. `# Config :` im Alias-Header?
+   ├─ JA → Config-Pfad gefunden ✓
+   └─ NEIN ↓
+
+2. Config-Datei in ~/.config/<tool>/ suchen
+   (mit Mapping: rg→ripgrep, markdownlint→markdownlint-cli2)
+   ├─ Datei mit `# Pfad :` oder `// Pfad :` Header?
+   │  └─ JA → Config-Pfad gefunden ✓
+   └─ NEIN → Kein Config-Pfad (Tool hat keine lokale Config)
+```
+
+**Konsequenz:** Config-Pfade gehören in die Config-Datei selbst (`# Pfad :`), nicht in den Alias-Header.
+Ausnahme: `# Config :` nur bei Dateien die keine Header unterstützen (z.B. btop.conf).
 
 ### Funktions- und Alias-Kommentare
 
