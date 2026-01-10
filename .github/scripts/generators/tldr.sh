@@ -735,6 +735,15 @@ generate_complete_patch() {
     if [[ "$tool_name" == "fzf" ]]; then
         output+="# dotfiles: Globale Tastenkürzel (in allen fzf-Dialogen)\n\n"
         output+=$(parse_fzf_config_keybindings "$FZF_CONFIG")
+        output+="\n# dotfiles: Helper-Skripte (~/.config/fzf/)\n\n"
+        output+="- dotfiles: \`config\` – Globale fzf-Optionen (Farben, Layout, Keybindings)\n\n"
+        output+="- dotfiles: \`init.zsh\` – Shell-Integration (Ctrl+X Keybindings, FZF_DEFAULT_COMMAND)\n\n"
+        output+="- dotfiles: \`preview-file\` – Datei-Vorschau mit bat und Syntax-Highlighting\n\n"
+        output+="- dotfiles: \`preview-dir\` – Verzeichnis-Vorschau mit eza --tree\n\n"
+        output+="- dotfiles: \`fman-preview\` – Man-Page/tldr Vorschau für fman-Funktion\n\n"
+        output+="- dotfiles: \`fa-preview\` – Alias/Funktions-Code-Vorschau für fa-Funktion\n\n"
+        output+="- dotfiles: \`fkill-list\` – Prozessliste für fkill-Funktion\n\n"
+        output+="- dotfiles: \`safe-action\` – Sichere Aktionen (copy, edit, git-diff, etc.)\n\n"
         output+="\n# dotfiles: Funktionen (aus fzf.alias)\n\n"
     fi
 

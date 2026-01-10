@@ -13,6 +13,25 @@
 - dotfiles: Einzelnen Eintrag zur Auswahl hinzufügen:
 
 `<Tab>`
+# dotfiles: Helper-Skripte (~/.config/fzf/)
+
+- dotfiles: `config` – Globale fzf-Optionen (Farben, Layout, Keybindings)
+
+- dotfiles: `init.zsh` – Shell-Integration (Ctrl+X Keybindings, FZF_DEFAULT_COMMAND)
+
+- dotfiles: `preview-file` – Datei-Vorschau mit bat und Syntax-Highlighting
+
+- dotfiles: `preview-dir` – Verzeichnis-Vorschau mit eza --tree
+
+- dotfiles: `fman-preview` – Man-Page/tldr Vorschau für fman-Funktion
+
+- dotfiles: `fa-preview` – Alias/Funktions-Code-Vorschau für fa-Funktion
+
+- dotfiles: `fkill-list` – Prozessliste für fkill-Funktion
+
+- dotfiles: `safe-action` – Sichere Aktionen (copy, edit, git-diff, etc.)
+
+
 # dotfiles: Funktionen (aus fzf.alias)
 
 - dotfiles: Prozess Browser (`<Enter>` Beenden, `<Tab>` Mehrfach, `<Ctrl s>` Apps↔Alle):
