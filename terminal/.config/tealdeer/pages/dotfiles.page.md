@@ -3,6 +3,8 @@
 > macOS-Konfiguration mit ZSH, Catppuccin und modernen CLI-Tools.
 > Mehr Informationen: <https://github.com/tshofmann/dotfiles>
 
+- dotfiles: Nutzt `tldr (tealdeer)`
+
 - Diese Hilfe anzeigen:
 
 `dothelp`

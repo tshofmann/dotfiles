@@ -344,11 +344,16 @@ generate_dotfiles_page() {
     local zshrc="$DOTFILES_DIR/terminal/.zshrc"
     local fzf_init="$DOTFILES_DIR/terminal/.config/fzf/init.zsh"
     local brew_alias="$ALIAS_DIR/brew.alias"
+    local dotfiles_alias="$ALIAS_DIR/dotfiles.alias"
 
     # Header
     output+="# dotfiles\n\n"
     output+="> macOS-Konfiguration mit ZSH, Catppuccin und modernen CLI-Tools.\n"
     output+="> Mehr Informationen: <https://github.com/tshofmann/dotfiles>\n\n"
+
+    # Abhängigkeiten aus dotfiles.alias (Konsistenz mit anderen Pages)
+    local nutzt=$(parse_header_field "$dotfiles_alias" "Nutzt")
+    [[ -n "$nutzt" ]] && output+="- dotfiles: Nutzt \`${nutzt}\`\n\n"
 
     # Einstiegspunkte
     output+="- Diese Hilfe anzeigen:\n\n\`dothelp\`\n\n"
