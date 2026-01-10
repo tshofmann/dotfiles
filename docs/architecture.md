@@ -11,13 +11,13 @@ Technische Details zur Struktur und Funktionsweise dieses dotfiles-Repositories.
 
 ```text
 dotfiles/
-├── .githooks/
-│   └── pre-commit # Verhindert Commits mit veralteter Dokumentation
 ├── .github/
 │   ├── ISSUE_TEMPLATE/
 │   │   ├── bug_report.md
 │   │   ├── config.yml
 │   │   └── feature_request.md
+│   ├── hooks/
+│   │   └── pre-commit # Verhindert Commits mit veralteter Dokumentation
 │   ├── workflows/
 │   │   └── validate.yml # Validiert Shell-Syntax, Dokumentation und Alias-Format
 │   ├── CODEOWNERS
@@ -33,6 +33,8 @@ dotfiles/
 │   ├── architecture.md # Architektur
 │   ├── customization.md # Konfiguration
 │   └── setup.md # Installation
+├── editor/
+│   └── .editorconfig # Konsistente Formatierung in allen Editoren
 ├── scripts/
 │   ├── generators/
 │   │   ├── architecture.sh # Generiert Architektur-Dokumentation aus Verzeichnisstruktur
@@ -205,7 +207,7 @@ GNU Stow mit `--no-folding` erstellt Symlinks für **Dateien**, nicht Verzeichni
 
 ```zsh
 # Stow mit --no-folding (via .stowrc)
-stow --adopt -R terminal
+stow --adopt -R terminal editor
 ```
 
 Vorteile:

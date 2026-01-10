@@ -39,7 +39,7 @@ warn() { echo -e "${C_YELLOW}⚠${C_RESET} $*"; }
 ensure_dir_writable() {
   local dir="$1"
   local description="${2:-Verzeichnis}"
-  
+
   # Falls Verzeichnis existiert, prüfe ob schreibbar
   if [[ -d "$dir" ]]; then
     if [[ -w "$dir" ]]; then
@@ -49,20 +49,20 @@ ensure_dir_writable() {
       return 1
     fi
   fi
-  
+
   # Verzeichnis existiert nicht, prüfe ob Elternverzeichnis schreibbar ist
   local parent="${dir:h}"
   if [[ ! -w "$parent" ]]; then
     err "Kann $description nicht erstellen, Elternverzeichnis nicht schreibbar: $parent"
     return 1
   fi
-  
+
   # Versuche Verzeichnis zu erstellen
   if ! mkdir -p "$dir" 2>/dev/null; then
     err "Konnte $description nicht erstellen: $dir"
     return 1
   fi
-  
+
   return 0
 }
 
@@ -72,18 +72,18 @@ ensure_file_writable() {
   local file="$1"
   local description="${2:-Datei}"
   local dir="${file:h}"
-  
+
   # Prüfe ob Zielverzeichnis schreibbar ist
   if ! ensure_dir_writable "$dir" "Zielverzeichnis für $description"; then
     return 1
   fi
-  
+
   # Falls Datei existiert, prüfe ob überschreibbar
   if [[ -e "$file" && ! -w "$file" ]]; then
     err "$description existiert aber ist nicht schreibbar: $file"
     return 1
   fi
-  
+
   return 0
 }
 
@@ -326,7 +326,7 @@ fi
 # Profil als Standard setzen (AppleScript, da defaults write bei laufendem Terminal nicht persistiert)
 set_profile_as_default() {
   local profile_name="$1"
-  
+
   osascript <<EOF
 tell application "Terminal"
     set targetProfile to null
@@ -336,7 +336,7 @@ tell application "Terminal"
             exit repeat
         end if
     end repeat
-    
+
     if targetProfile is not null then
         set default settings to targetProfile
         set startup settings to targetProfile
@@ -356,17 +356,17 @@ if [[ "$current_default" == "$PROFILE_NAME" && "$current_startup" == "$PROFILE_N
   ok "Profil '$PROFILE_NAME' bereits als Standard gesetzt"
 else
   log "Setze '$PROFILE_NAME' als Standard- und Startprofil"
-  
+
   applescript_result=$(set_profile_as_default "$PROFILE_NAME")
   if [[ "$applescript_result" != "success" ]]; then
     warn "AppleScript konnte Profil nicht direkt setzen: $applescript_result"
   fi
-  
+
   # Verifiziere die Änderung
   sleep 1
   verify_default=$(defaults read com.apple.Terminal "Default Window Settings" 2>/dev/null || true)
   verify_startup=$(defaults read com.apple.Terminal "Startup Window Settings" 2>/dev/null || true)
-  
+
   if [[ "$verify_default" == "$PROFILE_NAME" && "$verify_startup" == "$PROFILE_NAME" ]]; then
     ok "Profil '$PROFILE_NAME' als Standard gesetzt"
   else
@@ -506,7 +506,7 @@ if [[ -f "$HOME/.zshenv" ]] && grep -q "SHELL_SESSIONS_DISABLE=1" "$HOME/.zshenv
   ok "zsh_sessions deaktiviert via ~/.zshenv"
 else
   warn "~/.zshenv fehlt oder SHELL_SESSIONS_DISABLE nicht gesetzt"
-  warn "Nach 'stow -R terminal' wird dies automatisch verlinkt"
+  warn "Nach 'stow -R terminal editor' wird dies automatisch verlinkt"
 fi
 
 # Erfolgreicher Abschluss – CURRENT_STEP zurücksetzen für sauberen Exit
@@ -517,7 +517,8 @@ ok "Setup abgeschlossen"
 print ""
 log "Nächste Schritte:"
 log "  1. Terminal.app neu starten für vollständige Übernahme aller Einstellungen"
-log "  2. Konfigurationsdateien verlinken: cd $DOTFILES_DIR && stow --adopt -R terminal && git reset --hard HEAD"
-log "  3. bat Theme-Cache bauen: bat cache --build"
-log "  4. tldr-Pages herunterladen: tldr --update"
-log "  5. Schnellreferenz anzeigen: dothelp"
+log "  2. Konfigurationsdateien verlinken: cd $DOTFILES_DIR && stow --adopt -R terminal editor && git reset --hard HEAD"
+log "  3. Git-Hooks aktivieren: git config core.hooksPath .github/hooks"
+log "  4. bat Theme-Cache bauen: bat cache --build"
+log "  5. tldr-Pages herunterladen: tldr --update"
+log "  6. Schnellreferenz anzeigen: dothelp"

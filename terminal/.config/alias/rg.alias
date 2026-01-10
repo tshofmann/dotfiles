@@ -72,7 +72,7 @@ if command -v fzf >/dev/null 2>&1; then
     rgf() {
         local rg_prefix="rg --column --line-number --no-heading --color=always --smart-case"
         local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
-        
+
         fzf --ansi --disabled --query "${*:-}" \
             --bind "start:reload:$rg_prefix {q} || true" \
             --bind "change:reload:sleep 0.1; $rg_prefix {q} || true" \

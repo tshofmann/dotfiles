@@ -16,7 +16,7 @@ curl -fsSL https://github.com/tshofmann/dotfiles/archive/refs/heads/main.tar.gz 
 Nach Terminal-Neustart:
 
 ```zsh
-cd ~/dotfiles && stow --adopt -R terminal && git reset --hard HEAD && bat cache --build && tldr --update
+cd ~/dotfiles && stow --adopt -R terminal editor && git reset --hard HEAD && bat cache --build && tldr --update
 ```
 
 > ⚠️ **Achtung:** `git reset --hard` verwirft lokale Änderungen. Siehe [Setup](docs/setup.md) für Details.

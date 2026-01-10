@@ -18,41 +18,41 @@ source "${0:A:h}/lib.sh"
 format_keybindings_for_tldr() {
     local keybindings="$1"
     [[ -z "$keybindings" ]] && return
-    
+
     # Prüfe ob überhaupt Keybindings vorhanden sind
     case "$keybindings" in
         *Enter* | *Tab* | *Ctrl* | *Shift* | *Alt* | *Esc*) ;;
         *) return ;;
     esac
-    
+
     local result=""
     local IFS=','
-    
+
     for binding in ${=keybindings}; do
         binding="${binding## }"
         binding="${binding%% }"
-        
+
         [[ "$binding" != *"="* ]] && continue
-        
+
         local key="${binding%%=*}"
         local action="${binding#*=}"
-        
+
         case "$key" in
             Enter | Tab | Esc | Ctrl+* | Shift+* | Alt+*) ;;
             *) continue ;;
         esac
-        
+
         key="${key//+/ }"
         if [[ "$key" == *" "* ]]; then
             local modifier="${key%% *}"
             local letter="${key##* }"
             [[ "$letter" == [A-Za-z] ]] && key="${modifier} ${(L)letter}"
         fi
-        
+
         [[ -n "$result" ]] && result+=", "
         result+="\`<${key}>\` ${action}"
     done
-    
+
     [[ -n "$result" ]] && echo "($result)"
 }
 
@@ -62,10 +62,10 @@ format_keybindings_for_tldr() {
 format_param_for_tldr() {
     local param="$1"
     [[ -z "$param" ]] && return
-    
+
     param="${param%%\?}"
     param="${param%%=*}"
-    
+
     echo "{{${param}}}"
 }
 
@@ -76,14 +76,14 @@ parse_fzf_config_keybindings() {
     local config="$1"
     local output=""
     local prev_comment=""
-    
+
     while IFS= read -r line; do
         if [[ "$line" == "# Ctrl"*":"* || "$line" == "# Alt"*":"* ]]; then
             prev_comment="${line#\# }"
         elif [[ "$line" == "--bind="* && -n "$prev_comment" ]]; then
             local key="${prev_comment%% :*}"
             local action="${prev_comment#*: }"
-            
+
             key="${key//+/ }"
             if [[ "$key" == *" "* ]]; then
                 local modifier="${key%% *}"
@@ -91,16 +91,16 @@ parse_fzf_config_keybindings() {
                 [[ "$letter" =~ ^[A-Za-z]+$ ]] && letter="${(L)letter}"
                 key="${modifier} ${letter}"
             fi
-            
+
             output+="- dotfiles: ${action}:\n\n\`<${key}>\`\n\n"
             prev_comment=""
         else
             prev_comment=""
         fi
     done < "$config"
-    
+
     output+="- dotfiles: Einzelnen Eintrag zur Auswahl hinzufügen:\n\n\`<Tab>\`\n\n"
-    
+
     echo -e "$output"
 }
 
@@ -111,12 +111,12 @@ parse_shell_keybindings() {
     local file="$1"
     local output=""
     local in_section=false
-    
+
     while IFS= read -r line; do
         [[ "$line" == *"Shell-Keybindings"* ]] && { in_section=true; continue; }
         [[ "$in_section" == true && "$line" == "# ----"* ]] && continue
         [[ "$in_section" == true && "$line" == *"ZOXIDE"* ]] && break
-        
+
         if [[ "$in_section" == true && "$line" == "# Ctrl+X "* ]]; then
             local rest="${line#\# Ctrl+X }"
             local num="${rest%%:*}"
@@ -124,7 +124,7 @@ parse_shell_keybindings() {
             output+="- dotfiles: ${desc}:\n\n\`<Ctrl x> ${num}\`\n\n"
         fi
     done < "$file"
-    
+
     echo -e "$output"
 }
 
@@ -134,26 +134,26 @@ parse_shell_keybindings() {
 parse_cross_references() {
     local file="$1"
     local output=""
-    
+
     while IFS= read -r line; do
         [[ "$line" == "# Guard"* ]] && break
-        
+
         if [[ "$line" == *".alias"*"→"* ]]; then
             local temp="${line#*- }"
             local tool="${temp%%.alias*}"
             tool="${tool// /}"
-            
+
             local after_arrow="${line#*→ }"
             local funcs="$after_arrow"
             while [[ "$funcs" == *'('*')'* ]]; do
                 funcs="${funcs%%\(*}${funcs#*\)}"
             done
             funcs="${funcs// /}"
-            
+
             [[ -n "$tool" && -n "$funcs" ]] && output+="${tool}|${funcs}\n"
         fi
     done < "$file"
-    
+
     echo -e "$output"
 }
 
@@ -164,14 +164,14 @@ generate_patch_for_alias() {
     local alias_file="$1"
     local output=""
     local prev_comment=""
-    
+
     while IFS= read -r line; do
         local trimmed="${line#"${line%%[![:space:]]*}"}"
-        
+
         if [[ "$trimmed" == \#* && "$trimmed" != \#\ ----* && "$trimmed" != \#\ ====* ]]; then
             local content="${trimmed#\# }"
             local first_word="${content%% *}"
-            
+
             if [[ "$content" == *" – "* || "$content" == *" - "* ]]; then
                 case "$first_word" in
                     Zweck|Hinweis|Pfad|Docs|Guard|Voraussetzung|Nutzt) prev_comment="" ;;
@@ -183,13 +183,13 @@ generate_patch_for_alias() {
             fi
             continue
         fi
-        
+
         # Funktionen: func() {
         if [[ "$trimmed" =~ "^[a-zA-Z][a-zA-Z0-9_-]*\(\) \{" ]]; then
             local func_name="${trimmed%%\(*}"
-            
+
             [[ "$func_name" == _* ]] && { prev_comment=""; continue; }
-            
+
             if [[ -n "$prev_comment" ]]; then
                 local parsed=$(parse_description_comment "$prev_comment")
                 local name="${parsed%%|*}"
@@ -197,10 +197,10 @@ generate_patch_for_alias() {
                 local param="${rest%%|*}"
                 local keybindings="${rest#*|}"
                 keybindings="${keybindings%%|*}"
-                
+
                 local tldr_param=$(format_param_for_tldr "$param")
                 local tldr_keys=$(format_keybindings_for_tldr "$keybindings")
-                
+
                 output+="- dotfiles: ${name}"
                 [[ -n "$tldr_keys" ]] && output+=" ${tldr_keys}"
                 output+=":\n\n"
@@ -208,24 +208,24 @@ generate_patch_for_alias() {
                 [[ -n "$tldr_param" ]] && output+=" ${tldr_param}"
                 output+="\`\n\n"
             fi
-            
+
             prev_comment=""
         fi
-        
+
         # Aliase: alias name='command'
         if [[ "$trimmed" =~ "^alias[[:space:]]+[a-zA-Z][a-zA-Z0-9_-]*=" ]]; then
             local alias_def="${trimmed#alias }"
             local alias_name="${alias_def%%=*}"
-            
+
             if [[ -n "$prev_comment" ]]; then
                 output+="- dotfiles: ${prev_comment}:\n\n"
                 output+="\`${alias_name}\`\n\n"
             fi
-            
+
             prev_comment=""
         fi
     done < "$alias_file"
-    
+
     echo -e "$output"
 }
 
@@ -235,14 +235,14 @@ generate_patch_for_alias() {
 generate_cross_references() {
     local fzf_alias="$ALIAS_DIR/fzf.alias"
     local output=""
-    
+
     local refs=$(parse_cross_references "$fzf_alias")
-    
+
     while IFS='|' read -r tool funcs; do
         [[ -z "$tool" ]] && continue
         output+="- dotfiles: Siehe \`tldr ${tool}\` für \`${funcs//,/\`, \`}\`\n"
     done <<< "$refs"
-    
+
     echo -e "$output"
 }
 
@@ -254,7 +254,7 @@ extract_alias_names() {
     local max="${2:-3}"
     local aliases=()
     local count=0
-    
+
     while IFS= read -r line; do
         if [[ "$line" =~ "^alias ([a-zA-Z0-9_-]+)=" ]]; then
             aliases+=("${match[1]}")
@@ -262,7 +262,7 @@ extract_alias_names() {
             (( count >= max )) && break
         fi
     done < "$file"
-    
+
     echo "${(j:, :)aliases}"
 }
 
@@ -275,7 +275,7 @@ extract_function_desc() {
     local func_name="$2"
     local desc_comment=""
     local in_section=false
-    
+
     while IFS= read -r line; do
         # Sektionsheader gefunden
         if [[ "$line" == "# ---"* ]]; then
@@ -283,7 +283,7 @@ extract_function_desc() {
             desc_comment=""
             continue
         fi
-        
+
         # Beschreibungskommentar (nicht Nutzt, Voraussetzung, Docs etc.)
         if [[ "$line" == "# "* && "$line" != "# ==="* ]]; then
             local content="${line#\# }"
@@ -315,16 +315,16 @@ generate_dotfiles_page() {
     local zshrc="$DOTFILES_DIR/terminal/.zshrc"
     local fzf_init="$DOTFILES_DIR/terminal/.config/fzf/init.zsh"
     local brew_alias="$ALIAS_DIR/brew.alias"
-    
+
     # Header
     output+="# dotfiles\n\n"
     output+="> macOS-Konfiguration mit ZSH, Catppuccin und modernen CLI-Tools.\n"
     output+="> Mehr Informationen: <https://github.com/tshofmann/dotfiles>\n\n"
-    
+
     # Einstiegspunkte
     output+="- Diese Hilfe anzeigen:\n\n\`dothelp\`\n\n"
     output+="- Aliase interaktiv durchsuchen (Enter=ausführen, Ctrl+Y=kopieren):\n\n\`fa {{suche}}\`\n"
-    
+
     # Shell-Keybindings aus .zshrc (Format: #   Key   Beschreibung)
     output+="\n# Shell-Keybindings\n\n"
     if [[ -f "$zshrc" ]]; then
@@ -341,7 +341,7 @@ generate_dotfiles_page() {
             fi
         done < "$zshrc"
     fi
-    
+
     # Globale Keybindings aus fzf/init.zsh
     output+="# fzf-Keybindings (Ctrl+X Prefix)\n\n"
     if [[ -f "$fzf_init" ]]; then
@@ -355,7 +355,7 @@ generate_dotfiles_page() {
             fi
         done < "$fzf_init"
     fi
-    
+
     # Moderne Ersetzungen aus *.alias Ersetzt-Feldern + Aliase-Feld
     output+="# Moderne Ersetzungen\n\n"
     local -A replacements=()
@@ -372,7 +372,7 @@ generate_dotfiles_page() {
             replacements[$tool_name]="${original}|${desc}|${examples}"
         fi
     done
-    
+
     # Sortierte Ausgabe mit dynamischen Beispielen
     for tool in ${(ko)replacements}; do
         local data="${replacements[$tool]}"
@@ -387,7 +387,7 @@ generate_dotfiles_page() {
             output+="\`${tool}\`\n\n"
         fi
     done
-    
+
     # Homebrew – Beschreibungen aus brew.alias
     output+="# Homebrew\n\n"
     if [[ -f "$brew_alias" ]]; then
@@ -396,7 +396,7 @@ generate_dotfiles_page() {
         [[ -n "$brewup_desc" ]] && output+="- ${brewup_desc}:\n\n\`brewup\`\n\n"
         [[ -n "$brewv_desc" ]] && output+="- ${brewv_desc}:\n\n\`brewv\`\n"
     fi
-    
+
     # Verfügbare Hilfeseiten
     output+="\n# Verfügbare Hilfeseiten\n\n"
     local patches=()
@@ -408,15 +408,15 @@ generate_dotfiles_page() {
         local name="${${f:t}%.page.md}"
         [[ "$name" != "dotfiles" ]] && pages+=("$name")
     done
-    
+
     output+="- Tools mit dotfiles-Patches (tldr <tool>):\n\n"
     output+="\`${(j:, :)${(o)patches}}\`\n\n"
-    
+
     if (( ${#pages[@]} > 0 )); then
         output+="- Eigene Seiten:\n\n"
         output+="\`${(j:, :)${(o)pages}}, dotfiles\`\n"
     fi
-    
+
     echo -e "$output"
 }
 
@@ -426,13 +426,13 @@ generate_dotfiles_page() {
 generate_dotfiles_tldr() {
     local mode="${1:---check}"
     local page_file="$TEALDEER_DIR/dotfiles.page.md"
-    
+
     case "$mode" in
         --check)
             local generated=$(generate_dotfiles_page)
             local current=""
             [[ -f "$page_file" ]] && current=$(cat "$page_file")
-            
+
             if [[ "$generated" != "$current" ]]; then
                 err "dotfiles.page.md ist veraltet"
                 return 1
@@ -458,10 +458,10 @@ generate_catppuccin_page() {
     local -A themes_manual=()        # manuell konfiguriert
     local -A theme_paths=()          # Pfad zur Config
     local -A theme_repos=()          # Upstream-Repo URL
-    
+
     local theme_colors_file="$DOTFILES_DIR/terminal/.config/theme-colors"
     [[ ! -f "$theme_colors_file" ]] && return 1
-    
+
     # Parse Theme-Quellen Block aus theme-colors
     local in_block=false
     while IFS= read -r line; do
@@ -471,15 +471,15 @@ generate_catppuccin_page() {
             continue
         fi
         [[ "$in_block" != true ]] && continue
-        
+
         # Block-Ende bei Status-Legende oder leerem Kommentar
         [[ "$line" == "# Status-Legende:"* ]] && break
         [[ "$line" == "#" ]] && continue
-        
+
         # Nur Zeilen mit "#   tool | ..." parsen
         [[ "$line" != "#   "* ]] && continue
         [[ "$line" != *"|"* ]] && continue
-        
+
         # Parse: #   tool | path | source | status
         line="${line#\#   }"
         local tc_tool="${line%%|*}"
@@ -488,18 +488,18 @@ generate_catppuccin_page() {
         line="${line#*|}"
         local tc_repo="${line%%|*}"
         local tc_status="${line#*|}"
-        
+
         # Trim all leading/trailing whitespace
         tc_tool="${tc_tool#"${tc_tool%%[![:space:]]*}"}"; tc_tool="${tc_tool%"${tc_tool##*[![:space:]]}"}"
         tc_path="${tc_path#"${tc_path%%[![:space:]]*}"}"; tc_path="${tc_path%"${tc_path##*[![:space:]]}"}"
         tc_repo="${tc_repo#"${tc_repo%%[![:space:]]*}"}"; tc_repo="${tc_repo%"${tc_repo##*[![:space:]]}"}"
         tc_status="${tc_status#"${tc_status%%[![:space:]]*}"}"; tc_status="${tc_status%"${tc_status##*[![:space:]]}"}"
-        
+
         [[ -z "$tc_tool" ]] && continue
-        
+
         theme_paths[$tc_tool]="$tc_path"
         theme_repos[$tc_tool]="$tc_repo"
-        
+
         # Kategorisieren nach Status
         case "$tc_status" in
             upstream)
@@ -519,7 +519,7 @@ generate_catppuccin_page() {
                 ;;
         esac
     done < "$theme_colors_file"
-    
+
     # 3. Generiere Markdown
     local output="# catppuccin
 
@@ -542,7 +542,7 @@ generate_catppuccin_page() {
         p="${theme_paths[$t]}"
         output+="\`${t}: ${p}\`\n"
     done
-    
+
     output+="
 - Themes aus Upstream mit lokalen Anpassungen:
 
@@ -554,7 +554,7 @@ generate_catppuccin_page() {
         n="${i#*| }"
         output+="\`${t}: ${p} (${n})\`\n"
     done
-    
+
     output+="
 - Manuell konfiguriert (basierend auf catppuccin.com/palette):
 
@@ -565,7 +565,7 @@ generate_catppuccin_page() {
         n="${themes_manual[$t]}"
         output+="\`${t}: ${p} (${n})\`\n"
     done
-    
+
     output+="
 - Zentrale Shell-Farbvariablen in Skripten nutzen:
 
@@ -583,17 +583,17 @@ generate_catppuccin_page() {
         i="${themes_modified[$t]}"
         all_repos[$t]="${i%%|*}"
     done
-    
+
     sorted_keys=($(echo "${(k)all_repos}" | tr ' ' '\n' | LC_ALL=C sort))
     for t in $sorted_keys; do
         r="${all_repos[$t]}"
         r="${r## }"; r="${r%% }"
         output+="\`${t}: ${r}\`\n"
     done
-    
+
     # Entferne trailing newline für konsistente Ausgabe (echo -e fügt eines hinzu)
     output="${output%\\n}"
-    
+
     echo -e "$output"
 }
 
@@ -603,14 +603,14 @@ generate_catppuccin_page() {
 generate_catppuccin_tldr() {
     local mode="${1:---check}"
     local page_file="$TEALDEER_DIR/catppuccin.page.md"
-    
+
     case "$mode" in
         --check)
             # Generiere in temp-Datei für konsistenten Vergleich
             local temp_file=$(mktemp)
             generate_catppuccin_page > "$temp_file"
             echo "" >> "$temp_file"  # trailing newline
-            
+
             if ! diff -q "$page_file" "$temp_file" >/dev/null 2>&1; then
                 rm -f "$temp_file"
                 err "catppuccin.page.md ist veraltet"
@@ -623,7 +623,7 @@ generate_catppuccin_tldr() {
             local temp_file=$(mktemp)
             generate_catppuccin_page > "$temp_file"
             echo "" >> "$temp_file"  # trailing newline
-            
+
             if diff -q "$page_file" "$temp_file" >/dev/null 2>&1; then
                 rm -f "$temp_file"
                 dim "  Unverändert: catppuccin.page.md"
@@ -641,24 +641,24 @@ generate_complete_patch() {
     local tool_name="$1"
     local alias_file="$ALIAS_DIR/${tool_name}.alias"
     local output=""
-    
+
     [[ ! -f "$alias_file" ]] && { err "Alias-Datei nicht gefunden: $alias_file"; return 1; }
-    
+
     if [[ "$tool_name" == "fzf" ]]; then
         output+="# dotfiles: Globale Tastenkürzel (in allen fzf-Dialogen)\n\n"
         output+=$(parse_fzf_config_keybindings "$FZF_CONFIG")
         output+="\n# dotfiles: Funktionen (aus fzf.alias)\n\n"
     fi
-    
+
     output+=$(generate_patch_for_alias "$alias_file")
-    
+
     if [[ "$tool_name" == "fzf" ]]; then
         output+="\n# dotfiles: Shell-Keybindings (Ctrl+X Prefix)\n\n"
         output+=$(parse_shell_keybindings "$alias_file")
         output+="\n# dotfiles: Tool-spezifische fzf-Funktionen\n\n"
         output+=$(generate_cross_references)
     fi
-    
+
     echo -e "$output"
 }
 
@@ -668,60 +668,60 @@ generate_complete_patch() {
 generate_tldr_patches() {
     local mode="${1:---check}"
     local errors=0
-    
+
     case "$mode" in
         --check)
             for alias_file in "$ALIAS_DIR"/*.alias(N); do
                 local tool_name=$(basename "$alias_file" .alias)
                 local patch_file="$TEALDEER_DIR/${tool_name}.patch.md"
                 local page_file="$TEALDEER_DIR/${tool_name}.page.md"
-                
+
                 # Überspringe wenn eine .page.md existiert (vollständig eigene Seite)
                 [[ -f "$page_file" ]] && continue
-                
+
                 [[ ! -f "$patch_file" ]] && continue
-                
+
                 local generated=$(generate_complete_patch "$tool_name")
                 local current=$(cat "$patch_file")
-                
+
                 if [[ "$generated" != "$current" ]]; then
                     err "${tool_name}.patch.md ist veraltet"
                     (( errors++ )) || true
                 fi
             done
-            
+
             # Prüfe dotfiles.page.md
             generate_dotfiles_tldr --check || (( errors++ )) || true
-            
+
             # Prüfe catppuccin.page.md
             generate_catppuccin_tldr --check || (( errors++ )) || true
-            
+
             return $errors
             ;;
-            
+
         --generate)
             for alias_file in "$ALIAS_DIR"/*.alias(N); do
                 local tool_name=$(basename "$alias_file" .alias)
                 local patch_file="$TEALDEER_DIR/${tool_name}.patch.md"
                 local page_file="$TEALDEER_DIR/${tool_name}.page.md"
-                
+
                 # Überspringe wenn eine .page.md existiert (vollständig eigene Seite)
                 [[ -f "$page_file" ]] && continue
-                
+
                 local generated=$(generate_complete_patch "$tool_name")
-                
+
                 local trimmed="${generated//[[:space:]]/}"
                 if [[ -z "$trimmed" ]]; then
                     [[ -f "$patch_file" ]] && rm "$patch_file"
                     continue
                 fi
-                
+
                 write_if_changed "$patch_file" "$generated"
             done
-            
+
             # Generiere dotfiles.page.md
             generate_dotfiles_tldr --generate
-            
+
             # Generiere catppuccin.page.md
             generate_catppuccin_tldr --generate
             ;;

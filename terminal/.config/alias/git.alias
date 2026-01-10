@@ -58,7 +58,7 @@ if command -v fzf >/dev/null 2>&1; then
                 --header='Enter: Anzeigen | Ctrl+Y: SHA kopieren' \
                 --bind 'ctrl-y:execute-silent(echo -n {1} | pbcopy)+abort' | \
             awk '{print $1}')
-        
+
         if [[ -n "$sha" ]]; then
             if command -v bat >/dev/null 2>&1; then
                 git show --color=always "$sha" | bat --style=numbers --color=always -l diff | less -R
@@ -67,7 +67,7 @@ if command -v fzf >/dev/null 2>&1; then
             fi
         fi
     }
-    
+
     # Branch wechseln mit Log-Vorschau – Enter=Checkout, Ctrl+D=Löschen
     gbr() {
         local branch
@@ -78,22 +78,22 @@ if command -v fzf >/dev/null 2>&1; then
                 --header='Enter: Checkout | Ctrl+D: Löschen' \
                 --bind 'ctrl-d:execute(git branch -d {1})+reload(git branch --all --color=always | grep -v HEAD)' | \
             sed 's/^[* ]*//' | sed 's|remotes/[^/]*/||')
-        
+
         [[ -n "$branch" ]] && git checkout "$branch"
     }
-    
+
     # Status mit Diff-Vorschau (bat) – Enter=Add, Tab=Mehrfach, Ctrl+R=Reset
     gst() {
         local files
         local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
-        
+
         files=$(git -c color.status=always status --short | \
             fzf --ansi --multi \
                 --preview "$helper/safe-action git-diff {2}" \
                 --header='Enter: Add | Tab: Mehrfach | Ctrl+R: Reset' \
                 --bind "ctrl-r:execute($helper/safe-action git-restore {+2})+reload(git -c color.status=always status --short)" | \
             awk '{print $2}')
-        
+
         if [[ -n "$files" ]]; then
             local count=0
             while IFS= read -r file; do
@@ -102,7 +102,7 @@ if command -v fzf >/dev/null 2>&1; then
             echo "Staged: $count Datei(en)"
         fi
     }
-    
+
     # Stash-Browser – Enter=Apply, Ctrl+P=Pop, Ctrl+D=Drop
     gstash() {
         local stash
@@ -113,7 +113,7 @@ if command -v fzf >/dev/null 2>&1; then
                 --bind 'ctrl-d:execute(echo {} | cut -d: -f1 | xargs git stash drop)+reload(git stash list)' \
                 --bind 'ctrl-p:execute(echo {} | cut -d: -f1 | xargs git stash pop)+abort' | \
             cut -d: -f1)
-        
+
         [[ -n "$stash" ]] && git stash apply "$stash"
     }
 fi

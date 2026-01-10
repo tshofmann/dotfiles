@@ -61,12 +61,12 @@ if command -v fzf >/dev/null 2>&1; then
     cdf() {
         local dir
         local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
-        
+
         dir=$(fd --type d --hidden --follow --exclude .git . "${1:-.}" | \
             fzf --preview "$helper/preview-dir {}" \
                 --header='Enter: Wechseln | Ctrl+Y: Pfad kopieren' \
                 --bind="ctrl-y:execute-silent($helper/safe-action copy {})+abort")
-        
+
         [[ -n "$dir" ]] && cd "$dir"
     }
 
@@ -74,12 +74,12 @@ if command -v fzf >/dev/null 2>&1; then
     fo() {
         local file
         local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
-        
+
         file=$(fd --type f --hidden --follow --exclude .git . "${1:-.}" | \
             fzf --preview "$helper/preview-file {}" \
                 --header='Enter: Öffnen | Ctrl+Y: Pfad kopieren' \
                 --bind="ctrl-y:execute-silent($helper/safe-action copy {})+abort")
-        
+
         [[ -n "$file" ]] && open "$file"
     }
 fi

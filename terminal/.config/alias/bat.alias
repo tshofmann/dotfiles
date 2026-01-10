@@ -37,16 +37,16 @@ if command -v fzf >/dev/null 2>&1; then
     bat-theme() {
         local theme
         local config_file="$HOME/.config/bat/config"
-        
+
         # Symlink auflösen für sed -i
         [[ -L "$config_file" ]] && config_file=$(readlink -f "$config_file")
-        
+
         theme=$(bat --list-themes | fzf \
             --preview='bat --theme={} --color=always ~/.zshrc' \
             --header='Enter: Theme aktivieren | Esc: Abbrechen')
-        
+
         [[ -z "$theme" ]] && return 0
-        
+
         if [[ -f "$config_file" ]] && grep -q '^--theme=' "$config_file"; then
             sed -i '' "s/^--theme=.*$/--theme=\"$theme\"/" "$config_file"
             echo "✓ Theme aktiviert: $theme"

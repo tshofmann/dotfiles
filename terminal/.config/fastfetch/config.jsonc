@@ -12,121 +12,121 @@
 //           Logo-Farben und Key-Icons nutzen Catppuccin Palette
 // ============================================================
 {
-    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
-    "logo": {
-        "type": "builtin",
-        "padding": {
-            "top": 1
-        },
-        "color": {
-            "1": "#a6e3a1",
-            "2": "#f9e2af",
-            "3": "#fab387",
-            "4": "#f38ba8",
-            "5": "#cba6f7",
-            "6": "#89b4fa",
-            "7": "#94e2d5",
-            "8": "#f5e0dc",
-            "9": "#f2cdcd"
-        }
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "logo": {
+    "type": "builtin",
+    "padding": {
+      "top": 1
     },
-    "display": {
-        "separator": " "
+    "color": {
+      "1": "#a6e3a1",
+      "2": "#f9e2af",
+      "3": "#fab387",
+      "4": "#f38ba8",
+      "5": "#cba6f7",
+      "6": "#89b4fa",
+      "7": "#94e2d5",
+      "8": "#f5e0dc",
+      "9": "#f2cdcd"
+    }
+  },
+  "display": {
+    "separator": " "
+  },
+  "modules": [
+    {
+      "key": "╭───────────╮",
+      "type": "custom"
     },
-    "modules": [
-        {
-            "key": "╭───────────╮",
-            "type": "custom"
-        },
-        {
-            "key": "│ {#31} user    {#keys}│",
-            "type": "title",
-            "format": "{user-name}"
-        },
-        {
-            "key": "│ {#32}󰇅 hname   {#keys}│",
-            "type": "title",
-            "format": "{host-name}"
-        },
-        {
-            "key": "│ {#33}󰅐 uptime  {#keys}│",
-            "type": "uptime"
-        },
-        {
-            "key": "├───────────┤",
-            "type": "custom"
-        },
-        {
-            "key": "│ {#34}{icon} distro  {#keys}│",
-            "type": "os"
-        },
-        {
-            "key": "│ {#35} kernel  {#keys}│",
-            "type": "kernel"
-        },
-        {
-            "key": "│ {#36}󰇄 desktop {#keys}│",
-            "type": "de"
-        },
-        {
-            "key": "│ {#31} term    {#keys}│",
-            "type": "terminal"
-        },
-        {
-            "key": "│ {#32} shell   {#keys}│",
-            "type": "shell"
-        },
-        {
-            "key": "├───────────┤",
-            "type": "custom"
-        },
-        {
-            "key": "│ {#33}󰍛 cpu     {#keys}│",
-            "type": "cpu",
-            "showPeCoreCount": true
-        },
-        {
-            "key": "│ {#34}󰾲 gpu     {#keys}│",
-            "type": "gpu"
-        },
-        {
-            "key": "│ {#34}󰉉 disk    {#keys}│",
-            "type": "disk",
-            "folders": "/"
-        },
-        {
-            "key": "│ {#35} memory  {#keys}│",
-            "type": "memory"
-        },
-        {
-            "key": "├───────────┤",
-            "type": "custom"
-        },
-        {
-            "key": "│ {#36}󰩟 localip {#keys}│",
-            "type": "localip",
-            "format": "{ipv4} ({ifname})"
-        },
-        {
-            "key": "│ {#37}󰖟 pubip   {#keys}│",
-            "type": "publicip"
-        },
-        {
-            "key": "│ {#31}󰁹 battery {#keys}│",
-            "type": "battery"
-        },
-        {
-            "key": "├───────────┤",
-            "type": "custom"
-        },
-        {
-            "key": "│ {#39} colors  {#keys}│",
-            "type": "colors",
-            "symbol": "circle"
-        },
-        {
-            "key": "╰───────────╯",
-            "type": "custom"
-        }
-    ]
+    {
+      "key": "│ {#31} user    {#keys}│",
+      "type": "title",
+      "format": "{user-name}"
+    },
+    {
+      "key": "│ {#32}󰇅 hname   {#keys}│",
+      "type": "title",
+      "format": "{host-name}"
+    },
+    {
+      "key": "│ {#33}󰅐 uptime  {#keys}│",
+      "type": "uptime"
+    },
+    {
+      "key": "├───────────┤",
+      "type": "custom"
+    },
+    {
+      "key": "│ {#34}{icon} distro  {#keys}│",
+      "type": "os"
+    },
+    {
+      "key": "│ {#35} kernel  {#keys}│",
+      "type": "kernel"
+    },
+    {
+      "key": "│ {#36}󰇄 desktop {#keys}│",
+      "type": "de"
+    },
+    {
+      "key": "│ {#31} term    {#keys}│",
+      "type": "terminal"
+    },
+    {
+      "key": "│ {#32} shell   {#keys}│",
+      "type": "shell"
+    },
+    {
+      "key": "├───────────┤",
+      "type": "custom"
+    },
+    {
+      "key": "│ {#33}󰍛 cpu     {#keys}│",
+      "type": "cpu",
+      "showPeCoreCount": true
+    },
+    {
+      "key": "│ {#34}󰾲 gpu     {#keys}│",
+      "type": "gpu"
+    },
+    {
+      "key": "│ {#34}󰉉 disk    {#keys}│",
+      "type": "disk",
+      "folders": "/"
+    },
+    {
+      "key": "│ {#35} memory  {#keys}│",
+      "type": "memory"
+    },
+    {
+      "key": "├───────────┤",
+      "type": "custom"
+    },
+    {
+      "key": "│ {#36}󰩟 localip {#keys}│",
+      "type": "localip",
+      "format": "{ipv4} ({ifname})"
+    },
+    {
+      "key": "│ {#37}󰖟 pubip   {#keys}│",
+      "type": "publicip"
+    },
+    {
+      "key": "│ {#31}󰁹 battery {#keys}│",
+      "type": "battery"
+    },
+    {
+      "key": "├───────────┤",
+      "type": "custom"
+    },
+    {
+      "key": "│ {#39} colors  {#keys}│",
+      "type": "colors",
+      "symbol": "circle"
+    },
+    {
+      "key": "╰───────────╯",
+      "type": "custom"
+    }
+  ]
 }

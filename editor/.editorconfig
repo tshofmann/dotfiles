@@ -1,0 +1,55 @@
+# ============================================================
+# EditorConfig - Editor-übergreifende Formatierungsregeln
+# ============================================================
+# Zweck   : Konsistente Formatierung in allen Editoren
+# Pfad    : ~/.editorconfig
+# Docs    : https://editorconfig.org/
+# ============================================================
+# Support : VS Code (Plugin), Neovim (Plugin), JetBrains (nativ)
+# Plugin  : https://github.com/editorconfig/editorconfig-vim
+# ============================================================
+
+# Wurzel-Marker (keine weitere Suche in Elternverzeichnissen)
+root = true
+
+# ------------------------------------------------------------
+# Standard für alle Dateien
+# ------------------------------------------------------------
+[*]
+indent_style = space
+indent_size = 4
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# ------------------------------------------------------------
+# Shell-Skripte (ZSH, Bash)
+# ------------------------------------------------------------
+[*.{sh,zsh,alias}]
+indent_size = 4
+
+# ------------------------------------------------------------
+# Markdown
+# ------------------------------------------------------------
+# Trailing Whitespace beibehalten (für Line Breaks)
+[*.md]
+trim_trailing_whitespace = false
+
+# ------------------------------------------------------------
+# YAML/JSON/JSONC
+# ------------------------------------------------------------
+[*.{yml,yaml,json,jsonc}]
+indent_size = 2
+
+# ------------------------------------------------------------
+# Makefiles (erfordern Tabs)
+# ------------------------------------------------------------
+[Makefile]
+indent_style = tab
+
+# ------------------------------------------------------------
+# Git-Dateien
+# ------------------------------------------------------------
+[.git*]
+indent_size = 4

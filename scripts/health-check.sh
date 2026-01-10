@@ -42,6 +42,7 @@ readonly SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-colors"
 [[ -f "$SHELL_COLORS" ]] && source "$SHELL_COLORS"
 
 readonly TERMINAL_DIR="$DOTFILES_DIR/terminal"
+readonly EDITOR_DIR="$DOTFILES_DIR/editor"
 readonly BREWFILE="$DOTFILES_DIR/setup/Brewfile"
 
 # Zähler für Ergebnisse
@@ -55,7 +56,7 @@ typeset -i warnings=0
 pass()    { echo -e "  ${C_GREEN}✔${C_RESET} $*"; (( passed++ )); }
 fail()    { echo -e "  ${C_RED}✖${C_RESET} $*"; (( failed++ )); }
 warn()    { echo -e "  ${C_YELLOW}⚠${C_RESET} $*"; (( warnings++ )); }
-section() { echo -e "\n${C_BLUE}━━━${C_RESET} $* ${C_BLUE}━━━${C_RESET}"; }
+section() { print ""; print "${C_OVERLAY0}━━━${C_RESET} $* ${C_OVERLAY0}━━━${C_RESET}"; }
 
 # ------------------------------------------------------------
 # Symlink-Prüfung
@@ -64,7 +65,7 @@ check_symlink() {
   local link="$1"
   local expected_target="$2"
   local display_name="${3:-$link}"
-  
+
   if [[ -L "$link" ]]; then
     local actual_target
     actual_target=$(readlink "$link")
@@ -86,7 +87,7 @@ check_symlink() {
 check_tool() {
   local tool="$1"
   local description="${2:-$tool}"
-  
+
   if command -v "$tool" >/dev/null 2>&1; then
     pass "$description"
   else
@@ -102,19 +103,19 @@ check_tool() {
 get_tools_from_brewfile() {
   local brewfile="$1"
   [[ -f "$brewfile" ]] || return 1
-  
+
   # Mapping: Formula-Name → Binary-Name (falls unterschiedlich)
   typeset -A tool_mapping=(
     [ripgrep]=rg
     [tealdeer]=tldr
   )
-  
+
   # Formulae die kein eigenständiges Binary haben (werden separat geprüft)
   typeset -a skip_formulae=(
     zsh-syntax-highlighting
     zsh-autosuggestions
   )
-  
+
   # Extrahiere brew-Formulae (keine casks, keine mas)
   grep -E '^brew "[^"]+"' "$brewfile" | \
     sed 's/brew "\([^"]*\)".*/\1/' | \
@@ -131,9 +132,13 @@ get_tools_from_brewfile() {
 # ------------------------------------------------------------
 # Hauptprüfungen
 # ------------------------------------------------------------
-print "🔍 dotfiles Health Check (Systemprüfung)"
-print "   Prüft ob alle Komponenten korrekt installiert sind"
-print "   ℹ SOLL-IST-Vergleich: Alle Dateien in terminal/ werden geprüft"
+print ""
+print "${C_OVERLAY0}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
+print "${C_MAUVE}🔍 dotfiles Health Check${C_RESET}"
+print "${C_OVERLAY0}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
+print ""
+print "   ${C_SUBTEXT0}Prüft ob alle Komponenten korrekt installiert sind${C_RESET}"
+print "   ${C_SUBTEXT0}ℹ SOLL-IST-Vergleich: Alle Dateien in terminal/ und editor/${C_RESET}"
 
 # --- Symlinks: SOLL-IST-Vergleich ---
 section "Symlinks (SOLL-IST-Vergleich)"
@@ -144,52 +149,58 @@ section "Symlinks (SOLL-IST-Vergleich)"
 # SOLL = Alle Dateien in terminal/ (außer .DS_Store, *.patch.md)
 # IST  = Entsprechende Symlinks in ~/ bzw. ~/.config/
 #
-# Bei neuen Dateien in terminal/ wird der Check automatisch erweitert!
+# Bei neuen Dateien in terminal/ oder editor/ wird der Check automatisch erweitert!
 
 typeset -i symlink_count=0
 typeset -a missing_symlinks=()
 
-while IFS= read -r source_file; do
-  [[ -z "$source_file" ]] && continue
-  
-  # Relativen Pfad berechnen (ab terminal/)
-  local rel_path="${source_file#$TERMINAL_DIR/}"
-  
-  # Ziel-Pfad im Home-Verzeichnis
-  local target_path="$HOME/$rel_path"
-  local display_path="~/$rel_path"
-  
-  (( symlink_count++ )) || true
-  
-  if [[ -L "$target_path" ]]; then
-    # readlink direkt in Vergleich verwenden (vermeidet typeset output)
-    if [[ "$(readlink "$target_path")" == *"dotfiles/terminal/$rel_path"* ]]; then
-      pass "$display_path"
+# Prüfe terminal/ und editor/ Verzeichnisse
+for stow_dir in "$TERMINAL_DIR" "$EDITOR_DIR"; do
+  [[ -d "$stow_dir" ]] || continue
+  local dir_name="${stow_dir:t}"
+
+  while IFS= read -r source_file; do
+    [[ -z "$source_file" ]] && continue
+
+    # Relativen Pfad berechnen (ab terminal/ oder editor/)
+    local rel_path="${source_file#$stow_dir/}"
+
+    # Ziel-Pfad im Home-Verzeichnis
+    local target_path="$HOME/$rel_path"
+    local display_path="~/$rel_path"
+
+    (( symlink_count++ )) || true
+
+    if [[ -L "$target_path" ]]; then
+      # readlink direkt in Vergleich verwenden (vermeidet typeset output)
+      if [[ "$(readlink "$target_path")" == *"dotfiles/$dir_name/$rel_path"* ]]; then
+        pass "$display_path"
+      else
+        fail "$display_path → falsches Ziel: $(readlink "$target_path")"
+      fi
+    elif [[ -e "$target_path" ]]; then
+      fail "$display_path → existiert, ist aber kein Symlink"
     else
-      fail "$display_path → falsches Ziel: $(readlink "$target_path")"
+      fail "$display_path → fehlt"
+      missing_symlinks+=("$rel_path")
     fi
-  elif [[ -e "$target_path" ]]; then
-    fail "$display_path → existiert, ist aber kein Symlink"
-  else
-    fail "$display_path → fehlt"
-    missing_symlinks+=("$rel_path")
-  fi
-done < <(find "$TERMINAL_DIR" -type f ! -name '.DS_Store' ! -name '*.patch.md' 2>/dev/null | sort)
+  done < <(find "$stow_dir" -type f ! -name '.DS_Store' ! -name '*.patch.md' 2>/dev/null | sort)
+done
 
 # Hinweis bei fehlenden Symlinks
 if (( ${#missing_symlinks[@]} > 0 )); then
   print "\n  💡 Fehlende Symlinks erstellen mit:"
-  print "     cd $DOTFILES_DIR && stow -R terminal"
+  print "     cd $DOTFILES_DIR && stow -R terminal editor"
 fi
 
-print "\n  📊 Geprüft: $symlink_count Dateien aus terminal/"
+print "\n  📊 Geprüft: $symlink_count Dateien aus terminal/ und editor/"
 
 # --- Homebrew & Tools ---
 section "Homebrew & CLI-Tools"
 
 if command -v brew >/dev/null 2>&1; then
   pass "Homebrew installiert ($(brew --version | head -1))"
-  
+
   # DYNAMISCH: Tools aus Brewfile extrahieren
   if [[ -f "$BREWFILE" ]]; then
     local -a tools=($(get_tools_from_brewfile "$BREWFILE"))
@@ -242,7 +253,7 @@ if (( ${#font_casks[@]} > 0 )); then
         font_pattern="${font_pattern//-/}*"
         ;;
     esac
-    
+
     local -a font_files=(~/Library/Fonts/${~font_pattern}(N) /Library/Fonts/${~font_pattern}(N))
     if (( ${#font_files} > 0 )); then
       pass "$font_cask installiert (${#font_files} Dateien)"
@@ -289,7 +300,7 @@ if [[ -f "$HOME/.zshenv" ]] && grep -q "SHELL_SESSIONS_DISABLE=1" "$HOME/.zshenv
   pass "macOS zsh_sessions deaktiviert (SHELL_SESSIONS_DISABLE=1 in ~/.zshenv)"
 else
   warn "SHELL_SESSIONS_DISABLE=1 nicht in ~/.zshenv (macOS Session-History aktiv)"
-  warn "  → stow -R terminal ausführen oder ~/.zshenv manuell erstellen"
+  warn "  → stow -R terminal editor ausführen oder ~/.zshenv manuell erstellen"
 fi
 
 # --- Catppuccin Theme-Registry ---
@@ -301,7 +312,7 @@ section "Catppuccin Theme-Registry"
 check_theme_registry() {
   local theme_colors="$DOTFILES_DIR/terminal/.config/theme-colors"
   [[ -f "$theme_colors" ]] || { warn "theme-colors nicht gefunden"; return 1; }
-  
+
   # Extrahiere dokumentierte Tools + Pfade aus theme-colors
   # Format: #   tool   | config-path | upstream | status
   # Tool-Zeilen: beginnen mit "#   " UND enthalten "|"
@@ -310,29 +321,29 @@ check_theme_registry() {
   while IFS= read -r line; do
     # Nur Zeilen die mit "#   " beginnen UND Pipes enthalten
     [[ "$line" != "#   "*"|"* ]] && continue
-    
+
     local tool_name="${line##\#}"
     tool_name="${tool_name%%|*}"
     tool_name="${tool_name// /}"
     [[ -z "$tool_name" ]] && continue
-    
+
     # Extrahiere config-path (zweite Spalte)
     local cfg_path="${line#*|}"
     cfg_path="${cfg_path%%|*}"
     cfg_path="${cfg_path// /}"
-    
+
     documented_tools+=("$tool_name")
     documented_paths[$tool_name]="$cfg_path"
   done < "$theme_colors"
-  
+
   local has_errors=0
-  
+
   # ━━━ Richtung 1: IST → SOLL ━━━
   # Prüfe ob alle Config-Dateien mit "catppuccin" dokumentiert sind
   local -a undocumented=()
   while IFS= read -r file; do
     [[ -z "$file" ]] && continue
-    
+
     local tool=""
     case "$file" in
       */bat/themes/*|*/bat/config)     tool="bat" ;;
@@ -346,26 +357,26 @@ check_theme_registry() {
         tool="${tool%%/*}"
         ;;
     esac
-    
+
     [[ -z "$tool" ]] && continue
-    
+
     if ! (( ${documented_tools[(Ie)$tool]} )); then
       undocumented+=("$tool")
       has_errors=1
     fi
   done < <(grep -rlI -E "catppuccin|Catppuccin" "$DOTFILES_DIR" --include="*.yml" --include="*.yaml" --include="*.toml" --include="*.json" --include="*.jsonc" --include="*.theme" --include="*.tmTheme" --include="*.terminal" --include="*.xccolortheme" --include="config" --include="theme-colors" 2>/dev/null | grep -v ".git" | grep -v "node_modules")
-  
+
   # ━━━ Richtung 2: SOLL → IST ━━━
   # Prüfe ob alle dokumentierten Tools auch existieren
   local -a missing_configs=()
   for tool in "${documented_tools[@]}"; do
     local config_path="${documented_paths[$tool]}"
     [[ -z "$config_path" ]] && continue
-    
+
     # Expandiere Pfad (~ → $HOME, ~/dotfiles → $DOTFILES_DIR)
     local expanded_path="${config_path/#\~\/dotfiles/$DOTFILES_DIR}"
     expanded_path="${expanded_path/#\~/$HOME}"
-    
+
     # Prüfe ob Pfad existiert (Datei oder Verzeichnis)
     if [[ ! -e "$expanded_path" ]] && [[ ! -d "$expanded_path" ]]; then
       # Bei Glob-Pattern (*) prüfe ob mindestens eine Datei existiert
@@ -380,7 +391,7 @@ check_theme_registry() {
       fi
     fi
   done
-  
+
   # ━━━ Ergebnis ausgeben ━━━
   if (( ${#undocumented[@]} > 0 )); then
     fail "Config mit Catppuccin aber nicht in theme-colors:"
@@ -389,7 +400,7 @@ check_theme_registry() {
     done
     print "       💡 Füge das Tool zu terminal/.config/theme-colors hinzu"
   fi
-  
+
   if (( ${#missing_configs[@]} > 0 )); then
     fail "In theme-colors dokumentiert aber Config fehlt:"
     for item in "${missing_configs[@]}"; do
@@ -397,7 +408,7 @@ check_theme_registry() {
     done
     print "       💡 Entferne veraltete Einträge aus theme-colors"
   fi
-  
+
   if (( has_errors == 0 )); then
     pass "Theme-Registry konsistent (${#documented_tools[@]} Tools, bidirektional geprüft)"
   fi
@@ -412,7 +423,7 @@ if [[ -n "${HOMEBREW_BUNDLE_FILE:-}" ]] && [[ -f "$HOMEBREW_BUNDLE_FILE" ]]; the
   local check_output
   check_output=$(brew bundle check --file="$HOMEBREW_BUNDLE_FILE" --verbose 2>&1)
   local check_exit=$?
-  
+
   if (( check_exit == 0 )); then
     pass "Alle Brewfile-Abhängigkeiten erfüllt"
   elif echo "$check_output" | grep -qE "needs to be installed or updated"; then
@@ -433,23 +444,28 @@ fi
 # ------------------------------------------------------------
 # Zusammenfassung
 # ------------------------------------------------------------
-print "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-print "📊 Zusammenfassung"
-print "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-print "   ✔ Bestanden: $passed"
-print "   ⚠ Warnungen: $warnings"
-print "   ✖ Fehler:    $failed"
+print ""
+print "${C_OVERLAY0}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
+print "${C_MAUVE}📊 Zusammenfassung${C_RESET}"
+print "${C_OVERLAY0}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
+print ""
+print "   ${C_GREEN}✔${C_RESET} Bestanden: $passed"
+print "   ${C_YELLOW}⚠${C_RESET} Warnungen: $warnings"
+print "   ${C_RED}✖${C_RESET} Fehler:    $failed"
 
 if (( failed > 0 )); then
-  print "\n❌ Health Check fehlgeschlagen"
+  print ""
+  print "${C_RED}✖ Health Check fehlgeschlagen${C_RESET}"
   print "   Behebe die Fehler und führe den Check erneut aus."
   exit 1
 elif (( warnings > 0 )); then
-  print "\n⚠️  Health Check mit Warnungen abgeschlossen"
+  print ""
+  print "${C_YELLOW}⚠ Health Check mit Warnungen${C_RESET}"
   print "   Das Setup funktioniert, aber einige optionale Komponenten fehlen."
   exit 0
 else
-  print "\n✅ Health Check erfolgreich"
+  print ""
+  print "${C_GREEN}✔ Health Check erfolgreich${C_RESET}"
   print "   Alle Komponenten korrekt installiert."
   exit 0
 fi

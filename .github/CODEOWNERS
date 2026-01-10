@@ -18,7 +18,7 @@ setup/bootstrap.sh @tshofmann
 .github/workflows/ @tshofmann
 
 # Git Hooks – werden automatisch bei Commits ausgeführt
-.githooks/ @tshofmann
+.github/hooks/ @tshofmann
 
 # Dependency-Management – steuert automatische Updates
 .github/dependabot.yml @tshofmann

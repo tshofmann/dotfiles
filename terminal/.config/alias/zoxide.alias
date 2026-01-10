@@ -36,7 +36,7 @@ if command -v fzf >/dev/null 2>&1; then
     zf() {
         local selection dir
         local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
-        
+
         # Mit Score anzeigen (Format: "1234.5 /path/to/dir")
         # -n2.. durchsucht nur den Pfad (nicht den Score), unterstützt Leerzeichen
         selection=$(zoxide query -l -s | \
@@ -45,7 +45,7 @@ if command -v fzf >/dev/null 2>&1; then
                 --bind "ctrl-d:execute-silent($helper/safe-action zoxide-remove {2..})+reload(zoxide query -l -s)" \
                 --bind "ctrl-y:execute-silent($helper/safe-action copy {2..})" \
                 --header='Enter: Wechseln | Ctrl+D: Eintrag löschen | Ctrl+Y: Pfad kopieren')
-        
+
         # Pfad extrahieren (alles nach dem Score)
         [[ -n "$selection" ]] && dir="${selection#* }" && cd "$dir"
     }

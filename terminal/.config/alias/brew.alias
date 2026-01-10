@@ -51,14 +51,14 @@ fi
 # Nutzt   : theme-colors ($C_MAUVE, $C_GREEN, $C_TEXT, $C_RESET)
 brewv() {
     local brewfile="${DOTFILES_DIR:-$HOME/dotfiles}/setup/Brewfile"
-    
+
     if [[ ! -f "$brewfile" ]]; then
         echo "${C_RED}Brewfile nicht gefunden: $brewfile${C_RESET}"
         return 1
     fi
-    
+
     local formula_count=0 cask_count=0 mas_count=0
-    
+
     # Formulae aus Brewfile
     print "${C_MAUVE}━━━ Homebrew Formulae ━━━${C_RESET}"
     grep '^brew "' "$brewfile" | sed 's/brew "\([^"]*\)".*/\1/' | while read -r pkg; do
@@ -70,7 +70,7 @@ brewv() {
         fi
     done
     formula_count=$(grep -c '^brew "' "$brewfile")
-    
+
     # Casks aus Brewfile
     print "\n${C_MAUVE}━━━ Homebrew Casks ━━━${C_RESET}"
     grep '^cask "' "$brewfile" | sed 's/cask "\([^"]*\)".*/\1/' | while read -r pkg; do
@@ -82,7 +82,7 @@ brewv() {
         fi
     done
     cask_count=$(grep -c '^cask "' "$brewfile")
-    
+
     # MAS Apps aus Brewfile
     if command -v mas >/dev/null 2>&1; then
         print "\n${C_MAUVE}━━━ Mac App Store ━━━${C_RESET}"
@@ -100,7 +100,7 @@ brewv() {
         done
         mas_count=$(grep -c '^mas "' "$brewfile")
     fi
-    
+
     print "\n${C_OVERLAY0}Brewfile: $formula_count Formulae | $cask_count Casks | $mas_count MAS${C_RESET}"
 }
 
@@ -117,9 +117,9 @@ if command -v fzf >/dev/null 2>&1; then
         } | fzf --multi \
             --preview 'brew info {2}' \
             --header='[F]=Formula [C]=Cask | Enter: Installieren | Tab: Mehrfach')
-        
+
         [[ -z "$selection" ]] && return 0
-        
+
         echo "$selection" | while read -r line; do
             type="${line:1:1}"
             pkg="${line:4}"
@@ -130,14 +130,14 @@ if command -v fzf >/dev/null 2>&1; then
             fi
         done
     }
-    
+
     # Brew Remove Browser – Enter=Entfernen, Tab=Mehrfach
     brp() {
         local pkg
         pkg=$(brew leaves | fzf --multi \
             --preview 'brew info {}' \
             --header='Enter: Entfernen | Tab: Mehrfach')
-        
+
         [[ -n "$pkg" ]] && echo "$pkg" | xargs brew uninstall
     }
 fi

@@ -15,7 +15,7 @@ source "${0:A:h}/lib.sh"
 extract_bootstrap_steps() {
     local output=""
     local step_count=0
-    
+
     while IFS= read -r line; do
         # CURRENT_STEP="..." Zuweisungen
         if [[ "$line" == *'CURRENT_STEP='* ]]; then
@@ -27,7 +27,7 @@ extract_bootstrap_steps() {
             }
         fi
     done < "$BOOTSTRAP"
-    
+
     echo "$step_count"
 }
 
@@ -41,7 +41,7 @@ generate_setup_md() {
     macos_tested=$(extract_macos_tested_version)
     macos_min_name=$(get_macos_codename "$macos_min")
     macos_tested_name=$(get_macos_codename "$macos_tested")
-    
+
     cat << 'HEADER'
 # 🚀 Installation
 
@@ -138,10 +138,18 @@ Nach Abschluss des Bootstrap-Skripts:
 **2. Dann im neuen Terminal-Fenster:**
 
 ```zsh
-cd ~/dotfiles && stow --adopt -R terminal && git reset --hard HEAD
+cd ~/dotfiles && stow --adopt -R terminal editor && git reset --hard HEAD
 ```
 
-**3. bat-Cache für Catppuccin Theme bauen:**
+**3. Git-Hooks aktivieren:**
+
+```zsh
+git config core.hooksPath .github/hooks
+```
+
+> **💡 Warum dieser Schritt?** Der Pre-Commit Hook validiert vor jedem Commit ZSH-Syntax, Dokumentation, Alias-Format und Markdown – konsistent mit dem CI-Workflow.
+
+**4. bat-Cache für Catppuccin Theme bauen:**
 
 ```zsh
 bat cache --build
@@ -149,7 +157,7 @@ bat cache --build
 
 > **💡 Warum dieser Schritt?** Das Catppuccin Mocha Theme für bat liegt in `~/.config/bat/themes/` (via Stow verlinkt). bat erkennt neue Themes erst nach einem Cache-Rebuild.
 
-**4. tealdeer-Cache herunterladen (einmalig):**
+**5. tealdeer-Cache herunterladen (einmalig):**
 
 ```zsh
 tldr --update
@@ -162,8 +170,9 @@ tldr --update
 | Befehl | Beschreibung |
 | ------ | ------------ |
 | `cd ~/dotfiles` | Ins dotfiles-Verzeichnis wechseln |
-| `stow --adopt -R terminal` | Symlinks erstellen, existierende Dateien übernehmen |
+| `stow --adopt -R terminal editor` | Symlinks erstellen, existierende Dateien übernehmen |
 | `git reset --hard HEAD` | Adoptierte Dateien auf Repository-Zustand zurücksetzen |
+| `git config core.hooksPath .github/hooks` | Pre-Commit Hook aktivieren |
 | `bat cache --build` | bat Theme-Cache neu aufbauen |
 | `tldr --update` | tldr-Pages herunterladen |
 
@@ -200,68 +209,68 @@ REST
     echo ""
     echo "| Paket | Beschreibung |"
     echo "| ----- | ------------ |"
-    
+
     while IFS= read -r line; do
         [[ "$line" == \#* || -z "$line" ]] && continue
-        
+
         local parsed=$(parse_brewfile_entry "$line")
         [[ -z "$parsed" ]] && continue
-        
+
         local name="${parsed%%|*}"
         local rest="${parsed#*|}"
         local desc="${rest%%|*}"
         rest="${rest#*|}"
         local typ="${rest%%|*}"
-        
+
         [[ "$typ" == "brew" ]] && echo "| \`$name\` | $desc |"
     done < "$BREWFILE"
-    
+
     echo ""
-    
+
     # Casks
     echo "### Apps & Fonts (via Cask)"
     echo ""
     echo "| Paket | Beschreibung |"
     echo "| ----- | ------------ |"
-    
+
     while IFS= read -r line; do
         [[ "$line" == \#* || -z "$line" ]] && continue
-        
+
         local parsed=$(parse_brewfile_entry "$line")
         [[ -z "$parsed" ]] && continue
-        
+
         local name="${parsed%%|*}"
         local rest="${parsed#*|}"
         local desc="${rest%%|*}"
         rest="${rest#*|}"
         local typ="${rest%%|*}"
-        
+
         [[ "$typ" == "cask" ]] && echo "| \`$name\` | $desc |"
     done < "$BREWFILE"
-    
+
     echo ""
-    
+
     # MAS Apps
     echo "### Mac App Store Apps (via mas)"
     echo ""
     echo "| App | Beschreibung |"
     echo "| --- | ------------ |"
-    
+
     while IFS= read -r line; do
         [[ "$line" == \#* || -z "$line" ]] && continue
-        
+
         local parsed=$(parse_brewfile_entry "$line")
         [[ -z "$parsed" ]] && continue
-        
+
         local name="${parsed%%|*}"
         local rest="${parsed#*|}"
         local desc="${rest%%|*}"
         rest="${rest#*|}"
         local typ="${rest%%|*}"
-        
+
         [[ "$typ" == "mas" ]] && echo "| $name | $desc |"
     done < "$BREWFILE"
-    
+
     echo ""
     echo '> **Hinweis:** Die Anmeldung im App Store muss manuell erfolgen – die Befehle `mas account` und `mas signin` sind auf macOS 12+ nicht verfügbar.'
 }

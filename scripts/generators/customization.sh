@@ -17,26 +17,26 @@ source "${0:A:h}/lib.sh"
 generate_color_palette_table() {
     local colors_file="$DOTFILES_DIR/terminal/.config/theme-colors"
     [[ -f "$colors_file" ]] || return 1
-    
+
     echo "| Farbe | Hex | Variable |"
     echo "| ----- | --- | -------- |"
-    
+
     # Regex: typeset -gx C_NAME=$'\033[38;2;R;G;Bm'  # #HEX
     while IFS= read -r line; do
         # Nur Farbdefinitionen mit RGB-Werten (keine Aliase)
         [[ "$line" =~ ^typeset.*C_([A-Z0-9]+).*38\;2\;([0-9]+)\;([0-9]+)\;([0-9]+) ]] || continue
-        
+
         local name="${match[1]}"
         local r="${match[2]}"
         local g="${match[3]}"
         local b="${match[4]}"
-        
+
         # RGB zu Hex
         local hex=$(printf "#%02X%02X%02X" "$r" "$g" "$b")
-        
+
         # Name formatieren (SUBTEXT1 → Subtext1)
         local display_name="${(C)name:l}"
-        
+
         echo "| $display_name | \`$hex\` | \`C_$name\` |"
     done < "$colors_file"
 }
@@ -46,7 +46,7 @@ generate_color_palette_table() {
 extract_fzf_colors() {
     local config="$DOTFILES_DIR/terminal/.config/fzf/config"
     [[ -f "$config" ]] || { echo '```zsh'; echo '# Config nicht gefunden'; echo '```'; return 1; }
-    
+
     echo '```zsh'
     echo '# Catppuccin Mocha Farben (bereits konfiguriert)'
     grep '^--color=' "$config"
@@ -60,7 +60,7 @@ extract_fzf_colors() {
 extract_fzf_keybindings() {
     local init="$DOTFILES_DIR/terminal/.config/fzf/init.zsh"
     [[ -f "$init" ]] || { echo '```zsh'; echo '# Config nicht gefunden'; echo '```'; return 1; }
-    
+
     echo '```zsh'
     echo '# Ctrl+X Prefix für dotfiles-Keybindings'
     grep "^bindkey '\^X" "$init"
@@ -73,7 +73,7 @@ extract_terminal_profile_name() {
     local terminal_file
     terminal_file=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.terminal" | sort | head -1)
     [[ -f "$terminal_file" ]] || return 1
-    
+
     # Dateiname ohne Pfad und ohne .terminal-Endung
     echo "${${terminal_file:t}%.terminal}"
 }
@@ -83,7 +83,7 @@ extract_terminal_profile_name() {
 extract_installed_nerd_font() {
     local brewfile="$DOTFILES_DIR/setup/Brewfile"
     [[ -f "$brewfile" ]] || return 1
-    
+
     # Findet: cask "font-xyz-nerd-font" (erster Treffer)
     grep -o 'cask "font-[^"]*-nerd-font"' "$brewfile" | head -1 | sed 's/cask "\(.*\)"/\1/'
 }
@@ -95,11 +95,11 @@ extract_installed_nerd_font() {
 font_display_name() {
     local cask="$1"
     [[ -z "$cask" ]] && { echo "Nerd Font"; return; }
-    
+
     # Entferne "font-" Prefix und "-nerd-font" Suffix
     local base="${cask#font-}"
     base="${base%-nerd-font}"
-    
+
     # Mapping bekannter Fonts (markenspezifische Schreibweisen)
     case "$base" in
         meslo-lg)       echo "MesloLG Nerd Font Mono" ;;
@@ -115,14 +115,14 @@ font_display_name() {
 # Durchsucht bekannte Konfigurationspfade nach Theme-Einstellungen
 collect_theme_configs() {
     local output=""
-    
+
     # Terminal-Profil und Xcode-Theme dynamisch ermitteln (alphabetisch erste)
     local terminal_file
     terminal_file=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.terminal" | sort | head -1)
-    
+
     local xcode_file
     xcode_file=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.xccolortheme" | sort | head -1)
-    
+
     # Bekannte Theme-Dateien
     local -A theme_files=(
         ["Terminal.app"]="$terminal_file|Via Bootstrap importiert + als Standard gesetzt"
@@ -134,28 +134,28 @@ collect_theme_configs() {
         ["zsh-syntax-highlighting"]="$DOTFILES_DIR/terminal/.config/zsh/|Via Stow verlinkt"
         ["Xcode"]="$xcode_file|Via Bootstrap kopiert (manuelle Aktivierung)"
     )
-    
+
     output+="| Tool | Theme-Datei | Status |\n"
     output+="| ---- | ----------- | ------ |\n"
-    
+
     for tool in "Terminal.app" "Starship" "bat" "fzf" "btop" "eza" "zsh-syntax-highlighting" "Xcode"; do
         local info="${theme_files[$tool]}"
         local file="${info%%|*}"
         local stat="${info##*|}"
-        
+
         # Überspringen wenn Datei leer (optionale Themes: Terminal.app, Xcode)
         [[ -z "$file" && ( "$tool" == "Xcode" || "$tool" == "Terminal.app" ) ]] && continue
-        
+
         # Datei/Verzeichnis kürzen für Anzeige
         local display_file="$file"
         if [[ "$file" == "$DOTFILES_DIR"* ]]; then
             display_file="${file#$DOTFILES_DIR/}"
             display_file="\`$display_file\`"
         fi
-        
+
         output+="| **$tool** | $display_file | $stat |\n"
     done
-    
+
     echo "$output"
 }
 
@@ -180,7 +180,7 @@ HEADER
 
     # Theme-Tabelle
     collect_theme_configs
-    
+
     # Xcode-Sektion nur wenn .xccolortheme existiert
     local xcode_theme
     xcode_theme=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.xccolortheme" | sort | head -1)
@@ -210,7 +210,7 @@ FONT_SECTION
 
     # Dynamisch aus theme-colors generieren
     generate_color_palette_table
-    
+
     cat << 'AFTER_COLORS'
 
 > **Verwendung in Skripten:**
@@ -294,12 +294,12 @@ FONT_WARNING
     [[ -z "$installed_font" ]] && installed_font="font-<name>-nerd-font"
     local display_name
     display_name=$(font_display_name "$installed_font")
-    
+
     # Terminal-Profilname dynamisch aus .terminal-Datei
     local profile_name
     profile_name=$(extract_terminal_profile_name)
     [[ -z "$profile_name" ]] && profile_name="<profilname>"
-    
+
     cat << FONT_EXAMPLE
 \`\`\`zsh
 # Verfügbare Nerd Fonts suchen

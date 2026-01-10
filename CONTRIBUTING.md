@@ -15,10 +15,10 @@ cd ~/dotfiles
 ./setup/bootstrap.sh
 
 # 3. Git Hooks aktivieren
-git config core.hooksPath .githooks
+git config core.hooksPath .github/hooks
 
 # 4. Konfiguration verlinken
-stow --adopt -R terminal && git reset --hard HEAD
+stow --adopt -R terminal editor && git reset --hard HEAD
 ```
 
 Nach Schritt 3 wird bei jedem Commit automatisch geprüft, ob Dokumentation und Code synchron sind.
@@ -46,7 +46,7 @@ Siehe [architecture.md → Verzeichnisstruktur](docs/architecture.md#verzeichnis
 ### Aktivierung
 
 ```zsh
-git config core.hooksPath .githooks
+git config core.hooksPath .github/hooks
 ```
 
 ### Verfügbare Hooks

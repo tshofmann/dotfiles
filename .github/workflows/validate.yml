@@ -17,11 +17,11 @@ on:
 jobs:
   validate:
     runs-on: macos-latest
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-      
+
       - name: ZSH-Syntax prüfen
         run: |
           echo "Prüfe ZSH-Syntax (inkl. Alias-Dateien)..."
@@ -40,7 +40,7 @@ jobs:
             exit 1
           fi
           echo "✔ Shell-Syntax OK"
-      
+
       - name: Dokumentation prüfen
         run: |
           echo "Prüfe ob Dokumentation aktuell ist..."
@@ -54,27 +54,27 @@ jobs:
             exit 1
           fi
           echo "✔ Dokumentation ist aktuell"
-      
+
       - name: Alias-Format prüfen
         run: |
           echo "Prüfe Alias-Datei-Format..."
           errors=0
           for file in terminal/.config/alias/*.alias; do
             name=$(basename "$file")
-            
+
             # Header-Block vorhanden?
             if ! head -3 "$file" | grep -q "^# ===="; then
               echo "✖ $name: Kein Header-Block"
               errors=$((errors + 1))
             fi
-            
+
             # Guard-Check vorhanden?
             if ! grep -q "command -v.*>/dev/null" "$file"; then
               echo "✖ $name: Kein Guard-Check"
               errors=$((errors + 1))
             fi
           done
-          
+
           if [[ $errors -gt 0 ]]; then
             echo "✖ $errors Alias-Datei(en) mit Format-Fehlern"
             exit 1

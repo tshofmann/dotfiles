@@ -5,14 +5,14 @@
 # Zweck   : Verhindert Commits mit veralteter Dokumentation
 #           oder ungültiger Shell-Syntax
 #
-# Install : git config core.hooksPath .githooks
+# Install : git config core.hooksPath .github/hooks
 # WICHTIG : --no-verify ist VERBOTEN (siehe copilot-instructions.md)
 # ============================================================
 
 set -uo pipefail
 
 SCRIPT_DIR="${0:A:h}"
-DOTFILES_DIR="${SCRIPT_DIR:h}"  # .githooks → dotfiles
+DOTFILES_DIR="${SCRIPT_DIR:h:h}"  # .github/hooks → dotfiles
 SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-colors"
 
 # Farben (Catppuccin Mocha) – zentral definiert
@@ -118,9 +118,15 @@ check_markdown() {
         return 0  # Kein Fehler, nur Warnung
     fi
     
-    # Markdownlint ausführen (Config aus terminal/.config/)
-    if ! markdownlint-cli2 --config "$DOTFILES_DIR/terminal/.config/markdownlint-cli2/.markdownlint-cli2.jsonc" '**/*.md' '#node_modules' 2>/dev/null; then
+    # Markdownlint ausführen (Ausgabe nur bei Fehlern)
+    local output
+    output=$(markdownlint-cli2 --config "$DOTFILES_DIR/terminal/.config/markdownlint-cli2/.markdownlint-cli2.jsonc" '**/*.md' '#node_modules' 2>&1)
+    local exit_code=$?
+    
+    if (( exit_code != 0 )); then
         err "Markdown-Fehler gefunden!"
+        # Nur relevante Zeilen anzeigen (keine "Finding:", "Linting:", "Summary:")
+        echo "$output" | grep -v "^Finding:" | grep -v "^Linting:" | grep -v "^Summary:" | grep -v "^markdownlint-cli2"
         print ""
         print "  Fehler beheben oder Generatoren anpassen:"
         print "    ${C_YELLOW}scripts/generators/*.sh${C_RESET}"
@@ -134,9 +140,11 @@ check_markdown() {
 # ------------------------------------------------------------
 # Hauptprogramm
 # ------------------------------------------------------------
-print "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-print "🔍 Pre-Commit Checks"
-print "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+print ""
+print "${C_OVERLAY0}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
+print "${C_MAUVE}🔍 Pre-Commit Checks${C_RESET}"
+print "${C_OVERLAY0}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
+print ""
 
 failed=0
 
@@ -145,9 +153,11 @@ check_docs || (( failed++ ))
 check_alias_format || (( failed++ ))
 check_markdown || (( failed++ ))
 
-print "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+print ""
+print "${C_OVERLAY0}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
 
 if (( failed > 0 )); then
+    print ""
     err "Pre-Commit fehlgeschlagen ($failed Check(s))"
     print ""
     print "  ${C_RED}--no-verify ist VERBOTEN!${C_RESET}"
@@ -155,5 +165,6 @@ if (( failed > 0 )); then
     exit 1
 fi
 
+print ""
 ok "Alle Checks bestanden"
 exit 0

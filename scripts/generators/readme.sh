@@ -17,7 +17,7 @@ generate_readme_md() {
     macos_tested=$(extract_macos_tested_version)
     macos_min_name=$(get_macos_codename "$macos_min")
     macos_tested_name=$(get_macos_codename "$macos_tested")
-    
+
     cat << EOF
 # 🍎 dotfiles
 
@@ -37,7 +37,7 @@ curl -fsSL https://github.com/tshofmann/dotfiles/archive/refs/heads/main.tar.gz 
 Nach Terminal-Neustart:
 
 \`\`\`zsh
-cd ~/dotfiles && stow --adopt -R terminal && git reset --hard HEAD && bat cache --build && tldr --update
+cd ~/dotfiles && stow --adopt -R terminal editor && git reset --hard HEAD && bat cache --build && tldr --update
 \`\`\`
 
 > ⚠️ **Achtung:** \`git reset --hard\` verwirft lokale Änderungen. Siehe [Setup](docs/setup.md) für Details.

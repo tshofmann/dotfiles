@@ -84,10 +84,18 @@ Nach Abschluss des Bootstrap-Skripts:
 **2. Dann im neuen Terminal-Fenster:**
 
 ```zsh
-cd ~/dotfiles && stow --adopt -R terminal && git reset --hard HEAD
+cd ~/dotfiles && stow --adopt -R terminal editor && git reset --hard HEAD
 ```
 
-**3. bat-Cache für Catppuccin Theme bauen:**
+**3. Git-Hooks aktivieren:**
+
+```zsh
+git config core.hooksPath .github/hooks
+```
+
+> **💡 Warum dieser Schritt?** Der Pre-Commit Hook validiert vor jedem Commit ZSH-Syntax, Dokumentation, Alias-Format und Markdown – konsistent mit dem CI-Workflow.
+
+**4. bat-Cache für Catppuccin Theme bauen:**
 
 ```zsh
 bat cache --build
@@ -95,7 +103,7 @@ bat cache --build
 
 > **💡 Warum dieser Schritt?** Das Catppuccin Mocha Theme für bat liegt in `~/.config/bat/themes/` (via Stow verlinkt). bat erkennt neue Themes erst nach einem Cache-Rebuild.
 
-**4. tealdeer-Cache herunterladen (einmalig):**
+**5. tealdeer-Cache herunterladen (einmalig):**
 
 ```zsh
 tldr --update
@@ -108,8 +116,9 @@ tldr --update
 | Befehl | Beschreibung |
 | ------ | ------------ |
 | `cd ~/dotfiles` | Ins dotfiles-Verzeichnis wechseln |
-| `stow --adopt -R terminal` | Symlinks erstellen, existierende Dateien übernehmen |
+| `stow --adopt -R terminal editor` | Symlinks erstellen, existierende Dateien übernehmen |
 | `git reset --hard HEAD` | Adoptierte Dateien auf Repository-Zustand zurücksetzen |
+| `git config core.hooksPath .github/hooks` | Pre-Commit Hook aktivieren |
 | `bat cache --build` | bat Theme-Cache neu aufbauen |
 | `tldr --update` | tldr-Pages herunterladen |
 
