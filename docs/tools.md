@@ -226,15 +226,8 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 | Alias | Befehl | Beschreibung |
 | ----- | ------ | ------------ |
-| `dh` | `dothelp` | Kurzalias für schnellen Zugriff |
-
-**Interaktive Funktionen (mit fzf):**
-
-| Funktion | Beschreibung |
-| -------- | ------------ |
-| `dothelp` | dothelp (Zeigt alle verfügbaren tldr-Seiten mit dotfiles-Erweiterungen) |
-
-> **Hinweis:** dothelp listet alle verfügbaren Hilfe-Seiten auf. tldr-Patches erweitern offizielle Seiten mit dotfiles- spezifischen Funktionen, Aliases und Keybindings.
+| `dothelp` | `tldr dotfiles` | Schnellreferenz anzeigen (zeigt tldr dotfiles) |
+| `dh` | `dothelp` | - |
 
 ### eza.alias
 

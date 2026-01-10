@@ -389,9 +389,8 @@ Nach PR-Erstellung das passende Label hinzufügen:
 
 1. **Brewfile** erweitern: `setup/Brewfile`
 2. **Alias-Datei** erstellen: `terminal/.config/alias/tool.alias`
-3. Dokumentation wird automatisch generiert (tldr-Patch, tools.md, etc.)
-4. `./scripts/generate-docs.sh --generate` ausführen
-5. Änderungen prüfen und committen
+3. `./scripts/generate-docs.sh --generate` ausführen (generiert tldr-Patch automatisch)
+4. Änderungen prüfen und committen
 
 ### Dokumentation ändern
 
