@@ -58,51 +58,99 @@ brewv() {
         return 1
     fi
 
-    local formula_count=0 cask_count=0 mas_count=0
+    # Batch-Abfrage aller installierten Versionen (O(1) statt O(n))
+    local -A formula_versions cask_versions mas_versions
 
-    # Formulae aus Brewfile
+    # Formulae: Einmalig alle Versionen laden
+    while IFS=' ' read -r pkg ver; do
+        formula_versions[$pkg]="$ver"
+    done < <(brew list --formula --versions 2>/dev/null | while read -r line; do
+        local pkg="${line%% *}"
+        local ver="${line#* }"
+        echo "$pkg $ver"
+    done)
+
+    # Casks: Einmalig alle Versionen laden
+    while IFS=' ' read -r pkg ver; do
+        cask_versions[$pkg]="$ver"
+    done < <(brew list --cask --versions 2>/dev/null | while read -r line; do
+        local pkg="${line%% *}"
+        local ver="${line#* }"
+        echo "$pkg $ver"
+    done)
+
+    # MAS Apps: Einmalig alle laden (wenn mas verfügbar)
+    if command -v mas >/dev/null 2>&1; then
+        while IFS=' ' read -r id name_and_ver; do
+            # Format: "123456 AppName (1.2.3)"
+            local version="${name_and_ver##*\(}"
+            version="${version%\)}"
+            mas_versions[$id]="$version"
+        done < <(mas list 2>/dev/null)
+    fi
+
+    # Formulae aus Brewfile (Array statt Pipe)
+    local -a formulae=()
+    while IFS= read -r line; do
+        local pkg="${line#brew \"}"
+        pkg="${pkg%%\"*}"
+        formulae+=("$pkg")
+    done < <(grep '^brew "' "$brewfile")
+
     print "${C_MAUVE}━━━ Homebrew Formulae ━━━${C_RESET}"
-    grep '^brew "' "$brewfile" | sed 's/brew "\([^"]*\)".*/\1/' | while read -r pkg; do
-        local version=$(brew list --versions "$pkg" 2>/dev/null | cut -d' ' -f2-)
+    for pkg in "${formulae[@]}"; do
+        local version="${formula_versions[$pkg]}"
         if [[ -n "$version" ]]; then
             printf "${C_GREEN}%-30s${C_RESET} ${C_TEXT}%s${C_RESET}\n" "$pkg" "$version"
         else
             printf "${C_RED}%-30s${C_RESET} ${C_OVERLAY0}nicht installiert${C_RESET}\n" "$pkg"
         fi
     done
-    formula_count=$(grep -c '^brew "' "$brewfile")
 
-    # Casks aus Brewfile
+    # Casks aus Brewfile (Array statt Pipe)
+    local -a casks=()
+    while IFS= read -r line; do
+        local pkg="${line#cask \"}"
+        pkg="${pkg%%\"*}"
+        casks+=("$pkg")
+    done < <(grep '^cask "' "$brewfile")
+
     print "\n${C_MAUVE}━━━ Homebrew Casks ━━━${C_RESET}"
-    grep '^cask "' "$brewfile" | sed 's/cask "\([^"]*\)".*/\1/' | while read -r pkg; do
-        local version=$(brew list --cask --versions "$pkg" 2>/dev/null | cut -d' ' -f2-)
+    for pkg in "${casks[@]}"; do
+        local version="${cask_versions[$pkg]}"
         if [[ -n "$version" ]]; then
             printf "${C_BLUE}%-30s${C_RESET} ${C_TEXT}%s${C_RESET}\n" "$pkg" "$version"
         else
             printf "${C_RED}%-30s${C_RESET} ${C_OVERLAY0}nicht installiert${C_RESET}\n" "$pkg"
         fi
     done
-    cask_count=$(grep -c '^cask "' "$brewfile")
 
-    # MAS Apps aus Brewfile
+    # MAS Apps aus Brewfile (robusteres Parsing)
     if command -v mas >/dev/null 2>&1; then
-        print "\n${C_MAUVE}━━━ Mac App Store ━━━${C_RESET}"
-        grep '^mas "' "$brewfile" | while read -r line; do
+        local -a mas_apps=()
+        while IFS= read -r line; do
             # Format: mas "Name", id: 123456
-            local name=$(echo "$line" | sed 's/mas "\([^"]*\)".*/\1/')
-            local id=$(echo "$line" | sed 's/.*id: \([0-9]*\).*/\1/')
-            local installed=$(mas list | grep "^$id ")
-            if [[ -n "$installed" ]]; then
-                local version=$(echo "$installed" | sed -n 's/.*(\(.*\))$/\1/p')
+            local name="${line#mas \"}"
+            name="${name%%\"*}"
+            local id="${line##*id: }"
+            id="${id//[^0-9]/}"
+            mas_apps+=("$name:$id")
+        done < <(grep '^mas "' "$brewfile")
+
+        print "\n${C_MAUVE}━━━ Mac App Store ━━━${C_RESET}"
+        for entry in "${mas_apps[@]}"; do
+            local name="${entry%:*}"
+            local id="${entry#*:}"
+            local version="${mas_versions[$id]}"
+            if [[ -n "$version" ]]; then
                 printf "${C_YELLOW}%-30s${C_RESET} ${C_TEXT}%-12s${C_RESET} ${C_OVERLAY0}#%s${C_RESET}\n" "$name" "$version" "$id"
             else
                 printf "${C_RED}%-30s${C_RESET} ${C_OVERLAY0}nicht installiert${C_RESET} ${C_OVERLAY0}#%s${C_RESET}\n" "$name" "$id"
             fi
         done
-        mas_count=$(grep -c '^mas "' "$brewfile")
     fi
 
-    print "\n${C_OVERLAY0}Brewfile: $formula_count Formulae | $cask_count Casks | $mas_count MAS${C_RESET}"
+    print "\n${C_OVERLAY0}Brewfile: ${#formulae[@]} Formulae | ${#casks[@]} Casks | ${#mas_apps[@]:-0} MAS${C_RESET}"
 }
 
 # ------------------------------------------------------------
