@@ -611,6 +611,10 @@ generate_catppuccin_tldr() {
             echo "" >> "$temp_file"  # trailing newline
             
             if ! diff -q "$page_file" "$temp_file" >/dev/null 2>&1; then
+                # DEBUG: Zeige den Unterschied
+                echo "DEBUG: Unterschied in catppuccin.page.md:" >&2
+                diff "$page_file" "$temp_file" >&2 || true
+                echo "DEBUG: Ende Unterschied" >&2
                 rm -f "$temp_file"
                 err "catppuccin.page.md ist veraltet"
                 return 1
