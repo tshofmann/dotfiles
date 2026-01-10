@@ -102,6 +102,7 @@ Format für `terminal/.config/alias/*.alias`:
 # Zweck   : Was macht diese Datei
 # Pfad    : ~/.config/alias/tool.alias
 # Docs    : https://...
+# Config  : ~/.config/tool/config (wenn lokale Config existiert)
 # Nutzt   : fzf, bat (optionale Abhängigkeiten)
 # Ersetzt : original-cmd (was es ersetzt)
 # Aliase  : cmd1, cmd2
