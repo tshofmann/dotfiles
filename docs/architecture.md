@@ -111,7 +111,7 @@ dotfiles/
 │   │   │   │   ├── fzf.patch.md # Globale Tastenkürzel (in allen fzf-Dialogen)
 │   │   │   │   ├── gh.patch.md # tldr-Patch (auto-generiert)
 │   │   │   │   ├── git.patch.md # tldr-Patch (auto-generiert)
-│   │   │   │   ├── markdownlint.patch.md # tldr-Patch (auto-generiert)
+│   │   │   │   ├── markdownlint.page.md # markdownlint
 │   │   │   │   ├── rg.patch.md # tldr-Patch (auto-generiert)
 │   │   │   │   └── zoxide.patch.md # tldr-Patch (auto-generiert)
 │   │   │   └── config.toml # Vereinfachte Man-Pages mit Beispielen (tldr)

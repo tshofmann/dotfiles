@@ -75,8 +75,8 @@
 
 - Tools mit dotfiles-Patches (tldr <tool>):
 
-`bat brew btop eza fastfetch fd fzf gh git markdownlint rg zoxide`
+`bat brew btop eza fastfetch fd fzf gh git rg zoxide`
 
 - Eigene Seiten:
 
-`catppuccin, dotfiles`
+`catppuccin markdownlint, dotfiles`
