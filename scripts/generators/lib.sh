@@ -147,7 +147,6 @@ parse_description_comment() {
         keybindings=""
     fi
     
-    # Description ist der Name selbst (für tools.md Tabelle)
     description="$name"
     
     echo "${name}|${param}|${keybindings}|${description}"

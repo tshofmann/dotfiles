@@ -40,8 +40,7 @@ dotfiles/
 │   │   ├── lib.sh # Parser, Hilfsfunktionen, Konfiguration
 │   │   ├── readme.sh # Generiert Haupt-README aus Template + dynamischen Daten
 │   │   ├── setup.sh # Generiert Setup-Dokumentation aus bootstrap.sh
-│   │   ├── tldr.sh # Generiert tldr-Patches aus .alias-Dateien
-│   │   └── tools.sh # Generiert Tool-Dokumentation aus .alias-Dateien
+│   │   └── tldr.sh # Generiert tldr-Patches aus .alias-Dateien
 │   ├── tests/
 │   │   └── test_generators.sh # Testet Parser-Funktionen aus scripts/generators/lib.sh
 │   ├── generate-docs.sh # Generiert alle Dokumentation aus Code-Kommentaren
