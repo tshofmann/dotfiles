@@ -11,7 +11,7 @@ Das gesamte Setup verwendet [Catppuccin Mocha](https://catppuccin.com/) als einh
 ### Konfigurierte Tools
 
 | Tool | Theme-Datei | Status |
-|------|-------------|--------|
+| ---- | ----------- | ------ |
 | **Terminal.app** | `setup/catppuccin-mocha.terminal` | Via Bootstrap importiert + als Standard gesetzt |
 | **Starship** | catppuccin-powerline Preset | Via Bootstrap konfiguriert |
 | **bat** | `terminal/.config/bat/themes/` | Via Stow verlinkt (+ Cache-Build) |
@@ -20,7 +20,6 @@ Das gesamte Setup verwendet [Catppuccin Mocha](https://catppuccin.com/) als einh
 | **eza** | `terminal/.config/eza/theme.yml` | Via Stow verlinkt |
 | **zsh-syntax-highlighting** | `terminal/.config/zsh/` | Via Stow verlinkt |
 | **Xcode** | `setup/Catppuccin Mocha.xccolortheme` | Via Bootstrap kopiert (manuelle Aktivierung) |
-
 
 ### Xcode Theme aktivieren
 
@@ -35,10 +34,10 @@ Das Catppuccin Mocha Theme für Xcode wird automatisch vom Bootstrap-Skript nach
 
 ### Farbpalette (Catppuccin Mocha)
 
-Alle verfügbaren Shell-Farbvariablen aus `~/.config/shell-colors`:
+Alle verfügbaren Shell-Farbvariablen aus `~/.config/theme-colors`:
 
 | Farbe | Hex | Variable |
-|-------|-----|----------|
+| ----- | --- | -------- |
 | Rosewater | `#F5E0DC` | `C_ROSEWATER` |
 | Flamingo | `#F2CDCD` | `C_FLAMINGO` |
 | Pink | `#F5C2E7` | `C_PINK` |
@@ -67,10 +66,11 @@ Alle verfügbaren Shell-Farbvariablen aus `~/.config/shell-colors`:
 | Crust | `#11111B` | `C_CRUST` |
 
 > **Verwendung in Skripten:**
-> ```zsh
-> source ~/.config/shell-colors
-> echo "${C_GREEN}Erfolg${C_RESET}"
-> ```
+
+```zsh
+source ~/.config/theme-colors
+echo "${C_GREEN}Erfolg${C_RESET}"
+```
 
 Vollständige Palette: [catppuccin.com/palette](https://catppuccin.com/palette)
 
@@ -83,7 +83,7 @@ Das Setup konfiguriert automatisch [Starship](https://starship.rs/) mit dem `cat
 ### Standard-Verhalten
 
 | Situation | Verhalten |
-|-----------|-----------|
+| --------- | --------- |
 | Keine `starship.toml` vorhanden | Wird mit `catppuccin-powerline` erstellt |
 | `starship.toml` bereits vorhanden | Bleibt unverändert |
 | `STARSHIP_PRESET` Variable gesetzt | Wird mit diesem Preset erstellt/überschrieben |
@@ -125,7 +125,7 @@ Das Terminal-Profil, der Nerd Font und das Starship-Preset sind eng gekoppelt. W
 
 ### Voraussetzung
 
-Bei Starship-Presets mit Powerline-Symbolen (wie `catppuccin-powerline`) muss die neue Schriftart ein **Nerd Font** sein. Siehe [Tools → Warum Nerd Fonts?](tools.md#warum-nerd-fonts) für Details.
+Bei Starship-Presets mit Powerline-Symbolen (wie `catppuccin-powerline`) muss die neue Schriftart ein **Nerd Font** sein. Nerd Fonts enthalten zusätzliche Icons und Symbole, die für Powerline-Prompts benötigt werden.
 
 ### Schritt 1: Neuen Nerd Font installieren
 
@@ -165,7 +165,6 @@ git commit -m "Terminal-Profil: <Neuer Font Name>"
 ```
 
 > **Hinweis:** Der Dateiname ist frei wählbar – bootstrap.sh findet automatisch die alphabetisch erste `.terminal`-Datei in `setup/`. Bei mehreren Dateien erscheint eine Warnung.
-
 
 ---
 
@@ -237,9 +236,34 @@ bindkey '^X3' fzf-cd-widget              # Ctrl+X 3 = Verzeichnisse
 ## Weitere Anpassungen
 
 | Was | Wo | Format |
-|-----|-----|--------|
+| --- | -- | ------ |
 | bat Theme | `~/.config/bat/config` | `--theme="..."` |
 | fd Ignore-Patterns | `~/.config/fd/ignore` | Glob-Patterns |
 | ripgrep Optionen | `~/.config/ripgrep/config` | CLI-Flags |
 | lazygit Keybindings | `~/.config/lazygit/config.yml` | YAML |
 | fastfetch Modules | `~/.config/fastfetch/config.jsonc` | JSONC |
+
+---
+
+## ZSH-Ladereihenfolge
+
+```text
+.zshenv        # Immer (Umgebungsvariablen)
+    │
+    ├── Login-Shell?
+    │       │
+    │       └── .zprofile (PATH, EDITOR, etc.)
+    │
+    └── Interactive?
+            │
+            └── .zshrc (Aliase, Prompt, Keybindings)
+                    │
+                    └── .zlogin (Background-Tasks)
+```
+
+| Datei | Wann geladen | Verwendung |
+| ----- | ------------ | ---------- |
+| `.zshenv` | Immer | Umgebungsvariablen die VOR allen anderen Configs geladen werden |
+| `.zprofile` | Login-Shell | PATH, EDITOR, etc. (einmalig) |
+| `.zshrc` | Interaktiv | Aliase, Prompt, Keybindings |
+| `.zlogin` | Nach Login | Background-Tasks nach `.zshrc` |

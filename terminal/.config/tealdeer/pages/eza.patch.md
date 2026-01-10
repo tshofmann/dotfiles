@@ -1,3 +1,5 @@
+- dotfiles: Config `~/.config/eza/theme.yml`
+
 - dotfiles: Kompakte Liste, Verzeichnisse zuerst:
 
 `ls`

@@ -18,7 +18,7 @@ set -euo pipefail
 # ------------------------------------------------------------
 SCRIPT_DIR="${0:A:h}"
 GENERATORS_DIR="$SCRIPT_DIR/generators"
-DOTFILES_DIR="${SCRIPT_DIR:h}"
+DOTFILES_DIR="${SCRIPT_DIR:h:h}"  # .github/scripts → dotfiles
 DOCS_DIR="$DOTFILES_DIR/docs"
 
 # Laden der gemeinsamen Bibliothek
@@ -34,7 +34,7 @@ run_generator() {
     local module="$1"
     local func="$2"
     local output
-    
+
     # Subshell mit Error-Handling
     if ! output=$(
         export _SOURCED_BY_GENERATOR=1
@@ -44,7 +44,7 @@ run_generator() {
         err "Generator $module ($func) fehlgeschlagen"
         return 1
     fi
-    
+
     printf '%s\n' "$output"
 }
 
@@ -54,7 +54,7 @@ run_generator() {
 check_all() {
     log "Prüfe ob Dokumentation aktuell ist..."
     local errors=0
-    
+
     # README.md
     local generated=$(run_generator "readme.sh" "generate_readme_md")
     if ! compare_content "$DOTFILES_DIR/README.md" "$generated"; then
@@ -63,43 +63,25 @@ check_all() {
     else
         ok "README.md ist aktuell"
     fi
-    
-    # docs/tools.md
-    generated=$(run_generator "tools.sh" "generate_tools_md")
-    if ! compare_content "$DOCS_DIR/tools.md" "$generated"; then
-        err "docs/tools.md ist veraltet"
+
+    # docs/setup.md
+    generated=$(run_generator "setup.sh" "generate_setup_md")
+    if ! compare_content "$DOCS_DIR/setup.md" "$generated"; then
+        err "docs/setup.md ist veraltet"
         (( errors++ )) || true
     else
-        ok "docs/tools.md ist aktuell"
+        ok "docs/setup.md ist aktuell"
     fi
-    
-    # docs/installation.md
-    generated=$(run_generator "installation.sh" "generate_installation_md")
-    if ! compare_content "$DOCS_DIR/installation.md" "$generated"; then
-        err "docs/installation.md ist veraltet"
+
+    # docs/customization.md
+    generated=$(run_generator "customization.sh" "generate_customization_md")
+    if ! compare_content "$DOCS_DIR/customization.md" "$generated"; then
+        err "docs/customization.md ist veraltet"
         (( errors++ )) || true
     else
-        ok "docs/installation.md ist aktuell"
+        ok "docs/customization.md ist aktuell"
     fi
-    
-    # docs/architecture.md
-    generated=$(run_generator "architecture.sh" "generate_architecture_md")
-    if ! compare_content "$DOCS_DIR/architecture.md" "$generated"; then
-        err "docs/architecture.md ist veraltet"
-        (( errors++ )) || true
-    else
-        ok "docs/architecture.md ist aktuell"
-    fi
-    
-    # docs/configuration.md
-    generated=$(run_generator "configuration.sh" "generate_configuration_md")
-    if ! compare_content "$DOCS_DIR/configuration.md" "$generated"; then
-        err "docs/configuration.md ist veraltet"
-        (( errors++ )) || true
-    else
-        ok "docs/configuration.md ist aktuell"
-    fi
-    
+
     # tldr-Patches
     local tldr_ok=true
     (
@@ -110,13 +92,13 @@ check_all() {
         (( errors++ )) || true
     }
     $tldr_ok && ok "tldr-Patches sind aktuell"
-    
+
     if (( errors > 0 )); then
         echo ""
         err "$errors Datei(en) veraltet. Führe './scripts/generate-docs.sh --generate' aus."
         return 1
     fi
-    
+
     echo ""
     ok "Alle Dokumentation ist aktuell"
     return 0
@@ -127,33 +109,25 @@ check_all() {
 # ------------------------------------------------------------
 generate_all() {
     log "Generiere Dokumentation..."
-    
+
     # README.md
     local generated=$(run_generator "readme.sh" "generate_readme_md")
     write_if_changed "$DOTFILES_DIR/README.md" "$generated"
-    
-    # docs/tools.md
-    generated=$(run_generator "tools.sh" "generate_tools_md")
-    write_if_changed "$DOCS_DIR/tools.md" "$generated"
-    
-    # docs/installation.md
-    generated=$(run_generator "installation.sh" "generate_installation_md")
-    write_if_changed "$DOCS_DIR/installation.md" "$generated"
-    
-    # docs/architecture.md
-    generated=$(run_generator "architecture.sh" "generate_architecture_md")
-    write_if_changed "$DOCS_DIR/architecture.md" "$generated"
-    
-    # docs/configuration.md
-    generated=$(run_generator "configuration.sh" "generate_configuration_md")
-    write_if_changed "$DOCS_DIR/configuration.md" "$generated"
-    
+
+    # docs/setup.md
+    generated=$(run_generator "setup.sh" "generate_setup_md")
+    write_if_changed "$DOCS_DIR/setup.md" "$generated"
+
+    # docs/customization.md
+    generated=$(run_generator "customization.sh" "generate_customization_md")
+    write_if_changed "$DOCS_DIR/customization.md" "$generated"
+
     # tldr-Patches
     (
         source "$GENERATORS_DIR/tldr.sh"
         generate_tldr_patches --generate
     )
-    
+
     echo ""
     ok "Dokumentation generiert"
 }
@@ -163,7 +137,7 @@ generate_all() {
 # ------------------------------------------------------------
 main() {
     local mode="${1:---check}"
-    
+
     case "$mode" in
         --check)
             check_all
@@ -179,10 +153,8 @@ main() {
             echo ""
             echo "Generierte Dateien:"
             echo "  README.md"
-            echo "  docs/tools.md"
-            echo "  docs/installation.md"
-            echo "  docs/architecture.md"
-            echo "  docs/configuration.md"
+            echo "  docs/setup.md"
+            echo "  docs/customization.md"
             echo "  terminal/.config/tealdeer/pages/*.patch.md"
             ;;
         *)

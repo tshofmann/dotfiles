@@ -6,8 +6,7 @@
 # Docs    : https://github.com/eza-community/eza/blob/main/man/eza_colors.5.md
 # ============================================================
 # Aliase  : ~/.config/alias/eza.alias (ls, ll, la, lt, lss, lst)
-# Hinweis : EZA_CONFIG_DIR wird in .zshenv gesetzt.
-#           Farben basieren auf Catppuccin Mocha Palette.
+# Theme   : ~/.config/theme-colors
 # ============================================================
 
 colourful: true

@@ -15,10 +15,10 @@ cd ~/dotfiles
 ./setup/bootstrap.sh
 
 # 3. Git Hooks aktivieren
-git config core.hooksPath .githooks
+git config core.hooksPath .github/hooks
 
 # 4. Konfiguration verlinken
-stow --adopt -R terminal && git reset --hard HEAD
+stow --adopt -R terminal editor && git reset --hard HEAD
 ```
 
 Nach Schritt 3 wird bei jedem Commit automatisch geprüft, ob Dokumentation und Code synchron sind.
@@ -27,17 +27,53 @@ Nach Schritt 3 wird bei jedem Commit automatisch geprüft, ob Dokumentation und 
 
 ## Repository-Struktur
 
-Siehe [architecture.md → Verzeichnisstruktur](docs/architecture.md#verzeichnisstruktur) für die vollständige Struktur.
-
-**Kurzübersicht der wichtigsten Pfade:**
+**Wichtigste Pfade:**
 
 | Pfad | Zweck |
-|------|-------|
-| `scripts/generators/` | Dokumentations-Generatoren (Single Source of Truth) |
-| `scripts/tests/` | Unit-Tests für Generatoren |
+| ------ | ------- |
+| `.github/scripts/generators/` | Dokumentations-Generatoren (Single Source of Truth) |
+| `.github/scripts/tests/` | Unit-Tests für Generatoren |
+| `.github/hooks/` | Pre-Commit Hook für Validierung |
 | `setup/` | Bootstrap, Brewfile, Terminal-Profil |
-| `terminal/` | Dotfiles (werden nach `~` verlinkt) |
+| `terminal/` | Dotfiles (werden nach `~` verlinkt via Stow) |
+| `terminal/.config/alias/` | Tool-spezifische Aliase und Funktionen |
 | `docs/` | Dokumentation für Endnutzer |
+
+> **💡 Tipp:** Für die vollständige Verzeichnisstruktur nutze den GitHub Tree-View oder `eza --tree ~/dotfiles`.
+
+---
+
+## Architektur-Konzepte
+
+### Unix-Philosophie
+
+> *"Do One Thing and Do It Well"*
+
+- **Ein Tool = Eine Aufgabe** – Jede `.alias`-Datei gehört zu genau einem Tool
+- **Kleine, kombinierbare Einheiten** – Funktionen sind unabhängig und pipebar
+- **Text als universelles Interface** – Konfiguration in lesbaren Dateien
+
+### Modularität
+
+| Prinzip | Umsetzung |
+| ------- | --------- |
+| **Isolation** | Jedes Tool hat eigene Config in `~/.config/tool/` |
+| **Unabhängigkeit** | Guard-System erlaubt Teilinstallation |
+| **Erweiterbarkeit** | Neue Tools durch Hinzufügen einer `.alias`-Datei |
+| **Austauschbarkeit** | Aliase abstrahieren Tool-spezifische Syntax |
+
+### Guard-System
+
+Alle `.alias`-Dateien prüfen ob das jeweilige Tool installiert ist:
+
+```zsh
+# Guard am Anfang jeder .alias-Datei
+if ! command -v tool >/dev/null 2>&1; then
+    return 0
+fi
+```
+
+So bleiben Original-Befehle (`ls`, `cat`) erhalten wenn ein Tool fehlt.
 
 ---
 
@@ -46,16 +82,16 @@ Siehe [architecture.md → Verzeichnisstruktur](docs/architecture.md#verzeichnis
 ### Aktivierung
 
 ```zsh
-git config core.hooksPath .githooks
+git config core.hooksPath .github/hooks
 ```
 
 ### Verfügbare Hooks
 
 | Hook | Zweck |
-|------|-------|
-| `pre-commit` | 1. ZSH-Syntax (`zsh -n`) für `scripts/**/*.sh`, `terminal/.config/alias/*.alias`, `setup/bootstrap.sh` |
-|              | 2. Doku-Konsistenz (vergleicht generierte mit aktuellen Docs) |
-|              | 3. Alias-Format (Header-Block, Guard-Check) |
+| ------ | ------- |
+| `pre-commit` | 1. ZSH-Syntax (`zsh -n`) für `.github/scripts/**/*.sh`, `terminal/.config/alias/*.alias`, `setup/bootstrap.sh` |
+| | 2. Doku-Konsistenz (vergleicht generierte mit aktuellen Docs) |
+| | 3. Alias-Format (Header-Block, Guard-Check) |
 
 ### Hook schlägt fehl?
 
@@ -63,7 +99,7 @@ Wenn der Pre-Commit Hook fehlschlägt:
 
 ```zsh
 # Dokumentation neu generieren
-./scripts/generate-docs.sh --generate
+./.github/scripts/generate-docs.sh --generate
 
 # Dann erneut committen
 git add . && git commit -m "..."
@@ -81,33 +117,39 @@ Die Dokumentation wird automatisch aus dem Code generiert (Single Source of Trut
 
 ```zsh
 # Prüfen ob Dokumentation aktuell ist
-./scripts/generate-docs.sh --check
+./.github/scripts/generate-docs.sh --check
 
 # Dokumentation neu generieren
-./scripts/generate-docs.sh --generate
+./.github/scripts/generate-docs.sh --generate
 ```
 
 ### Unit-Tests für Generatoren
 
 ```zsh
 # Tests ausführen
-./scripts/tests/test_generators.sh
+./.github/scripts/tests/test_generators.sh
 ```
 
 Die Test-Suite prüft:
+
 - Pfad-Konfiguration (DOTFILES_DIR, etc.)
 - Extraktions-Funktionen (Aliase, Funktionen, Docs)
 - Logging und Zähler (ok, warn, err)
 
 ### Was wird generiert?
 
-Siehe [architecture.md → Single Source of Truth](docs/architecture.md#single-source-of-truth) für die vollständige Übersicht.
+| Quelle | Generiert |
+| ------ | --------- |
+| `.alias`-Dateien | tldr-Patches/Pages |
+| `Brewfile` | setup.md (Tool-Liste) |
+| `bootstrap.sh` | setup.md (Schritte) |
+| Config-Dateien | customization.md |
 
 ### Bei Fehlern
 
 1. Öffne die gemeldete Dokumentationsdatei
 2. Aktualisiere den veralteten Abschnitt **im Code** (nicht in der Doku!)
-3. Führe `./scripts/generate-docs.sh --generate` aus
+3. Führe `./.github/scripts/generate-docs.sh --generate` aus
 4. Committe die Änderung
 
 ---
@@ -119,7 +161,7 @@ Siehe [architecture.md → Single Source of Truth](docs/architecture.md#single-s
 **Deutsch** ist die bevorzugte Sprache für alle Inhalte in diesem Repository:
 
 | Bereich | Sprache | Beispiel |
-|---------|---------|----------|
+| --------- | --------- | ---------- |
 | **Kommentare im Code** | Deutsch | `# Nur wenn bat installiert ist` |
 | **Header-Beschreibungen** | Deutsch | `# Zweck   : Aliase für bat` |
 | **Dokumentation** | Deutsch | README, CONTRIBUTING, docs/ |
@@ -127,6 +169,7 @@ Siehe [architecture.md → Single Source of Truth](docs/architecture.md#single-s
 | **Issue-Beschreibungen** | Deutsch | GitHub Issues & PRs |
 
 **Ausnahmen** (Englisch erlaubt):
+
 - **Technische Begriffe** ohne gängige Übersetzung: `Guard`, `Symlink`, `Config`
 - **Code-Bezeichner**: Funktionsnamen (`brewup`), Variablen (`DOTFILES_DIR`)
 - **Tool-Namen und Referenzen**: `fzf`, `bat`, `ripgrep`
@@ -143,21 +186,43 @@ Alle Shell-Dateien (`.alias`, `.sh`, `.zsh*`) beginnen mit einem standardisierte
 # Zweck   : Ausführliche Beschreibung des Datei-Zwecks
 # Pfad    : ~/.config/alias/dateiname.alias
 # Docs    : https://github.com/tool/tool (offizielle Doku)
-# ============================================================
-# Hinweis : Optionale Zusatzinformationen (mehrzeilig erlaubt)
-#           z.B. Abhängigkeiten, Config-Pfade, Besonderheiten
+# Nutzt   : fzf (Preview), bat (Syntax-Highlighting)
+# Ersetzt : cat (mit Syntax-Highlighting)
+# Aliase  : cmd, cmd2, cmd3
 # ============================================================
 ```
 
 **Metadaten-Felder** (8 Zeichen breit, linksbündig):
 
 | Feld | Pflicht | Beschreibung |
-|------|---------|--------------|
+| ------ | --------- | -------------- |
 | `Zweck` | ✅ | Was macht diese Datei? |
 | `Pfad` | ✅ | Wo liegt die Datei nach Stow? |
 | `Docs` | ✅ | Link zur offiziellen Dokumentation |
-| `Hinweis` | ⚪ | Optionale Zusatzinfos |
+| `Nutzt` | ⚪ | Abhängigkeiten zu anderen Tools (fzf, bat, etc.) |
+| `Ersetzt` | ⚪ | Welchen Befehl ersetzt das Tool? (cat, find, ls) |
+| `Aliase` | ⚪ | Liste der definierten Aliase |
 | `Aufruf` | ⚪ | Für Skripte: Wie wird es aufgerufen? |
+| `Hinweis` | ⚪ | Nur für **einzigartige** kontextuelle Info (siehe SSOT) |
+| `Config` | ⚪ | Nur wenn Config-Datei keine Header unterstützt |
+
+### Config-Pfad Ermittlung (SSOT)
+
+Die `.alias`-Datei ist der zentrale Dokumentations-Hub für jedes Tool.
+
+```text
+Hat das Tool eine .alias-Datei?
+├─ JA → Config-Pfad gehört dort: `# Config : ~/.config/tool/config`
+│       (Single Source of Truth für Tool-Dokumentation)
+│
+└─ NEIN → Config-Datei in ~/.config/<tool>/ suchen
+          ├─ Datei mit `# Pfad :` oder `// Pfad :` Header?
+          │  └─ JA → Config-Pfad gefunden ✓
+          └─ NEIN → Kein Config-Pfad
+```
+
+**Regel:** `# Config :` in Alias-Datei ist Pflicht, wenn das Tool eine lokale Config hat.
+Der Fallback (`# Pfad :` in Config-Dateien) ist nur für Tools ohne `.alias`-Datei.
 
 ### Funktions- und Alias-Kommentare
 
@@ -179,26 +244,29 @@ fman() {
 
 Funktionen mit fzf-UI nutzen ein erweitertes Format:
 
-```
+```text
 # Name(param?) – Key=Aktion, Key=Aktion
 ```
 
 **Parameter-Notation:**
+
 | Notation | Bedeutung | Beispiel |
-|----------|-----------|----------|
+| ---------- | ----------- | ---------- |
 | `(param)` | Pflichtparameter | `# Suche(query)` |
 | `(param?)` | Optionaler Parameter | `# Suche(query?)` |
 | `(param=default)` | Optional mit Default | `# Wechseln(pfad=.)` |
 
 **Keybinding-Format:**
+
 - `Enter=Aktion` – Einzelne Taste
 - `Ctrl+S=Aktion` – Modifier-Kombination
-- Mehrere Keybindings durch `, ` getrennt
+- Mehrere Keybindings durch `,` getrennt
 
 **Beispiele:**
+
 ```zsh
 # zoxide Browser – Enter=Wechseln, Ctrl+D=Löschen, Ctrl+Y=Kopieren
-zf() { ... }
+zf() { ... }  # in zoxide.alias (Tool-Zuordnung!)
 
 # Verzeichnis wechseln(pfad=.) – Enter=Wechseln, Ctrl+Y=Pfad kopieren
 cdf() { ... }
@@ -208,20 +276,26 @@ rgf() { ... }
 ```
 
 > **Wichtig:** Diese Kommentare sind die Single Source of Truth für tldr-Patches.
-> Der Generator `scripts/generators/tldr.sh` erzeugt die `.patch.md` Dateien
-> automatisch aus diesen Kommentaren.
+> Der Generator `.github/scripts/generators/tldr.sh` erzeugt automatisch:
+>
+> - `.patch.md` – wenn eine offizielle tldr-Seite existiert (erweitert diese)
+> - `.page.md` – wenn keine offizielle tldr-Seite existiert (ersetzt diese)
+>
+> Der Generator prüft den tealdeer-Cache (`~/Library/Caches/tealdeer/tldr-pages/`)
+> und wählt automatisch das richtige Format.
 
 ### Ausnahmen vom Header-Format
 
 Einige Dateien folgen **nicht** dem Standard-Header-Format:
 
 | Datei | Grund |
-|-------|-------|
+| ------- | ------- |
 | `btop/btop.conf` | Wird von btop generiert – `btop --write-config` überschreibt Änderungen |
 | `btop/themes/catppuccin_mocha.theme` | Third-Party Theme (Catppuccin) – bei Updates überschrieben |
 | `bat/themes/Catppuccin Mocha.tmTheme` | Third-Party Theme (Catppuccin) – bei Updates überschrieben |
 | `zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh` | Third-Party Theme (Catppuccin) – bei Updates überschrieben |
-| `terminal/.config/tealdeer/pages/*.patch.md` | Markdown-Format für tldr-Patches – automatisch generiert |
+| `terminal/.config/tealdeer/pages/*.patch.md` | Erweitert offizielle tldr-Seiten – automatisch generiert |
+| `terminal/.config/tealdeer/pages/*.page.md` | Ersetzt fehlende tldr-Seiten – automatisch generiert |
 
 Diese Dateien werden vom Pre-Commit Hook nicht auf Header-Format geprüft.
 
@@ -272,7 +346,7 @@ function name() { # ❌ Hybrid-Style – redundant
 ```
 
 | Syntax | Status | Grund |
-|--------|--------|-------|
+| -------- | -------- | ------- |
 | `name() {` | ✅ Verwenden | Von `fa()` erkannt, konsistent |
 | `function name {` | ❌ Nicht verwenden | Nicht von `fa()` erkannt |
 | `function name() {` | ❌ Nicht verwenden | Redundant, inkonsistent |
@@ -285,13 +359,13 @@ function name() { # ❌ Hybrid-Style – redundant
 Diese Regeln gelten für alle Shell-Dateien:
 
 | Regel | Format | Beispiel |
-|-------|--------|----------|
+| ------- | -------- | ---------- |
 | **Metadaten-Felder** | 8 Zeichen + `:` | `# Docs    :`, `# Guard   :` |
 | **Guard-Kommentar** | Mit Tool-Name | `# Guard   : Nur wenn X installiert ist` |
-| **Sektions-Trenner** | `----` (60 Zeichen) | `# ------------------------------------------------------------` |
+| **Sektions-Trenner** | `----` (60 Zeichen) | `# --------------------------------------------------------` |
 | **Header-Block** | `====` nur oben | Erste Zeilen der Datei |
-| **fzf-Header** | `Enter:` zuerst | `--header='Enter: Aktion | Key: Aktion'` |
-| **Header Pipe-Zeichen** | ASCII `|` | Kein Unicode `│` in `--header` |
+| **fzf-Header** | `Enter:` zuerst | `--header='Enter: Aktion'` |
+| **Header Pipe-Zeichen** | ASCII | Kein Unicode in `--header` |
 
 ### Dokumentation
 
@@ -314,13 +388,13 @@ git checkout -b feature/beschreibung
 
 - Code ändern
 - Dokumentation aktualisieren (falls relevant)
-- `./scripts/generate-docs.sh --check` ausführen
+- `./.github/scripts/generate-docs.sh --check` ausführen
 
 ### 3. Testen
 
 ```zsh
 # Installation prüfen
-./scripts/health-check.sh
+./.github/scripts/health-check.sh
 
 # Bei Shell-Änderungen: neue Session starten
 exec zsh
@@ -334,6 +408,7 @@ git commit -m "type: beschreibung"
 ```
 
 **Commit-Typen:**
+
 - `feat:` – Neue Funktion
 - `fix:` – Bugfix
 - `docs:` – Nur Dokumentation
@@ -352,7 +427,7 @@ gh pr create
 Nach PR-Erstellung das passende Label hinzufügen:
 
 | Label | Verwendung |
-|-------|------------|
+| ------- | ------------ |
 | `bug` | Fehler, etwas funktioniert nicht |
 | `enhancement` | Neues Feature oder Verbesserung |
 | `documentation` | Nur Doku-Änderungen |
@@ -363,6 +438,7 @@ Nach PR-Erstellung das passende Label hinzufügen:
 | `setup` | Installation, Bootstrap |
 
 **Zusatz-Labels bei Bedarf:**
+
 - `breaking-change` – Ändert bestehendes Verhalten
 - `needs-review` – Bereit für Review
 - `blocked` – Wartet auf externe Abhängigkeit
@@ -377,16 +453,15 @@ Nach PR-Erstellung das passende Label hinzufügen:
 
 1. **Brewfile** erweitern: `setup/Brewfile`
 2. **Alias-Datei** erstellen: `terminal/.config/alias/tool.alias`
-3. Dokumentation wird automatisch generiert (tldr-Patch, tools.md, etc.)
-4. `./scripts/generate-docs.sh --generate` ausführen
-5. Änderungen prüfen und committen
+3. `./.github/scripts/generate-docs.sh --generate` ausführen (generiert tldr-Patch automatisch)
+4. Änderungen prüfen und committen
 
 ### Dokumentation ändern
 
 > ⚠️ **Wichtig:** Dokumentation wird aus Code generiert! Änderungen direkt in `docs/` werden überschrieben.
 
 1. Änderung im **Quellcode** vornehmen (`.alias`, `Brewfile`, Configs, oder `generators/*.sh`)
-2. `./scripts/generate-docs.sh --generate` ausführen
+2. `./.github/scripts/generate-docs.sh --generate` ausführen
 3. Generierte Änderungen prüfen und committen
 
 ### Terminal-Profil ändern
@@ -404,20 +479,29 @@ Die tldr-Patches in `terminal/.config/tealdeer/pages/` werden **automatisch** au
 **Workflow:**
 
 1. Kommentar über Alias/Funktion in `.alias`-Datei schreiben
-2. `./scripts/generate-docs.sh --generate` ausführen
+2. `./.github/scripts/generate-docs.sh --generate` ausführen
 3. Patch wird automatisch erstellt/aktualisiert
 
 > ⚠️ **Niemals** Patch-Dateien manuell editieren – Änderungen werden überschrieben!
 
-**Namenskonvention:** `tool.alias` → `tool.patch.md` → `tldr tool`
+**Automatische Erkennung:**
+
+Der Generator prüft, ob eine offizielle tldr-Seite im Cache existiert:
+
+- Offizielle Seite vorhanden → `tool.patch.md` (erweitert die offizielle Seite)
+- Keine offizielle Seite → `tool.page.md` (ersetzt die fehlende Seite)
+
+> 💡 Cache aktualisieren: `tldr --update`
+>
+> 💡 **Tipp:** `dothelp` zeigt alle verfügbaren tldr-Seiten mit dotfiles-Erweiterungen.
 
 ---
 
 ## Hilfe
 
-- **Docs stimmen nicht mit Code überein?** → `./scripts/generate-docs.sh --check` zeigt Details
-- **Hook blockiert Commit?** → `./scripts/generate-docs.sh --generate` ausführen, dann committen
-- **Installation kaputt?** → `./scripts/health-check.sh` zur Diagnose
+- **Docs stimmen nicht mit Code überein?** → `./.github/scripts/generate-docs.sh --check` zeigt Details
+- **Hook blockiert Commit?** → `./.github/scripts/generate-docs.sh --generate` ausführen, dann committen
+- **Installation kaputt?** → `./.github/scripts/health-check.sh` zur Diagnose
 - **Copilot/KI-Assistenten?** → Siehe [.github/copilot-instructions.md](.github/copilot-instructions.md) für projektspezifische Regeln
 
 ---

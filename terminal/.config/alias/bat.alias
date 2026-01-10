@@ -4,10 +4,10 @@
 # Zweck   : Aliase für bat mit verschiedenen Ausgabe-Stilen
 # Pfad    : ~/.config/alias/bat.alias
 # Docs    : https://github.com/sharkdp/bat
-# ============================================================
-# Hinweis : Globale Optionen (Theme, Style, Syntax-Mappings)
-#           sind in ~/.config/bat/config definiert.
-#           Nach Theme-Änderungen: `bat cache --build`
+# Config  : ~/.config/bat/config
+# Nutzt   : fzf (Theme-Browser)
+# Ersetzt : cat (mit Syntax-Highlighting)
+# Aliase  : cat, catn, catd
 # ============================================================
 
 # Guard   : Nur wenn bat installiert ist
@@ -35,16 +35,16 @@ if command -v fzf >/dev/null 2>&1; then
     bat-theme() {
         local theme
         local config_file="$HOME/.config/bat/config"
-        
+
         # Symlink auflösen für sed -i
         [[ -L "$config_file" ]] && config_file=$(readlink -f "$config_file")
-        
+
         theme=$(bat --list-themes | fzf \
             --preview='bat --theme={} --color=always ~/.zshrc' \
             --header='Enter: Theme aktivieren | Esc: Abbrechen')
-        
+
         [[ -z "$theme" ]] && return 0
-        
+
         if [[ -f "$config_file" ]] && grep -q '^--theme=' "$config_file"; then
             sed -i '' "s/^--theme=.*$/--theme=\"$theme\"/" "$config_file"
             echo "✓ Theme aktiviert: $theme"

@@ -4,6 +4,7 @@
 # Zweck   : Interaktive GitHub-Workflows mit gh CLI
 # Pfad    : ~/.config/alias/gh.alias
 # Docs    : https://cli.github.com/manual/
+# Nutzt   : fzf (Interactive), bat (Diff-Highlighting)
 # ============================================================
 # Hinweis : Erfordert gh auth login für Authentifizierung.
 #           Alle Funktionen nutzen fzf für interaktive Auswahl.
@@ -21,7 +22,7 @@ fi
 # Repository im Browser öffnen
 alias gho='gh browse'
 
-# GitHub Status: Zugewiesene Issues, PRs, Mentions
+# GitHub Status – zugewiesene Issues, PRs, Mentions
 alias ghst='gh status'
 
 # ------------------------------------------------------------
@@ -38,10 +39,10 @@ if command -v fzf >/dev/null 2>&1; then
                 --bind 'ctrl-o:execute-silent(gh pr view {1} --web)' \
                 --bind 'ctrl-d:execute(gh pr diff {1} | bat --color=always -l diff)' | \
             awk '{print $1}')
-        
+
         [[ -n "$pr" ]] && gh pr checkout "$pr"
     }
-    
+
     # Issues durchsuchen – Enter=Browser, Ctrl+E=Bearbeiten
     ghis() {
         local issue
@@ -51,10 +52,10 @@ if command -v fzf >/dev/null 2>&1; then
                 --header='Enter: Browser | Ctrl+E: Bearbeiten' \
                 --bind 'ctrl-e:execute(gh issue edit {1})' | \
             awk '{print $1}')
-        
+
         [[ -n "$issue" ]] && gh issue view "$issue" --web
     }
-    
+
     # Actions Runs – Enter=Logs, Ctrl+R=Rerun, Ctrl+O=Browser
     ghrun() {
         local run
@@ -66,10 +67,10 @@ if command -v fzf >/dev/null 2>&1; then
                 --bind 'ctrl-o:execute-silent(gh run view {7} --web)' \
                 --bind 'ctrl-r:execute(gh run rerun {7})' | \
             awk -F'\t' '{print $7}')
-        
+
         [[ -n "$run" ]] && gh run view "$run" --log | bat --color=always
     }
-    
+
     # Repo Browser(suche?) – Enter=Klonen, Ctrl+O=Browser
     ghrepo() {
         local repo
@@ -80,10 +81,10 @@ if command -v fzf >/dev/null 2>&1; then
                 --header='Enter: Klonen | Ctrl+O: Browser' \
                 --bind 'ctrl-o:execute-silent(gh repo view {1} --web)' | \
             awk '{print $1}')
-        
+
         [[ -n "$repo" ]] && gh repo clone "$repo"
     }
-    
+
     # Gists durchsuchen – Enter=Anzeigen, Ctrl+E=Bearbeiten, Ctrl+O=Browser
     ghgist() {
         local gist
@@ -94,7 +95,7 @@ if command -v fzf >/dev/null 2>&1; then
                 --bind 'ctrl-e:execute(gh gist edit {1})' \
                 --bind 'ctrl-o:execute-silent(gh gist view {1} --web)' | \
             awk '{print $1}')
-        
+
         [[ -n "$gist" ]] && gh gist view "$gist"
     }
 fi

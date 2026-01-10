@@ -1,0 +1,17 @@
+# ============================================================
+# dotfiles.alias - Dotfiles Repository Hilfsfunktionen
+# ============================================================
+# Zweck   : Zentrale Einstiegspunkte für dotfiles-Hilfe
+# Pfad    : ~/.config/alias/dotfiles.alias
+# Docs    : https://github.com/tshofmann/dotfiles
+# Nutzt   : tldr (tealdeer)
+# ============================================================
+
+# Guard: tldr (tealdeer) muss installiert sein für dothelp
+if ! command -v tldr >/dev/null 2>&1; then
+    return 0
+fi
+
+# Schnellreferenz anzeigen (zeigt tldr dotfiles)
+alias dothelp='tldr dotfiles'
+alias dh='dothelp'

@@ -1,9 +1,9 @@
 #!/usr/bin/env zsh
 # ============================================================
-# configuration.sh - Generator für docs/configuration.md
+# customization.sh - Generator für docs/customization.md
 # ============================================================
-# Zweck   : Generiert Konfigurations-Dokumentation aus Config-Dateien
-# Pfad    : scripts/generators/configuration.sh
+# Zweck   : Generiert Anpassungs-Dokumentation aus Config-Dateien
+# Pfad    : .github/scripts/generators/customization.sh
 # ============================================================
 
 source "${0:A:h}/lib.sh"
@@ -12,31 +12,31 @@ source "${0:A:h}/lib.sh"
 # Extraktionsfunktionen (Single Source of Truth)
 # ------------------------------------------------------------
 
-# Extrahiert Farbpalette aus shell-colors und generiert Markdown-Tabelle
+# Extrahiert Farbpalette aus theme-colors und generiert Markdown-Tabelle
 # Konvertiert RGB zu Hex und gruppiert nach Kategorie
 generate_color_palette_table() {
-    local colors_file="$DOTFILES_DIR/terminal/.config/shell-colors"
+    local colors_file="$DOTFILES_DIR/terminal/.config/theme-colors"
     [[ -f "$colors_file" ]] || return 1
-    
+
     echo "| Farbe | Hex | Variable |"
-    echo "|-------|-----|----------|"
-    
+    echo "| ----- | --- | -------- |"
+
     # Regex: typeset -gx C_NAME=$'\033[38;2;R;G;Bm'  # #HEX
     while IFS= read -r line; do
-        # Nur Farbdefinitionen (nicht Aliase wie C_DIM="$C_OVERLAY0")
+        # Nur Farbdefinitionen mit RGB-Werten (keine Aliase)
         [[ "$line" =~ ^typeset.*C_([A-Z0-9]+).*38\;2\;([0-9]+)\;([0-9]+)\;([0-9]+) ]] || continue
-        
+
         local name="${match[1]}"
         local r="${match[2]}"
         local g="${match[3]}"
         local b="${match[4]}"
-        
+
         # RGB zu Hex
         local hex=$(printf "#%02X%02X%02X" "$r" "$g" "$b")
-        
+
         # Name formatieren (SUBTEXT1 → Subtext1)
         local display_name="${(C)name:l}"
-        
+
         echo "| $display_name | \`$hex\` | \`C_$name\` |"
     done < "$colors_file"
 }
@@ -46,7 +46,7 @@ generate_color_palette_table() {
 extract_fzf_colors() {
     local config="$DOTFILES_DIR/terminal/.config/fzf/config"
     [[ -f "$config" ]] || { echo '```zsh'; echo '# Config nicht gefunden'; echo '```'; return 1; }
-    
+
     echo '```zsh'
     echo '# Catppuccin Mocha Farben (bereits konfiguriert)'
     grep '^--color=' "$config"
@@ -60,7 +60,7 @@ extract_fzf_colors() {
 extract_fzf_keybindings() {
     local init="$DOTFILES_DIR/terminal/.config/fzf/init.zsh"
     [[ -f "$init" ]] || { echo '```zsh'; echo '# Config nicht gefunden'; echo '```'; return 1; }
-    
+
     echo '```zsh'
     echo '# Ctrl+X Prefix für dotfiles-Keybindings'
     grep "^bindkey '\^X" "$init"
@@ -73,7 +73,7 @@ extract_terminal_profile_name() {
     local terminal_file
     terminal_file=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.terminal" | sort | head -1)
     [[ -f "$terminal_file" ]] || return 1
-    
+
     # Dateiname ohne Pfad und ohne .terminal-Endung
     echo "${${terminal_file:t}%.terminal}"
 }
@@ -83,7 +83,7 @@ extract_terminal_profile_name() {
 extract_installed_nerd_font() {
     local brewfile="$DOTFILES_DIR/setup/Brewfile"
     [[ -f "$brewfile" ]] || return 1
-    
+
     # Findet: cask "font-xyz-nerd-font" (erster Treffer)
     grep -o 'cask "font-[^"]*-nerd-font"' "$brewfile" | head -1 | sed 's/cask "\(.*\)"/\1/'
 }
@@ -95,11 +95,11 @@ extract_installed_nerd_font() {
 font_display_name() {
     local cask="$1"
     [[ -z "$cask" ]] && { echo "Nerd Font"; return; }
-    
+
     # Entferne "font-" Prefix und "-nerd-font" Suffix
     local base="${cask#font-}"
     base="${base%-nerd-font}"
-    
+
     # Mapping bekannter Fonts (markenspezifische Schreibweisen)
     case "$base" in
         meslo-lg)       echo "MesloLG Nerd Font Mono" ;;
@@ -115,14 +115,14 @@ font_display_name() {
 # Durchsucht bekannte Konfigurationspfade nach Theme-Einstellungen
 collect_theme_configs() {
     local output=""
-    
+
     # Terminal-Profil und Xcode-Theme dynamisch ermitteln (alphabetisch erste)
     local terminal_file
     terminal_file=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.terminal" | sort | head -1)
-    
+
     local xcode_file
     xcode_file=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.xccolortheme" | sort | head -1)
-    
+
     # Bekannte Theme-Dateien
     local -A theme_files=(
         ["Terminal.app"]="$terminal_file|Via Bootstrap importiert + als Standard gesetzt"
@@ -134,35 +134,35 @@ collect_theme_configs() {
         ["zsh-syntax-highlighting"]="$DOTFILES_DIR/terminal/.config/zsh/|Via Stow verlinkt"
         ["Xcode"]="$xcode_file|Via Bootstrap kopiert (manuelle Aktivierung)"
     )
-    
+
     output+="| Tool | Theme-Datei | Status |\n"
-    output+="|------|-------------|--------|\n"
-    
+    output+="| ---- | ----------- | ------ |\n"
+
     for tool in "Terminal.app" "Starship" "bat" "fzf" "btop" "eza" "zsh-syntax-highlighting" "Xcode"; do
         local info="${theme_files[$tool]}"
         local file="${info%%|*}"
         local stat="${info##*|}"
-        
+
         # Überspringen wenn Datei leer (optionale Themes: Terminal.app, Xcode)
         [[ -z "$file" && ( "$tool" == "Xcode" || "$tool" == "Terminal.app" ) ]] && continue
-        
+
         # Datei/Verzeichnis kürzen für Anzeige
         local display_file="$file"
         if [[ "$file" == "$DOTFILES_DIR"* ]]; then
             display_file="${file#$DOTFILES_DIR/}"
             display_file="\`$display_file\`"
         fi
-        
+
         output+="| **$tool** | $display_file | $stat |\n"
     done
-    
-    echo -e "$output"
+
+    echo "$output"
 }
 
 # ------------------------------------------------------------
-# Haupt-Generator für configuration.md
+# Haupt-Generator für customization.md
 # ------------------------------------------------------------
-generate_configuration_md() {
+generate_customization_md() {
     cat << 'HEADER'
 # ⚙️ Konfiguration
 
@@ -180,14 +180,13 @@ HEADER
 
     # Theme-Tabelle
     collect_theme_configs
-    
+
     # Xcode-Sektion nur wenn .xccolortheme existiert
     local xcode_theme
     xcode_theme=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.xccolortheme" | sort | head -1)
     if [[ -n "$xcode_theme" ]]; then
         local xcode_name="${xcode_theme:t}"  # Dateiname mit Endung
         cat << XCODE_SECTION
-
 ### Xcode Theme aktivieren
 
 Das Catppuccin Mocha Theme für Xcode wird automatisch vom Bootstrap-Skript nach \`~/Library/Developer/Xcode/UserData/FontAndColorThemes/\` kopiert, muss aber einmalig manuell aktiviert werden:
@@ -205,20 +204,21 @@ XCODE_SECTION
 
 ### Farbpalette (Catppuccin Mocha)
 
-Alle verfügbaren Shell-Farbvariablen aus `~/.config/shell-colors`:
+Alle verfügbaren Shell-Farbvariablen aus `~/.config/theme-colors`:
 
 FONT_SECTION
 
-    # Dynamisch aus shell-colors generieren
+    # Dynamisch aus theme-colors generieren
     generate_color_palette_table
-    
+
     cat << 'AFTER_COLORS'
 
 > **Verwendung in Skripten:**
-> ```zsh
-> source ~/.config/shell-colors
-> echo "${C_GREEN}Erfolg${C_RESET}"
-> ```
+
+```zsh
+source ~/.config/theme-colors
+echo "${C_GREEN}Erfolg${C_RESET}"
+```
 
 Vollständige Palette: [catppuccin.com/palette](https://catppuccin.com/palette)
 
@@ -231,7 +231,7 @@ Das Setup konfiguriert automatisch [Starship](https://starship.rs/) mit dem `cat
 ### Standard-Verhalten
 
 | Situation | Verhalten |
-|-----------|-----------|
+| --------- | --------- |
 | Keine `starship.toml` vorhanden | Wird mit `catppuccin-powerline` erstellt |
 | `starship.toml` bereits vorhanden | Bleibt unverändert |
 | `STARSHIP_PRESET` Variable gesetzt | Wird mit diesem Preset erstellt/überschrieben |
@@ -281,7 +281,7 @@ AFTER_COLORS
 
 ### Voraussetzung
 
-Bei Starship-Presets mit Powerline-Symbolen (wie \`catppuccin-powerline\`) muss die neue Schriftart ein **Nerd Font** sein. Siehe [Tools → Warum Nerd Fonts?](tools.md#warum-nerd-fonts) für Details.
+Bei Starship-Presets mit Powerline-Symbolen (wie \`catppuccin-powerline\`) muss die neue Schriftart ein **Nerd Font** sein. Nerd Fonts enthalten zusätzliche Icons und Symbole, die für Powerline-Prompts benötigt werden.
 
 ### Schritt 1: Neuen Nerd Font installieren
 
@@ -294,12 +294,12 @@ FONT_WARNING
     [[ -z "$installed_font" ]] && installed_font="font-<name>-nerd-font"
     local display_name
     display_name=$(font_display_name "$installed_font")
-    
+
     # Terminal-Profilname dynamisch aus .terminal-Datei
     local profile_name
     profile_name=$(extract_terminal_profile_name)
     [[ -z "$profile_name" ]] && profile_name="<profilname>"
-    
+
     cat << FONT_EXAMPLE
 \`\`\`zsh
 # Verfügbare Nerd Fonts suchen
@@ -341,7 +341,6 @@ git commit -m "Terminal-Profil: <Neuer Font Name>"
 FONT_EXAMPLE
 
     cat << 'ALIASES_SECTION'
-
 ---
 
 ## Aliase anpassen
@@ -403,15 +402,40 @@ FZF_KEYBINDINGS
 ## Weitere Anpassungen
 
 | Was | Wo | Format |
-|-----|-----|--------|
+| --- | -- | ------ |
 | bat Theme | `~/.config/bat/config` | `--theme="..."` |
 | fd Ignore-Patterns | `~/.config/fd/ignore` | Glob-Patterns |
 | ripgrep Optionen | `~/.config/ripgrep/config` | CLI-Flags |
 | lazygit Keybindings | `~/.config/lazygit/config.yml` | YAML |
 | fastfetch Modules | `~/.config/fastfetch/config.jsonc` | JSONC |
 
+---
+
+## ZSH-Ladereihenfolge
+
+```text
+.zshenv        # Immer (Umgebungsvariablen)
+    │
+    ├── Login-Shell?
+    │       │
+    │       └── .zprofile (PATH, EDITOR, etc.)
+    │
+    └── Interactive?
+            │
+            └── .zshrc (Aliase, Prompt, Keybindings)
+                    │
+                    └── .zlogin (Background-Tasks)
+```
+
+| Datei | Wann geladen | Verwendung |
+| ----- | ------------ | ---------- |
+| `.zshenv` | Immer | Umgebungsvariablen die VOR allen anderen Configs geladen werden |
+| `.zprofile` | Login-Shell | PATH, EDITOR, etc. (einmalig) |
+| `.zshrc` | Interaktiv | Aliase, Prompt, Keybindings |
+| `.zlogin` | Nach Login | Background-Tasks nach `.zshrc` |
+
 FOOTER
 }
 
 # Nur ausführen wenn direkt aufgerufen (nicht gesourct)
-[[ -z "${_SOURCED_BY_GENERATOR:-}" ]] && generate_configuration_md || true
+[[ -z "${_SOURCED_BY_GENERATOR:-}" ]] && generate_customization_md || true

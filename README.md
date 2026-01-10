@@ -16,12 +16,12 @@ curl -fsSL https://github.com/tshofmann/dotfiles/archive/refs/heads/main.tar.gz 
 Nach Terminal-Neustart:
 
 ```zsh
-cd ~/dotfiles && stow --adopt -R terminal && git reset --hard HEAD && bat cache --build && tldr --update
+cd ~/dotfiles && stow --adopt -R terminal editor && git reset --hard HEAD && bat cache --build && tldr --update
 ```
 
-> ⚠️ **Achtung:** `git reset --hard` verwirft lokale Änderungen. Siehe [Installation](docs/installation.md) für Details.
-
-> 💡 **Tipp:** Nach der Installation `fa` eingeben für eine interaktive Übersicht aller Aliase und Funktionen.
+> ⚠️ **Achtung:** `git reset --hard` verwirft lokale Änderungen. Siehe [Setup](docs/setup.md) für Details.
+>
+> 💡 **Tipp:** Nach der Installation `fa` eingeben für eine interaktive Übersicht aller Aliase und Funktionen. Oder `dothelp` für alle verfügbaren Hilfeseiten.
 
 ## Voraussetzungen
 
@@ -32,12 +32,10 @@ cd ~/dotfiles && stow --adopt -R terminal && git reset --hard HEAD && bat cache 
 ## Dokumentation
 
 | Thema | Beschreibung |
-|-------|--------------|
-| [Installation](docs/installation.md) | Schritt-für-Schritt Anleitung |
-| [Konfiguration](docs/configuration.md) | Starship, Aliase anpassen |
-| [Architektur](docs/architecture.md) | Struktur & Designentscheidungen |
-| [Tools](docs/tools.md) | Enthaltene CLI-Tools & Aliase |
-| [Contributing](CONTRIBUTING.md) | Für Entwickler: Hooks, Workflow |
+| ----- | ------------ |
+| [Setup](docs/setup.md) | Schritt-für-Schritt Anleitung |
+| [Anpassung](docs/customization.md) | Starship, Aliase, ZSH anpassen |
+| [Contributing](CONTRIBUTING.md) | Für Entwickler: Architektur, Hooks, Workflow |
 
 ## Lizenz
 

@@ -1,3 +1,7 @@
+- dotfiles: Config `~/.config/fd/ignore`
+
+- dotfiles: Nutzt `fzf (Interactive), bat (Preview), eza (Verzeichnis-Preview)`
+
 - dotfiles: Nur Dateien suchen:
 
 `fdf`
@@ -10,7 +14,7 @@
 
 `fdh`
 
-- dotfiles: Uneingeschränkt: alle Dateien inklusive .gitignore:
+- dotfiles: Uneingeschränkt – alle Dateien inklusive .gitignore:
 
 `fda`
 
@@ -37,3 +41,11 @@
 - dotfiles: YAML-Dateien finden:
 
 `fdyaml`
+
+- dotfiles: Verzeichnis wechseln (`<Enter>` Wechseln, `<Ctrl y>` Pfad kopieren):
+
+`cdf {{pfad}}`
+
+- dotfiles: Datei öffnen (`<Enter>` Öffnen, `<Ctrl y>` Pfad kopieren):
+
+`fo {{pfad}}`

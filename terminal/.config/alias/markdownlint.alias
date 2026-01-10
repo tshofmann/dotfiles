@@ -1,0 +1,27 @@
+# ============================================================
+# markdownlint.alias - Aliase für Markdown-Linting
+# ============================================================
+# Zweck   : Shortcuts für markdownlint-cli2
+# Pfad    : ~/.config/alias/markdownlint.alias
+# Docs    : https://github.com/DavidAnson/markdownlint-cli2
+# Config  : ~/.config/markdownlint-cli2/.markdownlint-cli2.jsonc
+# ============================================================
+
+# Guard: Nur wenn markdownlint-cli2 installiert ist
+if ! command -v markdownlint-cli2 >/dev/null 2>&1; then return 0; fi
+
+# ------------------------------------------------------------
+# Aliase
+# ------------------------------------------------------------
+
+# Alle Markdown-Dateien im aktuellen Verzeichnis prüfen
+alias mdl='markdownlint-cli2'
+
+# Alle Markdown-Dateien rekursiv prüfen
+alias mdla='markdownlint-cli2 "**/*.md"'
+
+# Mit Fix-Modus (automatische Korrekturen)
+alias mdlf='markdownlint-cli2 --fix'
+
+# Alle Markdown-Dateien rekursiv fixen
+alias mdlaf='markdownlint-cli2 --fix "**/*.md"'

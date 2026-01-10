@@ -1,3 +1,5 @@
+- dotfiles: Nutzt `fzf (Interactive), bat (Diff-Highlighting)`
+
 - dotfiles: Dateien zum Staging hinzufügen:
 
 `ga`
@@ -34,6 +36,18 @@
 
 `gd`
 
-- dotfiles: Terminal-UI für Git (lazygit):
+- dotfiles: Commit-History mit bat-Vorschau (`<Enter>` Anzeigen, `<Ctrl y>` SHA kopieren):
 
-`lg`
+`glog`
+
+- dotfiles: Branch wechseln mit Log-Vorschau (`<Enter>` Checkout, `<Ctrl d>` Löschen):
+
+`gbr`
+
+- dotfiles: Status mit Diff-Vorschau (`<Enter>` Add, `<Tab>` Mehrfach, `<Ctrl r>` Reset):
+
+`gst`
+
+- dotfiles: Stash-Browser (`<Enter>` Apply, `<Ctrl p>` Pop, `<Ctrl d>` Drop):
+
+`gstash`

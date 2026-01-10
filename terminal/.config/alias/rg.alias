@@ -4,10 +4,10 @@
 # Zweck   : Aliase für ripgrep mit häufig genutzten Optionen
 # Pfad    : ~/.config/alias/rg.alias
 # Docs    : https://github.com/BurntSushi/ripgrep
-# ============================================================
-# Hinweis : Globale Optionen (--smart-case, --line-number, --heading)
-#           und Excludes (Library/, Music/, Pictures/, Movies/)
-#           sind in ~/.config/ripgrep/config definiert.
+# Config  : ~/.config/ripgrep/config
+# Nutzt   : fzf (Interactive), bat (Preview)
+# Ersetzt : grep (schneller, respektiert .gitignore)
+# Aliase  : rg, rgc, rgi
 # ============================================================
 
 # Guard   : Nur wenn rg installiert ist
@@ -70,7 +70,7 @@ if command -v fzf >/dev/null 2>&1; then
     rgf() {
         local rg_prefix="rg --column --line-number --no-heading --color=always --smart-case"
         local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
-        
+
         fzf --ansi --disabled --query "${*:-}" \
             --bind "start:reload:$rg_prefix {q} || true" \
             --bind "change:reload:sleep 0.1; $rg_prefix {q} || true" \

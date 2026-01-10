@@ -4,10 +4,20 @@
 # Zweck   : Tool-unspezifische fzf-Utilities
 # Pfad    : ~/.config/alias/fzf.alias
 # Docs    : https://github.com/junegunn/fzf
+# Config  : ~/.config/fzf/config
+# Nutzt   : bat (Preview), eza (Verzeichnis-Preview), fd (Default-Command), tldr (fman)
 # ============================================================
-# Hinweis : Konfiguration in ~/.config/fzf/ (config, init.zsh,
-#           *-preview Helper). Keybindings: Ctrl+X 1/2/3.
-#           Tool-spezifische Funktionen in fd/rg/git/brew/gh.alias.
+# Tool-spezifische Funktionen in fd/rg/git/brew/gh.alias.
+#
+# Helper-Skripte in ~/.config/fzf/:
+#   config       – Globale fzf-Optionen (Farben, Layout, Keybindings)
+#   init.zsh     – Shell-Integration (Ctrl+X Keybindings, FZF_DEFAULT_COMMAND)
+#   preview-file – Datei-Vorschau mit bat und Syntax-Highlighting
+#   preview-dir  – Verzeichnis-Vorschau mit eza --tree
+#   fman-preview – Man-Page/tldr Vorschau für fman-Funktion
+#   fa-preview   – Alias/Funktions-Code-Vorschau für fa-Funktion
+#   fkill-list   – Prozessliste für fkill-Funktion
+#   safe-action  – Sichere Aktionen (copy, edit, git-diff, etc.)
 # ============================================================
 
 # Guard   : Nur wenn fzf installiert ist
@@ -23,32 +33,6 @@ fi
 # Ctrl+X 3: Verzeichnis wechseln mit eza-Vorschau
 
 # ------------------------------------------------------------
-# ZOXIDE + FZF: Intelligente Directory-Jumps
-# ------------------------------------------------------------
-# zi ist bereits in zoxide eingebaut (zi = zoxide interactive)
-# Erweiterte Version mit Score-Anzeige, Lösch- und Kopier-Option
-# Community-Pattern: -n2.. für Pfade mit Leerzeichen
-if command -v zoxide >/dev/null 2>&1; then
-    # zoxide Browser – Enter=Wechseln, Ctrl+D=Löschen, Ctrl+Y=Kopieren
-    zf() {
-        local selection dir
-        local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
-        
-        # Mit Score anzeigen (Format: "1234.5 /path/to/dir")
-        # -n2.. durchsucht nur den Pfad (nicht den Score), unterstützt Leerzeichen
-        selection=$(zoxide query -l -s | \
-            fzf -n2.. \
-                --preview "$helper/preview-dir {2..} 2" \
-                --bind "ctrl-d:execute-silent($helper/safe-action zoxide-remove {2..})+reload(zoxide query -l -s)" \
-                --bind "ctrl-y:execute-silent($helper/safe-action copy {2..})" \
-                --header='Enter: Wechseln | Ctrl+D: Eintrag löschen | Ctrl+Y: Pfad kopieren')
-        
-        # Pfad extrahieren (alles nach dem Score)
-        [[ -n "$selection" ]] && dir="${selection#* }" && cd "$dir"
-    }
-fi
-
-# ------------------------------------------------------------
 # KILL + FZF: Prozess-Management
 # ------------------------------------------------------------
 # Prozesse interaktiv suchen und beenden (Tab für Mehrfachauswahl)
@@ -56,7 +40,7 @@ fi
 fkill() {
     local pid
     local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fkill-list"
-    
+
     pid=$("$helper" apps | \
         fzf -m \
             --freeze-left=1 \
@@ -64,7 +48,7 @@ fkill() {
             --header='Enter: Beenden | Tab: Mehrfach | Ctrl+S: Apps/Alle' \
             --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Apps> ' ]] && echo 'reload($helper all)+change-prompt(Alle> )' || echo 'reload($helper apps)+change-prompt(Apps> )'" | \
         awk '{print $1}')
-    
+
     [[ -n "$pid" ]] && echo "$pid" | xargs kill -${1:-15}
 }
 
@@ -76,20 +60,20 @@ fkill() {
 fman() {
     local output mode selection page section
     local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fman-preview"
-    
+
     output=$(man -k . 2>/dev/null | \
         fzf --prompt='man> ' \
             --preview "[[ \$FZF_PROMPT == 'tldr> ' ]] && $helper tldr {} || $helper man {}" \
             --header='Enter: öffnen | Ctrl+S: man ↔ tldr' \
             --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'man> ' ]] && echo 'change-prompt(tldr> )+refresh-preview' || echo 'change-prompt(man> )+refresh-preview'" \
             --bind "enter:transform:[[ \$FZF_PROMPT == 'tldr> ' ]] && echo 'print(tldr)+accept' || echo 'print(man)+accept'")
-    
+
     [[ -z "$output" ]] && return 0
-    
+
     mode=$(echo "$output" | head -1)
     selection=$(echo "$output" | tail -1)
     page=$(echo "$selection" | sed 's/(.*//' | xargs)
-    
+
     if [[ "$mode" == "tldr" ]]; then
         tldr "$page"
     else
@@ -114,7 +98,7 @@ fa() {
     local selection name entries
     local file category prev_comment line
     local strip_ansi="sed 's/\x1b\[[0-9;]*m//g'"
-    
+
     # Aliase und Funktionen aus allen .alias-Dateien extrahieren
     # Format: name|typ|kategorie|beschreibung
     entries=""
@@ -122,7 +106,7 @@ fa() {
         [[ -f "$file" ]] || continue
         category="${${file##*/}%.alias}"
         prev_comment=""
-        
+
         while IFS= read -r line; do
             # Kommentar merken (Zeile beginnt mit # oder eingerückt mit #)
             local trimmed_line="${line#"${line%%[![:space:]]*}"}"
@@ -131,7 +115,7 @@ fa() {
                 prev_comment="${prev_comment## }"  # Führendes Leerzeichen entfernen
                 continue
             fi
-            
+
             # Alias: "alias name='..." oder 'alias name="...'
             if [[ "$line" == alias\ * ]]; then
                 # Extrahiere Namen zwischen "alias " und "="
@@ -145,7 +129,7 @@ fa() {
                 prev_comment=""
                 continue
             fi
-            
+
             # Funktion: "name() {" (keine privaten mit _)
             # Erst trimmen, dann Pattern prüfen (ohne EXTENDED_GLOB)
             local trimmed="${line#"${line%%[![:space:]]*}"}"
@@ -157,16 +141,16 @@ fa() {
                 prev_comment=""
                 continue
             fi
-            
+
             # Andere Zeile = Kommentar zurücksetzen
             prev_comment=""
         done < "$file"
     done
-    
+
     # Sortieren und Duplikate entfernen
     entries=$(echo "$entries" | sort -t'|' -k1,1 -u)
-    
-    # Formatierte Ausgabe für fzf (Farben aus shell-colors)
+
+    # Formatierte Ausgabe für fzf (Farben aus theme-colors)
     # Preview prüft Prompt für Toggle (wie fman-Pattern)
     selection=$(echo "$entries" | awk -F'|' \
         -v mauve="$C_MAUVE" -v green="$C_GREEN" -v blue="$C_BLUE" \
@@ -177,7 +161,7 @@ fa() {
             cat = $3
             desc = $4
             typcolor = ($2 == "alias") ? green : blue
-            printf "%s%-12s%s %s%-5s%s %s%-10s%s %s%s%s\n", 
+            printf "%s%-12s%s %s%-5s%s %s%-10s%s %s%s%s\n",
                 mauve, name, reset,
                 typcolor, typ, reset,
                 text, cat, reset,
@@ -189,7 +173,7 @@ fa() {
         --preview "[[ \$FZF_PROMPT == 'code> ' ]] && zsh '$fzf_dir/fa-preview' code {} || zsh '$fzf_dir/fa-preview' tldr {}" \
         --preview-window='right:50%:wrap' \
         --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'tldr> ' ]] && echo 'change-prompt(code> )+refresh-preview' || echo 'change-prompt(tldr> )+refresh-preview'")
-    
+
     # Bei Enter: Befehl ins Edit-Buffer (kann editiert/ausgeführt werden)
     if [[ -n "$selection" ]]; then
         name=$(echo "$selection" | eval "$strip_ansi" | awk '{print $1}')
@@ -204,7 +188,7 @@ fa() {
 # Env Browser – Enter=Export→Edit, Ctrl+Y=Kopieren
 fenv() {
     local selection name value
-    
+
     # Farbkodiert KEY=VALUE-Zeilen nach Kategorie (Catppuccin Mocha)
     # Dotfiles/XDG=Mauve, PATH=Green, Tools=Blue, Rest=Text
     _fenv_colorize() {
@@ -213,7 +197,7 @@ fenv() {
             name = $1
             value = substr($0, length($1) + 2)
             gsub(/\n/, " ", value)
-            
+
             # Farbauswahl nach Kategorie
             if (name ~ /^(DOTFILES|XDG|CONFIG)/) {
                 color = mauve  # Dotfiles-Variablen
@@ -224,14 +208,14 @@ fenv() {
             } else {
                 color = text   # Andere
             }
-            
+
             if (length(value) > 45) {
                 value = substr(value, 1, 42) "..."
             }
             printf "%s%-28s%s │ %s%s%s\n", color, name, reset, text, value, reset
         }'
     }
-    
+
     selection=$(printenv | grep -E '^[a-zA-Z_][a-zA-Z0-9_]*=' | sort | _fenv_colorize | fzf --ansi \
         --header='Enter: Export → Edit | Ctrl+Y: Wert kopieren' \
         --preview='n=$(echo {} | cut -d"│" -f1 | xargs)
@@ -244,7 +228,7 @@ fenv() {
             fi' \
         --preview-window='right:50%,wrap' \
         --bind='ctrl-y:execute-silent(n=$(echo {} | cut -d"│" -f1 | xargs); printenv "$n" | pbcopy)+abort')
-    
+
     if [[ -n "$selection" ]]; then
         name=$(echo "$selection" | cut -d'│' -f1 | xargs)
         value=$(printenv "$name")

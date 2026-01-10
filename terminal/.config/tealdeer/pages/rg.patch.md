@@ -1,3 +1,7 @@
+- dotfiles: Config `~/.config/ripgrep/config`
+
+- dotfiles: Nutzt `fzf (Interactive), bat (Preview)`
+
 - dotfiles: Suche mit 3 Zeilen Kontext vor und nach Treffer:
 
 `rgc`
@@ -45,3 +49,7 @@
 - dotfiles: Suche in Go-Dateien:
 
 `rggo`
+
+- dotfiles: Live-Grep (`<Enter>` Datei öffnen, `<Ctrl y>` Pfad kopieren):
+
+`rgf {{suche}}`

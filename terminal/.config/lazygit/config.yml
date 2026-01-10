@@ -4,9 +4,7 @@
 # Zweck   : lazygit Konfiguration mit Catppuccin Mocha Theme
 # Pfad    : ~/.config/lazygit/config.yml
 # Docs    : https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md
-# ============================================================
-# Hinweis : Catppuccin Mocha Theme (Mauve Akzent)
-#           https://github.com/catppuccin/lazygit
+# Theme   : ~/.config/theme-colors
 # ============================================================
 
 # ------------------------------------------------------------
