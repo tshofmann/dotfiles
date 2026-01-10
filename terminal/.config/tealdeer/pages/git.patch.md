@@ -1,3 +1,5 @@
+- dotfiles: Config `~/.config/lazygit/config.yml (lazygit Theme)`
+
 - dotfiles: Nutzt `fzf (Interactive), bat (Diff-Highlighting)`
 
 - dotfiles: Dateien zum Staging hinzufügen:
