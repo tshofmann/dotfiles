@@ -409,6 +409,31 @@ FZF_KEYBINDINGS
 | lazygit Keybindings | `~/.config/lazygit/config.yml` | YAML |
 | fastfetch Modules | `~/.config/fastfetch/config.jsonc` | JSONC |
 
+---
+
+## ZSH-Ladereihenfolge
+
+```text
+.zshenv        # Immer (Umgebungsvariablen)
+    │
+    ├── Login-Shell?
+    │       │
+    │       └── .zprofile (PATH, EDITOR, etc.)
+    │
+    └── Interactive?
+            │
+            └── .zshrc (Aliase, Prompt, Keybindings)
+                    │
+                    └── .zlogin (Background-Tasks)
+```
+
+| Datei | Wann geladen | Verwendung |
+| ----- | ------------ | ---------- |
+| `.zshenv` | Immer | Umgebungsvariablen die VOR allen anderen Configs geladen werden |
+| `.zprofile` | Login-Shell | PATH, EDITOR, etc. (einmalig) |
+| `.zshrc` | Interaktiv | Aliase, Prompt, Keybindings |
+| `.zlogin` | Nach Login | Background-Tasks nach `.zshrc` |
+
 FOOTER
 }
 

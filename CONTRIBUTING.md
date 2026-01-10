@@ -27,17 +27,53 @@ Nach Schritt 3 wird bei jedem Commit automatisch geprüft, ob Dokumentation und 
 
 ## Repository-Struktur
 
-Siehe [architecture.md → Verzeichnisstruktur](docs/architecture.md#verzeichnisstruktur) für die vollständige Struktur.
-
-**Kurzübersicht der wichtigsten Pfade:**
+**Wichtigste Pfade:**
 
 | Pfad | Zweck |
 | ------ | ------- |
 | `.github/scripts/generators/` | Dokumentations-Generatoren (Single Source of Truth) |
 | `.github/scripts/tests/` | Unit-Tests für Generatoren |
+| `.github/hooks/` | Pre-Commit Hook für Validierung |
 | `setup/` | Bootstrap, Brewfile, Terminal-Profil |
-| `terminal/` | Dotfiles (werden nach `~` verlinkt) |
+| `terminal/` | Dotfiles (werden nach `~` verlinkt via Stow) |
+| `terminal/.config/alias/` | Tool-spezifische Aliase und Funktionen |
 | `docs/` | Dokumentation für Endnutzer |
+
+> **💡 Tipp:** Für die vollständige Verzeichnisstruktur nutze den GitHub Tree-View oder `eza --tree ~/dotfiles`.
+
+---
+
+## Architektur-Konzepte
+
+### Unix-Philosophie
+
+> *"Do One Thing and Do It Well"*
+
+- **Ein Tool = Eine Aufgabe** – Jede `.alias`-Datei gehört zu genau einem Tool
+- **Kleine, kombinierbare Einheiten** – Funktionen sind unabhängig und pipebar
+- **Text als universelles Interface** – Konfiguration in lesbaren Dateien
+
+### Modularität
+
+| Prinzip | Umsetzung |
+| ------- | --------- |
+| **Isolation** | Jedes Tool hat eigene Config in `~/.config/tool/` |
+| **Unabhängigkeit** | Guard-System erlaubt Teilinstallation |
+| **Erweiterbarkeit** | Neue Tools durch Hinzufügen einer `.alias`-Datei |
+| **Austauschbarkeit** | Aliase abstrahieren Tool-spezifische Syntax |
+
+### Guard-System
+
+Alle `.alias`-Dateien prüfen ob das jeweilige Tool installiert ist:
+
+```zsh
+# Guard am Anfang jeder .alias-Datei
+if ! command -v tool >/dev/null 2>&1; then
+    return 0
+fi
+```
+
+So bleiben Original-Befehle (`ls`, `cat`) erhalten wenn ein Tool fehlt.
 
 ---
 
@@ -102,7 +138,12 @@ Die Test-Suite prüft:
 
 ### Was wird generiert?
 
-Siehe [architecture.md → Single Source of Truth](docs/architecture.md#single-source-of-truth) für die vollständige Übersicht.
+| Quelle | Generiert |
+| ------ | --------- |
+| `.alias`-Dateien | tldr-Patches/Pages |
+| `Brewfile` | setup.md (Tool-Liste) |
+| `bootstrap.sh` | setup.md (Schritte) |
+| Config-Dateien | customization.md |
 
 ### Bei Fehlern
 

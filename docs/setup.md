@@ -71,7 +71,7 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 > | CI/CD (GitHub Actions) | `60-90` | Shared Resources, variable Performance |
 > | Langsame Netzwerk-Speicher | `90-120` | Bei NFS/SMB-gemounteten Home-Verzeichnissen |
 >
-> **📦 Komponenten-Abhängigkeiten:** Terminal-Profil, Nerd Font und Starship-Preset sind eng gekoppelt. Wenn Icons als □ oder ? angezeigt werden, liegt es meist an einer fehlenden oder falschen Font-Konfiguration. Details: [Architektur → Komponenten-Abhängigkeiten](architecture.md#komponenten-abhängigkeiten)
+> **📦 Komponenten-Abhängigkeiten:** Terminal-Profil, Nerd Font und Starship-Preset sind eng gekoppelt. Wenn Icons als □ oder ? angezeigt werden, siehe [Troubleshooting](#troubleshooting) unten.
 
 ---
 
@@ -180,3 +180,75 @@ ff                                  # System-Info anzeigen
 | Keynote | Präsentationen |
 
 > **Hinweis:** Die Anmeldung im App Store muss manuell erfolgen – die Befehle `mas account` und `mas signin` sind auf macOS 12+ nicht verfügbar.
+
+---
+
+## Technische Details
+
+### XDG Base Directory Specification
+
+Das Setup folgt der [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html):
+
+| Variable | Pfad | Verwendung |
+| -------- | ---- | ---------- |
+| `XDG_CONFIG_HOME` | `~/.config` | Konfigurationsdateien |
+| `XDG_DATA_HOME` | `~/.local/share` | Anwendungsdaten |
+| `XDG_CACHE_HOME` | `~/.cache` | Cache-Dateien |
+
+### Symlink-Strategie
+
+GNU Stow mit `--no-folding` erstellt Symlinks für **Dateien**, nicht Verzeichnisse:
+
+```zsh
+# Stow mit --no-folding (via .stowrc)
+stow --adopt -R terminal editor
+```
+
+Vorteile:
+
+- Neue lokale Dateien werden nicht ins Repository übernommen
+- Granulare Kontrolle über einzelne Dateien
+- `.gitignore` in `~/.config/` bleibt erhalten
+
+### Setup-Datei-Erkennung
+
+Bootstrap erkennt Theme-Dateien automatisch nach Dateiendung:
+
+| Dateiendung | Sortiert | Warnung bei mehreren |
+| ----------- | -------- | -------------------- |
+| `.terminal` | Ja | Ja |
+| `.xccolortheme` | Ja | Ja |
+
+Dies ermöglicht:
+
+- Freie Benennung der Theme-Dateien
+- Deterministisches Verhalten (alphabetisch erste bei mehreren)
+- Explizite Warnung wenn mehrere Dateien existieren
+
+---
+
+## Troubleshooting
+
+### Icon-Probleme (□ oder ?)
+
+Bei fehlenden oder falschen Icons prüfen:
+
+1. **Font in Terminal.app korrekt?** – `catppuccin-mocha` Profil muss MesloLG Nerd Font verwenden
+2. **Nerd Font installiert?** – `brew list --cask | grep font`
+3. **Terminal neu gestartet?** – Nach Font-Installation erforderlich
+
+### Komponenten-Abhängigkeiten
+
+```text
+Terminal.app Profil
+       │
+       ├── MesloLG Nerd Font ──┬── Starship Icons
+       │                       └── eza Icons
+       │
+       └── Catppuccin Mocha ───┬── bat Theme
+                               ├── fzf Colors
+                               ├── btop Theme
+                               ├── eza Theme
+                               ├── zsh-syntax-highlighting
+                               └── Xcode Theme
+```

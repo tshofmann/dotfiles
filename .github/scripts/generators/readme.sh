@@ -55,9 +55,8 @@ cd ~/dotfiles && stow --adopt -R terminal editor && git reset --hard HEAD && bat
 | Thema | Beschreibung |
 | ----- | ------------ |
 | [Setup](docs/setup.md) | Schritt-für-Schritt Anleitung |
-| [Anpassung](docs/customization.md) | Starship, Aliase anpassen |
-| [Architektur](docs/architecture.md) | Struktur & Designentscheidungen |
-| [Contributing](CONTRIBUTING.md) | Für Entwickler: Hooks, Workflow |
+| [Anpassung](docs/customization.md) | Starship, Aliase, ZSH anpassen |
+| [Contributing](CONTRIBUTING.md) | Für Entwickler: Architektur, Hooks, Workflow |
 
 ## Lizenz
 

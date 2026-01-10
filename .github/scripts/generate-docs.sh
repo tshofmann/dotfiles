@@ -73,15 +73,6 @@ check_all() {
         ok "docs/setup.md ist aktuell"
     fi
 
-    # docs/architecture.md
-    generated=$(run_generator "architecture.sh" "generate_architecture_md")
-    if ! compare_content "$DOCS_DIR/architecture.md" "$generated"; then
-        err "docs/architecture.md ist veraltet"
-        (( errors++ )) || true
-    else
-        ok "docs/architecture.md ist aktuell"
-    fi
-
     # docs/customization.md
     generated=$(run_generator "customization.sh" "generate_customization_md")
     if ! compare_content "$DOCS_DIR/customization.md" "$generated"; then
@@ -127,10 +118,6 @@ generate_all() {
     generated=$(run_generator "setup.sh" "generate_setup_md")
     write_if_changed "$DOCS_DIR/setup.md" "$generated"
 
-    # docs/architecture.md
-    generated=$(run_generator "architecture.sh" "generate_architecture_md")
-    write_if_changed "$DOCS_DIR/architecture.md" "$generated"
-
     # docs/customization.md
     generated=$(run_generator "customization.sh" "generate_customization_md")
     write_if_changed "$DOCS_DIR/customization.md" "$generated"
@@ -167,7 +154,6 @@ main() {
             echo "Generierte Dateien:"
             echo "  README.md"
             echo "  docs/setup.md"
-            echo "  docs/architecture.md"
             echo "  docs/customization.md"
             echo "  terminal/.config/tealdeer/pages/*.patch.md"
             ;;

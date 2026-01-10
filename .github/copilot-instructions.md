@@ -182,7 +182,7 @@ gh api graphql -f query='mutation { resolveReviewThread(input: {threadId: "PRRT_
 | Funktions-Syntax | `CONTRIBUTING.md#funktions-syntax` |
 | Kommentar-Format | `CONTRIBUTING.md#beschreibungskommentar-format-für-fzf-funktionen` |
 | **Labels** | `CONTRIBUTING.md#6-labels-setzen` |
-| Verzeichnisstruktur | `docs/architecture.md#verzeichnisstruktur` |
+| Verzeichnisstruktur | GitHub Tree-View oder `eza --tree` |
 | PR-Template | `.github/PULL_REQUEST_TEMPLATE.md` |
 | Issue-Templates | `.github/ISSUE_TEMPLATE/` |
 | Installierte Tools | `setup/Brewfile` |
