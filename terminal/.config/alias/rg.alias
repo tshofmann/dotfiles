@@ -7,10 +7,7 @@
 # Nutzt   : fzf (Interactive), bat (Preview)
 # Ersetzt : grep (schneller, respektiert .gitignore)
 # Aliase  : rg, rgc, rgi
-# ============================================================
-# Hinweis : Globale Optionen (--smart-case, --line-number, --heading)
-#           und Excludes (Library/, Music/, Pictures/, Movies/)
-#           sind in ~/.config/ripgrep/config definiert.
+# Config  : ~/.config/ripgrep/config (Optionen, Excludes)
 # ============================================================
 
 # Guard   : Nur wenn rg installiert ist

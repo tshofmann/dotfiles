@@ -7,10 +7,9 @@
 # Nutzt   : fzf (Theme-Browser)
 # Ersetzt : cat (mit Syntax-Highlighting)
 # Aliase  : cat, catn, catd
+# Config  : ~/.config/bat/config (Theme, Style, Syntax-Mappings)
 # ============================================================
-# Hinweis : Globale Optionen (Theme, Style, Syntax-Mappings)
-#           sind in ~/.config/bat/config definiert.
-#           Nach Theme-Änderungen: `bat cache --build`
+# Hinweis : Nach Theme-Änderungen: `bat cache --build`
 # ============================================================
 
 # Guard   : Nur wenn bat installiert ist

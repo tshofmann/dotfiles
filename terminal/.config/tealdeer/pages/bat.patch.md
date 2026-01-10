@@ -1,3 +1,5 @@
+- dotfiles: Config `~/.config/bat/config (Theme, Style, Syntax-Mappings)`
+
 - dotfiles: Nutzt `fzf (Theme-Browser)`
 
 - dotfiles: Dateiansicht:

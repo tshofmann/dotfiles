@@ -1,3 +1,5 @@
+- dotfiles: Config `~/.config/fzf/ (config, init.zsh, Helper-Skripte)`
+
 - dotfiles: Nutzt `bat (Preview), eza (Verzeichnis-Preview), fd (Default-Command), tldr (fman)`
 
 # dotfiles: Globale Tastenkürzel (in allen fzf-Dialogen)

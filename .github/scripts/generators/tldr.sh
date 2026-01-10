@@ -678,6 +678,7 @@ extract_alias_header_info() {
     local zweck=""
     local docs=""
     local nutzt=""
+    local config=""
     local tool_name=""
 
     while IFS= read -r line; do
@@ -693,10 +694,12 @@ extract_alias_header_info() {
             docs="${line#*: }"
         elif [[ "$line" == "# Nutzt"*":"* ]]; then
             nutzt="${line#*: }"
+        elif [[ "$line" == "# Config"*":"* ]]; then
+            config="${line#*: }"
         fi
     done < "$alias_file"
 
-    echo "${tool_name}|${zweck}|${docs}|${nutzt}"
+    echo "${tool_name}|${zweck}|${docs}|${nutzt}|${config}"
 }
 
 # ------------------------------------------------------------
@@ -717,7 +720,9 @@ generate_complete_patch() {
     local zweck="${rest%%|*}"
     rest="${rest#*|}"
     local docs="${rest%%|*}"
-    local nutzt="${rest#*|}"
+    rest="${rest#*|}"
+    local nutzt="${rest%%|*}"
+    local config="${rest#*|}"
 
     # Für Pages: Header aus Alias-Datei generieren
     if [[ "$for_page" == "true" ]]; then
@@ -725,6 +730,11 @@ generate_complete_patch() {
         [[ -n "$zweck" ]] && output+="> ${zweck}.\n"
         [[ -n "$docs" ]] && output+="> Mehr Informationen: <${docs}>\n"
         output+="\n"
+    fi
+
+    # Konfigurationspfad anzeigen (für Pages und Patches)
+    if [[ -n "$config" ]]; then
+        output+="- dotfiles: Config \`${config}\`\n\n"
     fi
 
     # Abhängigkeiten anzeigen (für Pages und Patches)

@@ -4,9 +4,7 @@
 # Zweck   : Aliase für btop – moderner top/htop-Ersatz
 # Pfad    : ~/.config/alias/btop.alias
 # Docs    : https://github.com/aristocratos/btop
-# ============================================================
-# Hinweis : Konfiguration in ~/.config/btop/btop.conf
-#           Theme: Catppuccin Mocha
+# Config  : ~/.config/btop/btop.conf (Catppuccin Mocha Theme)
 # ============================================================
 
 # Guard   : Nur wenn btop installiert ist

@@ -1,0 +1,20 @@
+# ============================================================
+# tealdeer.alias - Aliase für tealdeer (schnelles tldr)
+# ============================================================
+# Zweck   : Konfiguration für tldr-Client tealdeer
+# Pfad    : ~/.config/alias/tealdeer.alias
+# Docs    : https://github.com/dbrgn/tealdeer
+# Config  : ~/.config/tealdeer/config.toml (Custom-Pages, Farben)
+# ============================================================
+# Die dotfiles-eigenen tldr-Seiten liegen in:
+#   ~/.config/tealdeer/pages/
+#
+# Dieser Client wird von `dothelp` (dotfiles.alias) genutzt.
+# ============================================================
+
+# Guard: Nur wenn tealdeer installiert ist
+if ! command -v tldr >/dev/null 2>&1; then
+    return 0
+fi
+
+# Keine Aliase – tealdeer wird direkt als `tldr` genutzt

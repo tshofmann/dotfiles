@@ -1,3 +1,5 @@
+- dotfiles: Config `~/.config/fd/ignore (Globale Ignore-Patterns)`
+
 - dotfiles: Nutzt `fzf (Interactive), bat (Preview), eza (Verzeichnis-Preview)`
 
 - dotfiles: Nur Dateien suchen:

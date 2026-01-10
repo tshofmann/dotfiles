@@ -4,6 +4,7 @@
 # Zweck   : Shortcuts für markdownlint-cli2
 # Pfad    : ~/.config/alias/markdownlint.alias
 # Docs    : https://github.com/DavidAnson/markdownlint-cli2
+# Config  : ~/.config/markdownlint-cli2/.markdownlint-cli2.jsonc
 # ============================================================
 
 # Guard: Nur wenn markdownlint-cli2 installiert ist

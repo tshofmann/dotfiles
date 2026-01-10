@@ -6,6 +6,7 @@
 # Docs    : https://eza.rocks
 # Ersetzt : ls (mit Icons und Git-Status)
 # Aliase  : ls, ll, la, tree
+# Config  : ~/.config/eza/theme.yml (Catppuccin Mocha Farben)
 #
 # Git-Integration:
 #   --git ist standardmäßig aktiv in allen -l Aliase. Performance:
@@ -14,7 +15,6 @@
 #   - Opt-out: export EZA_OVERRIDE_GIT=1
 #
 # Hinweis : EZA_ICONS_AUTO=1 ist in .zshrc gesetzt.
-#           Farbschema in ~/.config/eza/theme.yml (Catppuccin Mocha)
 # ============================================================
 
 # Guard   : Nur wenn eza installiert ist

@@ -7,10 +7,9 @@
 # Nutzt   : fzf (Interactive), bat (Preview), eza (Verzeichnis-Preview)
 # Ersetzt : find (schneller, intuitive Syntax)
 # Aliase  : fd, fdf, fdd
+# Config  : ~/.config/fd/ignore (Globale Ignore-Patterns)
 # ============================================================
-# Hinweis : Globale Ignore-Patterns (.git/, node_modules/, etc.)
-#           sind in ~/.config/fd/ignore definiert.
-#           Mit "fd -u" werden alle Ignore-Dateien umgangen.
+# Hinweis : Mit "fd -u" werden alle Ignore-Dateien umgangen.
 # ============================================================
 
 # Guard   : Nur wenn fd installiert ist
