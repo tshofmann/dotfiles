@@ -534,9 +534,10 @@ generate_catppuccin_page() {
 
 "
     # Sortierte Ausgabe der Upstream-Themes (explizit sortiert für Konsistenz)
+    # Verwende 'sort' für locale-unabhängige Sortierung
     local t p i n r
     local sorted_keys
-    sorted_keys=(${(o)${(k)themes_upstream}})
+    sorted_keys=($(echo "${(k)themes_upstream}" | tr ' ' '\n' | LC_ALL=C sort))
     for t in $sorted_keys; do
         p="${theme_paths[$t]}"
         output+="\`${t}: ${p}\`\n"
@@ -546,7 +547,7 @@ generate_catppuccin_page() {
 - Themes aus Upstream mit lokalen Anpassungen:
 
 "
-    sorted_keys=(${(o)${(k)themes_modified}})
+    sorted_keys=($(echo "${(k)themes_modified}" | tr ' ' '\n' | LC_ALL=C sort))
     for t in $sorted_keys; do
         p="${theme_paths[$t]}"
         i="${themes_modified[$t]}"
@@ -558,7 +559,7 @@ generate_catppuccin_page() {
 - Manuell konfiguriert (basierend auf catppuccin.com/palette):
 
 "
-    sorted_keys=(${(o)${(k)themes_manual}})
+    sorted_keys=($(echo "${(k)themes_manual}" | tr ' ' '\n' | LC_ALL=C sort))
     for t in $sorted_keys; do
         p="${theme_paths[$t]}"
         n="${themes_manual[$t]}"
@@ -583,7 +584,7 @@ generate_catppuccin_page() {
         all_repos[$t]="${i%%|*}"
     done
     
-    sorted_keys=(${(o)${(k)all_repos}})
+    sorted_keys=($(echo "${(k)all_repos}" | tr ' ' '\n' | LC_ALL=C sort))
     for t in $sorted_keys; do
         r="${all_repos[$t]}"
         r="${r## }"; r="${r%% }"
@@ -611,10 +612,6 @@ generate_catppuccin_tldr() {
             echo "" >> "$temp_file"  # trailing newline
             
             if ! diff -q "$page_file" "$temp_file" >/dev/null 2>&1; then
-                # DEBUG: Zeige den Unterschied
-                echo "DEBUG: Unterschied in catppuccin.page.md:" >&2
-                diff "$page_file" "$temp_file" >&2 || true
-                echo "DEBUG: Ende Unterschied" >&2
                 rm -f "$temp_file"
                 err "catppuccin.page.md ist veraltet"
                 return 1
