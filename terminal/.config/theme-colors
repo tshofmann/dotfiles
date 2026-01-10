@@ -33,19 +33,6 @@
 #   upstream-X    = Aus Upstream mit Entfernung (X = was entfernt)
 #   generated     = Wird bei bootstrap generiert (starship preset)
 #   manual        = Manuell basierend auf catppuccin.com/palette
-#
-# Komponenten-Abhängigkeiten (für tldr catppuccin + setup.md):
-#   Terminal.app Profil
-#          │
-#          ├── MesloLG Nerd Font ──┬── Starship Icons
-#          │                       └── eza Icons
-#          │
-#          └── Catppuccin Mocha ───┬── bat Theme
-#                                  ├── fzf Colors
-#                                  ├── btop Theme
-#                                  ├── eza Theme
-#                                  ├── zsh-syntax-highlighting
-#                                  └── Xcode Theme
 # ------------------------------------------------------------
 
 # ------------------------------------------------------------

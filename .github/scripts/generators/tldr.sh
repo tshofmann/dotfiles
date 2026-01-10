@@ -549,33 +549,12 @@ generate_catppuccin_page() {
         esac
     done < "$theme_colors_file"
 
-    # 3. Extrahiere Komponenten-Abhängigkeiten Diagramm aus theme-colors
-    local diagram=""
-    local in_diagram=false
-    while IFS= read -r line; do
-        if [[ "$line" == "# Komponenten-Abhängigkeiten"* ]]; then
-            in_diagram=true
-            continue
-        fi
-        [[ "$in_diagram" != true ]] && continue
-        # Block-Ende bei nächstem Abschnitt
-        [[ "$line" == "# ----"* ]] && break
-        # Nur Diagramm-Zeilen (mit │ ├ └ oder Leerzeilen)
-        if [[ "$line" == "#   "* ]]; then
-            local diag_line="${line#\#   }"
-            diagram+="\`${diag_line}\`\n"
-        fi
-    done < "$theme_colors_file"
-
-    # 4. Generiere Markdown
+    # 3. Generiere Markdown
     local output="# catppuccin
 
 > Catppuccin Mocha Theme-Konfiguration für alle Tools.
 > Mehr Informationen: https://catppuccin.com/palette
 
-- Komponenten-Abhängigkeiten:
-
-${diagram}
 - Zeige alle Theme-Dateien in diesem Repository:
 
 \`fd -HI -e theme -e tmTheme -e xccolortheme catppuccin ~/dotfiles\`
@@ -688,11 +667,12 @@ generate_catppuccin_tldr() {
 # ------------------------------------------------------------
 # Helper: Extrahiere Header-Infos aus Alias-Datei für Page-Generierung
 # ------------------------------------------------------------
-# Liest Zweck und Docs aus dem Header-Block einer .alias-Datei
+# Liest Zweck, Docs und Nutzt aus dem Header-Block einer .alias-Datei
 extract_alias_header_info() {
     local alias_file="$1"
     local zweck=""
     local docs=""
+    local nutzt=""
     local tool_name=""
 
     while IFS= read -r line; do
@@ -706,10 +686,12 @@ extract_alias_header_info() {
             zweck="${line#*: }"
         elif [[ "$line" == "# Docs"*":"* ]]; then
             docs="${line#*: }"
+        elif [[ "$line" == "# Nutzt"*":"* ]]; then
+            nutzt="${line#*: }"
         fi
     done < "$alias_file"
 
-    echo "${tool_name}|${zweck}|${docs}"
+    echo "${tool_name}|${zweck}|${docs}|${nutzt}"
 }
 
 # ------------------------------------------------------------
@@ -723,18 +705,26 @@ generate_complete_patch() {
 
     [[ ! -f "$alias_file" ]] && { err "Alias-Datei nicht gefunden: $alias_file"; return 1; }
 
+    # Header-Infos aus Alias-Datei extrahieren
+    local header_info=$(extract_alias_header_info "$alias_file")
+    local parsed_name="${header_info%%|*}"
+    local rest="${header_info#*|}"
+    local zweck="${rest%%|*}"
+    rest="${rest#*|}"
+    local docs="${rest%%|*}"
+    local nutzt="${rest#*|}"
+
     # Für Pages: Header aus Alias-Datei generieren
     if [[ "$for_page" == "true" ]]; then
-        local header_info=$(extract_alias_header_info "$alias_file")
-        local parsed_name="${header_info%%|*}"
-        local rest="${header_info#*|}"
-        local zweck="${rest%%|*}"
-        local docs="${rest#*|}"
-
         output+="# ${tool_name}\n\n"
         [[ -n "$zweck" ]] && output+="> ${zweck}.\n"
         [[ -n "$docs" ]] && output+="> Mehr Informationen: <${docs}>\n"
         output+="\n"
+    fi
+
+    # Abhängigkeiten anzeigen (für Pages und Patches)
+    if [[ -n "$nutzt" ]]; then
+        output+="- dotfiles: Nutzt \`${nutzt}\`\n\n"
     fi
 
     if [[ "$tool_name" == "fzf" ]]; then

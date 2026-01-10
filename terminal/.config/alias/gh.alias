@@ -4,6 +4,7 @@
 # Zweck   : Interaktive GitHub-Workflows mit gh CLI
 # Pfad    : ~/.config/alias/gh.alias
 # Docs    : https://cli.github.com/manual/
+# Nutzt   : fzf (Interactive), bat (Diff-Highlighting)
 # ============================================================
 # Hinweis : Erfordert gh auth login für Authentifizierung.
 #           Alle Funktionen nutzen fzf für interaktive Auswahl.

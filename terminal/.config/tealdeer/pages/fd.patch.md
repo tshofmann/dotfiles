@@ -1,3 +1,5 @@
+- dotfiles: Nutzt `fzf (Interactive), bat (Preview), eza (Verzeichnis-Preview)`
+
 - dotfiles: Nur Dateien suchen:
 
 `fdf`

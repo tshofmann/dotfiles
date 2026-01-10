@@ -1,3 +1,5 @@
+- dotfiles: Nutzt `bat (Preview), eza (Verzeichnis-Preview)`
+
 # dotfiles: Globale Tastenkürzel (in allen fzf-Dialogen)
 
 - dotfiles: Vorschau ein-/ausblenden:

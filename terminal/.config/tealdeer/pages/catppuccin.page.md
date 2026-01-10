@@ -3,20 +3,6 @@
 > Catppuccin Mocha Theme-Konfiguration für alle Tools.
 > Mehr Informationen: https://catppuccin.com/palette
 
-- Komponenten-Abhängigkeiten:
-
-`Terminal.app Profil`
-`       │`
-`       ├── MesloLG Nerd Font ──┬── Starship Icons`
-`       │                       └── eza Icons`
-`       │`
-`       └── Catppuccin Mocha ───┬── bat Theme`
-`                               ├── fzf Colors`
-`                               ├── btop Theme`
-`                               ├── eza Theme`
-`                               ├── zsh-syntax-highlighting`
-`                               └── Xcode Theme`
-
 - Zeige alle Theme-Dateien in diesem Repository:
 
 `fd -HI -e theme -e tmTheme -e xccolortheme catppuccin ~/dotfiles`

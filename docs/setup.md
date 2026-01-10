@@ -236,19 +236,3 @@ Bei fehlenden oder falschen Icons prüfen:
 1. **Font in Terminal.app korrekt?** – `catppuccin-mocha` Profil muss MesloLG Nerd Font verwenden
 2. **Nerd Font installiert?** – `brew list --cask | grep font`
 3. **Terminal neu gestartet?** – Nach Font-Installation erforderlich
-
-### Komponenten-Abhängigkeiten
-
-```text
-Terminal.app Profil
-       │
-       ├── MesloLG Nerd Font ──┬── Starship Icons
-       │                       └── eza Icons
-       │
-       └── Catppuccin Mocha ───┬── bat Theme
-                               ├── fzf Colors
-                               ├── btop Theme
-                               ├── eza Theme
-                               ├── zsh-syntax-highlighting
-                               └── Xcode Theme
-```

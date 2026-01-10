@@ -325,29 +325,7 @@ Bei fehlenden oder falschen Icons prüfen:
 1. **Font in Terminal.app korrekt?** – `catppuccin-mocha` Profil muss MesloLG Nerd Font verwenden
 2. **Nerd Font installiert?** – `brew list --cask | grep font`
 3. **Terminal neu gestartet?** – Nach Font-Installation erforderlich
-
-### Komponenten-Abhängigkeiten
-
 TECH
-
-    # Extrahiere Diagramm aus theme-colors (Single Source of Truth)
-    local theme_colors="$DOTFILES_DIR/terminal/.config/theme-colors"
-    if [[ -f "$theme_colors" ]]; then
-        echo '```text'
-        local in_diagram=false
-        while IFS= read -r line; do
-            if [[ "$line" == "# Komponenten-Abhängigkeiten"* ]]; then
-                in_diagram=true
-                continue
-            fi
-            [[ "$in_diagram" != true ]] && continue
-            [[ "$line" == "# ----"* ]] && break
-            if [[ "$line" == "#   "* ]]; then
-                echo "${line#\#   }"
-            fi
-        done < "$theme_colors"
-        echo '```'
-    fi
 }
 
 # Nur ausführen wenn direkt aufgerufen (nicht gesourct)

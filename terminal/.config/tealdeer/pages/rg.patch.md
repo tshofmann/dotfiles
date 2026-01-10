@@ -1,3 +1,5 @@
+- dotfiles: Nutzt `fzf (Interactive), bat (Preview)`
+
 - dotfiles: Suche mit 3 Zeilen Kontext vor und nach Treffer:
 
 `rgc`

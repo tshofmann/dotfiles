@@ -1,3 +1,5 @@
+- dotfiles: Nutzt `fzf (Interactive), bat (Diff-Highlighting)`
+
 - dotfiles: Dateien zum Staging hinzufügen:
 
 `ga`

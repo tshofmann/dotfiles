@@ -4,6 +4,7 @@
 # Zweck   : Aliase für ripgrep mit häufig genutzten Optionen
 # Pfad    : ~/.config/alias/rg.alias
 # Docs    : https://github.com/BurntSushi/ripgrep
+# Nutzt   : fzf (Interactive), bat (Preview)
 # Ersetzt : grep (schneller, respektiert .gitignore)
 # Aliase  : rg, rgc, rgi
 # ============================================================
