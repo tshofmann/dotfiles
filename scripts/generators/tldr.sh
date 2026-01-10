@@ -533,9 +533,11 @@ generate_catppuccin_page() {
 - Themes aus offiziellen Catppuccin-Repositories (unverändert):
 
 "
-    # Sortierte Ausgabe der Upstream-Themes
+    # Sortierte Ausgabe der Upstream-Themes (explizit sortiert für Konsistenz)
     local t p i n r
-    for t in ${(ko)themes_upstream}; do
+    local sorted_keys
+    sorted_keys=(${(o)${(k)themes_upstream}})
+    for t in $sorted_keys; do
         p="${theme_paths[$t]}"
         output+="\`${t}: ${p}\`\n"
     done
@@ -544,7 +546,8 @@ generate_catppuccin_page() {
 - Themes aus Upstream mit lokalen Anpassungen:
 
 "
-    for t in ${(ko)themes_modified}; do
+    sorted_keys=(${(o)${(k)themes_modified}})
+    for t in $sorted_keys; do
         p="${theme_paths[$t]}"
         i="${themes_modified[$t]}"
         n="${i#*| }"
@@ -555,7 +558,8 @@ generate_catppuccin_page() {
 - Manuell konfiguriert (basierend auf catppuccin.com/palette):
 
 "
-    for t in ${(ko)themes_manual}; do
+    sorted_keys=(${(o)${(k)themes_manual}})
+    for t in $sorted_keys; do
         p="${theme_paths[$t]}"
         n="${themes_manual[$t]}"
         output+="\`${t}: ${p} (${n})\`\n"
@@ -579,7 +583,8 @@ generate_catppuccin_page() {
         all_repos[$t]="${i%%|*}"
     done
     
-    for t in ${(ko)all_repos}; do
+    sorted_keys=(${(o)${(k)all_repos}})
+    for t in $sorted_keys; do
         r="${all_repos[$t]}"
         r="${r## }"; r="${r%% }"
         output+="\`${t}: ${r}\`\n"
