@@ -4,6 +4,7 @@
 # Zweck   : Aliase für Homebrew Paketverwaltung
 # Pfad    : ~/.config/alias/brew.alias
 # Docs    : https://docs.brew.sh/Manpage
+# Nutzt   : fzf (Interactive)
 # ============================================================
 # Hinweis : Kein Guard für brew – ohne Homebrew ist dieses
 #           dotfiles-Repository ohnehin nicht nutzbar.

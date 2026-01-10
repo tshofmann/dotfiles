@@ -1,3 +1,5 @@
+- dotfiles: Nutzt `fzf (Interactive)`
+
 - dotfiles: Homebrew Komplett-Update:
 
 `brewup`
