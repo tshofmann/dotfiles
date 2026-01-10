@@ -1,12 +1,10 @@
 # ============================================================
 # lazygit.alias - lazygit Terminal-UI für Git
 # ============================================================
-# Zweck   : Aliase für lazygit
+# Zweck   : Aliase für lazygit – Terminal-UI für Git
 # Pfad    : ~/.config/alias/lazygit.alias
 # Docs    : https://github.com/jesseduffield/lazygit
-# ============================================================
-# Die lazygit-Integration ist in git.alias definiert (lg alias).
-# Diese Datei existiert nur für die Config-Dokumentation.
+# Aliase  : lg
 # ============================================================
 
 # Guard: Nur wenn lazygit installiert ist
@@ -14,4 +12,5 @@ if ! command -v lazygit >/dev/null 2>&1; then
     return 0
 fi
 
-# Aliase sind in git.alias definiert (lg = lazygit)
+# Terminal-UI für Git
+alias lg='lazygit'

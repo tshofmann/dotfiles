@@ -1,5 +1,3 @@
-- dotfiles: Config `~/.config/lazygit/config.yml (lazygit Theme)`
-
 - dotfiles: Nutzt `fzf (Interactive), bat (Diff-Highlighting)`
 
 - dotfiles: Dateien zum Staging hinzufügen:
@@ -53,7 +51,3 @@
 - dotfiles: Stash-Browser (`<Enter>` Apply, `<Ctrl p>` Pop, `<Ctrl d>` Drop):
 
 `gstash`
-
-- dotfiles: Terminal-UI für Git (lazygit):
-
-`lg`
