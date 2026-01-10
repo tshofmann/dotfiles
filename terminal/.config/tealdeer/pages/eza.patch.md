@@ -1,4 +1,4 @@
-- dotfiles: Config `~/.config/eza/theme.yml (Dateityp-Farben für eza (ls-Ersatz))`
+- dotfiles: Config `~/.config/eza/theme.yml`
 
 - dotfiles: Kompakte Liste, Verzeichnisse zuerst:
 

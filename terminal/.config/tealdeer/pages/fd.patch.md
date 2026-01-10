@@ -1,4 +1,4 @@
-- dotfiles: Config `~/.config/fd/ignore (Globale Ausschlüsse für fd (auch bei --hidden))`
+- dotfiles: Config `~/.config/fd/ignore`
 
 - dotfiles: Nutzt `fzf (Interactive), bat (Preview), eza (Verzeichnis-Preview)`
 

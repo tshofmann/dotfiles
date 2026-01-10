@@ -1,4 +1,4 @@
-- dotfiles: Config `~/.config/bat/config (Native bat-Konfiguration (cat mit Syntax-Highlighting))`
+- dotfiles: Config `~/.config/bat/config`
 
 - dotfiles: Nutzt `fzf (Theme-Browser)`
 

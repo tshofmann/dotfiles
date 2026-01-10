@@ -1,4 +1,4 @@
-- dotfiles: Config `~/.config/fzf/config (Native fzf-Konfiguration (FZF_DEFAULT_OPTS_FILE))`
+- dotfiles: Config `~/.config/fzf/config`
 
 - dotfiles: Nutzt `bat (Preview), eza (Verzeichnis-Preview), fd (Default-Command), tldr (fman)`
 

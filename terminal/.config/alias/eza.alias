@@ -4,6 +4,7 @@
 # Zweck   : Aliase für eza mit Icons und Git-Integration
 # Pfad    : ~/.config/alias/eza.alias
 # Docs    : https://eza.rocks
+# Config  : ~/.config/eza/theme.yml
 # Ersetzt : ls (mit Icons und Git-Status)
 # Aliase  : ls, ll, la, tree
 #

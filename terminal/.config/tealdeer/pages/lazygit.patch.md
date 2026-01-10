@@ -1,4 +1,4 @@
-- dotfiles: Config `~/.config/lazygit/config.yml (lazygit Konfiguration mit Catppuccin Mocha Theme)`
+- dotfiles: Config `~/.config/lazygit/config.yml`
 
 - dotfiles: Terminal-UI für Git:
 

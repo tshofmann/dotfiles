@@ -4,6 +4,7 @@
 # Zweck   : Tool-unspezifische fzf-Utilities
 # Pfad    : ~/.config/alias/fzf.alias
 # Docs    : https://github.com/junegunn/fzf
+# Config  : ~/.config/fzf/config
 # Nutzt   : bat (Preview), eza (Verzeichnis-Preview), fd (Default-Command), tldr (fman)
 # ============================================================
 # Tool-spezifische Funktionen in fd/rg/git/brew/gh.alias.
