@@ -12,8 +12,6 @@
 #   - Außerhalb Git-Repos: 0ms Overhead (eza ignoriert --git)
 #   - Innerhalb Git-Repos: ~20ms (unter Wahrnehmungsschwelle)
 #   - Opt-out: export EZA_OVERRIDE_GIT=1
-#
-# Hinweis : EZA_ICONS_AUTO=1 ist in .zshrc gesetzt.
 # ============================================================
 
 # Guard   : Nur wenn eza installiert ist

@@ -6,8 +6,7 @@
 # Docs    : https://github.com/junegunn/fzf
 # Nutzt   : bat (Preview), eza (Verzeichnis-Preview), fd (Default-Command), tldr (fman)
 # ============================================================
-# Hinweis : Keybindings: Ctrl+X 1/2/3.
-#           Tool-spezifische Funktionen in fd/rg/git/brew/gh.alias.
+# Tool-spezifische Funktionen in fd/rg/git/brew/gh.alias.
 #
 # Helper-Skripte in ~/.config/fzf/:
 #   config       – Globale fzf-Optionen (Farben, Layout, Keybindings)

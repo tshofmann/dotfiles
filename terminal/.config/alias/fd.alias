@@ -8,8 +8,6 @@
 # Ersetzt : find (schneller, intuitive Syntax)
 # Aliase  : fd, fdf, fdd
 # ============================================================
-# Hinweis : Mit "fd -u" werden alle Ignore-Dateien umgangen.
-# ============================================================
 
 # Guard   : Nur wenn fd installiert ist
 if ! command -v fd >/dev/null 2>&1; then
