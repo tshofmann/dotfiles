@@ -444,11 +444,13 @@ generate_dotfiles_page() {
     done
 
     output+="- Tools mit dotfiles-Patches (tldr <tool>):\n\n"
-    output+="\`${(j:, :)${(o)patches}}\`\n\n"
+    local sorted_patches=(${(o)patches})
+    output+="\`${(j:, :)sorted_patches}\`\n\n"
 
     if (( ${#pages[@]} > 0 )); then
         output+="- Eigene Seiten:\n\n"
-        output+="\`${(j:, :)${(o)pages}}, dotfiles\`\n"
+        local sorted_pages=(${(o)pages})
+        output+="\`${(j:, :)sorted_pages}, dotfiles\`\n"
     fi
 
     echo -e "$output"
