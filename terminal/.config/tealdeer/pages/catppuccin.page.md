@@ -43,3 +43,4 @@
 `lazygit: github.com/catppuccin/lazygit`
 `starship: github.com/catppuccin/starship`
 `zsh-syntax: github.com/catppuccin/zsh-syntax-highlighting`
+

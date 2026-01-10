@@ -605,26 +605,29 @@ generate_catppuccin_tldr() {
     
     case "$mode" in
         --check)
-            local generated=$(generate_catppuccin_page)
-            local current=""
-            [[ -f "$page_file" ]] && current=$(cat "$page_file")
+            # Generiere in temp-Datei für konsistenten Vergleich
+            local temp_file=$(mktemp)
+            generate_catppuccin_page > "$temp_file"
+            echo "" >> "$temp_file"  # trailing newline
             
-            if [[ "$generated" != "$current" ]]; then
+            if ! diff -q "$page_file" "$temp_file" >/dev/null 2>&1; then
+                rm -f "$temp_file"
                 err "catppuccin.page.md ist veraltet"
                 return 1
             fi
+            rm -f "$temp_file"
             return 0
             ;;
         --generate)
-            local generated=$(generate_catppuccin_page)
-            local current=""
-            [[ -f "$page_file" ]] && current=$(cat "$page_file")
+            local temp_file=$(mktemp)
+            generate_catppuccin_page > "$temp_file"
+            echo "" >> "$temp_file"  # trailing newline
             
-            if [[ "$generated" == "$current" ]]; then
+            if diff -q "$page_file" "$temp_file" >/dev/null 2>&1; then
+                rm -f "$temp_file"
                 dim "  Unverändert: catppuccin.page.md"
             else
-                # echo -e fügt newline hinzu, printf '%s\n' ist konsistenter
-                printf '%s\n' "$generated" > "$page_file"
+                mv "$temp_file" "$page_file"
                 ok "Generiert: catppuccin.page.md"
             fi
             ;;
