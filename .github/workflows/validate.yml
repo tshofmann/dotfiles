@@ -85,6 +85,6 @@ jobs:
         run: |
           echo "Prüfe Markdown-Dateien..."
           brew install markdownlint-cli2
-          # Config wird automatisch aus .markdownlint-cli2.jsonc geladen
-          markdownlint-cli2 '**/*.md' '#node_modules'
+          # Config aus terminal/.config/ (wird lokal via Stow verlinkt)
+          markdownlint-cli2 --config terminal/.config/markdownlint-cli2/.markdownlint-cli2.jsonc '**/*.md' '#node_modules'
           echo "✔ Markdown OK"

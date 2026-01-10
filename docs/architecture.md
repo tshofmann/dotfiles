@@ -28,7 +28,6 @@ dotfiles/
 │   └── dependabot.yml # Hält GitHub Actions automatisch aktuell
 ├── .gitattributes # Zeilenenden und Dateibehandlung normalisieren
 ├── .gitignore # Dateien von Versionskontrolle ausschließen
-├── .markdownlint-cli2.jsonc
 ├── .stowrc # Ignore-Patterns und Standard-Optionen für GNU Stow
 ├── docs/
 │   ├── architecture.md # Architektur
@@ -95,6 +94,8 @@ dotfiles/
 │   │   │   └── safe-action # Führt Aktionen Shell-Injection-sicher aus
 │   │   ├── lazygit/
 │   │   │   └── config.yml # lazygit Konfiguration mit Catppuccin Mocha Theme
+│   │   ├── markdownlint-cli2/
+│   │   │   └── .markdownlint-cli2.jsonc
 │   │   ├── ripgrep/
 │   │   │   └── config # Native ripgrep-Konfiguration (RIPGREP_CONFIG_PATH)
 │   │   ├── tealdeer/

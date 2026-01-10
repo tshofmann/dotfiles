@@ -118,8 +118,8 @@ check_markdown() {
         return 0  # Kein Fehler, nur Warnung
     fi
     
-    # Markdownlint ausführen (config wird automatisch gefunden)
-    if ! markdownlint-cli2 '**/*.md' '#node_modules' 2>/dev/null; then
+    # Markdownlint ausführen (Config aus terminal/.config/)
+    if ! markdownlint-cli2 --config "$DOTFILES_DIR/terminal/.config/markdownlint-cli2/.markdownlint-cli2.jsonc" '**/*.md' '#node_modules' 2>/dev/null; then
         err "Markdown-Fehler gefunden!"
         print ""
         print "  Fehler beheben oder Generatoren anpassen:"
