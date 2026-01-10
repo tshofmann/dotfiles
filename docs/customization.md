@@ -11,7 +11,7 @@ Das gesamte Setup verwendet [Catppuccin Mocha](https://catppuccin.com/) als einh
 ### Konfigurierte Tools
 
 | Tool | Theme-Datei | Status |
-|------|-------------|--------|
+| ---- | ----------- | ------ |
 | **Terminal.app** | `setup/catppuccin-mocha.terminal` | Via Bootstrap importiert + als Standard gesetzt |
 | **Starship** | catppuccin-powerline Preset | Via Bootstrap konfiguriert |
 | **bat** | `terminal/.config/bat/themes/` | Via Stow verlinkt (+ Cache-Build) |
@@ -38,7 +38,7 @@ Das Catppuccin Mocha Theme für Xcode wird automatisch vom Bootstrap-Skript nach
 Alle verfügbaren Shell-Farbvariablen aus `~/.config/theme-colors`:
 
 | Farbe | Hex | Variable |
-|-------|-----|----------|
+| ----- | --- | -------- |
 | Rosewater | `#F5E0DC` | `C_ROSEWATER` |
 | Flamingo | `#F2CDCD` | `C_FLAMINGO` |
 | Pink | `#F5C2E7` | `C_PINK` |
@@ -83,7 +83,7 @@ Das Setup konfiguriert automatisch [Starship](https://starship.rs/) mit dem `cat
 ### Standard-Verhalten
 
 | Situation | Verhalten |
-|-----------|-----------|
+| --------- | --------- |
 | Keine `starship.toml` vorhanden | Wird mit `catppuccin-powerline` erstellt |
 | `starship.toml` bereits vorhanden | Bleibt unverändert |
 | `STARSHIP_PRESET` Variable gesetzt | Wird mit diesem Preset erstellt/überschrieben |
@@ -237,7 +237,7 @@ bindkey '^X3' fzf-cd-widget              # Ctrl+X 3 = Verzeichnisse
 ## Weitere Anpassungen
 
 | Was | Wo | Format |
-|-----|-----|--------|
+| --- | -- | ------ |
 | bat Theme | `~/.config/bat/config` | `--theme="..."` |
 | fd Ignore-Patterns | `~/.config/fd/ignore` | Glob-Patterns |
 | ripgrep Optionen | `~/.config/ripgrep/config` | CLI-Flags |

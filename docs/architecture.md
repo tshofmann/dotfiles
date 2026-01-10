@@ -14,6 +14,7 @@ dotfiles/
 ├── .githooks/
 │   └── pre-commit # Verhindert Commits mit veralteter Dokumentation
 ├── .github/
+│   ├── .markdownlint.json
 │   ├── ISSUE_TEMPLATE/
 │   │   ├── bug_report.md
 │   │   ├── config.yml
@@ -132,7 +133,7 @@ dotfiles/
 Der Code ist die einzige Wahrheit. Alle Dokumentation wird automatisch generiert:
 
 | Quelle | Generiert |
-|--------|-----------|
+| ------ | --------- |
 | \`.alias\`-Dateien | tools.md, tldr-Patches |
 | \`Brewfile\` | tools.md (CLI-Tools), setup.md |
 | \`bootstrap.sh\` | setup.md |
@@ -171,7 +172,7 @@ So bleiben Original-Befehle (`ls`, `cat`) erhalten wenn ein Tool fehlt.
 Das Setup folgt der [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html):
 
 | Variable | Pfad | Verwendung |
-|----------|------|------------|
+| -------- | ---- | ---------- |
 | `XDG_CONFIG_HOME` | `~/.config` | Konfigurationsdateien |
 | `XDG_DATA_HOME` | `~/.local/share` | Anwendungsdaten |
 | `XDG_CACHE_HOME` | `~/.cache` | Cache-Dateien |
@@ -199,7 +200,7 @@ Vorteile:
 Bootstrap erkennt Theme-Dateien automatisch nach Dateiendung:
 
 | Dateiendung | Sortiert | Warnung bei mehreren |
-|-------------|----------|----------------------|
+| ----------- | -------- | -------------------- |
 | `.terminal` | Ja | Ja |
 | `.xccolortheme` | Ja | Ja |
 

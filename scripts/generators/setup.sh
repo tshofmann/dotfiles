@@ -53,7 +53,7 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles au
 ## Voraussetzungen
 
 | Anforderung | Details |
-|-------------|---------|
+| ----------- | ------- |
 | **Apple Silicon Mac** | M1, M2, … (arm64) – Intel-Macs werden nicht unterstützt |
 HEADER
     # Dynamische macOS-Zeile mit min und tested
@@ -88,7 +88,7 @@ curl -fsSL https://github.com/tshofmann/dotfiles/archive/refs/heads/main.tar.gz 
 Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 
 | Aktion | Beschreibung | Bei Fehler |
-|--------|--------------|------------|
+| ------ | ------------ | ---------- |
 | Architektur-Check | Prüft ob arm64 (Apple Silicon) | ❌ Exit |
 PART2
     # Dynamische macOS-Version-Check Zeile
@@ -106,16 +106,19 @@ PART2
 PART3
 
     cat << 'REST'
+
 > **Idempotenz:** Das Skript kann beliebig oft ausgeführt werden – bereits installierte Komponenten werden erkannt und übersprungen.
 
 > **⏱️ Timeout-Konfiguration:** Der Terminal-Profil-Import wartet standardmäßig 20 Sekunden auf Registrierung im System. Bei langsamen Systemen oder VMs kann dies erhöht werden:
+>
 > ```bash
 > PROFILE_IMPORT_TIMEOUT=60 ./setup/bootstrap.sh
 > ```
 >
 > **Empfohlene Timeout-Werte:**
+>
 > | Umgebung | Empfohlener Wert | Begründung |
-> |----------|------------------|------------|
+> | -------- | ---------------- | ---------- |
 > | Native Hardware | `20` (Standard) | Ausreichend für normale Systeme |
 > | macOS VM (Apple Silicon) | `30-45` | VMs haben leicht erhöhte I/O-Latenz |
 > | macOS VM (Parallels/VMware) | `45-60` | Virtualisierungsoverhead bei GUI-Operationen |
@@ -130,14 +133,15 @@ PART3
 
 Nach Abschluss des Bootstrap-Skripts:
 
-1. **Terminal.app neu starten** (für vollständige Übernahme der Profil-Einstellungen)
-2. Dann im neuen Terminal-Fenster:
+**1. Terminal.app neu starten** (für vollständige Übernahme der Profil-Einstellungen)
+
+**2. Dann im neuen Terminal-Fenster:**
 
 ```zsh
 cd ~/dotfiles && stow --adopt -R terminal && git reset --hard HEAD
 ```
 
-3. **bat-Cache für Catppuccin Theme bauen:**
+**3. bat-Cache für Catppuccin Theme bauen:**
 
 ```zsh
 bat cache --build
@@ -145,7 +149,7 @@ bat cache --build
 
 > **💡 Warum dieser Schritt?** Das Catppuccin Mocha Theme für bat liegt in `~/.config/bat/themes/` (via Stow verlinkt). bat erkennt neue Themes erst nach einem Cache-Rebuild.
 
-4. **tealdeer-Cache herunterladen (einmalig):**
+**4. tealdeer-Cache herunterladen (einmalig):**
 
 ```zsh
 tldr --update
@@ -156,7 +160,7 @@ tldr --update
 ### Was diese Befehle machen
 
 | Befehl | Beschreibung |
-|--------|--------------|
+| ------ | ------------ |
 | `cd ~/dotfiles` | Ins dotfiles-Verzeichnis wechseln |
 | `stow --adopt -R terminal` | Symlinks erstellen, existierende Dateien übernehmen |
 | `git reset --hard HEAD` | Adoptierte Dateien auf Repository-Zustand zurücksetzen |
@@ -192,7 +196,7 @@ REST
     echo "### CLI-Tools (via Homebrew)"
     echo ""
     echo "| Paket | Beschreibung |"
-    echo "|-------|--------------|"
+    echo "| ----- | ------------ |"
     
     while IFS= read -r line; do
         [[ "$line" == \#* || -z "$line" ]] && continue
@@ -215,7 +219,7 @@ REST
     echo "### Apps & Fonts (via Cask)"
     echo ""
     echo "| Paket | Beschreibung |"
-    echo "|-------|--------------|"
+    echo "| ----- | ------------ |"
     
     while IFS= read -r line; do
         [[ "$line" == \#* || -z "$line" ]] && continue
@@ -238,7 +242,7 @@ REST
     echo "### Mac App Store Apps (via mas)"
     echo ""
     echo "| App | Beschreibung |"
-    echo "|-----|--------------|"
+    echo "| --- | ------------ |"
     
     while IFS= read -r line; do
         [[ "$line" == \#* || -z "$line" ]] && continue

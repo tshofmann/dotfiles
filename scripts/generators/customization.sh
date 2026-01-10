@@ -19,7 +19,7 @@ generate_color_palette_table() {
     [[ -f "$colors_file" ]] || return 1
     
     echo "| Farbe | Hex | Variable |"
-    echo "|-------|-----|----------|"
+    echo "| ----- | --- | -------- |"
     
     # Regex: typeset -gx C_NAME=$'\033[38;2;R;G;Bm'  # #HEX
     while IFS= read -r line; do
@@ -136,7 +136,7 @@ collect_theme_configs() {
     )
     
     output+="| Tool | Theme-Datei | Status |\n"
-    output+="|------|-------------|--------|\n"
+    output+="| ---- | ----------- | ------ |\n"
     
     for tool in "Terminal.app" "Starship" "bat" "fzf" "btop" "eza" "zsh-syntax-highlighting" "Xcode"; do
         local info="${theme_files[$tool]}"
@@ -231,7 +231,7 @@ Das Setup konfiguriert automatisch [Starship](https://starship.rs/) mit dem `cat
 ### Standard-Verhalten
 
 | Situation | Verhalten |
-|-----------|-----------|
+| --------- | --------- |
 | Keine `starship.toml` vorhanden | Wird mit `catppuccin-powerline` erstellt |
 | `starship.toml` bereits vorhanden | Bleibt unverändert |
 | `STARSHIP_PRESET` Variable gesetzt | Wird mit diesem Preset erstellt/überschrieben |
@@ -403,7 +403,7 @@ FZF_KEYBINDINGS
 ## Weitere Anpassungen
 
 | Was | Wo | Format |
-|-----|-----|--------|
+| --- | -- | ------ |
 | bat Theme | `~/.config/bat/config` | `--theme="..."` |
 | fd Ignore-Patterns | `~/.config/fd/ignore` | Glob-Patterns |
 | ripgrep Optionen | `~/.config/ripgrep/config` | CLI-Flags |

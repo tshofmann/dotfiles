@@ -8,7 +8,7 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles au
 ## Voraussetzungen
 
 | Anforderung | Details |
-|-------------|---------|
+| ----------- | ------- |
 | **Apple Silicon Mac** | M1, M2, … (arm64) – Intel-Macs werden nicht unterstützt |
 | **macOS 26+** | Tahoe oder neuer – getestet auf 26 (Tahoe) |
 | **Internetverbindung** | Für Homebrew-Installation und Download der Formulae/Casks |
@@ -40,7 +40,7 @@ curl -fsSL https://github.com/tshofmann/dotfiles/archive/refs/heads/main.tar.gz 
 Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 
 | Aktion | Beschreibung | Bei Fehler |
-|--------|--------------|------------|
+| ------ | ------------ | ---------- |
 | Architektur-Check | Prüft ob arm64 (Apple Silicon) | ❌ Exit |
 | macOS-Version-Check | Prüft ob macOS 26+ (Tahoe) | ❌ Exit |
 | Netzwerk-Check | Prüft Internetverbindung | ❌ Exit |
@@ -52,16 +52,19 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 | Terminal-Profil | Importiert `catppuccin-mocha.terminal` als Standard | ⚠️ Warnung |
 | Starship-Theme | Generiert `~/.config/starship.toml` | ⚠️ Warnung |
 | ZSH-Sessions | Prüft SHELL_SESSIONS_DISABLE in ~/.zshenv | ⚠️ Warnung |
+
 > **Idempotenz:** Das Skript kann beliebig oft ausgeführt werden – bereits installierte Komponenten werden erkannt und übersprungen.
 
 > **⏱️ Timeout-Konfiguration:** Der Terminal-Profil-Import wartet standardmäßig 20 Sekunden auf Registrierung im System. Bei langsamen Systemen oder VMs kann dies erhöht werden:
+>
 > ```bash
 > PROFILE_IMPORT_TIMEOUT=60 ./setup/bootstrap.sh
 > ```
 >
 > **Empfohlene Timeout-Werte:**
+>
 > | Umgebung | Empfohlener Wert | Begründung |
-> |----------|------------------|------------|
+> | -------- | ---------------- | ---------- |
 > | Native Hardware | `20` (Standard) | Ausreichend für normale Systeme |
 > | macOS VM (Apple Silicon) | `30-45` | VMs haben leicht erhöhte I/O-Latenz |
 > | macOS VM (Parallels/VMware) | `45-60` | Virtualisierungsoverhead bei GUI-Operationen |
@@ -76,14 +79,15 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 
 Nach Abschluss des Bootstrap-Skripts:
 
-1. **Terminal.app neu starten** (für vollständige Übernahme der Profil-Einstellungen)
-2. Dann im neuen Terminal-Fenster:
+**1. Terminal.app neu starten** (für vollständige Übernahme der Profil-Einstellungen)
+
+**2. Dann im neuen Terminal-Fenster:**
 
 ```zsh
 cd ~/dotfiles && stow --adopt -R terminal && git reset --hard HEAD
 ```
 
-3. **bat-Cache für Catppuccin Theme bauen:**
+**3. bat-Cache für Catppuccin Theme bauen:**
 
 ```zsh
 bat cache --build
@@ -91,7 +95,7 @@ bat cache --build
 
 > **💡 Warum dieser Schritt?** Das Catppuccin Mocha Theme für bat liegt in `~/.config/bat/themes/` (via Stow verlinkt). bat erkennt neue Themes erst nach einem Cache-Rebuild.
 
-4. **tealdeer-Cache herunterladen (einmalig):**
+**4. tealdeer-Cache herunterladen (einmalig):**
 
 ```zsh
 tldr --update
@@ -102,7 +106,7 @@ tldr --update
 ### Was diese Befehle machen
 
 | Befehl | Beschreibung |
-|--------|--------------|
+| ------ | ------------ |
 | `cd ~/dotfiles` | Ins dotfiles-Verzeichnis wechseln |
 | `stow --adopt -R terminal` | Symlinks erstellen, existierende Dateien übernehmen |
 | `git reset --hard HEAD` | Adoptierte Dateien auf Repository-Zustand zurücksetzen |
@@ -135,7 +139,7 @@ ff
 ### CLI-Tools (via Homebrew)
 
 | Paket | Beschreibung |
-|-------|--------------|
+| ----- | ------------ |
 | `fzf` | Fuzzy Finder |
 | `gh` | GitHub CLI |
 | `stow` | Symlink-Manager |
@@ -156,14 +160,14 @@ ff
 ### Apps & Fonts (via Cask)
 
 | Paket | Beschreibung |
-|-------|--------------|
+| ----- | ------------ |
 | `font-meslo-lg-nerd-font` | Nerd Font für Terminal |
 | `claude-code` | KI-Coding-Assistent |
 
 ### Mac App Store Apps (via mas)
 
 | App | Beschreibung |
-|-----|--------------|
+| --- | ------------ |
 | Xcode | Apple IDE |
 | Pages | Textverarbeitung |
 | Numbers | Tabellenkalkulation |

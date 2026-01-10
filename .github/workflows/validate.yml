@@ -80,3 +80,11 @@ jobs:
             exit 1
           fi
           echo "✔ Alias-Format OK"
+
+      - name: Markdown prüfen
+        run: |
+          echo "Prüfe Markdown-Dateien..."
+          npm install -g markdownlint-cli --silent
+          # Explizit nur .md Dateien – keine anderen Formate
+          markdownlint '**/*.md' --ignore node_modules --config .github/.markdownlint.json
+          echo "✔ Markdown OK"

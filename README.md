@@ -32,7 +32,7 @@ cd ~/dotfiles && stow --adopt -R terminal && git reset --hard HEAD && bat cache 
 ## Dokumentation
 
 | Thema | Beschreibung |
-|-------|--------------|
+| ----- | ------------ |
 | [Setup](docs/setup.md) | Schritt-für-Schritt Anleitung |
 | [Anpassung](docs/customization.md) | Starship, Aliase anpassen |
 | [Architektur](docs/architecture.md) | Struktur & Designentscheidungen |

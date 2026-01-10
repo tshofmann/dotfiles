@@ -45,7 +45,7 @@ generate_tool_usage_section() {
         output+="---\n\n"
     done
     
-    echo -e "$output"
+    echo "$output"
 }
 
 # ------------------------------------------------------------
@@ -102,7 +102,7 @@ generate_zsh_plugins_usage() {
         output+="### zsh-autosuggestions\n\n"
         output+="Zeigt Befehlsvorschläge basierend auf der History beim Tippen an.\n\n"
         output+="| Taste | Aktion |\n"
-        output+="|-------|--------|\n"
+        output+="| ----- | ------ |\n"
         
         local entries="${plugin_entries[zsh-autosuggestions]}"
         while IFS='|' read -r key value; do
@@ -119,7 +119,7 @@ generate_zsh_plugins_usage() {
         output+="### zsh-syntax-highlighting\n\n"
         output+="Färbt Kommandos während der Eingabe ein:\n\n"
         output+="| Farbe | Bedeutung |\n"
-        output+="|-------|--------|\n"
+        output+="| ----- | ------ |\n"
         
         local entries="${plugin_entries[zsh-syntax-highlighting]}"
         while IFS='|' read -r key value; do
@@ -131,7 +131,7 @@ generate_zsh_plugins_usage() {
         output+="\n"
     fi
     
-    echo -e "$output"
+    echo "$output"
 }
 
 # ------------------------------------------------------------
@@ -206,7 +206,7 @@ generate_font_section() {
     
     output+="### ${display_name} Nerd Font\n\n"
     output+="| Eigenschaft | Wert |\n"
-    output+="|-------------|------|\n"
+    output+="| ----------- | ---- |\n"
     output+="| **Name** | $font_variante |\n"
     output+="| **Installiert via** | \`brew install --cask $font_name\` |\n"
     output+="| **Speicherort** | \`$font_speicherort\` |\n"
@@ -239,7 +239,7 @@ generate_font_section() {
     output+="brew install --cask font-jetbrains-mono-nerd-font\n"
     output+="\`\`\`\n"
     
-    echo -e "$output"
+    echo "$output"
 }
 
 # ------------------------------------------------------------
@@ -250,7 +250,7 @@ generate_theming_section() {
     
     output+="Alle Tools nutzen das **Catppuccin Mocha** Farbschema für ein einheitliches Erscheinungsbild:\n\n"
     output+="| Tool | Lokale Konfiguration | Upstream-Quelle |\n"
-    output+="|------|----------------------|-----------------|\n"
+    output+="| ---- | -------------------- | --------------- |\n"
     output+="| **bat** | \`~/.config/bat/themes/Catppuccin Mocha.tmTheme\` | [github.com/catppuccin/bat](https://github.com/catppuccin/bat) |\n"
     output+="| **btop** | \`~/.config/btop/themes/catppuccin_mocha.theme\` | [github.com/catppuccin/btop](https://github.com/catppuccin/btop) |\n"
     output+="| **eza** | \`~/.config/eza/theme.yml\` | [github.com/catppuccin/eza](https://github.com/catppuccin/eza) |\n"
@@ -264,7 +264,7 @@ generate_theming_section() {
     output+="> **Hinweis:** Shell-Farben sind zentral in \`terminal/.config/theme-colors\` definiert.\n"
     output+="> Die vollständige Palette findest du unter [catppuccin.com/palette](https://catppuccin.com/palette).\n"
     
-    echo -e "$output"
+    echo "$output"
 }
 
 # ------------------------------------------------------------
@@ -278,7 +278,7 @@ generate_links_section() {
     output+="- [Starship Presets](https://starship.rs/presets/)\n"
     output+="- [Catppuccin Ports](https://github.com/catppuccin/catppuccin#-ports-and-more) – Themes für weitere Tools\n"
     
-    echo -e "$output"
+    echo "$output"
 }
 
 # ------------------------------------------------------------
@@ -337,7 +337,7 @@ extract_aliases_from_file() {
         fi
     done < "$file"
     
-    echo -e "$output"
+    echo "$output"
 }
 
 # ------------------------------------------------------------
@@ -394,7 +394,7 @@ extract_functions_from_file() {
         fi
     done < "$file"
     
-    echo -e "$output"
+    echo "$output"
 }
 
 # ------------------------------------------------------------
@@ -404,7 +404,7 @@ generate_installed_tools_table() {
     local output=""
     
     output+="| Tool | Beschreibung | Dokumentation |\n"
-    output+="|------|--------------|---------------|\n"
+    output+="| ---- | ------------ | ------------- |\n"
     
     while IFS= read -r line; do
         [[ "$line" == \#* || -z "$line" ]] && continue
@@ -434,7 +434,7 @@ generate_installed_tools_table() {
         output+="| **$name** | $desc | $docs |\n"
     done < "$BREWFILE"
     
-    echo -e "$output"
+    echo "$output"
 }
 
 # ------------------------------------------------------------
@@ -444,7 +444,7 @@ generate_casks_table() {
     local output=""
     
     output+="| App | Beschreibung | Dokumentation |\n"
-    output+="|-----|--------------|---------------|\n"
+    output+="| --- | ------------ | ------------- |\n"
     
     while IFS= read -r line; do
         [[ "$line" == \#* || -z "$line" ]] && continue
@@ -473,7 +473,7 @@ generate_casks_table() {
         output+="| **$name** | $desc | $docs |\n"
     done < "$BREWFILE"
     
-    echo -e "$output"
+    echo "$output"
 }
 
 # ------------------------------------------------------------
@@ -483,7 +483,7 @@ generate_mas_table() {
     local output=""
     
     output+="| App | Beschreibung | Dokumentation |\n"
-    output+="|-----|--------------|--------------|\n"
+    output+="| --- | ------------ | ------------ |\n"
     
     while IFS= read -r line; do
         [[ "$line" == \#* || -z "$line" ]] && continue
@@ -512,7 +512,7 @@ generate_mas_table() {
         output+="| **$name** | $desc | $docs |\n"
     done < "$BREWFILE"
     
-    echo -e "$output"
+    echo "$output"
 }
 
 # ------------------------------------------------------------
@@ -538,7 +538,7 @@ Die wichtigsten Tastenkombinationen und Befehle auf einen Blick:
 ### Tastenkombinationen (global)
 
 | Taste | Funktion | Beschreibung |
-|-------|----------|--------------|
+| ----- | -------- | ------------ |
 | `Ctrl+X 1` | History-Suche | Frühere Befehle fuzzy suchen |
 | `Ctrl+X 2` | Datei einfügen | Datei suchen und in Kommandozeile einfügen |
 | `Ctrl+X 3` | Verzeichnis wechseln | Interaktiv in Unterverzeichnis springen |
@@ -548,7 +548,7 @@ Die wichtigsten Tastenkombinationen und Befehle auf einen Blick:
 ### Die wichtigsten Aliase
 
 | Alias | Statt | Funktion |
-|-------|-------|----------|
+| ----- | ----- | -------- |
 | `ls` | `ls` | Dateien mit Icons anzeigen |
 | `ll` | `ls -la` | Ausführliche Auflistung |
 | `cat` | `cat` | Datei mit Syntax-Highlighting |
@@ -589,7 +589,7 @@ fa commit       # Nach "commit" filtern
 ```
 
 | Keybinding | Aktion |
-|------------|--------|
+| ---------- | ------ |
 | `Enter` | Befehl übernehmen (ins Edit-Buffer) |
 | `Ctrl+C` | Preview: Code-Definition |
 | `Ctrl+T` | Preview: tldr für Tool-Kategorie |
@@ -626,10 +626,11 @@ Diese Tools werden via Brewfile installiert:
     output+=$(generate_installed_tools_table)
     
     output+='
+
 ### ZSH-Plugins
 
 | Plugin | Beschreibung | Dokumentation |
-|--------|--------------|---------------|
+| ------ | ------------ | ------------- |
 | **zsh-autosuggestions** | History-basierte Befehlsvorschläge beim Tippen | [github.com/zsh-users/zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) |
 | **zsh-syntax-highlighting** | Echtzeit Syntax-Highlighting für Kommandos | [github.com/zsh-users/zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) |
 
@@ -641,6 +642,7 @@ Diese Pakete werden via `brew install --cask` installiert:
     output+=$(generate_casks_table)
     
     output+='
+
 ### Mac App Store Apps
 
 Diese Apps werden via `mas` installiert (Benutzer muss im App Store angemeldet sein):
@@ -649,6 +651,7 @@ Diese Apps werden via `mas` installiert (Benutzer muss im App Store angemeldet s
     output+=$(generate_mas_table)
     
     output+='
+
 > **Hinweis:** Die Anmeldung im App Store muss manuell über App Store.app erfolgen – die Befehle `mas account` und `mas signin` sind auf macOS 12+ nicht verfügbar.
 
 ---
@@ -676,15 +679,14 @@ Verfügbare Aliase aus `~/.config/alias/`:
         local docs_url=$(parse_header_field "$alias_file" "Docs")
         local hinweis=$(parse_header_field "$alias_file" "Hinweis")
         
-        output+="\n<a name=\"${tool_name}alias\"></a>\n\n"
-        output+="### ${tool_name}.alias\n\n"
+        output+="\n### ${tool_name}.alias\n\n"
         
         # Aliase
         local aliases=$(extract_aliases_from_file "$alias_file")
         if [[ -n "${aliases// /}" ]]; then
             output+="| Alias | Befehl | Beschreibung |\n"
-            output+="|-------|--------|--------------|\n"
-            output+="$aliases"
+            output+="| ----- | ------ | ------------ |\n"
+            output+="${aliases}"
         fi
         
         # Funktionen
@@ -692,14 +694,13 @@ Verfügbare Aliase aus `~/.config/alias/`:
         if [[ -n "${funcs// /}" ]]; then
             output+="\n\n**Interaktive Funktionen (mit fzf):**\n\n"
             output+="| Funktion | Beschreibung |\n"
-            output+="|----------|--------------|\n"
-            output+="$funcs"
-            output+="\n"
+            output+="| -------- | ------------ |\n"
+            output+="${funcs}"
         fi
         
-        # Hinweis
+        # Hinweis (mit Leerzeile davor für Markdown-Konformität)
         if [[ -n "$hinweis" ]]; then
-            output+="> **Hinweis:** $hinweis\n"
+            output+="\n\n> **Hinweis:** $hinweis\n"
         fi
         
         output+="\n"

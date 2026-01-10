@@ -14,7 +14,7 @@ Die wichtigsten Tastenkombinationen und Befehle auf einen Blick:
 ### Tastenkombinationen (global)
 
 | Taste | Funktion | Beschreibung |
-|-------|----------|--------------|
+| ----- | -------- | ------------ |
 | `Ctrl+X 1` | History-Suche | Frühere Befehle fuzzy suchen |
 | `Ctrl+X 2` | Datei einfügen | Datei suchen und in Kommandozeile einfügen |
 | `Ctrl+X 3` | Verzeichnis wechseln | Interaktiv in Unterverzeichnis springen |
@@ -24,7 +24,7 @@ Die wichtigsten Tastenkombinationen und Befehle auf einen Blick:
 ### Die wichtigsten Aliase
 
 | Alias | Statt | Funktion |
-|-------|-------|----------|
+| ----- | ----- | -------- |
 | `ls` | `ls` | Dateien mit Icons anzeigen |
 | `ll` | `ls -la` | Ausführliche Auflistung |
 | `cat` | `cat` | Datei mit Syntax-Highlighting |
@@ -65,7 +65,7 @@ fa commit       # Nach "commit" filtern
 ```
 
 | Keybinding | Aktion |
-|------------|--------|
+| ---------- | ------ |
 | `Enter` | Befehl übernehmen (ins Edit-Buffer) |
 | `Ctrl+C` | Preview: Code-Definition |
 | `Ctrl+T` | Preview: tldr für Tool-Kategorie |
@@ -99,7 +99,7 @@ Die Erweiterungen sind als Patches implementiert – sie werden automatisch an d
 Diese Tools werden via Brewfile installiert:
 
 | Tool | Beschreibung | Dokumentation |
-|------|--------------|---------------|
+| ---- | ------------ | ------------- |
 | **fzf** | Fuzzy Finder | [github.com/junegunn/fzf](https://github.com/junegunn/fzf) |
 | **gh** | GitHub CLI | [cli.github.com](https://cli.github.com/) |
 | **stow** | Symlink-Manager | [www.gnu.org/software/stow](https://www.gnu.org/software/stow/) |
@@ -116,10 +116,11 @@ Diese Tools werden via Brewfile installiert:
 | **lazygit** | Terminal-UI für Git | [github.com/jesseduffield/lazygit](https://github.com/jesseduffield/lazygit) |
 | **zsh-syntax-highlighting** | Syntax-Highlighting | [github.com/zsh-users/zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) |
 | **zsh-autosuggestions** | History-Vorschläge | [github.com/zsh-users/zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) |
+
 ### ZSH-Plugins
 
 | Plugin | Beschreibung | Dokumentation |
-|--------|--------------|---------------|
+| ------ | ------------ | ------------- |
 | **zsh-autosuggestions** | History-basierte Befehlsvorschläge beim Tippen | [github.com/zsh-users/zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) |
 | **zsh-syntax-highlighting** | Echtzeit Syntax-Highlighting für Kommandos | [github.com/zsh-users/zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) |
 
@@ -128,19 +129,21 @@ Diese Tools werden via Brewfile installiert:
 Diese Pakete werden via `brew install --cask` installiert:
 
 | App | Beschreibung | Dokumentation |
-|-----|--------------|---------------|
+| --- | ------------ | ------------- |
 | **font-meslo-lg-nerd-font** | Nerd Font für Terminal | [github.com/ryanoasis/nerd-fonts](https://github.com/ryanoasis/nerd-fonts) |
 | **claude-code** | KI-Coding-Assistent | [www.anthropic.com/claude-code](https://www.anthropic.com/claude-code) |
+
 ### Mac App Store Apps
 
 Diese Apps werden via `mas` installiert (Benutzer muss im App Store angemeldet sein):
 
 | App | Beschreibung | Dokumentation |
-|-----|--------------|--------------|
+| --- | ------------ | ------------ |
 | **Xcode** | Apple IDE | [apps.apple.com/app/id497799835](https://apps.apple.com/app/id497799835) |
 | **Pages** | Textverarbeitung | [apps.apple.com/app/id409201541](https://apps.apple.com/app/id409201541) |
 | **Numbers** | Tabellenkalkulation | [apps.apple.com/app/id409203825](https://apps.apple.com/app/id409203825) |
 | **Keynote** | Präsentationen | [apps.apple.com/app/id409183694](https://apps.apple.com/app/id409183694) |
+
 > **Hinweis:** Die Anmeldung im App Store muss manuell über App Store.app erfolgen – die Befehle `mas account` und `mas signin` sind auf macOS 12+ nicht verfügbar.
 
 ---
@@ -150,7 +153,7 @@ Diese Apps werden via `mas` installiert (Benutzer muss im App Store angemeldet s
 Alle Tools nutzen das **Catppuccin Mocha** Farbschema für ein einheitliches Erscheinungsbild:
 
 | Tool | Lokale Konfiguration | Upstream-Quelle |
-|------|----------------------|-----------------|
+| ---- | -------------------- | --------------- |
 | **bat** | `~/.config/bat/themes/Catppuccin Mocha.tmTheme` | [github.com/catppuccin/bat](https://github.com/catppuccin/bat) |
 | **btop** | `~/.config/btop/themes/catppuccin_mocha.theme` | [github.com/catppuccin/btop](https://github.com/catppuccin/btop) |
 | **eza** | `~/.config/eza/theme.yml` | [github.com/catppuccin/eza](https://github.com/catppuccin/eza) |
@@ -173,12 +176,10 @@ Verfügbare Aliase aus `~/.config/alias/`:
 > **Guard-System:** Alle Tool-Aliase prüfen zuerst ob das jeweilige Tool installiert ist (`command -v`). Ist ein Tool nicht vorhanden, bleiben die originalen Befehle (`ls`, `cat`, `grep`) erhalten.
 
 
-<a name="batalias"></a>
-
 ### bat.alias
 
 | Alias | Befehl | Beschreibung |
-|-------|--------|--------------|
+| ----- | ------ | ------------ |
 | `cat` | `bat -pp` | Ersetzt cat mit Syntax-Highlighting (plain style) |
 | `catn` | `bat --style=numbers --paging=never` | Mit Zeilennummern, ohne Pager (bat allein hat Pager) |
 | `catd` | `bat --diff` | Zeigt Git-Diff-Markierungen an |
@@ -186,17 +187,16 @@ Verfügbare Aliase aus `~/.config/alias/`:
 **Interaktive Funktionen (mit fzf):**
 
 | Funktion | Beschreibung |
-|----------|--------------|
+| -------- | ------------ |
 | `bat-theme` | Theme Browser (Enter=Aktivieren) |
+
 > **Hinweis:** Globale Optionen (Theme, Style, Syntax-Mappings) sind in ~/.config/bat/config definiert. Nach Theme-Änderungen: `bat cache --build`
 
-
-<a name="brewalias"></a>
 
 ### brew.alias
 
 | Alias | Befehl | Beschreibung |
-|-------|--------|--------------|
+| ----- | ------ | ------------ |
 | `maso` | `mas outdated` | Zeige veraltete Mac App Store Apps |
 | `masu` | `mas upgrade` | Alle Mac App Store Apps aktualisieren |
 | `mass` | `mas search` | Im Mac App Store nach Apps suchen (gibt ID zurück) |
@@ -206,71 +206,69 @@ Verfügbare Aliase aus `~/.config/alias/`:
 **Interaktive Funktionen (mit fzf):**
 
 | Funktion | Beschreibung |
-|----------|--------------|
+| -------- | ------------ |
 | `brewup` | Homebrew Komplett-Update (update, upgrade, autoremove, cleanup, mas) |
 | `brewv` | Brewfile Versionsübersicht (zeigt installierte Versionen aller Pakete) |
 | `bip` | Brew Install Browser (Enter=Installieren, Tab=Mehrfach) |
 | `brp` | Brew Remove Browser (Enter=Entfernen, Tab=Mehrfach) |
+
 > **Hinweis:** Kein Guard für brew – ohne Homebrew ist dieses dotfiles-Repository ohnehin nicht nutzbar.
 
-
-<a name="btopalias"></a>
 
 ### btop.alias
 
 | Alias | Befehl | Beschreibung |
-|-------|--------|--------------|
+| ----- | ------ | ------------ |
 | `top` | `btop` | Systemmonitor mit modernem Interface |
-| `htop` | `btop` | Bessere Alternative zu htop |> **Hinweis:** Konfiguration in ~/.config/btop/btop.conf Theme: Catppuccin Mocha
+| `htop` | `btop` | Bessere Alternative zu htop |
 
+> **Hinweis:** Konfiguration in ~/.config/btop/btop.conf Theme: Catppuccin Mocha
 
-<a name="dotfilesalias"></a>
 
 ### dotfiles.alias
 
 | Alias | Befehl | Beschreibung |
-|-------|--------|--------------|
+| ----- | ------ | ------------ |
 | `dh` | `dothelp` | Kurzalias für schnellen Zugriff |
 
 **Interaktive Funktionen (mit fzf):**
 
 | Funktion | Beschreibung |
-|----------|--------------|
+| -------- | ------------ |
 | `dothelp` | dothelp (Zeigt alle verfügbaren tldr-Seiten mit dotfiles-Erweiterungen) |
+
 > **Hinweis:** dothelp listet alle verfügbaren Hilfe-Seiten auf. tldr-Patches erweitern offizielle Seiten mit dotfiles- spezifischen Funktionen, Aliases und Keybindings.
 
-
-<a name="ezaalias"></a>
 
 ### eza.alias
 
 | Alias | Befehl | Beschreibung |
-|-------|--------|--------------|
+| ----- | ------ | ------------ |
 | `ls` | `eza --group-directories-first` | Kompakte Liste, Verzeichnisse zuerst |
 | `ll` | `eza -l --git --group-directories-first --header` | Lange Liste mit Git-Status und Spaltenüberschriften |
 | `la` | `eza -la --git --group-directories-first --header` | Wie ll, aber inkl. versteckter Dateien |
 | `lt` | `eza --tree --level=2` | Verzeichnisbaum, 2 Ebenen tief |
 | `lt3` | `eza --tree --level=3` | Verzeichnisbaum, 3 Ebenen tief |
 | `lss` | `eza -l --git --sort=size --reverse --group-directories-first --header` | Nach Größe sortiert (größte zuerst), mit Git-Status |
-| `lst` | `eza -l --git --sort=modified --reverse --group-directories-first --header` | Nach Änderungsdatum sortiert (neueste zuerst), mit Git-Status |> **Hinweis:** EZA_ICONS_AUTO=1 ist in .zshrc gesetzt. Farbschema in ~/.config/eza/theme.yml (Catppuccin Mocha)
+| `lst` | `eza -l --git --sort=modified --reverse --group-directories-first --header` | Nach Änderungsdatum sortiert (neueste zuerst), mit Git-Status |
 
+> **Hinweis:** EZA_ICONS_AUTO=1 ist in .zshrc gesetzt. Farbschema in ~/.config/eza/theme.yml (Catppuccin Mocha)
 
-<a name="fastfetchalias"></a>
 
 ### fastfetch.alias
 
 | Alias | Befehl | Beschreibung |
-|-------|--------|--------------|
+| ----- | ------ | ------------ |
 | `ff` | `fastfetch` | Schnelle System-Info (Standardanzeige) |
-| `neofetch` | `fastfetch` | Neofetch-Kompatibilität |> **Hinweis:** Konfiguration in ~/.config/fastfetch/config.jsonc Theme: Catppuccin Mocha (Box-Layout)
+| `neofetch` | `fastfetch` | Neofetch-Kompatibilität |
 
+> **Hinweis:** Konfiguration in ~/.config/fastfetch/config.jsonc Theme: Catppuccin Mocha (Box-Layout)
 
-<a name="fdalias"></a>
 
 ### fd.alias
 
 | Alias | Befehl | Beschreibung |
-|-------|--------|--------------|
+| ----- | ------ | ------------ |
 | `fdf` | `fd --type f` | Nur Dateien suchen |
 | `fdd` | `fd --type d` | Nur Verzeichnisse suchen |
 | `fdh` | `fd --hidden` | Inklusive versteckte Dateien |
@@ -285,13 +283,12 @@ Verfügbare Aliase aus `~/.config/alias/`:
 **Interaktive Funktionen (mit fzf):**
 
 | Funktion | Beschreibung |
-|----------|--------------|
+| -------- | ------------ |
 | `cdf` | Verzeichnis wechseln (Enter=Wechseln, Ctrl+Y=Pfad kopieren) |
 | `fo` | Datei öffnen (Enter=Öffnen, Ctrl+Y=Pfad kopieren) |
+
 > **Hinweis:** Globale Ignore-Patterns (.git/, node_modules/, etc.) sind in ~/.config/fd/ignore definiert. Mit "fd -u" werden alle Ignore-Dateien umgangen.
 
-
-<a name="fzfalias"></a>
 
 ### fzf.alias
 
@@ -300,41 +297,39 @@ Verfügbare Aliase aus `~/.config/alias/`:
 **Interaktive Funktionen (mit fzf):**
 
 | Funktion | Beschreibung |
-|----------|--------------|
+| -------- | ------------ |
 | `fkill` | Prozess Browser (Enter=Beenden, Tab=Mehrfach, Ctrl+S=Apps↔Alle) |
 | `fman` | Man/tldr Browser (Ctrl+S=Modus wechseln, Enter=je nach Modus öffnen) |
 | `fa` | fa Browser (Enter=Übernehmen, Ctrl+S=tldr↔Code) |
 | `fenv` | Env Browser (Enter=Export→Edit, Ctrl+Y=Kopieren) |
+
 > **Hinweis:** Konfiguration in ~/.config/fzf/ (config, init.zsh, *-preview Helper). Keybindings: Ctrl+X 1/2/3. Tool-spezifische Funktionen in fd/rg/git/brew/gh.alias.
 
-
-<a name="ghalias"></a>
 
 ### gh.alias
 
 | Alias | Befehl | Beschreibung |
-|-------|--------|--------------|
+| ----- | ------ | ------------ |
 | `gho` | `gh browse` | Repository im Browser öffnen |
 | `ghst` | `gh status` | GitHub Status: Zugewiesene Issues, PRs, Mentions |
 
 **Interaktive Funktionen (mit fzf):**
 
 | Funktion | Beschreibung |
-|----------|--------------|
+| -------- | ------------ |
 | `ghpr` | PRs durchsuchen (Enter=Checkout, Ctrl+D=Diff, Ctrl+O=Browser) |
 | `ghis` | Issues durchsuchen (Enter=Browser, Ctrl+E=Bearbeiten) |
 | `ghrun` | Actions Runs (Enter=Logs, Ctrl+R=Rerun, Ctrl+O=Browser) |
 | `ghrepo` | Repo Browser (Enter=Klonen, Ctrl+O=Browser) |
 | `ghgist` | Gists durchsuchen (Enter=Anzeigen, Ctrl+E=Bearbeiten, Ctrl+O=Browser) |
+
 > **Hinweis:** Erfordert gh auth login für Authentifizierung. Alle Funktionen nutzen fzf für interaktive Auswahl.
 
-
-<a name="gitalias"></a>
 
 ### git.alias
 
 | Alias | Befehl | Beschreibung |
-|-------|--------|--------------|
+| ----- | ------ | ------------ |
 | `ga` | `git add` | Dateien zum Staging hinzufügen |
 | `gc` | `git commit` | Einen neuen Commit erstellen |
 | `gcm` | `git commit -m` | Commit mit Nachricht |
@@ -349,20 +344,19 @@ Verfügbare Aliase aus `~/.config/alias/`:
 **Interaktive Funktionen (mit fzf):**
 
 | Funktion | Beschreibung |
-|----------|--------------|
+| -------- | ------------ |
 | `glog` | Commit-History mit bat-Vorschau (Enter=Anzeigen, Ctrl+Y=SHA kopieren) |
 | `gbr` | Branch wechseln mit Log-Vorschau (Enter=Checkout, Ctrl+D=Löschen) |
 | `gst` | Status mit Diff-Vorschau (Enter=Add, Tab=Mehrfach, Ctrl+R=Reset) |
 | `gstash` | Stash-Browser (Enter=Apply, Ctrl+P=Pop, Ctrl+D=Drop) |
+
 > **Hinweis:** Interaktive Git-Funktionen (mit fzf) sind unten definiert: glog, gbr, gst, gstash
 
-
-<a name="rgalias"></a>
 
 ### rg.alias
 
 | Alias | Befehl | Beschreibung |
-|-------|--------|--------------|
+| ----- | ------ | ------------ |
 | `rgc` | `rg -C 3` | Suche mit 3 Zeilen Kontext vor und nach Treffer |
 | `rgi` | `rg --ignore-case` | Suche ohne Berücksichtigung von Groß-/Kleinschreibung |
 | `rga` | `rg -uuu` | Suche in allen Dateien ohne Einschränkungen |
@@ -379,12 +373,11 @@ Verfügbare Aliase aus `~/.config/alias/`:
 **Interaktive Funktionen (mit fzf):**
 
 | Funktion | Beschreibung |
-|----------|--------------|
+| -------- | ------------ |
 | `rgf` | Live-Grep (Enter=Datei öffnen, Ctrl+Y=Pfad kopieren) |
+
 > **Hinweis:** Globale Optionen (--smart-case, --line-number, --heading) und Excludes (Library/, Music/, Pictures/, Movies/) sind in ~/.config/ripgrep/config definiert.
 
-
-<a name="zoxidealias"></a>
 
 ### zoxide.alias
 
@@ -393,9 +386,8 @@ Verfügbare Aliase aus `~/.config/alias/`:
 **Interaktive Funktionen (mit fzf):**
 
 | Funktion | Beschreibung |
-|----------|--------------|
+| -------- | ------------ |
 | `zf` | zoxide Browser (Enter=Wechseln, Ctrl+D=Löschen, Ctrl+Y=Kopieren) |
-
 
 ---
 
@@ -527,7 +519,7 @@ rgf               # Live-Grep(suche?) – Enter=Datei öffnen, Ctrl+Y=Pfad kopie
 ### MesloLg Nerd Font
 
 | Eigenschaft | Wert |
-|-------------|------|
+| ----------- | ---- |
 | **Name** | LDZNF (L=Large, DZ=Dotted Zero, NF=Nerd Font) |
 | **Installiert via** | `brew install --cask font-meslo-lg-nerd-font` |
 | **Speicherort** | `~/Library/Fonts/` |
@@ -560,7 +552,7 @@ brew install --cask font-jetbrains-mono-nerd-font
 Zeigt Befehlsvorschläge basierend auf der History beim Tippen an.
 
 | Taste | Aktion |
-|-------|--------|
+| ----- | ------ |
 | `→` | Vorschlag komplett übernehmen |
 | `Alt+→` | Wort für Wort übernehmen |
 | `Escape` | Vorschlag ignorieren |
@@ -570,7 +562,7 @@ Zeigt Befehlsvorschläge basierend auf der History beim Tippen an.
 Färbt Kommandos während der Eingabe ein:
 
 | Farbe | Bedeutung |
-|-------|--------|
+| ----- | ------ |
 | **Grün** | Gültiger Befehl |
 | **Rot** | Ungültiger Befehl |
 | **Unterstrichen** | Existierende Datei/Verzeichnis |
