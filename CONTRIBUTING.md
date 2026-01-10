@@ -186,9 +186,9 @@ Alle Shell-Dateien (`.alias`, `.sh`, `.zsh*`) beginnen mit einem standardisierte
 # Zweck   : Ausführliche Beschreibung des Datei-Zwecks
 # Pfad    : ~/.config/alias/dateiname.alias
 # Docs    : https://github.com/tool/tool (offizielle Doku)
-# ============================================================
-# Hinweis : Optionale Zusatzinformationen (mehrzeilig erlaubt)
-#           z.B. Abhängigkeiten, Config-Pfade, Besonderheiten
+# Nutzt   : fzf (Preview), bat (Syntax-Highlighting)
+# Ersetzt : cat (mit Syntax-Highlighting)
+# Aliase  : cmd, cmd2, cmd3
 # ============================================================
 ```
 
@@ -199,8 +199,16 @@ Alle Shell-Dateien (`.alias`, `.sh`, `.zsh*`) beginnen mit einem standardisierte
 | `Zweck` | ✅ | Was macht diese Datei? |
 | `Pfad` | ✅ | Wo liegt die Datei nach Stow? |
 | `Docs` | ✅ | Link zur offiziellen Dokumentation |
-| `Hinweis` | ⚪ | Optionale Zusatzinfos |
+| `Nutzt` | ⚪ | Abhängigkeiten zu anderen Tools (fzf, bat, etc.) |
+| `Ersetzt` | ⚪ | Welchen Befehl ersetzt das Tool? (cat, find, ls) |
+| `Aliase` | ⚪ | Liste der definierten Aliase |
 | `Aufruf` | ⚪ | Für Skripte: Wie wird es aufgerufen? |
+| `Hinweis` | ⚪ | Nur für **einzigartige** kontextuelle Info (siehe SSOT) |
+| `Config` | ⚪ | Nur wenn Config-Datei keine Header unterstützt |
+
+> ⚠️ **SSOT-Regel für `# Hinweis`:** Nur Informationen eintragen, die **nirgendwo anders** dokumentiert sind.
+> Informationen aus Config-Dateien, `.zshrc` oder anderen Quellen gehören **dort** – nicht im Alias-Header.
+> Der tldr-Generator extrahiert Config-Pfade automatisch aus `# Pfad :` in Config-Dateien.
 
 ### Funktions- und Alias-Kommentare
 
