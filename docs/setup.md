@@ -130,19 +130,12 @@ tldr --update
 
 Nach der Installation kannst du die Einrichtung prüfen:
 
-```zsh
-# Health-Check ausführen
-./scripts/health-check.sh
-
-# Interaktive Alias-Suche testen
-fa
-
-# Tool-Hilfe mit dotfiles-Erweiterungen
-dothelp
-
-# System-Info anzeigen
-ff
-```
+\`\`\`zsh
+./.github/scripts/health-check.sh  # Health-Check ausführen
+fa                                  # Interaktive Alias-Suche
+dothelp                             # Tool-Hilfe mit dotfiles-Erweiterungen
+ff                                  # System-Info anzeigen
+\`\`\`
 
 ---
 

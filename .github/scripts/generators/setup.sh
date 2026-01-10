@@ -3,7 +3,7 @@
 # setup.sh - Generator für docs/setup.md
 # ============================================================
 # Zweck   : Generiert Setup-Dokumentation aus bootstrap.sh
-# Pfad    : scripts/generators/setup.sh
+# Pfad    : .github/scripts/generators/setup.sh
 # ============================================================
 
 source "${0:A:h}/lib.sh"
@@ -184,19 +184,12 @@ tldr --update
 
 Nach der Installation kannst du die Einrichtung prüfen:
 
-```zsh
-# Health-Check ausführen
-./scripts/health-check.sh
-
-# Interaktive Alias-Suche testen
-fa
-
-# Tool-Hilfe mit dotfiles-Erweiterungen
-dothelp
-
-# System-Info anzeigen
-ff
-```
+\`\`\`zsh
+./.github/scripts/health-check.sh  # Health-Check ausführen
+fa                                  # Interaktive Alias-Suche
+dothelp                             # Tool-Hilfe mit dotfiles-Erweiterungen
+ff                                  # System-Info anzeigen
+\`\`\`
 
 ---
 

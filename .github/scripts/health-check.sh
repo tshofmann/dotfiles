@@ -35,7 +35,7 @@ set -uo pipefail
 # Konfiguration
 # ------------------------------------------------------------
 readonly SCRIPT_DIR="${0:A:h}"
-readonly DOTFILES_DIR="${SCRIPT_DIR:h}"
+readonly DOTFILES_DIR="${SCRIPT_DIR:h:h}"  # .github/scripts → dotfiles
 readonly SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-colors"
 
 # Farben (Catppuccin Mocha) – zentral definiert

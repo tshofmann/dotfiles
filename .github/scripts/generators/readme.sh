@@ -3,7 +3,7 @@
 # readme.sh - Generator für README.md
 # ============================================================
 # Zweck   : Generiert Haupt-README aus Template + dynamischen Daten
-# Pfad    : scripts/generators/readme.sh
+# Pfad    : .github/scripts/generators/readme.sh
 # ============================================================
 
 source "${0:A:h}/lib.sh"

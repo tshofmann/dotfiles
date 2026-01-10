@@ -3,7 +3,7 @@
 # architecture.sh - Generator für docs/architecture.md
 # ============================================================
 # Zweck   : Generiert Architektur-Dokumentation aus Verzeichnisstruktur
-# Pfad    : scripts/generators/architecture.sh
+# Pfad    : .github/scripts/generators/architecture.sh
 # ============================================================
 
 source "${0:A:h}/lib.sh"
@@ -266,15 +266,12 @@ Der Code ist die einzige Wahrheit. Alle Dokumentation wird automatisch generiert
 
 ### Dokumentations-Generator
 
-Der Generator (`scripts/generate-docs.sh`) wird automatisch via Pre-Commit Hook ausgeführt:
+Der Generator (\`.github/scripts/generate-docs.sh\`) wird automatisch via Pre-Commit Hook ausgeführt:
 
-```zsh
-# Manuell ausführen
-./scripts/generate-docs.sh --generate
-
-# Nur prüfen (CI)
-./scripts/generate-docs.sh --check
-```
+\`\`\`zsh
+./.github/scripts/generate-docs.sh --generate  # Generieren
+./.github/scripts/generate-docs.sh --check     # Nur prüfen (CI)
+\`\`\`
 
 ### Guard-System
 

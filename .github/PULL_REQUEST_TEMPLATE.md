@@ -15,8 +15,8 @@
 ## Checkliste
 
 - [ ] Ich habe die [Contributing Guidelines](CONTRIBUTING.md) gelesen
-- [ ] `./scripts/generate-docs.sh --check` ist erfolgreich
-- [ ] `./scripts/health-check.sh` zeigt keine Fehler
+- [ ] `./.github/scripts/generate-docs.sh --check` ist erfolgreich
+- [ ] `./.github/scripts/health-check.sh` zeigt keine Fehler
 - [ ] Neue Aliase/Funktionen haben Beschreibungskommentare
 - [ ] Bei neuen Tools: Guard-Check vorhanden
 

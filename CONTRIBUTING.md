@@ -33,8 +33,8 @@ Siehe [architecture.md → Verzeichnisstruktur](docs/architecture.md#verzeichnis
 
 | Pfad | Zweck |
 | ------ | ------- |
-| `scripts/generators/` | Dokumentations-Generatoren (Single Source of Truth) |
-| `scripts/tests/` | Unit-Tests für Generatoren |
+| `.github/scripts/generators/` | Dokumentations-Generatoren (Single Source of Truth) |
+| `.github/scripts/tests/` | Unit-Tests für Generatoren |
 | `setup/` | Bootstrap, Brewfile, Terminal-Profil |
 | `terminal/` | Dotfiles (werden nach `~` verlinkt) |
 | `docs/` | Dokumentation für Endnutzer |
@@ -53,7 +53,7 @@ git config core.hooksPath .github/hooks
 
 | Hook | Zweck |
 | ------ | ------- |
-| `pre-commit` | 1. ZSH-Syntax (`zsh -n`) für `scripts/**/*.sh`, `terminal/.config/alias/*.alias`, `setup/bootstrap.sh` |
+| `pre-commit` | 1. ZSH-Syntax (`zsh -n`) für `.github/scripts/**/*.sh`, `terminal/.config/alias/*.alias`, `setup/bootstrap.sh` |
 | | 2. Doku-Konsistenz (vergleicht generierte mit aktuellen Docs) |
 | | 3. Alias-Format (Header-Block, Guard-Check) |
 
@@ -63,7 +63,7 @@ Wenn der Pre-Commit Hook fehlschlägt:
 
 ```zsh
 # Dokumentation neu generieren
-./scripts/generate-docs.sh --generate
+./.github/scripts/generate-docs.sh --generate
 
 # Dann erneut committen
 git add . && git commit -m "..."
@@ -81,17 +81,17 @@ Die Dokumentation wird automatisch aus dem Code generiert (Single Source of Trut
 
 ```zsh
 # Prüfen ob Dokumentation aktuell ist
-./scripts/generate-docs.sh --check
+./.github/scripts/generate-docs.sh --check
 
 # Dokumentation neu generieren
-./scripts/generate-docs.sh --generate
+./.github/scripts/generate-docs.sh --generate
 ```
 
 ### Unit-Tests für Generatoren
 
 ```zsh
 # Tests ausführen
-./scripts/tests/test_generators.sh
+./.github/scripts/tests/test_generators.sh
 ```
 
 Die Test-Suite prüft:
@@ -108,7 +108,7 @@ Siehe [architecture.md → Single Source of Truth](docs/architecture.md#single-s
 
 1. Öffne die gemeldete Dokumentationsdatei
 2. Aktualisiere den veralteten Abschnitt **im Code** (nicht in der Doku!)
-3. Führe `./scripts/generate-docs.sh --generate` aus
+3. Führe `./.github/scripts/generate-docs.sh --generate` aus
 4. Committe die Änderung
 
 ---
@@ -213,7 +213,7 @@ rgf() { ... }
 ```
 
 > **Wichtig:** Diese Kommentare sind die Single Source of Truth für tldr-Patches.
-> Der Generator `scripts/generators/tldr.sh` erzeugt die `.patch.md` Dateien
+> Der Generator `.github/scripts/generators/tldr.sh` erzeugt die `.patch.md` Dateien
 > automatisch aus diesen Kommentaren.
 >
 > **Sonderfall `.page.md`:** Für Tools ohne offizielle tldr-Seite (z.B. `dotfiles`)
@@ -324,13 +324,13 @@ git checkout -b feature/beschreibung
 
 - Code ändern
 - Dokumentation aktualisieren (falls relevant)
-- `./scripts/generate-docs.sh --check` ausführen
+- `./.github/scripts/generate-docs.sh --check` ausführen
 
 ### 3. Testen
 
 ```zsh
 # Installation prüfen
-./scripts/health-check.sh
+./.github/scripts/health-check.sh
 
 # Bei Shell-Änderungen: neue Session starten
 exec zsh
@@ -389,7 +389,7 @@ Nach PR-Erstellung das passende Label hinzufügen:
 
 1. **Brewfile** erweitern: `setup/Brewfile`
 2. **Alias-Datei** erstellen: `terminal/.config/alias/tool.alias`
-3. `./scripts/generate-docs.sh --generate` ausführen (generiert tldr-Patch automatisch)
+3. `./.github/scripts/generate-docs.sh --generate` ausführen (generiert tldr-Patch automatisch)
 4. Änderungen prüfen und committen
 
 ### Dokumentation ändern
@@ -397,7 +397,7 @@ Nach PR-Erstellung das passende Label hinzufügen:
 > ⚠️ **Wichtig:** Dokumentation wird aus Code generiert! Änderungen direkt in `docs/` werden überschrieben.
 
 1. Änderung im **Quellcode** vornehmen (`.alias`, `Brewfile`, Configs, oder `generators/*.sh`)
-2. `./scripts/generate-docs.sh --generate` ausführen
+2. `./.github/scripts/generate-docs.sh --generate` ausführen
 3. Generierte Änderungen prüfen und committen
 
 ### Terminal-Profil ändern
@@ -415,7 +415,7 @@ Die tldr-Patches in `terminal/.config/tealdeer/pages/` werden **automatisch** au
 **Workflow:**
 
 1. Kommentar über Alias/Funktion in `.alias`-Datei schreiben
-2. `./scripts/generate-docs.sh --generate` ausführen
+2. `./.github/scripts/generate-docs.sh --generate` ausführen
 3. Patch wird automatisch erstellt/aktualisiert
 
 > ⚠️ **Niemals** Patch-Dateien manuell editieren – Änderungen werden überschrieben!
@@ -431,9 +431,9 @@ Die tldr-Patches in `terminal/.config/tealdeer/pages/` werden **automatisch** au
 
 ## Hilfe
 
-- **Docs stimmen nicht mit Code überein?** → `./scripts/generate-docs.sh --check` zeigt Details
-- **Hook blockiert Commit?** → `./scripts/generate-docs.sh --generate` ausführen, dann committen
-- **Installation kaputt?** → `./scripts/health-check.sh` zur Diagnose
+- **Docs stimmen nicht mit Code überein?** → `./.github/scripts/generate-docs.sh --check` zeigt Details
+- **Hook blockiert Commit?** → `./.github/scripts/generate-docs.sh --generate` ausführen, dann committen
+- **Installation kaputt?** → `./.github/scripts/health-check.sh` zur Diagnose
 - **Copilot/KI-Assistenten?** → Siehe [.github/copilot-instructions.md](.github/copilot-instructions.md) für projektspezifische Regeln
 
 ---

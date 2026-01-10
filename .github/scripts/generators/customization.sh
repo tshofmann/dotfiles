@@ -3,7 +3,7 @@
 # customization.sh - Generator für docs/customization.md
 # ============================================================
 # Zweck   : Generiert Anpassungs-Dokumentation aus Config-Dateien
-# Pfad    : scripts/generators/customization.sh
+# Pfad    : .github/scripts/generators/customization.sh
 # ============================================================
 
 source "${0:A:h}/lib.sh"

@@ -3,15 +3,15 @@
 # lib.sh - Gemeinsame Bibliothek für Dokumentations-Generatoren
 # ============================================================
 # Zweck   : Parser, Hilfsfunktionen, Konfiguration
-# Pfad    : scripts/generators/lib.sh
+# Pfad    : .github/scripts/generators/lib.sh
 # ============================================================
 
 # ------------------------------------------------------------
 # Konfiguration
 # ------------------------------------------------------------
 SCRIPT_DIR="${0:A:h}"
-GENERATORS_DIR="${SCRIPT_DIR}"
-DOTFILES_DIR="${GENERATORS_DIR:h:h}"
+GENERATORS_DIR="${SCRIPT_DIR}"                # .github/scripts/generators
+DOTFILES_DIR="${GENERATORS_DIR:h:h:h}"        # .github/scripts/generators → dotfiles
 ALIAS_DIR="$DOTFILES_DIR/terminal/.config/alias"
 DOCS_DIR="$DOTFILES_DIR/docs"
 FZF_CONFIG="$DOTFILES_DIR/terminal/.config/fzf/config"

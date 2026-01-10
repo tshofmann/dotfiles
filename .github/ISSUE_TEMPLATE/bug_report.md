@@ -22,7 +22,7 @@ assignees: ''
 
 ## System-Informationen
 
-<!-- Führe `./scripts/health-check.sh` aus und füge relevante Zeilen ein -->
+<!-- Führe `./.github/scripts/health-check.sh` aus und füge relevante Zeilen ein -->
 
 - **macOS-Version:** <!-- z.B. 15.2 (Sequoia) -->
 - **Chip:** <!-- z.B. Apple M2 -->
@@ -31,7 +31,7 @@ assignees: ''
 ## Health-Check Ausgabe
 
 <details>
-<summary>Ausgabe von ./scripts/health-check.sh</summary>
+<summary>Ausgabe von ./.github/scripts/health-check.sh</summary>
 
 ```text
 <!-- Hier einfügen -->

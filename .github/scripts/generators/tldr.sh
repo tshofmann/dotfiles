@@ -4,7 +4,7 @@
 # ============================================================
 # Zweck   : Generiert tldr-Patches aus .alias-Dateien
 #           und catppuccin.page.md aus Theme-Kommentaren
-# Pfad    : scripts/generators/tldr.sh
+# Pfad    : .github/scripts/generators/tldr.sh
 # Hinweis : Ersetzt scripts/generate-tldr-patches.sh
 # ============================================================
 

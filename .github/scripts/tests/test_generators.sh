@@ -2,7 +2,7 @@
 # ============================================================
 # test_generators.sh - Unit-Tests für Generator-Bibliothek
 # ============================================================
-# Zweck   : Testet Parser-Funktionen aus scripts/generators/lib.sh
+# Zweck   : Testet Parser-Funktionen aus .github/scripts/generators/lib.sh
 # Pfad    : scripts/tests/test_generators.sh
 # Ausführung: ./scripts/tests/test_generators.sh [--verbose]
 # ============================================================
@@ -13,8 +13,8 @@ set -euo pipefail
 # Konfiguration
 # ------------------------------------------------------------
 SCRIPT_DIR="${0:A:h}"
-DOTFILES_DIR="${SCRIPT_DIR:h:h}"
-LIB_FILE="$DOTFILES_DIR/scripts/generators/lib.sh"
+DOTFILES_DIR="${SCRIPT_DIR:h:h:h}"  # .github/scripts/tests → dotfiles
+LIB_FILE="$DOTFILES_DIR/.github/scripts/generators/lib.sh"
 SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-colors"
 
 # Farben (Catppuccin Mocha) – zentral definiert

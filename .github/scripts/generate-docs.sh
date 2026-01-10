@@ -18,7 +18,7 @@ set -euo pipefail
 # ------------------------------------------------------------
 SCRIPT_DIR="${0:A:h}"
 GENERATORS_DIR="$SCRIPT_DIR/generators"
-DOTFILES_DIR="${SCRIPT_DIR:h}"
+DOTFILES_DIR="${SCRIPT_DIR:h:h}"  # .github/scripts → dotfiles
 DOCS_DIR="$DOTFILES_DIR/docs"
 
 # Laden der gemeinsamen Bibliothek

@@ -18,6 +18,18 @@ dotfiles/
 │   │   └── feature_request.md
 │   ├── hooks/
 │   │   └── pre-commit # Verhindert Commits mit veralteter Dokumentation
+│   ├── scripts/
+│   │   ├── generators/
+│   │   │   ├── architecture.sh # Generiert Architektur-Dokumentation aus Verzeichnisstruktur
+│   │   │   ├── customization.sh # Generiert Anpassungs-Dokumentation aus Config-Dateien
+│   │   │   ├── lib.sh # Parser, Hilfsfunktionen, Konfiguration
+│   │   │   ├── readme.sh # Generiert Haupt-README aus Template + dynamischen Daten
+│   │   │   ├── setup.sh # Generiert Setup-Dokumentation aus bootstrap.sh
+│   │   │   └── tldr.sh # Generiert tldr-Patches aus .alias-Dateien
+│   │   ├── tests/
+│   │   │   └── test_generators.sh # Testet Parser-Funktionen aus .github/scripts/generators/lib.sh
+│   │   ├── generate-docs.sh # Generiert alle Dokumentation aus Code-Kommentaren
+│   │   └── health-check.sh # Prüft ob alle Komponenten korrekt INSTALLIERT sind
 │   ├── workflows/
 │   │   └── validate.yml # Validiert Shell-Syntax, Dokumentation und Alias-Format
 │   ├── CODEOWNERS
@@ -35,18 +47,6 @@ dotfiles/
 │   └── setup.md # Installation
 ├── editor/
 │   └── .editorconfig # Konsistente Formatierung in allen Editoren
-├── scripts/
-│   ├── generators/
-│   │   ├── architecture.sh # Generiert Architektur-Dokumentation aus Verzeichnisstruktur
-│   │   ├── customization.sh # Generiert Anpassungs-Dokumentation aus Config-Dateien
-│   │   ├── lib.sh # Parser, Hilfsfunktionen, Konfiguration
-│   │   ├── readme.sh # Generiert Haupt-README aus Template + dynamischen Daten
-│   │   ├── setup.sh # Generiert Setup-Dokumentation aus bootstrap.sh
-│   │   └── tldr.sh # Generiert tldr-Patches aus .alias-Dateien
-│   ├── tests/
-│   │   └── test_generators.sh # Testet Parser-Funktionen aus scripts/generators/lib.sh
-│   ├── generate-docs.sh # Generiert alle Dokumentation aus Code-Kommentaren
-│   └── health-check.sh # Prüft ob alle Komponenten korrekt INSTALLIERT sind
 ├── setup/
 │   ├── Brewfile # Deklarative Homebrew-Abhängigkeiten (CLI-Tools & Font)
 │   ├── Catppuccin Mocha.xccolortheme # Xcode Theme
@@ -164,15 +164,12 @@ Der Code ist die einzige Wahrheit. Alle Dokumentation wird automatisch generiert
 
 ### Dokumentations-Generator
 
-Der Generator (`scripts/generate-docs.sh`) wird automatisch via Pre-Commit Hook ausgeführt:
+Der Generator (\`.github/scripts/generate-docs.sh\`) wird automatisch via Pre-Commit Hook ausgeführt:
 
-```zsh
-# Manuell ausführen
-./scripts/generate-docs.sh --generate
-
-# Nur prüfen (CI)
-./scripts/generate-docs.sh --check
-```
+\`\`\`zsh
+./.github/scripts/generate-docs.sh --generate  # Generieren
+./.github/scripts/generate-docs.sh --check     # Nur prüfen (CI)
+\`\`\`
 
 ### Guard-System
 

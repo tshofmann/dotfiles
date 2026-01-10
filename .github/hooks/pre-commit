@@ -30,9 +30,9 @@ err()  { echo -e "${C_RED}✖${C_RESET} $1" >&2; }
 check_shell_syntax() {
     log "Prüfe Shell-Syntax..."
     local errors=0
-    
+
     # Alle .sh und .alias Dateien prüfen
-    for file in "$DOTFILES_DIR"/scripts/**/*.sh(N) \
+    for file in "$DOTFILES_DIR"/.github/scripts/**/*.sh(N) \
                 "$DOTFILES_DIR"/terminal/.config/alias/*.alias(N) \
                 "$DOTFILES_DIR"/setup/bootstrap.sh; do
         if [[ -f "$file" ]]; then
@@ -43,12 +43,12 @@ check_shell_syntax() {
             fi
         fi
     done
-    
+
     if (( errors > 0 )); then
         err "$errors Datei(en) mit Syntax-Fehlern"
         return 1
     fi
-    
+
     ok "Shell-Syntax OK"
     return 0
 }
@@ -58,17 +58,17 @@ check_shell_syntax() {
 # ------------------------------------------------------------
 check_docs() {
     log "Prüfe ob Dokumentation aktuell ist..."
-    
-    if ! "$DOTFILES_DIR/scripts/generate-docs.sh" --check >/dev/null 2>&1; then
+
+    if ! "$DOTFILES_DIR/.github/scripts/generate-docs.sh" --check >/dev/null 2>&1; then
         err "Dokumentation ist veraltet!"
         print ""
         print "  Bitte ausführen:"
-        print "    ${C_YELLOW}./scripts/generate-docs.sh --generate${C_RESET}"
+        print "    ${C_YELLOW}./.github/scripts/generate-docs.sh --generate${C_RESET}"
         print ""
         print "  Dann erneut committen."
         return 1
     fi
-    
+
     ok "Dokumentation ist aktuell"
     return 0
 }
@@ -79,28 +79,28 @@ check_docs() {
 check_alias_format() {
     log "Prüfe Alias-Datei-Format..."
     local errors=0
-    
+
     for file in "$DOTFILES_DIR"/terminal/.config/alias/*.alias(N); do
         local name=$(basename "$file")
-        
+
         # Header-Block vorhanden?
         if ! head -3 "$file" | grep -q "^# ===="; then
             err "$name: Kein Header-Block"
             (( errors++ ))
         fi
-        
+
         # Guard-Check vorhanden?
         if ! grep -q "command -v.*>/dev/null" "$file"; then
             err "$name: Kein Guard-Check"
             (( errors++ ))
         fi
     done
-    
+
     if (( errors > 0 )); then
         err "$errors Alias-Datei(en) mit Format-Fehlern"
         return 1
     fi
-    
+
     ok "Alias-Format OK"
     return 0
 }
@@ -110,29 +110,29 @@ check_alias_format() {
 # ------------------------------------------------------------
 check_markdown() {
     log "Prüfe Markdown-Dateien..."
-    
+
     # markdownlint-cli2 verfügbar?
     if ! command -v markdownlint-cli2 >/dev/null 2>&1; then
         warn "markdownlint-cli2 nicht gefunden – übersprungen"
         warn "Installieren mit: brew install markdownlint-cli2"
         return 0  # Kein Fehler, nur Warnung
     fi
-    
+
     # Markdownlint ausführen (Ausgabe nur bei Fehlern)
     local output
     output=$(markdownlint-cli2 --config "$DOTFILES_DIR/terminal/.config/markdownlint-cli2/.markdownlint-cli2.jsonc" '**/*.md' '#node_modules' 2>&1)
     local exit_code=$?
-    
+
     if (( exit_code != 0 )); then
         err "Markdown-Fehler gefunden!"
         # Nur relevante Zeilen anzeigen (keine "Finding:", "Linting:", "Summary:")
         echo "$output" | grep -v "^Finding:" | grep -v "^Linting:" | grep -v "^Summary:" | grep -v "^markdownlint-cli2"
         print ""
         print "  Fehler beheben oder Generatoren anpassen:"
-        print "    ${C_YELLOW}scripts/generators/*.sh${C_RESET}"
+        print "    ${C_YELLOW}.github/scripts/generators/*.sh${C_RESET}"
         return 1
     fi
-    
+
     ok "Markdown OK"
     return 0
 }

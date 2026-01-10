@@ -26,7 +26,7 @@ jobs:
         run: |
           echo "Prüfe ZSH-Syntax (inkl. Alias-Dateien)..."
           errors=0
-          for file in scripts/**/*.sh terminal/.config/alias/*.alias setup/bootstrap.sh; do
+          for file in .github/scripts/**/*.sh terminal/.config/alias/*.alias setup/bootstrap.sh; do
             if [[ -f "$file" ]]; then
               if ! zsh -n "$file" 2>/dev/null; then
                 echo "✖ Syntax-Fehler: $file"
@@ -44,12 +44,12 @@ jobs:
       - name: Dokumentation prüfen
         run: |
           echo "Prüfe ob Dokumentation aktuell ist..."
-          if ! ./scripts/generate-docs.sh --check; then
+          if ! ./.github/scripts/generate-docs.sh --check; then
             echo ""
             echo "✖ Dokumentation ist veraltet!"
             echo ""
             echo "Bitte lokal ausführen:"
-            echo "  ./scripts/generate-docs.sh --generate"
+            echo "  ./.github/scripts/generate-docs.sh --generate"
             echo ""
             exit 1
           fi
