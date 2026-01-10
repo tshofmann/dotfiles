@@ -32,8 +32,7 @@ dotfiles/
 ├── docs/
 │   ├── architecture.md # Architektur
 │   ├── customization.md # Konfiguration
-│   ├── setup.md # Installation
-│   └── tools.md # Tools
+│   └── setup.md # Installation
 ├── scripts/
 │   ├── generators/
 │   │   ├── architecture.sh # Generiert Architektur-Dokumentation aus Verzeichnisstruktur
