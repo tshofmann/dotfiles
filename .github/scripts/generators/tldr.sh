@@ -549,12 +549,33 @@ generate_catppuccin_page() {
         esac
     done < "$theme_colors_file"
 
-    # 3. Generiere Markdown
+    # 3. Extrahiere Komponenten-Abhängigkeiten Diagramm aus theme-colors
+    local diagram=""
+    local in_diagram=false
+    while IFS= read -r line; do
+        if [[ "$line" == "# Komponenten-Abhängigkeiten"* ]]; then
+            in_diagram=true
+            continue
+        fi
+        [[ "$in_diagram" != true ]] && continue
+        # Block-Ende bei nächstem Abschnitt
+        [[ "$line" == "# ----"* ]] && break
+        # Nur Diagramm-Zeilen (mit │ ├ └ oder Leerzeilen)
+        if [[ "$line" == "#   "* ]]; then
+            local diag_line="${line#\#   }"
+            diagram+="\`${diag_line}\`\n"
+        fi
+    done < "$theme_colors_file"
+
+    # 4. Generiere Markdown
     local output="# catppuccin
 
 > Catppuccin Mocha Theme-Konfiguration für alle Tools.
 > Mehr Informationen: https://catppuccin.com/palette
 
+- Komponenten-Abhängigkeiten:
+
+${diagram}
 - Zeige alle Theme-Dateien in diesem Repository:
 
 \`fd -HI -e theme -e tmTheme -e xccolortheme catppuccin ~/dotfiles\`
@@ -763,7 +784,6 @@ generate_tldr_patches() {
 
                 if [[ "$is_page" == "false" ]]; then
                     # Offizielle Seite existiert → .patch.md verwenden
-                    # Lösche verwaiste .page.md wenn vorhanden
                     if [[ -f "$page_file" ]]; then
                         err "${tool_name}.page.md sollte gelöscht werden (offizielle tldr-Seite existiert)"
                         (( errors++ )) || true
@@ -780,8 +800,7 @@ generate_tldr_patches() {
                         (( errors++ )) || true
                     fi
                 else
-                    # Keine offizielle Seite → .page.md verwenden (mit Header)
-                    # Lösche verwaiste .patch.md wenn vorhanden
+                    # Keine offizielle Seite → .page.md verwenden
                     if [[ -f "$patch_file" ]]; then
                         err "${tool_name}.patch.md sollte gelöscht werden (keine offizielle tldr-Seite)"
                         (( errors++ )) || true
@@ -794,7 +813,7 @@ generate_tldr_patches() {
                             (( errors++ )) || true
                         fi
                     else
-                        err "${tool_name}.page.md fehlt (keine offizielle tldr-Seite)"
+                        err "${tool_name}.page.md fehlt"
                         (( errors++ )) || true
                     fi
                 fi

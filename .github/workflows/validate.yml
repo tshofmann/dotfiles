@@ -41,6 +41,13 @@ jobs:
           fi
           echo "✔ Shell-Syntax OK"
 
+      - name: tealdeer Cache initialisieren
+        run: |
+          echo "Initialisiere tealdeer Cache für tldr-Patch/Page-Erkennung..."
+          brew install tealdeer
+          tldr --update
+          echo "✔ tealdeer Cache bereit"
+
       - name: Dokumentation prüfen
         run: |
           echo "Prüfe ob Dokumentation aktuell ist..."

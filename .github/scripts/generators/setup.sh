@@ -328,20 +328,26 @@ Bei fehlenden oder falschen Icons prüfen:
 
 ### Komponenten-Abhängigkeiten
 
-```text
-Terminal.app Profil
-       │
-       ├── MesloLG Nerd Font ──┬── Starship Icons
-       │                       └── eza Icons
-       │
-       └── Catppuccin Mocha ───┬── bat Theme
-                               ├── fzf Colors
-                               ├── btop Theme
-                               ├── eza Theme
-                               ├── zsh-syntax-highlighting
-                               └── Xcode Theme
-```
 TECH
+
+    # Extrahiere Diagramm aus theme-colors (Single Source of Truth)
+    local theme_colors="$DOTFILES_DIR/terminal/.config/theme-colors"
+    if [[ -f "$theme_colors" ]]; then
+        echo '```text'
+        local in_diagram=false
+        while IFS= read -r line; do
+            if [[ "$line" == "# Komponenten-Abhängigkeiten"* ]]; then
+                in_diagram=true
+                continue
+            fi
+            [[ "$in_diagram" != true ]] && continue
+            [[ "$line" == "# ----"* ]] && break
+            if [[ "$line" == "#   "* ]]; then
+                echo "${line#\#   }"
+            fi
+        done < "$theme_colors"
+        echo '```'
+    fi
 }
 
 # Nur ausführen wenn direkt aufgerufen (nicht gesourct)
