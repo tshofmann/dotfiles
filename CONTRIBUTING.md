@@ -32,7 +32,7 @@ Siehe [architecture.md → Verzeichnisstruktur](docs/architecture.md#verzeichnis
 **Kurzübersicht der wichtigsten Pfade:**
 
 | Pfad | Zweck |
-|------|-------|
+| ------ | ------- |
 | `scripts/generators/` | Dokumentations-Generatoren (Single Source of Truth) |
 | `scripts/tests/` | Unit-Tests für Generatoren |
 | `setup/` | Bootstrap, Brewfile, Terminal-Profil |
@@ -52,10 +52,10 @@ git config core.hooksPath .githooks
 ### Verfügbare Hooks
 
 | Hook | Zweck |
-|------|-------|
+| ------ | ------- |
 | `pre-commit` | 1. ZSH-Syntax (`zsh -n`) für `scripts/**/*.sh`, `terminal/.config/alias/*.alias`, `setup/bootstrap.sh` |
-|              | 2. Doku-Konsistenz (vergleicht generierte mit aktuellen Docs) |
-|              | 3. Alias-Format (Header-Block, Guard-Check) |
+| | 2. Doku-Konsistenz (vergleicht generierte mit aktuellen Docs) |
+| | 3. Alias-Format (Header-Block, Guard-Check) |
 
 ### Hook schlägt fehl?
 
@@ -95,6 +95,7 @@ Die Dokumentation wird automatisch aus dem Code generiert (Single Source of Trut
 ```
 
 Die Test-Suite prüft:
+
 - Pfad-Konfiguration (DOTFILES_DIR, etc.)
 - Extraktions-Funktionen (Aliase, Funktionen, Docs)
 - Logging und Zähler (ok, warn, err)
@@ -119,7 +120,7 @@ Siehe [architecture.md → Single Source of Truth](docs/architecture.md#single-s
 **Deutsch** ist die bevorzugte Sprache für alle Inhalte in diesem Repository:
 
 | Bereich | Sprache | Beispiel |
-|---------|---------|----------|
+| --------- | --------- | ---------- |
 | **Kommentare im Code** | Deutsch | `# Nur wenn bat installiert ist` |
 | **Header-Beschreibungen** | Deutsch | `# Zweck   : Aliase für bat` |
 | **Dokumentation** | Deutsch | README, CONTRIBUTING, docs/ |
@@ -127,6 +128,7 @@ Siehe [architecture.md → Single Source of Truth](docs/architecture.md#single-s
 | **Issue-Beschreibungen** | Deutsch | GitHub Issues & PRs |
 
 **Ausnahmen** (Englisch erlaubt):
+
 - **Technische Begriffe** ohne gängige Übersetzung: `Guard`, `Symlink`, `Config`
 - **Code-Bezeichner**: Funktionsnamen (`brewup`), Variablen (`DOTFILES_DIR`)
 - **Tool-Namen und Referenzen**: `fzf`, `bat`, `ripgrep`
@@ -152,7 +154,7 @@ Alle Shell-Dateien (`.alias`, `.sh`, `.zsh*`) beginnen mit einem standardisierte
 **Metadaten-Felder** (8 Zeichen breit, linksbündig):
 
 | Feld | Pflicht | Beschreibung |
-|------|---------|--------------|
+| ------ | --------- | -------------- |
 | `Zweck` | ✅ | Was macht diese Datei? |
 | `Pfad` | ✅ | Wo liegt die Datei nach Stow? |
 | `Docs` | ✅ | Link zur offiziellen Dokumentation |
@@ -179,23 +181,26 @@ fman() {
 
 Funktionen mit fzf-UI nutzen ein erweitertes Format:
 
-```
+```text
 # Name(param?) – Key=Aktion, Key=Aktion
 ```
 
 **Parameter-Notation:**
+
 | Notation | Bedeutung | Beispiel |
-|----------|-----------|----------|
+| ---------- | ----------- | ---------- |
 | `(param)` | Pflichtparameter | `# Suche(query)` |
 | `(param?)` | Optionaler Parameter | `# Suche(query?)` |
 | `(param=default)` | Optional mit Default | `# Wechseln(pfad=.)` |
 
 **Keybinding-Format:**
+
 - `Enter=Aktion` – Einzelne Taste
 - `Ctrl+S=Aktion` – Modifier-Kombination
-- Mehrere Keybindings durch `, ` getrennt
+- Mehrere Keybindings durch `,` getrennt
 
 **Beispiele:**
+
 ```zsh
 # zoxide Browser – Enter=Wechseln, Ctrl+D=Löschen, Ctrl+Y=Kopieren
 zf() { ... }  # in zoxide.alias (Tool-Zuordnung!)
@@ -220,7 +225,7 @@ rgf() { ... }
 Einige Dateien folgen **nicht** dem Standard-Header-Format:
 
 | Datei | Grund |
-|-------|-------|
+| ------- | ------- |
 | `btop/btop.conf` | Wird von btop generiert – `btop --write-config` überschreibt Änderungen |
 | `btop/themes/catppuccin_mocha.theme` | Third-Party Theme (Catppuccin) – bei Updates überschrieben |
 | `bat/themes/Catppuccin Mocha.tmTheme` | Third-Party Theme (Catppuccin) – bei Updates überschrieben |
@@ -277,7 +282,7 @@ function name() { # ❌ Hybrid-Style – redundant
 ```
 
 | Syntax | Status | Grund |
-|--------|--------|-------|
+| -------- | -------- | ------- |
 | `name() {` | ✅ Verwenden | Von `fa()` erkannt, konsistent |
 | `function name {` | ❌ Nicht verwenden | Nicht von `fa()` erkannt |
 | `function name() {` | ❌ Nicht verwenden | Redundant, inkonsistent |
@@ -290,13 +295,13 @@ function name() { # ❌ Hybrid-Style – redundant
 Diese Regeln gelten für alle Shell-Dateien:
 
 | Regel | Format | Beispiel |
-|-------|--------|----------|
+| ------- | -------- | ---------- |
 | **Metadaten-Felder** | 8 Zeichen + `:` | `# Docs    :`, `# Guard   :` |
 | **Guard-Kommentar** | Mit Tool-Name | `# Guard   : Nur wenn X installiert ist` |
-| **Sektions-Trenner** | `----` (60 Zeichen) | `# ------------------------------------------------------------` |
+| **Sektions-Trenner** | `----` (60 Zeichen) | `# --------------------------------------------------------` |
 | **Header-Block** | `====` nur oben | Erste Zeilen der Datei |
-| **fzf-Header** | `Enter:` zuerst | `--header='Enter: Aktion | Key: Aktion'` |
-| **Header Pipe-Zeichen** | ASCII `|` | Kein Unicode `│` in `--header` |
+| **fzf-Header** | `Enter:` zuerst | `--header='Enter: Aktion'` |
+| **Header Pipe-Zeichen** | ASCII | Kein Unicode in `--header` |
 
 ### Dokumentation
 
@@ -339,6 +344,7 @@ git commit -m "type: beschreibung"
 ```
 
 **Commit-Typen:**
+
 - `feat:` – Neue Funktion
 - `fix:` – Bugfix
 - `docs:` – Nur Dokumentation
@@ -357,7 +363,7 @@ gh pr create
 Nach PR-Erstellung das passende Label hinzufügen:
 
 | Label | Verwendung |
-|-------|------------|
+| ------- | ------------ |
 | `bug` | Fehler, etwas funktioniert nicht |
 | `enhancement` | Neues Feature oder Verbesserung |
 | `documentation` | Nur Doku-Änderungen |
@@ -368,6 +374,7 @@ Nach PR-Erstellung das passende Label hinzufügen:
 | `setup` | Installation, Bootstrap |
 
 **Zusatz-Labels bei Bedarf:**
+
 - `breaking-change` – Ändert bestehendes Verhalten
 - `needs-review` – Bereit für Review
 - `blocked` – Wartet auf externe Abhängigkeit
@@ -415,6 +422,7 @@ Die tldr-Patches in `terminal/.config/tealdeer/pages/` werden **automatisch** au
 > ⚠️ **Niemals** Patch-Dateien manuell editieren – Änderungen werden überschrieben!
 
 **Namenskonvention:**
+
 - `tool.alias` → `tool.patch.md` → `tldr tool` (erweitert offizielle Seite)
 - `tool.alias` → `tool.page.md` → `tldr tool` (ersetzt fehlende offizielle Seite)
 
