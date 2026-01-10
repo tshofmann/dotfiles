@@ -192,7 +192,6 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 > **Hinweis:** Globale Optionen (Theme, Style, Syntax-Mappings) sind in ~/.config/bat/config definiert. Nach Theme-Änderungen: `bat cache --build`
 
-
 ### brew.alias
 
 | Alias | Befehl | Beschreibung |
@@ -214,7 +213,6 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 > **Hinweis:** Kein Guard für brew – ohne Homebrew ist dieses dotfiles-Repository ohnehin nicht nutzbar.
 
-
 ### btop.alias
 
 | Alias | Befehl | Beschreibung |
@@ -223,7 +221,6 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `htop` | `btop` | Bessere Alternative zu htop |
 
 > **Hinweis:** Konfiguration in ~/.config/btop/btop.conf Theme: Catppuccin Mocha
-
 
 ### dotfiles.alias
 
@@ -239,7 +236,6 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 > **Hinweis:** dothelp listet alle verfügbaren Hilfe-Seiten auf. tldr-Patches erweitern offizielle Seiten mit dotfiles- spezifischen Funktionen, Aliases und Keybindings.
 
-
 ### eza.alias
 
 | Alias | Befehl | Beschreibung |
@@ -254,7 +250,6 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 > **Hinweis:** EZA_ICONS_AUTO=1 ist in .zshrc gesetzt. Farbschema in ~/.config/eza/theme.yml (Catppuccin Mocha)
 
-
 ### fastfetch.alias
 
 | Alias | Befehl | Beschreibung |
@@ -263,7 +258,6 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `neofetch` | `fastfetch` | Neofetch-Kompatibilität |
 
 > **Hinweis:** Konfiguration in ~/.config/fastfetch/config.jsonc Theme: Catppuccin Mocha (Box-Layout)
-
 
 ### fd.alias
 
@@ -289,9 +283,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 > **Hinweis:** Globale Ignore-Patterns (.git/, node_modules/, etc.) sind in ~/.config/fd/ignore definiert. Mit "fd -u" werden alle Ignore-Dateien umgangen.
 
-
 ### fzf.alias
-
 
 
 **Interaktive Funktionen (mit fzf):**
@@ -304,7 +296,6 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `fenv` | Env Browser (Enter=Export→Edit, Ctrl+Y=Kopieren) |
 
 > **Hinweis:** Konfiguration in ~/.config/fzf/ (config, init.zsh, *-preview Helper). Keybindings: Ctrl+X 1/2/3. Tool-spezifische Funktionen in fd/rg/git/brew/gh.alias.
-
 
 ### gh.alias
 
@@ -324,7 +315,6 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | `ghgist` | Gists durchsuchen (Enter=Anzeigen, Ctrl+E=Bearbeiten, Ctrl+O=Browser) |
 
 > **Hinweis:** Erfordert gh auth login für Authentifizierung. Alle Funktionen nutzen fzf für interaktive Auswahl.
-
 
 ### git.alias
 
@@ -352,7 +342,6 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 > **Hinweis:** Interaktive Git-Funktionen (mit fzf) sind unten definiert: glog, gbr, gst, gstash
 
-
 ### rg.alias
 
 | Alias | Befehl | Beschreibung |
@@ -378,9 +367,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 
 > **Hinweis:** Globale Optionen (--smart-case, --line-number, --heading) und Excludes (Library/, Music/, Pictures/, Movies/) sind in ~/.config/ripgrep/config definiert.
 
-
 ### zoxide.alias
-
 
 
 **Interaktive Funktionen (mit fzf):**
@@ -388,6 +375,7 @@ Verfügbare Aliase aus `~/.config/alias/`:
 | Funktion | Beschreibung |
 | -------- | ------------ |
 | `zf` | zoxide Browser (Enter=Wechseln, Ctrl+D=Löschen, Ctrl+Y=Kopieren) |
+
 
 ---
 
@@ -511,11 +499,7 @@ rggo              # Suche in Go-Dateien
 rgf               # Live-Grep(suche?) – Enter=Datei öffnen, Ctrl+Y=Pfad kopieren
 ```
 
-> **Hinweis:** Globale Optionen (--smart-case, --line-number, --heading) und Excludes (Library/, Music/, Pictures/, Movies/) sind in ~/.config/ripgrep/config definiert.
-
----
-
----
+> **Hinweis:** Globale Optionen (--smart-case, --line-number, --heading) und Excludes (Library/, Music/, Pictures/, Movies/) sind in ~/.config/ripgrep/config definiert.---
 
 ## Font
 
@@ -545,9 +529,7 @@ brew search nerd-font
 
 # Beispiel: JetBrains Mono installieren
 brew install --cask font-jetbrains-mono-nerd-font
-```
-
----
+```---
 
 ## ZSH-Plugin-Bedienung
 
@@ -569,9 +551,7 @@ Färbt Kommandos während der Eingabe ein:
 | ----- | ------ |
 | **Grün** | Gültiger Befehl |
 | **Rot** | Ungültiger Befehl |
-| **Unterstrichen** | Existierende Datei/Verzeichnis |
-
----
+| **Unterstrichen** | Existierende Datei/Verzeichnis |---
 
 ## Eigene Tools hinzufügen
 

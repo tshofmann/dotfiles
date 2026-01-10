@@ -156,7 +156,7 @@ collect_theme_configs() {
         output+="| **$tool** | $display_file | $stat |\n"
     done
     
-    echo -e "$output"
+    echo "$output"
 }
 
 # ------------------------------------------------------------

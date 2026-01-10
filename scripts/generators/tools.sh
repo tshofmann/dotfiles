@@ -14,6 +14,7 @@ source "${0:A:h}/lib.sh"
 # Generiert Sektion mit Codeblocks für jedes Tool
 generate_tool_usage_section() {
     local output=""
+    local first=true
     
     # Nur für Tools mit mehr als 3 Aliasen
     for alias_file in "$ALIAS_DIR"/*.alias(N); do
@@ -33,6 +34,13 @@ generate_tool_usage_section() {
         
         local hinweis=$(parse_header_field "$alias_file" "Hinweis")
         
+        # Separator vor jedem Eintrag außer dem ersten
+        if [[ "$first" == true ]]; then
+            first=false
+        else
+            output+="---\n\n"
+        fi
+        
         output+="### $tool_name – ${title#Aliase für }\n\n"
         output+="\`\`\`zsh\n"
         output+="${usage%\\n}"  # Trailing newline entfernen falls vorhanden
@@ -41,8 +49,6 @@ generate_tool_usage_section() {
         if [[ -n "$hinweis" ]]; then
             output+="> **Hinweis:** $hinweis\n\n"
         fi
-        
-        output+="---\n\n"
     done
     
     echo "$output"
@@ -688,28 +694,27 @@ Verfügbare Aliase aus `~/.config/alias/`:
         if [[ -n "${aliases// /}" ]]; then
             output+="| Alias | Befehl | Beschreibung |\n"
             output+="| ----- | ------ | ------------ |\n"
-            output+="${aliases}"
+            output+="${aliases}\n"
         fi
         
         # Funktionen
         local funcs=$(extract_functions_from_file "$alias_file")
         if [[ -n "${funcs// /}" ]]; then
-            output+="\n\n**Interaktive Funktionen (mit fzf):**\n\n"
+            output+="\n**Interaktive Funktionen (mit fzf):**\n\n"
             output+="| Funktion | Beschreibung |\n"
             output+="| -------- | ------------ |\n"
-            output+="${funcs}"
+            output+="${funcs}\n"
         fi
         
         # Hinweis (mit Leerzeile davor für Markdown-Konformität)
         if [[ -n "$hinweis" ]]; then
-            output+="\n\n> **Hinweis:** $hinweis\n"
+            output+="\n> **Hinweis:** $hinweis\n"
         fi
-        
-        output+="\n"
     done
     
     # Tool-Nutzung Sektion
     output+='
+
 ---
 
 ## Tool-Nutzung
@@ -720,9 +725,7 @@ Ausführliche Beispiele für die wichtigsten Tools:
     output+=$(generate_tool_usage_section)
     
     # Font-Sektion
-    output+='
-
----
+    output+='---
 
 ## Font
 
@@ -730,9 +733,7 @@ Ausführliche Beispiele für die wichtigsten Tools:
     output+=$(generate_font_section)
     
     # ZSH-Plugins Bedienung
-    output+='
-
----
+    output+='---
 
 ## ZSH-Plugin-Bedienung
 
@@ -740,9 +741,7 @@ Ausführliche Beispiele für die wichtigsten Tools:
     output+=$(generate_zsh_plugins_usage)
     
     # Eigene Tools hinzufügen
-    output+='
-
----
+    output+='---
 
 ## Eigene Tools hinzufügen
 
