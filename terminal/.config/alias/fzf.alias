@@ -5,7 +5,6 @@
 # Pfad    : ~/.config/alias/fzf.alias
 # Docs    : https://github.com/junegunn/fzf
 # Nutzt   : bat (Preview), eza (Verzeichnis-Preview), fd (Default-Command), tldr (fman)
-# Config  : ~/.config/fzf/ (config, init.zsh, Helper-Skripte)
 # ============================================================
 # Hinweis : Keybindings: Ctrl+X 1/2/3.
 #           Tool-spezifische Funktionen in fd/rg/git/brew/gh.alias.

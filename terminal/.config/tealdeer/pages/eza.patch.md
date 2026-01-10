@@ -1,4 +1,4 @@
-- dotfiles: Config `~/.config/eza/theme.yml (Catppuccin Mocha Farben)`
+- dotfiles: Config `~/.config/eza/theme.yml (Dateityp-Farben für eza (ls-Ersatz))`
 
 - dotfiles: Kompakte Liste, Verzeichnisse zuerst:
 

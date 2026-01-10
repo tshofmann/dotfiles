@@ -7,7 +7,6 @@
 # Nutzt   : fzf (Interactive), bat (Preview), eza (Verzeichnis-Preview)
 # Ersetzt : find (schneller, intuitive Syntax)
 # Aliase  : fd, fdf, fdd
-# Config  : ~/.config/fd/ignore (Globale Ignore-Patterns)
 # ============================================================
 # Hinweis : Mit "fd -u" werden alle Ignore-Dateien umgangen.
 # ============================================================

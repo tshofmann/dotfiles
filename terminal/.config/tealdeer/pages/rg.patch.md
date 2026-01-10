@@ -1,4 +1,4 @@
-- dotfiles: Config `~/.config/ripgrep/config (Optionen, Excludes)`
+- dotfiles: Config `~/.config/ripgrep/config (Native ripgrep-Konfiguration (RIPGREP_CONFIG_PATH))`
 
 - dotfiles: Nutzt `fzf (Interactive), bat (Preview)`
 

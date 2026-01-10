@@ -6,7 +6,6 @@
 # Docs    : https://eza.rocks
 # Ersetzt : ls (mit Icons und Git-Status)
 # Aliase  : ls, ll, la, tree
-# Config  : ~/.config/eza/theme.yml (Catppuccin Mocha Farben)
 #
 # Git-Integration:
 #   --git ist standardmäßig aktiv in allen -l Aliase. Performance:

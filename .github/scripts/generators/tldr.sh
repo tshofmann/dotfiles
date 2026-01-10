@@ -684,8 +684,8 @@ extract_alias_header_info() {
     while IFS= read -r line; do
         [[ "$line" == "# Guard"* ]] && break
 
-        if [[ "$line" == "# "*.alias* ]]; then
-            # Erste Zeile: tool.alias - Beschreibung
+        # Erste Zeile: "# tool.alias - Beschreibung" (muss " - " enthalten)
+        if [[ "$line" == "# "*.alias" - "* ]]; then
             tool_name="${line#\# }"
             tool_name="${tool_name%%.alias*}"
         elif [[ "$line" == "# Zweck"*":"* ]]; then
@@ -699,7 +699,48 @@ extract_alias_header_info() {
         fi
     done < "$alias_file"
 
+    # Fallback: Config aus Config-Datei extrahieren wenn nicht in .alias
+    if [[ -z "$config" && -n "$tool_name" ]]; then
+        config=$(find_config_path "$tool_name")
+    fi
+
     echo "${tool_name}|${zweck}|${docs}|${nutzt}|${config}"
+}
+
+# ------------------------------------------------------------
+# Helper: Config-Pfad aus Config-Datei extrahieren
+# ------------------------------------------------------------
+# Sucht in ~/.config/<tool>/ nach Config-Dateien mit # Pfad : Header
+# Berücksichtigt Alias→Verzeichnis-Mapping (rg→ripgrep, etc.)
+find_config_path() {
+    local tool_name="$1"
+
+    # Mapping: Alias-Name → Config-Verzeichnisname
+    local -A config_dir_map=(
+        [rg]=ripgrep
+        [mdl]=markdownlint-cli2
+        [markdownlint]=markdownlint-cli2
+    )
+
+    local dir_name="${config_dir_map[$tool_name]:-$tool_name}"
+    local config_dir="$DOTFILES_DIR/terminal/.config/${dir_name}"
+
+    [[ ! -d "$config_dir" ]] && return
+
+    # Suche Config-Dateien (inkl. versteckte, mit Pfad-Header)
+    for cfg in "$config_dir"/*(D.N); do
+        [[ ! -f "$cfg" ]] && continue
+
+        # Extrahiere Pfad aus Header (unterstützt # und // Kommentare)
+        local pfad=$(grep -m1 -E "^(#|//) Pfad[[:space:]]*:" "$cfg" 2>/dev/null | sed -E 's/^(#|\/\/) Pfad[[:space:]]*:[[:space:]]*//')
+        if [[ -n "$pfad" ]]; then
+            # Optional: Zweck als Beschreibung anhängen
+            local zweck=$(grep -m1 -E "^(#|//) Zweck[[:space:]]*:" "$cfg" 2>/dev/null | sed -E 's/^(#|\/\/) Zweck[[:space:]]*:[[:space:]]*//')
+            [[ -n "$zweck" ]] && pfad="${pfad} (${zweck})"
+            echo "$pfad"
+            return
+        fi
+    done
 }
 
 # ------------------------------------------------------------

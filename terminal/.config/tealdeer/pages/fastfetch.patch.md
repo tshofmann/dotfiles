@@ -1,4 +1,4 @@
-- dotfiles: Config `~/.config/fastfetch/config.jsonc (Catppuccin Mocha)`
+- dotfiles: Config `~/.config/fastfetch/config.jsonc (System-Informationen im Box-Stil anzeigen)`
 
 - dotfiles: Schnelle System-Info (Standardanzeige):
 

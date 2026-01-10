@@ -81,4 +81,4 @@
 
 - Eigene Seiten:
 
-`catppuccin markdownlint tealdeer, dotfiles`
+`catppuccin markdownlint, dotfiles`

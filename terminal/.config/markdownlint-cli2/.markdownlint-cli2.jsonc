@@ -2,6 +2,7 @@
 // .markdownlint-cli2.jsonc - Markdownlint Konfiguration
 // ============================================================
 // Zweck   : Einheitliche Markdown-Regeln für CLI, CI und VS Code
+// Pfad    : ~/.config/markdownlint-cli2/.markdownlint-cli2.jsonc
 // Docs    : https://github.com/DavidAnson/markdownlint-cli2
 // ============================================================
 // VS Code: Extension nutzt diese Datei automatisch

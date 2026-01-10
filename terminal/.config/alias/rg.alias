@@ -7,7 +7,6 @@
 # Nutzt   : fzf (Interactive), bat (Preview)
 # Ersetzt : grep (schneller, respektiert .gitignore)
 # Aliase  : rg, rgc, rgi
-# Config  : ~/.config/ripgrep/config (Optionen, Excludes)
 # ============================================================
 
 # Guard   : Nur wenn rg installiert ist
