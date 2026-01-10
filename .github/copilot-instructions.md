@@ -60,8 +60,8 @@
 
 Doku wird automatisch aus Code generiert (Single Source of Truth):
 
-- `.alias`-Dateien → `docs/tools.md`, tldr-Patches
-- `Brewfile` → Tool-Listen
+- `.alias`-Dateien → tldr-Patches (`.patch.md`)
+- `Brewfile` → `docs/setup.md` (Tool-Listen)
 - Verzeichnisse → `docs/architecture.md`
 
 **Niemals Docs manuell editieren** – Änderungen im Code machen.
@@ -181,4 +181,5 @@ gh api graphql -f query='mutation { resolveReviewThread(input: {threadId: "PRRT_
 | PR-Template | `.github/PULL_REQUEST_TEMPLATE.md` |
 | Issue-Templates | `.github/ISSUE_TEMPLATE/` |
 | Installierte Tools | `setup/Brewfile` |
+| Hilfe/Schnellreferenz | `dothelp` (zeigt alle tldr-Seiten mit dotfiles-Erweiterungen) |
 | Farb-Palette | [catppuccin.com/palette](https://catppuccin.com/palette) |
