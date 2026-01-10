@@ -585,6 +585,9 @@ generate_catppuccin_page() {
         output+="\`${t}: ${r}\`\n"
     done
     
+    # Entferne trailing newline
+    output="${output%\\n}"
+    
     echo -e "$output"
 }
 
