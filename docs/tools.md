@@ -514,6 +514,9 @@ rgf               # Live-Grep(suche?) – Enter=Datei öffnen, Ctrl+Y=Pfad kopie
 > **Hinweis:** Globale Optionen (--smart-case, --line-number, --heading) und Excludes (Library/, Music/, Pictures/, Movies/) sind in ~/.config/ripgrep/config definiert.
 
 ---
+
+---
+
 ## Font
 
 ### MesloLg Nerd Font
@@ -543,9 +546,10 @@ brew search nerd-font
 # Beispiel: JetBrains Mono installieren
 brew install --cask font-jetbrains-mono-nerd-font
 ```
+
 ---
 
-## ZSH-Plugins
+## ZSH-Plugin-Bedienung
 
 ### zsh-autosuggestions
 
@@ -566,6 +570,7 @@ Färbt Kommandos während der Eingabe ein:
 | **Grün** | Gültiger Befehl |
 | **Rot** | Ungültiger Befehl |
 | **Unterstrichen** | Existierende Datei/Verzeichnis |
+
 ---
 
 ## Eigene Tools hinzufügen
@@ -595,6 +600,7 @@ Siehe [CONTRIBUTING.md → Neues Tool hinzufügen](../CONTRIBUTING.md#neues-tool
 - [Nerd Fonts](https://www.nerdfonts.com/)
 - [Starship Presets](https://starship.rs/presets/)
 - [Catppuccin Ports](https://github.com/catppuccin/catppuccin#-ports-and-more) – Themes für weitere Tools
+
 ---
 
 [← Zurück zur Übersicht](../README.md)

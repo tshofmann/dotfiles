@@ -1,7 +1,7 @@
 # dotfiles
 
 > Dotfiles Repository Hilfsfunktionen.
-> Mehr Informationen: https://github.com/tshofmann/dotfiles
+> Mehr Informationen: <https://github.com/tshofmann/dotfiles>
 
 - Zeige alle verfügbaren Hilfeseiten mit dotfiles-Erweiterungen:
 

@@ -130,6 +130,7 @@ generate_zsh_plugins_usage() {
         done <<< "$entries"
         output+="\n"
     fi
+    output+="\n"
     
     echo "$output"
 }
@@ -237,7 +238,7 @@ generate_font_section() {
     output+="$font_alternativen\n\n"
     output+="# Beispiel: JetBrains Mono installieren\n"
     output+="brew install --cask font-jetbrains-mono-nerd-font\n"
-    output+="\`\`\`\n"
+    output+="\`\`\`\n\n"
     
     echo "$output"
 }
@@ -277,6 +278,7 @@ generate_links_section() {
     output+="- [Nerd Fonts](https://www.nerdfonts.com/)\n"
     output+="- [Starship Presets](https://starship.rs/presets/)\n"
     output+="- [Catppuccin Ports](https://github.com/catppuccin/catppuccin#-ports-and-more) – Themes für weitere Tools\n"
+    output+="\n"
     
     echo "$output"
 }
@@ -719,6 +721,9 @@ Ausführliche Beispiele für die wichtigsten Tools:
     
     # Font-Sektion
     output+='
+
+---
+
 ## Font
 
 '
@@ -726,15 +731,17 @@ Ausführliche Beispiele für die wichtigsten Tools:
     
     # ZSH-Plugins Bedienung
     output+='
+
 ---
 
-## ZSH-Plugins
+## ZSH-Plugin-Bedienung
 
 '
     output+=$(generate_zsh_plugins_usage)
     
     # Eigene Tools hinzufügen
     output+='
+
 ---
 
 ## Eigene Tools hinzufügen
@@ -764,6 +771,7 @@ Siehe [CONTRIBUTING.md → Neues Tool hinzufügen](../CONTRIBUTING.md#neues-tool
     output+=$(generate_links_section)
     
     output+='
+
 ---
 
 [← Zurück zur Übersicht](../README.md)'
