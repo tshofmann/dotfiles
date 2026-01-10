@@ -213,12 +213,13 @@ rgf() { ... }
 ```
 
 > **Wichtig:** Diese Kommentare sind die Single Source of Truth für tldr-Patches.
-> Der Generator `.github/scripts/generators/tldr.sh` erzeugt die `.patch.md` Dateien
-> automatisch aus diesen Kommentaren.
+> Der Generator `.github/scripts/generators/tldr.sh` erzeugt automatisch:
 >
-> **Sonderfall `.page.md`:** Für Tools ohne offizielle tldr-Seite (z.B. `dotfiles`)
-> wird eine vollständige `.page.md` manuell erstellt. Der Generator überspringt
-> Alias-Dateien, für die bereits eine `.page.md` existiert.
+> - `.patch.md` – wenn eine offizielle tldr-Seite existiert (erweitert diese)
+> - `.page.md` – wenn keine offizielle tldr-Seite existiert (ersetzt diese)
+>
+> Der Generator prüft den tealdeer-Cache (`~/Library/Caches/tealdeer/tldr-pages/`)
+> und wählt automatisch das richtige Format.
 
 ### Ausnahmen vom Header-Format
 
@@ -230,8 +231,8 @@ Einige Dateien folgen **nicht** dem Standard-Header-Format:
 | `btop/themes/catppuccin_mocha.theme` | Third-Party Theme (Catppuccin) – bei Updates überschrieben |
 | `bat/themes/Catppuccin Mocha.tmTheme` | Third-Party Theme (Catppuccin) – bei Updates überschrieben |
 | `zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh` | Third-Party Theme (Catppuccin) – bei Updates überschrieben |
-| `terminal/.config/tealdeer/pages/*.patch.md` | Markdown-Format für tldr-Patches – automatisch generiert |
-| `terminal/.config/tealdeer/pages/*.page.md` | Vollständige tldr-Seiten für Tools ohne offizielle Seite |
+| `terminal/.config/tealdeer/pages/*.patch.md` | Erweitert offizielle tldr-Seiten – automatisch generiert |
+| `terminal/.config/tealdeer/pages/*.page.md` | Ersetzt fehlende tldr-Seiten – automatisch generiert |
 
 Diese Dateien werden vom Pre-Commit Hook nicht auf Header-Format geprüft.
 
@@ -420,11 +421,15 @@ Die tldr-Patches in `terminal/.config/tealdeer/pages/` werden **automatisch** au
 
 > ⚠️ **Niemals** Patch-Dateien manuell editieren – Änderungen werden überschrieben!
 
-**Namenskonvention:**
+**Automatische Erkennung:**
 
-- `tool.alias` → `tool.patch.md` → `tldr tool` (erweitert offizielle Seite)
-- `tool.alias` → `tool.page.md` → `tldr tool` (ersetzt fehlende offizielle Seite)
+Der Generator prüft, ob eine offizielle tldr-Seite im Cache existiert:
 
+- Offizielle Seite vorhanden → `tool.patch.md` (erweitert die offizielle Seite)
+- Keine offizielle Seite → `tool.page.md` (ersetzt die fehlende Seite)
+
+> 💡 Cache aktualisieren: `tldr --update`
+>
 > 💡 **Tipp:** `dothelp` zeigt alle verfügbaren tldr-Seiten mit dotfiles-Erweiterungen.
 
 ---

@@ -1,14 +1,34 @@
 #!/usr/bin/env zsh
 # ============================================================
-# tldr.sh - Generator für tldr-Patches und catppuccin.page.md
+# tldr.sh - Generator für tldr-Patches und Pages
 # ============================================================
 # Zweck   : Generiert tldr-Patches aus .alias-Dateien
-#           und catppuccin.page.md aus Theme-Kommentaren
+#           Falls keine offizielle tldr-Seite existiert,
+#           wird stattdessen eine .page.md generiert
 # Pfad    : .github/scripts/generators/tldr.sh
 # Hinweis : Ersetzt scripts/generate-tldr-patches.sh
 # ============================================================
 
 source "${0:A:h}/lib.sh"
+
+# ------------------------------------------------------------
+# Helper: Prüfe ob offizielle tldr-Seite existiert
+# ------------------------------------------------------------
+# Prüft im tealdeer-Cache ob eine offizielle Seite vorhanden ist
+# Cache-Pfad: ~/Library/Caches/tealdeer/tldr-pages/pages.{lang}/{platform}/
+has_official_tldr_page() {
+    local tool_name="$1"
+    local cache_base="${HOME}/Library/Caches/tealdeer/tldr-pages"
+
+    # Prüfe in allen Sprachen und Plattformen
+    for lang_dir in "$cache_base"/pages.*(N); do
+        for platform in common osx linux; do
+            [[ -f "$lang_dir/$platform/${tool_name}.md" ]] && return 0
+        done
+    done
+
+    return 1
+}
 
 # ------------------------------------------------------------
 # Parser: Keybindings zu tldr-Format
@@ -635,14 +655,57 @@ generate_catppuccin_tldr() {
     esac
 }
 
-# ------------------------------------------------------------# Generator: Kompletter Patch für ein Tool
+# ------------------------------------------------------------
+# Helper: Extrahiere Header-Infos aus Alias-Datei für Page-Generierung
+# ------------------------------------------------------------
+# Liest Zweck und Docs aus dem Header-Block einer .alias-Datei
+extract_alias_header_info() {
+    local alias_file="$1"
+    local zweck=""
+    local docs=""
+    local tool_name=""
+
+    while IFS= read -r line; do
+        [[ "$line" == "# Guard"* ]] && break
+
+        if [[ "$line" == "# "*.alias* ]]; then
+            # Erste Zeile: tool.alias - Beschreibung
+            tool_name="${line#\# }"
+            tool_name="${tool_name%%.alias*}"
+        elif [[ "$line" == "# Zweck"*":"* ]]; then
+            zweck="${line#*: }"
+        elif [[ "$line" == "# Docs"*":"* ]]; then
+            docs="${line#*: }"
+        fi
+    done < "$alias_file"
+
+    echo "${tool_name}|${zweck}|${docs}"
+}
+
+# ------------------------------------------------------------
+# Generator: Kompletter Patch/Page für ein Tool
 # ------------------------------------------------------------
 generate_complete_patch() {
     local tool_name="$1"
+    local for_page="${2:-false}"  # true wenn für .page.md (Header benötigt)
     local alias_file="$ALIAS_DIR/${tool_name}.alias"
     local output=""
 
     [[ ! -f "$alias_file" ]] && { err "Alias-Datei nicht gefunden: $alias_file"; return 1; }
+
+    # Für Pages: Header aus Alias-Datei generieren
+    if [[ "$for_page" == "true" ]]; then
+        local header_info=$(extract_alias_header_info "$alias_file")
+        local parsed_name="${header_info%%|*}"
+        local rest="${header_info#*|}"
+        local zweck="${rest%%|*}"
+        local docs="${rest#*|}"
+
+        output+="# ${tool_name}\n\n"
+        [[ -n "$zweck" ]] && output+="> ${zweck}.\n"
+        [[ -n "$docs" ]] && output+="> Mehr Informationen: <${docs}>\n"
+        output+="\n"
+    fi
 
     if [[ "$tool_name" == "fzf" ]]; then
         output+="# dotfiles: Globale Tastenkürzel (in allen fzf-Dialogen)\n\n"
@@ -676,17 +739,55 @@ generate_tldr_patches() {
                 local patch_file="$TEALDEER_DIR/${tool_name}.patch.md"
                 local page_file="$TEALDEER_DIR/${tool_name}.page.md"
 
-                # Überspringe wenn eine .page.md existiert (vollständig eigene Seite)
-                [[ -f "$page_file" ]] && continue
+                # Spezialfälle: dotfiles und catppuccin haben eigene Generatoren
+                [[ "$tool_name" == "dotfiles" || "$tool_name" == "catppuccin" ]] && continue
 
-                [[ ! -f "$patch_file" ]] && continue
+                # Prüfe ob offizielle Seite existiert (bestimmt ob Patch oder Page)
+                local is_page=false
+                has_official_tldr_page "$tool_name" || is_page=true
 
-                local generated=$(generate_complete_patch "$tool_name")
-                local current=$(cat "$patch_file")
+                local generated=$(generate_complete_patch "$tool_name" "$is_page")
+                local trimmed="${generated//[[:space:]]/}"
 
-                if [[ "$generated" != "$current" ]]; then
-                    err "${tool_name}.patch.md ist veraltet"
-                    (( errors++ )) || true
+                # Keine Inhalte generiert → überspringen
+                [[ -z "$trimmed" ]] && continue
+
+                if [[ "$is_page" == "false" ]]; then
+                    # Offizielle Seite existiert → .patch.md verwenden
+                    # Lösche verwaiste .page.md wenn vorhanden
+                    if [[ -f "$page_file" ]]; then
+                        err "${tool_name}.page.md sollte gelöscht werden (offizielle tldr-Seite existiert)"
+                        (( errors++ )) || true
+                    fi
+
+                    if [[ -f "$patch_file" ]]; then
+                        local current=$(cat "$patch_file")
+                        if [[ "$generated" != "$current" ]]; then
+                            err "${tool_name}.patch.md ist veraltet"
+                            (( errors++ )) || true
+                        fi
+                    else
+                        err "${tool_name}.patch.md fehlt"
+                        (( errors++ )) || true
+                    fi
+                else
+                    # Keine offizielle Seite → .page.md verwenden (mit Header)
+                    # Lösche verwaiste .patch.md wenn vorhanden
+                    if [[ -f "$patch_file" ]]; then
+                        err "${tool_name}.patch.md sollte gelöscht werden (keine offizielle tldr-Seite)"
+                        (( errors++ )) || true
+                    fi
+
+                    if [[ -f "$page_file" ]]; then
+                        local current=$(cat "$page_file")
+                        if [[ "$generated" != "$current" ]]; then
+                            err "${tool_name}.page.md ist veraltet"
+                            (( errors++ )) || true
+                        fi
+                    else
+                        err "${tool_name}.page.md fehlt (keine offizielle tldr-Seite)"
+                        (( errors++ )) || true
+                    fi
                 fi
             done
 
@@ -705,18 +806,32 @@ generate_tldr_patches() {
                 local patch_file="$TEALDEER_DIR/${tool_name}.patch.md"
                 local page_file="$TEALDEER_DIR/${tool_name}.page.md"
 
-                # Überspringe wenn eine .page.md existiert (vollständig eigene Seite)
-                [[ -f "$page_file" ]] && continue
+                # Spezialfälle: dotfiles und catppuccin haben eigene Generatoren
+                [[ "$tool_name" == "dotfiles" || "$tool_name" == "catppuccin" ]] && continue
 
-                local generated=$(generate_complete_patch "$tool_name")
+                # Prüfe ob offizielle Seite existiert (bestimmt ob Patch oder Page)
+                local is_page=false
+                has_official_tldr_page "$tool_name" || is_page=true
 
+                local generated=$(generate_complete_patch "$tool_name" "$is_page")
                 local trimmed="${generated//[[:space:]]/}"
+
+                # Keine Inhalte generiert → beide Dateien löschen falls vorhanden
                 if [[ -z "$trimmed" ]]; then
                     [[ -f "$patch_file" ]] && rm "$patch_file"
+                    [[ -f "$page_file" ]] && rm "$page_file"
                     continue
                 fi
 
-                write_if_changed "$patch_file" "$generated"
+                if [[ "$is_page" == "false" ]]; then
+                    # Offizielle Seite existiert → .patch.md verwenden
+                    [[ -f "$page_file" ]] && rm "$page_file" && dim "  Gelöscht: ${tool_name}.page.md (offizielle tldr-Seite existiert)"
+                    write_if_changed "$patch_file" "$generated"
+                else
+                    # Keine offizielle Seite → .page.md verwenden
+                    [[ -f "$patch_file" ]] && rm "$patch_file" && dim "  Gelöscht: ${tool_name}.patch.md (keine offizielle tldr-Seite)"
+                    write_if_changed "$page_file" "$generated"
+                fi
             done
 
             # Generiere dotfiles.page.md

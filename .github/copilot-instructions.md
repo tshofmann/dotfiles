@@ -60,9 +60,14 @@
 
 Doku wird automatisch aus Code generiert (Single Source of Truth):
 
-- `.alias`-Dateien → tldr-Patches (`.patch.md`)
+- `.alias`-Dateien → tldr-Patches/Pages (`.patch.md` oder `.page.md`)
 - `Brewfile` → `docs/setup.md` (Tool-Listen)
 - Verzeichnisse → `docs/architecture.md`
+
+**tldr-Format:** Der Generator prüft automatisch ob eine offizielle tldr-Seite existiert:
+
+- Offizielle Seite vorhanden → `.patch.md` (erweitert diese)
+- Keine offizielle Seite → `.page.md` (ersetzt diese)
 
 **Niemals Docs manuell editieren** – Änderungen im Code machen.
 
