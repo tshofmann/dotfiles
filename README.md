@@ -36,7 +36,6 @@ cd ~/dotfiles && stow --adopt -R terminal && git reset --hard HEAD && bat cache 
 | [Setup](docs/setup.md) | Schritt-für-Schritt Anleitung |
 | [Anpassung](docs/customization.md) | Starship, Aliase anpassen |
 | [Architektur](docs/architecture.md) | Struktur & Designentscheidungen |
-| [Tools](docs/tools.md) | Enthaltene CLI-Tools & Aliase |
 | [Contributing](CONTRIBUTING.md) | Für Entwickler: Hooks, Workflow |
 
 ## Lizenz

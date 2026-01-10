@@ -64,15 +64,6 @@ check_all() {
         ok "README.md ist aktuell"
     fi
     
-    # docs/tools.md
-    generated=$(run_generator "tools.sh" "generate_tools_md")
-    if ! compare_content "$DOCS_DIR/tools.md" "$generated"; then
-        err "docs/tools.md ist veraltet"
-        (( errors++ )) || true
-    else
-        ok "docs/tools.md ist aktuell"
-    fi
-    
     # docs/setup.md
     generated=$(run_generator "setup.sh" "generate_setup_md")
     if ! compare_content "$DOCS_DIR/setup.md" "$generated"; then
@@ -132,10 +123,6 @@ generate_all() {
     local generated=$(run_generator "readme.sh" "generate_readme_md")
     write_if_changed "$DOTFILES_DIR/README.md" "$generated"
     
-    # docs/tools.md
-    generated=$(run_generator "tools.sh" "generate_tools_md")
-    write_if_changed "$DOCS_DIR/tools.md" "$generated"
-    
     # docs/setup.md
     generated=$(run_generator "setup.sh" "generate_setup_md")
     write_if_changed "$DOCS_DIR/setup.md" "$generated"
@@ -179,7 +166,6 @@ main() {
             echo ""
             echo "Generierte Dateien:"
             echo "  README.md"
-            echo "  docs/tools.md"
             echo "  docs/setup.md"
             echo "  docs/architecture.md"
             echo "  docs/customization.md"

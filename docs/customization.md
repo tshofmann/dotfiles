@@ -125,7 +125,7 @@ Das Terminal-Profil, der Nerd Font und das Starship-Preset sind eng gekoppelt. W
 
 ### Voraussetzung
 
-Bei Starship-Presets mit Powerline-Symbolen (wie `catppuccin-powerline`) muss die neue Schriftart ein **Nerd Font** sein. Siehe [Tools → Warum Nerd Fonts?](tools.md#warum-nerd-fonts) für Details.
+Bei Starship-Presets mit Powerline-Symbolen (wie `catppuccin-powerline`) muss die neue Schriftart ein **Nerd Font** sein. Nerd Fonts enthalten zusätzliche Icons und Symbole, die für Powerline-Prompts benötigt werden.
 
 ### Schritt 1: Neuen Nerd Font installieren
 
