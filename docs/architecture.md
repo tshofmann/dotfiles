@@ -9,7 +9,7 @@ Technische Details zur Struktur und Funktionsweise dieses dotfiles-Repositories.
 
 ## Verzeichnisstruktur
 
-```
+```text
 dotfiles/
 ├── .githooks/
 │   └── pre-commit # Verhindert Commits mit veralteter Dokumentation
@@ -189,6 +189,7 @@ stow --adopt -R terminal
 ```
 
 Vorteile:
+
 - Neue lokale Dateien werden nicht ins Repository übernommen
 - Granulare Kontrolle über einzelne Dateien
 - `.gitignore` in `~/.config/` bleibt erhalten
@@ -207,6 +208,7 @@ Bootstrap erkennt Theme-Dateien automatisch nach Dateiendung:
 **Aktuell in `setup/`:** `catppuccin-mocha.terminal`
 
 Dies ermöglicht:
+
 - Freie Benennung der Theme-Dateien
 - Deterministisches Verhalten (alphabetisch erste bei mehreren)
 - Explizite Warnung wenn mehrere Dateien existieren
@@ -215,7 +217,7 @@ Dies ermöglicht:
 
 ## Komponenten-Abhängigkeiten
 
-```
+```text
 Terminal.app Profil
        │
        ├── MesloLG Nerd Font ──┬── Starship Icons
@@ -230,6 +232,7 @@ Terminal.app Profil
 ```
 
 Bei Icon-Problemen (□ oder ?) prüfen:
+
 1. Font in Terminal.app korrekt? (`catppuccin-mocha` Profil)
 2. Nerd Font installiert? (`brew list --cask | grep font`)
 3. Terminal neu gestartet?
@@ -238,7 +241,7 @@ Bei Icon-Problemen (□ oder ?) prüfen:
 
 ## ZSH-Ladereihenfolge
 
-```
+```text
 .zshenv        # Immer (Umgebungsvariablen)
     │
     ├── Login-Shell?

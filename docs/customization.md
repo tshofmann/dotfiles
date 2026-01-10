@@ -67,10 +67,11 @@ Alle verfügbaren Shell-Farbvariablen aus `~/.config/theme-colors`:
 | Crust | `#11111B` | `C_CRUST` |
 
 > **Verwendung in Skripten:**
-> ```zsh
-> source ~/.config/theme-colors
-> echo "${C_GREEN}Erfolg${C_RESET}"
-> ```
+
+```zsh
+source ~/.config/theme-colors
+echo "${C_GREEN}Erfolg${C_RESET}"
+```
 
 Vollständige Palette: [catppuccin.com/palette](https://catppuccin.com/palette)
 

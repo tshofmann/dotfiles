@@ -215,10 +215,11 @@ FONT_SECTION
     cat << 'AFTER_COLORS'
 
 > **Verwendung in Skripten:**
-> ```zsh
-> source ~/.config/theme-colors
-> echo "${C_GREEN}Erfolg${C_RESET}"
-> ```
+
+```zsh
+source ~/.config/theme-colors
+echo "${C_GREEN}Erfolg${C_RESET}"
+```
 
 Vollständige Palette: [catppuccin.com/palette](https://catppuccin.com/palette)
 
