@@ -1,8 +1,8 @@
 # ============================================================
-# Brewfile - Homebrew Abhängigkeiten
+# Brewfile - Homebrew Bundle Konfiguration
 # ============================================================
 # Zweck     : Deklarative Homebrew-Abhängigkeiten
-# Verwendung: brew bundle --file=setup/Brewfile
+# Verwendung: brew bundle (via bb Alias)
 # Docs      : https://github.com/Homebrew/homebrew-bundle
 # ============================================================
 # Format für Doku-Generierung:

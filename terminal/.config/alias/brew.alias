@@ -11,6 +11,19 @@
 # ============================================================
 
 # ------------------------------------------------------------
+# Brewfile (Bundle)
+# ------------------------------------------------------------
+# brew bundle mit dotfiles Brewfile (brew bundle check, list, etc.)
+brew() {
+    if [[ "$1" == "bundle" ]]; then
+        shift
+        command brew bundle --file="$DOTFILES_DIR/setup/Brewfile" "$@"
+    else
+        command brew "$@"
+    fi
+}
+
+# ------------------------------------------------------------
 # Update & Wartung
 # ------------------------------------------------------------
 # Homebrew Komplett-Update – update, upgrade, autoremove, cleanup, mas
