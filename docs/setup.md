@@ -154,14 +154,14 @@ ff                                  # System-Info anzeigen
 | `tealdeer` | tldr-Client |
 | `zoxide` | Smartes cd |
 | `mas` | Mac App Store CLI |
-| `eza` | Moderner ls-Ersatz |
+| `markdownlint-cli2` | Markdown-Linter |
+| `eza` | ls-Ersatz mit Icons |
 | `bat` | cat mit Syntax-Highlighting |
-| `ripgrep` | Ultraschneller grep-Ersatz |
+| `ripgrep` | Schneller grep-Ersatz |
 | `fd` | Schneller find-Ersatz |
 | `btop` | Ressourcen-Monitor |
-| `fastfetch` | Schnelle System-Info |
+| `fastfetch` | System-Info |
 | `lazygit` | Terminal-UI für Git |
-| `markdownlint-cli2` | Markdown-Linter |
 | `zsh-syntax-highlighting` | Syntax-Highlighting |
 | `zsh-autosuggestions` | History-Vorschläge |
 
