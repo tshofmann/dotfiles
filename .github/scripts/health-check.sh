@@ -56,7 +56,7 @@ typeset -i warnings=0
 pass()    { echo -e "  ${C_GREEN}✔${C_RESET} $*"; (( passed++ )); }
 fail()    { echo -e "  ${C_RED}✖${C_RESET} $*"; (( failed++ )); }
 warn()    { echo -e "  ${C_YELLOW}⚠${C_RESET} $*"; (( warnings++ )); }
-section() { print ""; print "${C_OVERLAY0}━━━${C_RESET} ${C_BOLD}$*${C_RESET} ${C_OVERLAY0}━━━${C_RESET}"; }
+section() { print ""; print "${C_MAUVE}━━━ ${C_BOLD}$*${C_RESET}${C_MAUVE} ━━━${C_RESET}"; }
 
 # ------------------------------------------------------------
 # Symlink-Prüfung

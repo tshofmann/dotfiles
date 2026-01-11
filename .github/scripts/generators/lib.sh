@@ -93,7 +93,7 @@ ui_banner() {
 # Usage: ui_section "Symlinks"
 ui_section() {
     print ""
-    print "${C_OVERLAY0}━━━${C_RESET} ${C_BOLD}$1${C_RESET} ${C_OVERLAY0}━━━${C_RESET}"
+    print "${C_MAUVE}━━━ ${C_BOLD}$1${C_RESET}${C_MAUVE} ━━━${C_RESET}"
 }
 
 # Footer mit Trennlinie
