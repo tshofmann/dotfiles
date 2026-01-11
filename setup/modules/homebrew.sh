@@ -30,6 +30,11 @@ readonly BREWFILE="${SCRIPT_DIR}/Brewfile"
 # ------------------------------------------------------------
 # Homebrew Installation
 # ------------------------------------------------------------
+# SICHERHEITSHINWEIS: Der offizielle Homebrew-Installer wird von HEAD geladen.
+# Dies ist der empfohlene Installationsweg (https://brew.sh), birgt aber ein
+# theoretisches Supply-Chain-Risiko. Alternativen (Pinning, lokale Kopie)
+# würden manuelle Updates erfordern und schnell veralten.
+# Das Homebrew-Team signiert die brew-Binaries nach Installation.
 install_homebrew() {
     CURRENT_STEP="Homebrew Installation"
 
