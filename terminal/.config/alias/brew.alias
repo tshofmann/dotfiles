@@ -131,9 +131,13 @@ brewv() {
             # Format: mas "Name", id: 123456
             name="${line#mas \"}"
             name="${name%%\"*}"
-            id="${line##*id: }"
-            id="${id//[^0-9]/}"
-            mas_apps+=("$name:$id")
+            # Robustes ID-Parsing: nur Ziffern direkt nach "id:"
+            if [[ "$line" == *"id:"* ]]; then
+                id="${line##*id:}"
+                id="${id##[[:space:]]}"
+                id="${id%%[!0-9]*}"
+                [[ -n "$id" ]] && mas_apps+=("$name:$id")
+            fi
         done < <(grep '^mas "' "$brewfile" 2>/dev/null || true)
 
         print "\n${C_MAUVE}━━━ Mac App Store ━━━${C_RESET}"
