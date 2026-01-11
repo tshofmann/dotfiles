@@ -16,10 +16,12 @@ ALIAS_DIR="$DOTFILES_DIR/terminal/.config/alias"
 DOCS_DIR="$DOTFILES_DIR/docs"
 FZF_CONFIG="$DOTFILES_DIR/terminal/.config/fzf/config"
 TEALDEER_DIR="$DOTFILES_DIR/terminal/.config/tealdeer/pages"
-BREWFILE="$DOTFILES_DIR/setup/Brewfile"
 BOOTSTRAP="$DOTFILES_DIR/setup/bootstrap.sh"
 BOOTSTRAP_MODULES="$DOTFILES_DIR/setup/modules"
 SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-style"
+
+# BREWFILE nur setzen wenn nicht bereits definiert (Konflikt mit homebrew.sh vermeiden)
+[[ -z "${BREWFILE:-}" ]] && BREWFILE="$DOTFILES_DIR/setup/Brewfile"
 
 # Farben (Catppuccin Mocha) – zentral definiert
 [[ -f "$SHELL_COLORS" ]] && source "$SHELL_COLORS"
@@ -166,12 +168,12 @@ get_bootstrap_module_order() {
             local module="${trimmed%%#*}"
             module="${module#"${module%%[![:space:]]*}"}"
             module="${module%"${module##*[![:space:]]}"}"
-            
+
             # Plattform-Prefix entfernen falls vorhanden (macos:, linux:, etc.)
             if [[ "$module" == *":"* ]]; then
                 module="${module#*:}"
             fi
-            
+
             # Nur gültige Modul-Namen (alphanumerisch + Bindestrich)
             [[ "$module" =~ ^[a-z][a-z0-9-]*$ ]] && echo "$module"
         fi
