@@ -1,9 +1,5 @@
 - dotfiles: Nutzt `fzf (Interactive), theme-style (Farben für brewv)`
 
-- dotfiles: brew bundle mit dotfiles Brewfile:
-
-`brew`
-
 - dotfiles: Homebrew Komplett-Update:
 
 `brewup`
