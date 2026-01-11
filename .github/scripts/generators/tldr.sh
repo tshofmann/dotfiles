@@ -356,11 +356,14 @@ generate_dotfiles_page() {
     [[ -n "$nutzt" ]] && output+="- dotfiles: Nutzt \`${nutzt}\`\n\n"
 
     # Einstiegspunkte
-    output+="- Diese Hilfe anzeigen:\n\n\`dothelp\`\n\n"
-    output+="- Aliase interaktiv durchsuchen (Enter=ausführen, Ctrl+Y=kopieren):\n\n\`fa {{suche}}\`\n"
+    output+="- Diese Hilfe anzeigen:\n\n\`dothelp\`\n"
+
+    # Aliase-Sektion mit fa
+    output+="\n# ${DOTHELP_CAT_ALIASES}\n\n"
+    output+="- Interaktiv durchsuchen (Enter=ausführen, Ctrl+Y=kopieren):\n\n\`fa {{suche}}\`\n"
 
     # Shell-Keybindings aus .zshrc (Format: #   Key   Beschreibung)
-    output+="\n# Shell-Keybindings\n\n"
+    output+="\n# ${DOTHELP_CAT_KEYBINDINGS}\n\n"
     if [[ -f "$zshrc" ]]; then
         while IFS= read -r line; do
             # Format: #   →        Vorschlag komplett übernehmen
@@ -377,7 +380,7 @@ generate_dotfiles_page() {
     fi
 
     # Globale Keybindings aus fzf/init.zsh
-    output+="# fzf-Keybindings (Ctrl+X Prefix)\n\n"
+    output+="# ${DOTHELP_CAT_FZF} (Ctrl+X Prefix)\n\n"
     if [[ -f "$fzf_init" ]]; then
         while IFS= read -r line; do
             if [[ "$line" == "bindkey '^X"*"'"*"# Ctrl+X"* ]]; then
@@ -391,7 +394,7 @@ generate_dotfiles_page() {
     fi
 
     # Moderne Ersetzungen aus *.alias Ersetzt-Feldern + Aliase-Feld
-    output+="# Moderne Ersetzungen\n\n"
+    output+="# ${DOTHELP_CAT_REPLACEMENTS}\n\n"
     local -A replacements=()
     for alias_file in "$ALIAS_DIR"/*.alias(N); do
         local tool_name=$(basename "$alias_file" .alias)

@@ -9,11 +9,13 @@
 
 `dothelp`
 
-- Aliase interaktiv durchsuchen (Enter=ausführen, Ctrl+Y=kopieren):
+# Aliase
+
+- Interaktiv durchsuchen (Enter=ausführen, Ctrl+Y=kopieren):
 
 `fa {{suche}}`
 
-# Shell-Keybindings
+# Keybindings
 
 - Vorschlag komplett übernehmen:
 
@@ -27,7 +29,7 @@
 
 `Escape`
 
-# fzf-Keybindings (Ctrl+X Prefix)
+# fzf-Shortcuts (Ctrl+X Prefix)
 
 - History:
 
@@ -41,7 +43,7 @@
 
 `Ctrl+X 3`
 
-# Moderne Ersetzungen
+# Tool-Ersetzungen
 
 - cat → bat (mit Syntax-Highlighting):
 

@@ -521,4 +521,6 @@ log "  2. Konfigurationsdateien verlinken: cd $DOTFILES_DIR && stow --adopt -R t
 log "  3. Git-Hooks aktivieren: git config core.hooksPath .github/hooks"
 log "  4. bat Theme-Cache bauen: bat cache --build"
 log "  5. tldr-Pages herunterladen: tldr --update"
-log "  6. Schnellreferenz anzeigen: dothelp"
+print ""
+print "  ${C_GREEN}💡 Gib im Terminal '\033[1mdothelp${C_RESET}${C_GREEN}' ein für Hilfe/Dokumentation${C_RESET}"
+print ""

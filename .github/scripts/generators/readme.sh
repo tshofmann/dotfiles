@@ -18,6 +18,9 @@ generate_readme_md() {
     macos_min_name=$(get_macos_codename "$macos_min")
     macos_tested_name=$(get_macos_codename "$macos_tested")
 
+    # dothelp-Kategorien aus echten Quellen
+    local dothelp_categories=$(get_dothelp_categories)
+
     cat << EOF
 # 🍎 dotfiles
 
@@ -41,8 +44,6 @@ cd ~/dotfiles && stow --adopt -R terminal editor && git reset --hard HEAD && bat
 \`\`\`
 
 > ⚠️ **Achtung:** \`git reset --hard\` verwirft lokale Änderungen. Siehe [Setup](docs/setup.md) für Details.
->
-> 💡 **Tipp:** Nach der Installation \`fa\` eingeben für eine interaktive Übersicht aller Aliase und Funktionen. Oder \`dothelp\` für alle verfügbaren Hilfeseiten.
 
 ## Voraussetzungen
 
@@ -50,10 +51,11 @@ cd ~/dotfiles && stow --adopt -R terminal editor && git reset --hard HEAD && bat
 - **macOS ${macos_min}+** (${macos_min_name}) – getestet auf macOS ${macos_tested} (${macos_tested_name})
 - **Internetverbindung** & Admin-Rechte
 
-## Dokumentation
+## Hilfe & Dokumentation
 
 | Thema | Beschreibung |
 | ----- | ------------ |
+| \`dothelp\` | Hilfe/Dokumentation im Terminal: ${dothelp_categories} |
 | [Setup](docs/setup.md) | Schritt-für-Schritt Anleitung |
 | [Anpassung](docs/customization.md) | Starship, Aliase, ZSH anpassen |
 | [Contributing](CONTRIBUTING.md) | Für Entwickler: Architektur, Hooks, Workflow |
