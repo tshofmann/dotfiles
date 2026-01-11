@@ -2,11 +2,12 @@
 # theme-style - Catppuccin Mocha Theme-Variablen
 # ============================================================
 # Zweck   : Zentrale Farb- und Text-Style-Variablen für Shell-Ausgaben
-# Pfad    : ~/.config/theme-style
+# Pfad    : ~/.config/theme-style (nach stow) oder terminal/.config/theme-style (im Repo)
 # Docs    : https://catppuccin.com/palette
 # ============================================================
-# WICHTIG: Bei Änderungen auch setup/bootstrap.sh aktualisieren!
-#          Bootstrap kann theme-style nicht sourcen (läuft vor stow).
+# Wird verwendet von:
+#   - setup/modules/_core.sh (Bootstrap lädt direkt aus Repo)
+#   - terminal/.config/alias/*.alias (nach stow via ~/.config/theme-style)
 # ============================================================
 
 # ------------------------------------------------------------

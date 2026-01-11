@@ -62,21 +62,30 @@ is_debian() { [[ "$PLATFORM_OS" == "debian" ]]; }
 is_arch()   { [[ "$PLATFORM_OS" == "arch" ]]; }
 
 # ------------------------------------------------------------
-# Farben (Catppuccin Mocha)
+# Farben (aus theme-style laden)
 # ------------------------------------------------------------
-# WICHTIG: Synchron halten mit terminal/.config/theme-style!
-#          Nur Subset hier, da bootstrap.sh vor stow läuft.
-C_RESET='\033[0m'
-C_MAUVE='\033[38;2;203;166;247m'
-C_GREEN='\033[38;2;166;227;161m'
-C_RED='\033[38;2;243;139;168m'
-C_YELLOW='\033[38;2;249;226;175m'
-C_BLUE='\033[38;2;137;180;250m'
-C_TEXT='\033[38;2;205;214;244m'
-C_OVERLAY0='\033[38;2;108;112;134m'
-# Text Styles
-C_BOLD='\033[1m'
-C_DIM='\033[2m'
+# theme-style ist Teil des Repos – kein stow nötig!
+# Pfad wird relativ zu diesem Skript berechnet.
+_THEME_STYLE="${0:A:h:h:h}/terminal/.config/theme-style"
+
+if [[ -f "$_THEME_STYLE" ]]; then
+    source "$_THEME_STYLE"
+else
+    # Fallback falls theme-style fehlt (sollte nie passieren)
+    echo "WARNUNG: theme-style nicht gefunden: $_THEME_STYLE" >&2
+    echo "         Verwende minimale Farben als Fallback" >&2
+    typeset -gx C_RESET=$'\033[0m'
+    typeset -gx C_BOLD=$'\033[1m'
+    typeset -gx C_DIM=$'\033[2m'
+    typeset -gx C_GREEN=$'\033[32m'
+    typeset -gx C_RED=$'\033[31m'
+    typeset -gx C_YELLOW=$'\033[33m'
+    typeset -gx C_BLUE=$'\033[34m'
+    typeset -gx C_MAUVE=$'\033[35m'
+    typeset -gx C_TEXT=$'\033[37m'
+    typeset -gx C_OVERLAY0=$'\033[90m'
+fi
+unset _THEME_STYLE
 
 # ------------------------------------------------------------
 # Logging-Helper
