@@ -143,7 +143,7 @@ ff                                  # System-Info anzeigen
 
 ## Installierte Pakete
 
-### CLI-Tools (via Homebrew)
+### CLI-Tools (Basis)
 
 | Paket | Beschreibung |
 | ----- | ------------ |
@@ -155,6 +155,11 @@ ff                                  # System-Info anzeigen
 | `zoxide` | Smartes cd |
 | `mas` | Mac App Store CLI |
 | `markdownlint-cli2` | Markdown-Linter |
+
+### Moderne CLI-Ersetzungen
+
+| Paket | Beschreibung |
+| ----- | ------------ |
 | `eza` | ls-Ersatz mit Icons |
 | `bat` | cat mit Syntax-Highlighting |
 | `ripgrep` | Schneller grep-Ersatz |
@@ -162,20 +167,30 @@ ff                                  # System-Info anzeigen
 | `btop` | Ressourcen-Monitor |
 | `fastfetch` | System-Info |
 | `lazygit` | Terminal-UI für Git |
+
+### ZSH-Plugins
+
+| Paket | Beschreibung |
+| ----- | ------------ |
 | `zsh-syntax-highlighting` | Syntax-Highlighting |
 | `zsh-autosuggestions` | History-Vorschläge |
 
-### Apps & Fonts (via Cask)
+### Fonts
 
 | Paket | Beschreibung |
 | ----- | ------------ |
 | `font-meslo-lg-nerd-font` | Nerd Font für Terminal |
+
+### GUI Apps (Casks)
+
+| Paket | Beschreibung |
+| ----- | ------------ |
 | `claude-code` | KI-Coding-Assistent |
 
-### Mac App Store Apps (via mas)
+### Mac App Store
 
-| App | Beschreibung |
-| --- | ------------ |
+| Paket | Beschreibung |
+| ----- | ------------ |
 | Xcode | Apple IDE |
 | Pages | Textverarbeitung |
 | Numbers | Tabellenkalkulation |
