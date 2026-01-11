@@ -4,7 +4,7 @@
 # Zweck   : Hauptkonfiguration für interaktive ZSH Shells
 # Pfad    : ~/.zshrc
 # Laden   : .zshenv → .zprofile → [.zshrc] → .zlogin
-# Theme   : ~/.config/theme-colors (tldr catppuccin)
+# Theme   : ~/.config/theme-style (tldr catppuccin)
 # Docs    : https://zsh.sourceforge.io/Doc/Release/Files.html#Startup_002fShutdown-Files
 # ============================================================
 
@@ -45,8 +45,8 @@ fi
 # ------------------------------------------------------------
 # Farben und modulare Alias-Dateien aus ~/.config/alias/
 
-# Catppuccin Mocha ANSI-Farben ($C_GREEN, $C_RED, etc.)
-[[ -f "$HOME/.config/theme-colors" ]] && source "$HOME/.config/theme-colors"
+# Catppuccin Mocha ANSI-Farben und Text-Styles ($C_GREEN, $C_BOLD, etc.)
+[[ -f "$HOME/.config/theme-style" ]] && source "$HOME/.config/theme-style"
 
 # Lädt alle .alias-Dateien aus ~/.config/alias/
 for alias_file in "$HOME/.config/alias"/*.alias(N-.on); do

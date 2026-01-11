@@ -1,12 +1,12 @@
 # ============================================================
-# theme-colors - Catppuccin Mocha Theme-Registry
+# theme-style - Catppuccin Mocha Theme-Variablen
 # ============================================================
-# Zweck   : Zentrale Farbvariablen + Theme-Quellen-Dokumentation
-# Pfad    : ~/.config/theme-colors
+# Zweck   : Zentrale Farb- und Text-Style-Variablen für Shell-Ausgaben
+# Pfad    : ~/.config/theme-style
 # Docs    : https://catppuccin.com/palette
 # ============================================================
 # WICHTIG: Bei Änderungen auch setup/bootstrap.sh aktualisieren!
-#          Bootstrap kann theme-colors nicht sourcen (läuft vor stow).
+#          Bootstrap kann theme-style nicht sourcen (läuft vor stow).
 # ============================================================
 
 # ------------------------------------------------------------
@@ -25,7 +25,7 @@
 #   zsh-syntax    | ~/.config/zsh/catppuccin_mocha-*   | github.com/catppuccin/zsh-syntax-highlighting | upstream
 #   Terminal.app  | ~/dotfiles/setup/                  | github.com/catppuccin/Terminal.app          | upstream
 #   Xcode         | ~/dotfiles/setup/                  | github.com/catppuccin/xcode                 | upstream
-#   theme-colors  | ~/.config/theme-colors             | manual                                      | manual
+#   theme-style   | ~/.config/theme-style              | manual                                      | manual
 #
 # Status-Legende:
 #   upstream      = Unverändert aus offiziellem Catppuccin-Repo

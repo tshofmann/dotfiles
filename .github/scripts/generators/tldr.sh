@@ -486,9 +486,9 @@ generate_dotfiles_tldr() {
 }
 
 # ------------------------------------------------------------
-# Generator: catppuccin.page.md aus theme-colors
+# Generator: catppuccin.page.md aus theme-style
 # ------------------------------------------------------------
-# Parst Theme-Quellen aus ~/.config/theme-colors Header
+# Parst Theme-Quellen aus ~/.config/theme-style Header
 # Format: tool | config-pfad | upstream-repo | status
 # ------------------------------------------------------------
 generate_catppuccin_page() {
@@ -498,10 +498,10 @@ generate_catppuccin_page() {
     local -A theme_paths=()          # Pfad zur Config
     local -A theme_repos=()          # Upstream-Repo URL
 
-    local theme_colors_file="$DOTFILES_DIR/terminal/.config/theme-colors"
-    [[ ! -f "$theme_colors_file" ]] && return 1
+    local theme_style_file="$DOTFILES_DIR/terminal/.config/theme-style"
+    [[ ! -f "$theme_style_file" ]] && return 1
 
-    # Parse Theme-Quellen Block aus theme-colors
+    # Parse Theme-Quellen Block aus theme-style
     local in_block=false
     while IFS= read -r line; do
         # Block-Start erkennen
@@ -557,7 +557,7 @@ generate_catppuccin_page() {
                 themes_manual[$tc_tool]="kein offizielles Repo"
                 ;;
         esac
-    done < "$theme_colors_file"
+    done < "$theme_style_file"
 
     # 3. Generiere Markdown
     local output="# catppuccin
@@ -608,7 +608,7 @@ generate_catppuccin_page() {
     output+="
 - Zentrale Shell-Farbvariablen in Skripten nutzen:
 
-\`source ~/.config/theme-colors && echo \"\\\${C_GREEN}Erfolg\\\${C_RESET}\"\`
+\`source ~/.config/theme-style && echo \"\\\${C_GREEN}Erfolg\\\${C_RESET}\"\`
 
 - Upstream Theme-Repositories:
 

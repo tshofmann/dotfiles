@@ -6,7 +6,7 @@
 # Docs    : https://github.com/junegunn/fzf#environment-variables
 # ============================================================
 # Aliase  : ~/.config/alias/fzf.alias (zf, fkill, fman, fa, fenv)
-# Theme   : ~/.config/theme-colors
+# Theme   : ~/.config/theme-style
 # ============================================================
 
 # ------------------------------------------------------------

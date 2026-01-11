@@ -4,7 +4,7 @@
 # Zweck   : Aliase für Homebrew Paketverwaltung
 # Pfad    : ~/.config/alias/brew.alias
 # Docs    : https://docs.brew.sh/Manpage
-# Nutzt   : fzf (Interactive), theme-colors (Farben für brewv)
+# Nutzt   : fzf (Interactive), theme-style (Farben für brewv)
 # ============================================================
 # Hinweis : Kein Guard für brew – ohne Homebrew ist dieses
 #           dotfiles-Repository ohnehin nicht nutzbar.
@@ -49,7 +49,7 @@ fi
 # Versionsübersicht
 # ------------------------------------------------------------
 # Brewfile Versionsübersicht – zeigt installierte Versionen aller Pakete
-# Nutzt   : theme-colors ($C_MAUVE, $C_GREEN, $C_TEXT, $C_RESET)
+# Nutzt   : theme-style ($C_MAUVE, $C_GREEN, $C_TEXT, $C_RESET)
 brewv() {
     local brewfile="${DOTFILES_DIR:-$HOME/dotfiles}/setup/Brewfile"
 

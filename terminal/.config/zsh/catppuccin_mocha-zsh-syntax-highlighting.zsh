@@ -1,5 +1,5 @@
 # Catppuccin Mocha Theme (for zsh-syntax-highlighting)
-# Theme   : ~/.config/theme-colors
+# Theme   : ~/.config/theme-style
 # License: MIT
 #
 # WICHTIG: Diese Datei muss VOR dem zsh-syntax-highlighting Plugin geladen werden!

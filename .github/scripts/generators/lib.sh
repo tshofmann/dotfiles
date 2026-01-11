@@ -18,7 +18,7 @@ FZF_CONFIG="$DOTFILES_DIR/terminal/.config/fzf/config"
 TEALDEER_DIR="$DOTFILES_DIR/terminal/.config/tealdeer/pages"
 BREWFILE="$DOTFILES_DIR/setup/Brewfile"
 BOOTSTRAP="$DOTFILES_DIR/setup/bootstrap.sh"
-SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-colors"
+SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-style"
 
 # Farben (Catppuccin Mocha) – zentral definiert
 [[ -f "$SHELL_COLORS" ]] && source "$SHELL_COLORS"

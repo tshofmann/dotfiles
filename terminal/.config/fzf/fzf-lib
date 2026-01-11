@@ -17,10 +17,10 @@ FZF_LIB_LOADED=1
 # Shell-Farben laden (Catppuccin Mocha)
 # ------------------------------------------------------------
 _fzf_load_colors() {
-    local colors_file="${XDG_CONFIG_HOME:-$HOME/.config}/theme-colors"
+    local colors_file="${XDG_CONFIG_HOME:-$HOME/.config}/theme-style"
     [[ -f "$colors_file" ]] && source "$colors_file"
     
-    # Fallback: leere Werte wenn theme-colors nicht verfügbar
+    # Fallback: leere Werte wenn theme-style nicht verfügbar
     : "${C_MAUVE:=}"
     : "${C_GREEN:=}"
     : "${C_BLUE:=}"

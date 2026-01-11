@@ -6,7 +6,7 @@
 // Docs    : https://github.com/fastfetch-cli/fastfetch
 // ============================================================
 // Aliase  : ~/.config/alias/fastfetch.alias (ff, neofetch)
-// Theme   : ~/.config/theme-colors
+// Theme   : ~/.config/theme-style
 // Hinweis : Basiert auf Preset 13 mit Catppuccin Mocha Farben
 //           Logo-Typ "builtin" wählt automatisch das OS-Logo
 //           Logo-Farben und Key-Icons nutzen Catppuccin Palette
