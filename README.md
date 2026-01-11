@@ -5,7 +5,7 @@
 [![macOS](https://img.shields.io/badge/macOS-26%2B-black?logo=apple)](https://www.apple.com/macos/)
 [![Shell: zsh](https://img.shields.io/badge/Shell-zsh-green?logo=gnubash)](https://www.zsh.org/)
 
-> macOS Setup für Apple Silicon (arm64) – automatisiert, idempotent, minimal.
+> Terminal-Setup für Apple Silicon – automatisiert, idempotent, minimal.
 
 ## Quickstart
 

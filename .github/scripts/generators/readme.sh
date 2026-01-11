@@ -31,7 +31,7 @@ generate_readme_md() {
 [![macOS](https://img.shields.io/badge/macOS-${macos_min}%2B-black?logo=apple)](https://www.apple.com/macos/)
 [![Shell: zsh](https://img.shields.io/badge/Shell-zsh-green?logo=gnubash)](https://www.zsh.org/)
 
-> macOS Setup für Apple Silicon (arm64) – automatisiert, idempotent, minimal.
+> ${PROJECT_DESCRIPTION}
 
 ## Quickstart
 

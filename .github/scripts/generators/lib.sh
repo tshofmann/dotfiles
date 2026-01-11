@@ -26,6 +26,14 @@ SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-style"
 # Farben (Catppuccin Mocha) – zentral definiert
 [[ -f "$SHELL_COLORS" ]] && source "$SHELL_COLORS"
 
+# ------------------------------------------------------------
+# Projekt-Metadaten (Single Source of Truth)
+# ------------------------------------------------------------
+# Kurzbeschreibung für README, tldr, GitHub Repo Description
+readonly PROJECT_TAGLINE="Dotfiles mit ZSH, Catppuccin-Theme und modernen CLI-Tools."
+# Erweiterte Beschreibung für README
+readonly PROJECT_DESCRIPTION="Terminal-Setup für Apple Silicon – automatisiert, idempotent, minimal."
+
 # dothelp-Kategorien (Single Source of Truth für readme.sh + tldr.sh)
 readonly DOTHELP_CAT_ALIASES="Aliase"
 readonly DOTHELP_CAT_KEYBINDINGS="Keybindings"
