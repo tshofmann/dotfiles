@@ -170,11 +170,28 @@ main() {
     print -P "${C_GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
     print -P ""
     section "Nächste Schritte"
-    print -P "  ${C_MAUVE}1.${C_RESET} Terminal.app neu starten für vollständige Übernahme aller Einstellungen"
-    print -P "  ${C_MAUVE}2.${C_RESET} Konfigurationsdateien verlinken: ${C_DIM}cd $DOTFILES_DIR && stow --adopt -R terminal editor && git reset --hard HEAD${C_RESET}"
-    print -P "  ${C_MAUVE}3.${C_RESET} Git-Hooks aktivieren: ${C_DIM}git config core.hooksPath .github/hooks${C_RESET}"
-    print -P "  ${C_MAUVE}4.${C_RESET} bat Theme-Cache bauen: ${C_DIM}bat cache --build${C_RESET}"
-    print -P "  ${C_MAUVE}5.${C_RESET} tldr-Pages herunterladen: ${C_DIM}tldr --update${C_RESET}"
+
+    # Schritt-Zähler
+    local step=1
+
+    # OS-spezifisch: Terminal neu starten
+    if is_macos; then
+        print -P "  ${C_MAUVE}${step}.${C_RESET} Terminal.app neu starten für vollständige Übernahme aller Einstellungen"
+        (( step++ ))
+    elif is_linux; then
+        print -P "  ${C_MAUVE}${step}.${C_RESET} Terminal neu starten oder Shell neuladen: ${C_DIM}exec zsh${C_RESET}"
+        (( step++ ))
+    fi
+
+    # Universell: stow, git-hooks, bat, tldr
+    print -P "  ${C_MAUVE}${step}.${C_RESET} Konfigurationsdateien verlinken: ${C_DIM}cd $DOTFILES_DIR && stow --adopt -R terminal editor && git reset --hard HEAD${C_RESET}"
+    (( step++ ))
+    print -P "  ${C_MAUVE}${step}.${C_RESET} Git-Hooks aktivieren: ${C_DIM}git config core.hooksPath .github/hooks${C_RESET}"
+    (( step++ ))
+    print -P "  ${C_MAUVE}${step}.${C_RESET} bat Theme-Cache bauen: ${C_DIM}bat cache --build${C_RESET}"
+    (( step++ ))
+    print -P "  ${C_MAUVE}${step}.${C_RESET} tldr-Pages herunterladen: ${C_DIM}tldr --update${C_RESET}"
+
     print -P ""
     print -P "  ${C_GREEN}💡 Gib im Terminal '${C_BOLD}dothelp${C_RESET}${C_GREEN}' ein für Hilfe/Dokumentation${C_RESET}"
     print -P ""
