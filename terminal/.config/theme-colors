@@ -79,4 +79,10 @@ typeset -gx C_BASE=$'\033[38;2;30;30;46m'          # #1E1E2E
 typeset -gx C_MANTLE=$'\033[38;2;24;24;37m'        # #181825
 typeset -gx C_CRUST=$'\033[38;2;17;17;27m'         # #11111B
 
+# ---- Text Styles ----
+typeset -gx C_BOLD=$'\033[1m'                      # Fett
+typeset -gx C_DIM=$'\033[2m'                       # Abgeschwächt
+typeset -gx C_ITALIC=$'\033[3m'                    # Kursiv
+typeset -gx C_UNDERLINE=$'\033[4m'                 # Unterstrichen
+
 # EOF

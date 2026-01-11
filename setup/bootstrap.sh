@@ -22,6 +22,9 @@ C_YELLOW='\033[38;2;249;226;175m'
 C_BLUE='\033[38;2;137;180;250m'
 C_TEXT='\033[38;2;205;214;244m'
 C_OVERLAY0='\033[38;2;108;112;134m'
+# Text Styles
+C_BOLD='\033[1m'
+C_DIM='\033[2m'
 
 # ------------------------------------------------------------
 # Logging-Helper
@@ -522,5 +525,5 @@ log "  3. Git-Hooks aktivieren: git config core.hooksPath .github/hooks"
 log "  4. bat Theme-Cache bauen: bat cache --build"
 log "  5. tldr-Pages herunterladen: tldr --update"
 print ""
-print "  ${C_GREEN}💡 Gib im Terminal '\033[1mdothelp${C_RESET}${C_GREEN}' ein für Hilfe/Dokumentation${C_RESET}"
+print "  ${C_GREEN}💡 Gib im Terminal '${C_BOLD}dothelp${C_RESET}${C_GREEN}' ein für Hilfe/Dokumentation${C_RESET}"
 print ""
