@@ -73,7 +73,7 @@ has_bootstrap_modules() {
 extract_macos_min_version_from_module() {
     local validation="$BOOTSTRAP_MODULES/validation.sh"
     [[ -f "$validation" ]] || { echo "26"; return; }
-    local version=$(grep "^readonly MACOS_MIN_VERSION=" "$validation" | sed 's/.*=\([0-9]*\).*/\1/')
+    local version=$(grep "readonly MACOS_MIN_VERSION=" "$validation" | sed 's/.*=\([0-9]*\).*/\1/')
     echo "${version:-26}"
 }
 
@@ -81,7 +81,7 @@ extract_macos_min_version_from_module() {
 extract_macos_tested_version_from_module() {
     local validation="$BOOTSTRAP_MODULES/validation.sh"
     [[ -f "$validation" ]] || { echo "26"; return; }
-    local version=$(grep "^readonly MACOS_TESTED_VERSION=" "$validation" | sed 's/.*=\([0-9]*\).*/\1/')
+    local version=$(grep "readonly MACOS_TESTED_VERSION=" "$validation" | sed 's/.*=\([0-9]*\).*/\1/')
     echo "${version:-26}"
 }
 
@@ -160,12 +160,18 @@ get_bootstrap_module_order() {
             break
         fi
 
-        # Modul-Namen extrahieren (Format: "modulname  # Kommentar")
+        # Modul-Namen extrahieren (Format: "modulname  # Kommentar" oder "prefix:modulname")
         if $in_modules; then
             # Kommentar entfernen und trimmen
             local module="${trimmed%%#*}"
             module="${module#"${module%%[![:space:]]*}"}"
             module="${module%"${module##*[![:space:]]}"}"
+            
+            # Plattform-Prefix entfernen falls vorhanden (macos:, linux:, etc.)
+            if [[ "$module" == *":"* ]]; then
+                module="${module#*:}"
+            fi
+            
             # Nur gültige Modul-Namen (alphanumerisch + Bindestrich)
             [[ "$module" =~ ^[a-z][a-z0-9-]*$ ]] && echo "$module"
         fi

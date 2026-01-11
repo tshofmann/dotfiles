@@ -82,10 +82,22 @@ C_DIM='\033[2m'
 # Logging-Helper
 # ------------------------------------------------------------
 # Format: Emoji + Nachricht (für konsistente Ausgabe)
-log()  { echo -e "${C_BLUE}→${C_RESET} $*"; }
-ok()   { echo -e "${C_GREEN}✔${C_RESET} $*"; }
-err()  { echo -e "${C_RED}✖${C_RESET} $*" >&2; }
-warn() { echo -e "${C_YELLOW}⚠${C_RESET} $*"; }
+log()  { print -P "${C_BLUE}→${C_RESET} $*"; }
+ok()   { print -P "${C_GREEN}✔${C_RESET} $*"; }
+err()  { print -P "${C_RED}✖${C_RESET} $*" >&2; }
+warn() { print -P "${C_YELLOW}⚠${C_RESET} $*"; }
+
+# Sektions-Header (wie brewv)
+# Verwendung: section "Titel"
+section() {
+    print -P "\n${C_MAUVE}━━━ ${C_BOLD}$1${C_RESET}${C_MAUVE} ━━━${C_RESET}"
+}
+
+# Sektions-Abschluss mit Status
+# Verwendung: section_end "3 Pakete installiert"
+section_end() {
+    print -P "${C_OVERLAY0}    └─ $*${C_RESET}"
+}
 
 # ------------------------------------------------------------
 # Modul-Status Tracking
@@ -181,10 +193,10 @@ run_module() {
 }
 
 # ------------------------------------------------------------
-# Konfiguration (readonly verhindert versehentliche Überschreibung)
+# Konfiguration (Pfade für Module)
 # ------------------------------------------------------------
 # Diese Variablen werden von allen Modulen verwendet
-# MODULES_DIR wird vom Orchestrator gesetzt, hier Fallback
+# MODULES_DIR wird vom Orchestrator gesetzt, hier Fallback für direktes Sourcing
 if [[ -z "${MODULES_DIR:-}" ]]; then
     MODULES_DIR="${0:A:h}"
 fi
@@ -194,3 +206,6 @@ fi
 if [[ -z "${DOTFILES_DIR:-}" ]]; then
     DOTFILES_DIR="${SCRIPT_DIR:h}"
 fi
+
+# Exportiere für Subprozesse
+export MODULES_DIR SCRIPT_DIR DOTFILES_DIR

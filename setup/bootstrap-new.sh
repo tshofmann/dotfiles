@@ -129,11 +129,21 @@ readonly -a MODULES=(
 # Hauptprogramm
 # ------------------------------------------------------------
 main() {
-    # macOS-Version für Banner (wird von validation.sh gesetzt, hier Fallback)
-    local macos_version
-    macos_version=$(sw_vers -productVersion 2>/dev/null || echo "unbekannt")
+    # Versions-Info für Banner
+    local os_version
+    if is_macos; then
+        os_version="macOS $(sw_vers -productVersion 2>/dev/null || echo "?")"
+    elif is_linux; then
+        os_version="$PLATFORM_OS ($PLATFORM_ARCH)"
+    else
+        os_version="$PLATFORM_OS"
+    fi
 
-    print "==> ${C_BOLD}macOS Bootstrap${C_RESET} ${C_DIM}(Version $macos_version)${C_RESET}"
+    # Banner (minimalistisch wie brewv)
+    print -P ""
+    print -P "${C_MAUVE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
+    print -P "${C_MAUVE}  ${C_BOLD}Dotfiles Bootstrap${C_RESET}  ${C_DIM}$os_version${C_RESET}"
+    print -P "${C_MAUVE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
 
     # Module in definierter Reihenfolge laden und ausführen
     for module in "${MODULES[@]}"; do
@@ -154,18 +164,20 @@ main() {
     CURRENT_STEP=""
 
     # Abschluss-Meldung
-    print ""
-    ok "Setup abgeschlossen"
-    print ""
-    log "${C_BOLD}Nächste Schritte:${C_RESET}"
-    log "  ${C_BOLD}1.${C_RESET} Terminal.app neu starten für vollständige Übernahme aller Einstellungen"
-    log "  ${C_BOLD}2.${C_RESET} Konfigurationsdateien verlinken: ${C_DIM}cd $DOTFILES_DIR && stow --adopt -R terminal editor && git reset --hard HEAD${C_RESET}"
-    log "  ${C_BOLD}3.${C_RESET} Git-Hooks aktivieren: ${C_DIM}git config core.hooksPath .github/hooks${C_RESET}"
-    log "  ${C_BOLD}4.${C_RESET} bat Theme-Cache bauen: ${C_DIM}bat cache --build${C_RESET}"
-    log "  ${C_BOLD}5.${C_RESET} tldr-Pages herunterladen: ${C_DIM}tldr --update${C_RESET}"
-    print ""
-    print "  ${C_GREEN}💡 Gib im Terminal '${C_BOLD}dothelp${C_RESET}${C_GREEN}' ein für Hilfe/Dokumentation${C_RESET}"
-    print ""
+    print -P ""
+    print -P "${C_GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
+    print -P "${C_GREEN}  ✔ Setup abgeschlossen${C_RESET}"
+    print -P "${C_GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
+    print -P ""
+    section "Nächste Schritte"
+    print -P "  ${C_MAUVE}1.${C_RESET} Terminal.app neu starten"
+    print -P "  ${C_MAUVE}2.${C_RESET} Configs verlinken: ${C_DIM}cd $DOTFILES_DIR && stow --adopt -R terminal editor && git reset --hard HEAD${C_RESET}"
+    print -P "  ${C_MAUVE}3.${C_RESET} Git-Hooks: ${C_DIM}git config core.hooksPath .github/hooks${C_RESET}"
+    print -P "  ${C_MAUVE}4.${C_RESET} bat Cache: ${C_DIM}bat cache --build${C_RESET}"
+    print -P "  ${C_MAUVE}5.${C_RESET} tldr Pages: ${C_DIM}tldr --update${C_RESET}"
+    print -P ""
+    print -P "  ${C_GREEN}💡${C_RESET} ${C_TEXT}Gib${C_RESET} ${C_BOLD}'dothelp'${C_RESET} ${C_TEXT}ein für Dokumentation${C_RESET}"
+    print -P ""
 }
 
 main "$@"

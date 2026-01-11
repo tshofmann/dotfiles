@@ -78,6 +78,7 @@ install_brewfile() {
 # Haupt-Setup-Funktion
 # ------------------------------------------------------------
 setup_homebrew() {
+    section "Homebrew"
     install_homebrew || return 1
     install_brewfile || return 1
 

@@ -168,6 +168,7 @@ validate_build_tools() {
 # ------------------------------------------------------------
 # Führt alle Validierungen in der richtigen Reihenfolge aus
 setup_validation() {
+    section "System-Prüfung"
     validate_platform || return 1
     validate_network || return 1
     validate_write_permissions || return 1
