@@ -49,11 +49,35 @@ trap cleanup EXIT
 # Modul-Loader
 # ------------------------------------------------------------
 # Lädt ein Modul und führt dessen setup_* Funktion aus
+# Unterstützt Plattform-Prefixe: "macos:", "linux:", "fedora:" etc.
 # Argumente:
-#   $1 - Modul-Name (ohne .sh)
+#   $1 - Modul-Spezifikation (z.B. "validation" oder "macos:terminal-profile")
 # Rückgabe: 0 = Erfolg, 1 = Fehler, 2 = Übersprungen
 load_module() {
-    local module="$1"
+    local spec="$1"
+    local platform_prefix=""
+    local module=""
+
+    # Plattform-Prefix extrahieren falls vorhanden
+    if [[ "$spec" == *":"* ]]; then
+        platform_prefix="${spec%%:*}"
+        module="${spec#*:}"
+    else
+        module="$spec"
+    fi
+
+    # Plattform-Filter anwenden
+    if [[ -n "$platform_prefix" ]]; then
+        case "$platform_prefix" in
+            macos)  is_macos || { log "Überspringe $module (nicht macOS)"; return 2; } ;;
+            linux)  is_linux || { log "Überspringe $module (nicht Linux)"; return 2; } ;;
+            fedora) is_fedora || { log "Überspringe $module (nicht Fedora)"; return 2; } ;;
+            debian) is_debian || { log "Überspringe $module (nicht Debian)"; return 2; } ;;
+            arch)   is_arch || { log "Überspringe $module (nicht Arch)"; return 2; } ;;
+            *)      warn "Unbekannter Plattform-Prefix: $platform_prefix" ;;
+        esac
+    fi
+
     local module_file="$MODULES_DIR/${module}.sh"
 
     # Modul-Datei prüfen
@@ -85,14 +109,20 @@ load_module() {
 # ------------------------------------------------------------
 # WICHTIG: Reihenfolge beachten! Module können von vorherigen abhängen.
 # Dokumentation in jedem Modul unter "Benötigt:"
+#
+# Plattform-spezifische Module:
+#   - Prefix "macos:" = nur auf macOS laden
+#   - Prefix "linux:" = nur auf Linux laden
+#   - Prefix "fedora:" = nur auf Fedora laden
+#   - Ohne Prefix = auf allen Plattformen laden
 readonly -a MODULES=(
-    validation         # Architektur, macOS, Netzwerk, Rechte, Xcode CLI
-    homebrew           # Homebrew + Brewfile (benötigt: validation)
-    font               # Font-Verifikation (benötigt: homebrew)
-    terminal-profile   # Terminal-Profil Import (benötigt: font)
-    starship           # Starship-Theme (benötigt: homebrew)
-    xcode-theme        # Xcode Theme (optional, wenn Xcode installiert)
-    zsh-sessions       # ZSH Sessions Check (Info-Modul)
+    validation              # Architektur, OS, Netzwerk, Rechte (plattformübergreifend)
+    homebrew                # Homebrew/Linuxbrew + Brewfile
+    font                    # Font-Verifikation
+    macos:terminal-profile  # Terminal-Profil Import (nur macOS)
+    starship                # Starship-Theme (plattformübergreifend)
+    macos:xcode-theme       # Xcode Theme (nur macOS)
+    macos:zsh-sessions      # ZSH Sessions Check (nur macOS)
 )
 
 # ------------------------------------------------------------

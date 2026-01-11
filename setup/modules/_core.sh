@@ -12,6 +12,56 @@
 readonly _BOOTSTRAP_CORE_LOADED=1
 
 # ------------------------------------------------------------
+# Plattform-Detection
+# ------------------------------------------------------------
+# Erkennt Betriebssystem und Architektur für plattformspezifische Module
+detect_platform() {
+    local os arch
+
+    case "$(uname -s)" in
+        Darwin) os="macos" ;;
+        Linux)
+            # Linux-Distribution erkennen
+            if [[ -f /etc/fedora-release ]]; then
+                os="fedora"
+            elif [[ -f /etc/debian_version ]]; then
+                os="debian"
+            elif [[ -f /etc/arch-release ]]; then
+                os="arch"
+            else
+                os="linux"
+            fi
+            ;;
+        *) os="unknown" ;;
+    esac
+
+    case "$(uname -m)" in
+        arm64|aarch64) arch="arm64" ;;
+        x86_64|amd64)  arch="x86_64" ;;
+        *)             arch="unknown" ;;
+    esac
+
+    echo "${os}|${arch}"
+}
+
+# Plattform-Variablen (readonly nach Initialisierung)
+_platform_info=$(detect_platform)
+readonly PLATFORM_OS="${_platform_info%%|*}"
+readonly PLATFORM_ARCH="${_platform_info##*|}"
+unset _platform_info
+
+# Helper: Prüft ob wir auf macOS sind
+is_macos() { [[ "$PLATFORM_OS" == "macos" ]]; }
+
+# Helper: Prüft ob wir auf Linux sind (beliebige Distro)
+is_linux() { [[ "$PLATFORM_OS" == "linux" || "$PLATFORM_OS" == "fedora" || "$PLATFORM_OS" == "debian" || "$PLATFORM_OS" == "arch" ]]; }
+
+# Helper: Prüft ob spezifische Distro
+is_fedora() { [[ "$PLATFORM_OS" == "fedora" ]]; }
+is_debian() { [[ "$PLATFORM_OS" == "debian" ]]; }
+is_arch()   { [[ "$PLATFORM_OS" == "arch" ]]; }
+
+# ------------------------------------------------------------
 # Farben (Catppuccin Mocha)
 # ------------------------------------------------------------
 # WICHTIG: Synchron halten mit terminal/.config/theme-style!

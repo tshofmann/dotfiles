@@ -2,11 +2,12 @@
 # ============================================================
 # validation.sh - System-Validierungen für Bootstrap
 # ============================================================
-# Zweck       : Prüft Voraussetzungen (Architektur, macOS, Netzwerk, Rechte)
+# Zweck       : Prüft Voraussetzungen (Architektur, OS, Netzwerk, Rechte)
 # Pfad        : setup/modules/validation.sh
 # Benötigt    : _core.sh
-# CURRENT_STEP: Architektur-Check, macOS-Version-Check, Netzwerk-Prüfung,
-#               Schreibrechte-Prüfung, Xcode CLI Tools
+# Plattform   : Universell (macOS + Linux)
+# CURRENT_STEP: Plattform-Check, Netzwerk-Prüfung, Schreibrechte-Prüfung,
+#               Xcode CLI Tools (macOS), Build-Tools (Linux)
 # ============================================================
 
 # Guard: Core muss geladen sein
@@ -16,57 +17,66 @@
 }
 
 # ------------------------------------------------------------
-# Konfiguration
+# Konfiguration (plattformspezifisch)
 # ------------------------------------------------------------
-# macOS-Versionen (Single Source of Truth für Generatoren)
-# Homebrew Tier 1 Support: macOS 14+, siehe https://docs.brew.sh/Support-Tiers
-readonly MACOS_MIN_VERSION=26     # Unterstützt ab (ändert sich selten)
-readonly MACOS_TESTED_VERSION=26  # Zuletzt getestet auf (ändert sich bei Upgrade)
+if is_macos; then
+    # macOS-Versionen (Single Source of Truth für Generatoren)
+    # Homebrew Tier 1 Support: macOS 14+, siehe https://docs.brew.sh/Support-Tiers
+    readonly MACOS_MIN_VERSION=26     # Unterstützt ab (ändert sich selten)
+    readonly MACOS_TESTED_VERSION=26  # Zuletzt getestet auf (ändert sich bei Upgrade)
 
-# Homebrew-Prefix für Apple Silicon
-readonly BREW_PREFIX="/opt/homebrew"
+    # Homebrew-Prefix für Apple Silicon
+    readonly BREW_PREFIX="/opt/homebrew"
+elif is_linux; then
+    # Linuxbrew-Prefix
+    readonly BREW_PREFIX="/home/linuxbrew/.linuxbrew"
+fi
 
 # ------------------------------------------------------------
-# Architektur-Prüfung
+# Plattform-Prüfung
 # ------------------------------------------------------------
-# Nur Apple Silicon (arm64) wird unterstützt
-validate_architecture() {
-    CURRENT_STEP="Architektur-Check"
+validate_platform() {
+    CURRENT_STEP="Plattform-Check"
 
-    if [[ $(uname -m) != "arm64" ]]; then
-        err "Dieses Setup ist nur für Apple Silicon (arm64) vorgesehen"
+    if is_macos; then
+        # Nur Apple Silicon (arm64) wird auf macOS unterstützt
+        if [[ "$PLATFORM_ARCH" != "arm64" ]]; then
+            err "Dieses Setup ist nur für Apple Silicon (arm64) vorgesehen"
+            err "Erkannte Architektur: $PLATFORM_ARCH"
+            return 1
+        fi
+        ok "macOS auf Apple Silicon (arm64) erkannt"
+
+        # macOS-Version prüfen
+        local macos_version macos_major
+        macos_version=$(sw_vers -productVersion)
+        macos_major=${macos_version%%.*}
+
+        # Exportiere für andere Module
+        export MACOS_VERSION="$macos_version"
+        export MACOS_MAJOR="$macos_major"
+
+        if (( macos_major < MACOS_MIN_VERSION )); then
+            err "macOS $macos_version wird nicht unterstützt"
+            err "Unterstützt ab: macOS $MACOS_MIN_VERSION"
+            err "Getestet auf: macOS $MACOS_TESTED_VERSION"
+            return 1
+        fi
+        ok "macOS $macos_version unterstützt"
+
+    elif is_linux; then
+        ok "Linux erkannt: $PLATFORM_OS ($PLATFORM_ARCH)"
+        # Linux-spezifische Checks hier hinzufügen
+    else
+        err "Nicht unterstützte Plattform: $PLATFORM_OS"
         return 1
     fi
 
-    ok "Apple Silicon (arm64) erkannt"
     return 0
 }
 
 # ------------------------------------------------------------
-# macOS-Version Prüfung
-# ------------------------------------------------------------
-validate_macos_version() {
-    CURRENT_STEP="macOS-Version-Check"
-
-    local macos_version macos_major
-    macos_version=$(sw_vers -productVersion)
-    macos_major=${macos_version%%.*}
-
-    # Exportiere für andere Module
-    export MACOS_VERSION="$macos_version"
-    export MACOS_MAJOR="$macos_major"
-
-    if (( macos_major < MACOS_MIN_VERSION )); then
-        err "macOS $macos_version wird nicht unterstützt"
-        err "Unterstützt ab: macOS $MACOS_MIN_VERSION"
-        err "Getestet auf: macOS $MACOS_TESTED_VERSION"
-        return 1
-    fi
-
-    ok "macOS $macos_version unterstützt"
-    return 0
-}
-
+# Netzwerk-Prüfung
 # ------------------------------------------------------------
 # Netzwerk-Prüfung
 # ------------------------------------------------------------
@@ -74,13 +84,14 @@ validate_macos_version() {
 validate_network() {
     CURRENT_STEP="Netzwerk-Prüfung"
 
-    # Verwendet curl HEAD-Request mit kurzem Timeout gegen Apple-Server
-    if ! curl -sfL --head --connect-timeout 5 --max-time 10 "https://apple.com" >/dev/null 2>&1; then
+    # Plattformunabhängiger Test gegen google.com (zuverlässiger als apple.com auf Linux)
+    local test_url="https://google.com"
+    if ! curl -sfL --head --connect-timeout 5 --max-time 10 "$test_url" >/dev/null 2>&1; then
         err "Keine Internetverbindung verfügbar"
         err "Das Bootstrap-Skript benötigt eine aktive Internetverbindung für:"
-        err "  • Homebrew-Installation"
+        err "  • Homebrew/Linuxbrew-Installation"
         err "  • Download von CLI-Tools und Fonts"
-        err "  • Mac App Store Apps (optional)"
+        is_macos && err "  • Mac App Store Apps (optional)"
         err ""
         err "Bitte Netzwerkverbindung herstellen und erneut versuchen."
         return 1
@@ -109,20 +120,40 @@ validate_write_permissions() {
 }
 
 # ------------------------------------------------------------
-# Xcode Command Line Tools
+# Build-Tools (plattformspezifisch)
 # ------------------------------------------------------------
-# Voraussetzung für git/clang und Homebrew
-validate_xcode_cli() {
-    CURRENT_STEP="Xcode CLI Tools"
+# macOS: Xcode CLI Tools, Linux: build-essential/Development Tools
+validate_build_tools() {
+    CURRENT_STEP="Build-Tools"
 
-    if ! xcode-select -p >/dev/null 2>&1; then
-        log "Xcode Command Line Tools werden benötigt (für git/Homebrew). Starte Installation..."
-        xcode-select --install || true
-        err "Bitte Installation der Command Line Tools abschließen und Skript danach erneut ausführen."
-        return 1
+    if is_macos; then
+        # Xcode Command Line Tools (Voraussetzung für git/clang und Homebrew)
+        if ! xcode-select -p >/dev/null 2>&1; then
+            log "Xcode Command Line Tools werden benötigt (für git/Homebrew). Starte Installation..."
+            xcode-select --install || true
+            err "Bitte Installation der Command Line Tools abschließen und Skript danach erneut ausführen."
+            return 1
+        fi
+        ok "Xcode CLI Tools vorhanden"
+
+    elif is_linux; then
+        # Prüfe ob grundlegende Build-Tools vorhanden sind
+        if ! command -v gcc >/dev/null 2>&1 && ! command -v clang >/dev/null 2>&1; then
+            warn "Keine Build-Tools gefunden (gcc/clang)"
+            if is_fedora; then
+                log "Installiere mit: sudo dnf groupinstall 'Development Tools'"
+            elif is_debian; then
+                log "Installiere mit: sudo apt install build-essential"
+            elif is_arch; then
+                log "Installiere mit: sudo pacman -S base-devel"
+            fi
+            # Kein harter Fehler - Homebrew kann einiges selbst mitbringen
+            warn "Homebrew wird versuchen, fehlende Tools zu installieren"
+        else
+            ok "Build-Tools vorhanden"
+        fi
     fi
 
-    ok "Xcode CLI Tools vorhanden"
     return 0
 }
 
@@ -131,11 +162,10 @@ validate_xcode_cli() {
 # ------------------------------------------------------------
 # Führt alle Validierungen in der richtigen Reihenfolge aus
 setup_validation() {
-    validate_architecture || return 1
-    validate_macos_version || return 1
+    validate_platform || return 1
     validate_network || return 1
     validate_write_permissions || return 1
-    validate_xcode_cli || return 1
+    validate_build_tools || return 1
 
     return 0
 }
