@@ -377,15 +377,38 @@ extract_section_items() {
     local in_section=false
     local prev_comment=""
 
+    local found_header=false      # Sektionsheader gefunden
+    local in_header_block=false   # Zwischen den Trennlinien des Headers
+    local skip_next_sep=false     # Nächste Trennlinie (nach Header) überspringen
+
     while IFS= read -r line; do
-        # Sektionsheader gefunden (exakter Match)
-        if [[ "$line" == "# ${section_name}" ]]; then
-            in_section=true
+        # Trennlinie behandeln
+        if [[ "$line" == "# ---"* ]]; then
+            if [[ "$skip_next_sep" == true ]]; then
+                # Trennlinie direkt nach Sektionsheader → überspringen
+                skip_next_sep=false
+                continue
+            fi
+            if [[ "$in_section" == true && "$found_header" == true ]]; then
+                # Bereits in Sektion und neue Trennlinie → nächste Sektion beginnt → beenden
+                break
+            fi
+            # Trennlinie könnte Header-Block starten
+            in_header_block=true
             continue
         fi
 
-        # Trennlinie überspringen
-        [[ "$in_section" == true && "$line" == "# ---"* ]] && continue
+        # Sektionsheader gefunden (nach Trennlinie)
+        if [[ "$in_header_block" == true && "$line" == "# ${section_name}" ]]; then
+            in_section=true
+            found_header=true
+            in_header_block=false
+            skip_next_sep=true  # Nächste Trennlinie (unter Header) überspringen
+            continue
+        fi
+
+        # Reset header block wenn keine Trennlinie mehr
+        in_header_block=false
 
         # Nächste Sektion oder Datei-Header beendet aktuelle Sektion
         if [[ "$in_section" == true ]]; then
