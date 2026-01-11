@@ -326,6 +326,20 @@ warn() { echo -e "${C_YELLOW}⚠${C_RESET} $*"; }
   - Müssen nicht dokumentiert werden
   - Für interne Helper, Parser, etc.
 
+#### Sektionen für automatische Dokumentation
+
+Bestimmte Sektionen in `.alias`-Dateien werden automatisch in `tldr dotfiles` dokumentiert:
+
+| Datei | Sektion | Erscheint in |
+| ------- | ------- | ------- |
+| `brew.alias` | `# Update & Wartung` | Homebrew |
+| `brew.alias` | `# Versionsübersicht` | Homebrew |
+| `dotfiles.alias` | `# Dotfiles Wartung` | Dotfiles-Wartung |
+
+> **Wichtig:** Neue Aliase und Funktionen müssen **innerhalb** der entsprechenden Sektion stehen,
+> nicht am Dateiende. Der Generator `extract_section_items()` extrahiert nur Items zwischen
+> Sektionsheader und nächster Sektion.
+
 ### Funktions-Syntax
 
 **Verwende diese Form (von `fa()` erkannt):**
