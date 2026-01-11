@@ -75,6 +75,20 @@
 
 `brewv`
 
+# Dotfiles-Wartung
+
+- Health-Check:
+
+`dothealth`
+
+- Dokumentation neu generieren:
+
+`dotdocs`
+
+- Symlinks neu verlinken (nach Änderungen in terminal/ oder editor/):
+
+`dotstow`
+
 # Verfügbare Hilfeseiten
 
 - Tools mit dotfiles-Patches (tldr <tool>):

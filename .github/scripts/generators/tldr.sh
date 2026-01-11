@@ -296,6 +296,31 @@ extract_alias_names() {
 }
 
 # ------------------------------------------------------------
+# Helper: Extrahiere Alias-Beschreibung aus Kommentar
+# ------------------------------------------------------------
+# Format: # Beschreibung – Details
+# Rückgabe: "Beschreibung" (Teil vor " – ")
+extract_alias_desc() {
+    local file="$1"
+    local alias_name="$2"
+    local desc_comment=""
+
+    while IFS= read -r line; do
+        # Beschreibungskommentar merken
+        if [[ "$line" == "# "* && "$line" != "# ---"* && "$line" != "# ==="* ]]; then
+            desc_comment="${line#\# }"
+        elif [[ "$line" == "alias ${alias_name}="* ]]; then
+            # Fand den Alias – gib Beschreibung zurück (Teil vor " – ")
+            echo "${desc_comment%% –*}"
+            return
+        else
+            # Reset wenn wir keinen Kommentar direkt vor dem Alias haben
+            [[ "$line" != "" ]] && desc_comment=""
+        fi
+    done < "$file"
+}
+
+# ------------------------------------------------------------
 # Helper: Extrahiere Funktionsbeschreibung aus Kommentar
 # ------------------------------------------------------------
 # Format: # Beschreibung – Details (ignoriert # Nutzt, # Voraussetzung etc.)
@@ -432,6 +457,17 @@ generate_dotfiles_page() {
         local brewv_desc=$(extract_function_desc "$brew_alias" "brewv")
         [[ -n "$brewup_desc" ]] && output+="- ${brewup_desc}:\n\n\`brewup\`\n\n"
         [[ -n "$brewv_desc" ]] && output+="- ${brewv_desc}:\n\n\`brewv\`\n"
+    fi
+
+    # Dotfiles-Wartung – Beschreibungen aus dotfiles.alias
+    output+="\n# Dotfiles-Wartung\n\n"
+    if [[ -f "$dotfiles_alias" ]]; then
+        local dothealth_desc=$(extract_alias_desc "$dotfiles_alias" "dothealth")
+        local dotdocs_desc=$(extract_alias_desc "$dotfiles_alias" "dotdocs")
+        local dotstow_desc=$(extract_alias_desc "$dotfiles_alias" "dotstow")
+        [[ -n "$dothealth_desc" ]] && output+="- ${dothealth_desc}:\n\n\`dothealth\`\n\n"
+        [[ -n "$dotdocs_desc" ]] && output+="- ${dotdocs_desc}:\n\n\`dotdocs\`\n\n"
+        [[ -n "$dotstow_desc" ]] && output+="- ${dotstow_desc}:\n\n\`dotstow\`\n"
     fi
 
     # Verfügbare Hilfeseiten
