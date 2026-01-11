@@ -154,15 +154,9 @@ extract_module_header_field() {
 }
 
 # Liste aller Bootstrap-Module in der definierten Reihenfolge
-# Liest MODULES Array aus bootstrap.sh oder bootstrap-new.sh
+# Liest MODULES Array aus bootstrap.sh
 get_bootstrap_module_order() {
-    local bootstrap
-    # Prüfe zuerst neuen Orchestrator, dann alten
-    if [[ -f "$DOTFILES_DIR/setup/bootstrap-new.sh" ]]; then
-        bootstrap="$DOTFILES_DIR/setup/bootstrap-new.sh"
-    else
-        bootstrap="$BOOTSTRAP"
-    fi
+    local bootstrap="$BOOTSTRAP"
 
     [[ -f "$bootstrap" ]] || return 1
 
