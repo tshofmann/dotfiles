@@ -784,6 +784,89 @@ generate_catppuccin_tldr() {
 }
 
 # ------------------------------------------------------------
+# Generator: zsh.patch.md aus .zshrc und .zshenv
+# ------------------------------------------------------------
+# Dokumentiert dotfiles-spezifische ZSH-Konfiguration:
+# - History-Einstellungen
+# - XDG-Pfade
+# - Completion-System
+# - Tool-Konfigurationen
+# - Plugins und Keybindings
+# ------------------------------------------------------------
+generate_zsh_page() {
+    local zshrc="$DOTFILES_DIR/terminal/.zshrc"
+    local zshenv="$DOTFILES_DIR/terminal/.zshenv"
+    local output=""
+
+    # Header mit Links zu Startup-Files Dokumentation
+    output+="# dotfiles: Konfigurationsdateien\n\n"
+    output+="- dotfiles: \`~/.zshenv\` – Umgebungsvariablen (XDG-Pfade)\n\n"
+    output+="- dotfiles: \`~/.zshrc\` – Hauptkonfiguration für interaktive Shells\n\n"
+    output+="- dotfiles: Lade-Reihenfolge: \`.zshenv → .zprofile → .zshrc → .zlogin\`\n\n"
+
+    # XDG aus .zshenv
+    output+="# dotfiles: XDG Base Directory\n\n"
+    output+="- dotfiles: \`\$XDG_CONFIG_HOME\` → \`~/.config\` für alle Tool-Configs\n\n"
+    output+="- dotfiles: \`\$EZA_CONFIG_DIR\` und \`\$TEALDEER_CONFIG_DIR\` explizit gesetzt (macOS)\n\n"
+
+    # History-Konfiguration aus .zshrc
+    output+="# dotfiles: History-Konfiguration\n\n"
+    output+="- dotfiles: Zentrale History in \`~/.zsh_history\` (25.000 Einträge)\n\n"
+    output+="- dotfiles: \`SHELL_SESSIONS_DISABLE=1\` – keine separate History pro Tab\n\n"
+    output+="- dotfiles: Führende Leerzeichen verbergen Befehle aus History (\`HIST_IGNORE_SPACE\`)\n\n"
+
+    # Alias-System
+    output+="# dotfiles: Alias-System\n\n"
+    output+="- dotfiles: Alle \`.alias\`-Dateien aus \`~/.config/alias/\` werden geladen\n\n"
+    output+="- dotfiles: Farben aus \`~/.config/theme-style\` (\`\$C_GREEN\`, \`\$C_RED\`, etc.)\n\n"
+
+    # Tool-Integrationen
+    output+="# dotfiles: Tool-Integrationen\n\n"
+    output+="- dotfiles: fzf – \`~/.config/fzf/init.zsh\` und \`config\`\n\n"
+    output+="- dotfiles: zoxide – \`z\` für schnelle Verzeichniswechsel, \`zi\` interaktiv\n\n"
+    output+="- dotfiles: bat – Man-Pages mit Syntax-Highlighting (\`\$MANPAGER\`)\n\n"
+    output+="- dotfiles: starship – Shell-Prompt (tldr starship)\n\n"
+    output+="- dotfiles: gh – GitHub CLI Completions\n\n"
+
+    # Plugins
+    output+="# dotfiles: ZSH-Plugins\n\n"
+    output+="- dotfiles: zsh-autosuggestions – Vorschläge aus History:\n\n"
+    output+="\`→ übernehmen, Alt+→ Wort für Wort, Esc ignorieren\`\n\n"
+    output+="- dotfiles: zsh-syntax-highlighting – Farbige Befehlsvalidierung:\n\n"
+    output+="\`Grün=gültig, Rot=ungültig, Unterstrichen=existiert\`\n\n"
+
+    # Completion
+    output+="# dotfiles: Completion-System\n\n"
+    output+="- dotfiles: Tab-Vervollständigung mit täglicher Cache-Erneuerung\n\n"
+    output+="- dotfiles: \`compinit\` läuft nur einmal täglich vollständig\n\n"
+
+    echo -e "$output"
+}
+
+generate_zsh_tldr() {
+    local mode="${1:---check}"
+    local patch_file="$TEALDEER_DIR/zsh.patch.md"
+
+    case "$mode" in
+        --check)
+            local generated=$(generate_zsh_page)
+            local current=""
+            [[ -f "$patch_file" ]] && current=$(cat "$patch_file")
+
+            if [[ "$generated" != "$current" ]]; then
+                err "zsh.patch.md ist veraltet"
+                return 1
+            fi
+            return 0
+            ;;
+        --generate)
+            local generated=$(generate_zsh_page)
+            write_if_changed "$patch_file" "$generated"
+            ;;
+    esac
+}
+
+# ------------------------------------------------------------
 # Helper: Extrahiere Header-Infos aus Alias-Datei für Page-Generierung
 # ------------------------------------------------------------
 # Liest Zweck, Docs und Nutzt aus dem Header-Block einer .alias-Datei
@@ -994,6 +1077,9 @@ generate_tldr_patches() {
             # Prüfe catppuccin.page.md
             generate_catppuccin_tldr --check || (( errors++ )) || true
 
+            # Prüfe zsh.patch.md
+            generate_zsh_tldr --check || (( errors++ )) || true
+
             return $errors
             ;;
 
@@ -1036,6 +1122,9 @@ generate_tldr_patches() {
 
             # Generiere catppuccin.page.md
             generate_catppuccin_tldr --generate
+
+            # Generiere zsh.patch.md
+            generate_zsh_tldr --generate
             ;;
     esac
 }

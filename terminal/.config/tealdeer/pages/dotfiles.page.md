@@ -99,7 +99,7 @@
 
 - Jedes Tool hat ALLE Aliase+Funktionen dokumentiert:
 
-`tldr {{bat|brew|btop|eza|fastfetch|fd|fzf|gh|git|lazygit|rg|zoxide}}`
+`tldr {{bat|brew|btop|eza|fastfetch|fd|fzf|gh|git|lazygit|rg|zoxide|zsh}}`
 
 - Eigene Seiten (ohne offizielle tldr-Basis):
 
