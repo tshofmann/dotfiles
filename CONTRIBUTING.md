@@ -32,7 +32,6 @@ Nach Schritt 3 wird bei jedem Commit automatisch geprüft, ob Dokumentation und 
 | Pfad | Zweck |
 | ------ | ------- |
 | `.github/scripts/generators/` | Dokumentations-Generatoren (Single Source of Truth) |
-| `.github/scripts/tests/` | Unit-Tests für Generatoren |
 | `.github/hooks/` | Pre-Commit Hook für Validierung |
 | `setup/` | Bootstrap-Orchestrator, Module, Brewfile, Terminal-Profil |
 | `setup/modules/` | Modulare Bootstrap-Schritte (Validation, Homebrew, etc.) |
@@ -123,19 +122,6 @@ Die Dokumentation wird automatisch aus dem Code generiert (Single Source of Trut
 # Dokumentation neu generieren
 ./.github/scripts/generate-docs.sh --generate
 ```
-
-### Unit-Tests für Generatoren
-
-```zsh
-# Tests ausführen
-./.github/scripts/tests/test_generators.sh
-```
-
-Die Test-Suite prüft:
-
-- Pfad-Konfiguration (DOTFILES_DIR, etc.)
-- Extraktions-Funktionen (Aliase, Funktionen, Docs)
-- Logging und Zähler (ok, warn, err)
 
 ### Was wird generiert?
 
