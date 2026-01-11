@@ -1,12 +1,12 @@
 # ============================================================
-# theme-colors - Catppuccin Mocha Theme-Registry
+# theme-style - Catppuccin Mocha Theme-Variablen
 # ============================================================
-# Zweck   : Zentrale Farbvariablen + Theme-Quellen-Dokumentation
-# Pfad    : ~/.config/theme-colors
+# Zweck   : Zentrale Farb- und Text-Style-Variablen für Shell-Ausgaben
+# Pfad    : ~/.config/theme-style
 # Docs    : https://catppuccin.com/palette
 # ============================================================
 # WICHTIG: Bei Änderungen auch setup/bootstrap.sh aktualisieren!
-#          Bootstrap kann theme-colors nicht sourcen (läuft vor stow).
+#          Bootstrap kann theme-style nicht sourcen (läuft vor stow).
 # ============================================================
 
 # ------------------------------------------------------------
@@ -25,7 +25,7 @@
 #   zsh-syntax    | ~/.config/zsh/catppuccin_mocha-*   | github.com/catppuccin/zsh-syntax-highlighting | upstream
 #   Terminal.app  | ~/dotfiles/setup/                  | github.com/catppuccin/Terminal.app          | upstream
 #   Xcode         | ~/dotfiles/setup/                  | github.com/catppuccin/xcode                 | upstream
-#   theme-colors  | ~/.config/theme-colors             | manual                                      | manual
+#   theme-style   | ~/.config/theme-style              | manual                                      | manual
 #
 # Status-Legende:
 #   upstream      = Unverändert aus offiziellem Catppuccin-Repo
@@ -78,5 +78,11 @@ typeset -gx C_SURFACE0=$'\033[38;2;49;50;68m'      # #313244
 typeset -gx C_BASE=$'\033[38;2;30;30;46m'          # #1E1E2E
 typeset -gx C_MANTLE=$'\033[38;2;24;24;37m'        # #181825
 typeset -gx C_CRUST=$'\033[38;2;17;17;27m'         # #11111B
+
+# ---- Text Styles ----
+typeset -gx C_BOLD=$'\033[1m'                      # Fett
+typeset -gx C_DIM=$'\033[2m'                       # Abgeschwächt
+typeset -gx C_ITALIC=$'\033[3m'                    # Kursiv
+typeset -gx C_UNDERLINE=$'\033[4m'                 # Unterstrichen
 
 # EOF

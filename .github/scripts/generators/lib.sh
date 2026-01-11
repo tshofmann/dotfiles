@@ -18,10 +18,16 @@ FZF_CONFIG="$DOTFILES_DIR/terminal/.config/fzf/config"
 TEALDEER_DIR="$DOTFILES_DIR/terminal/.config/tealdeer/pages"
 BREWFILE="$DOTFILES_DIR/setup/Brewfile"
 BOOTSTRAP="$DOTFILES_DIR/setup/bootstrap.sh"
-SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-colors"
+SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-style"
 
 # Farben (Catppuccin Mocha) – zentral definiert
 [[ -f "$SHELL_COLORS" ]] && source "$SHELL_COLORS"
+
+# dothelp-Kategorien (Single Source of Truth für readme.sh + tldr.sh)
+readonly DOTHELP_CAT_ALIASES="Aliase"
+readonly DOTHELP_CAT_KEYBINDINGS="Keybindings"
+readonly DOTHELP_CAT_FZF="fzf-Shortcuts"
+readonly DOTHELP_CAT_REPLACEMENTS="Tool-Ersetzungen"
 
 # ------------------------------------------------------------
 # macOS Version Helper
@@ -61,7 +67,8 @@ log()  { echo -e "${C_BLUE}→${C_RESET} $1"; }
 ok()   { echo -e "${C_GREEN}✔${C_RESET} $1"; }
 warn() { echo -e "${C_YELLOW}⚠${C_RESET} $1"; }
 err()  { echo -e "${C_RED}✖${C_RESET} $1" >&2; }
-dim()  { echo -e "${C_OVERLAY0}$1${C_RESET}"; }
+dim()  { echo -e "${C_DIM}$1${C_RESET}"; }
+bold() { echo -e "${C_BOLD}$1${C_RESET}"; }
 
 # ------------------------------------------------------------
 # UI-Komponenten (konsistent für alle Skripte)
@@ -77,7 +84,7 @@ ui_banner() {
     local title="$2"
     print ""
     print "${C_OVERLAY0}${UI_LINE}${C_RESET}"
-    print "${C_MAUVE}${emoji} ${title}${C_RESET}"
+    print "${C_MAUVE}${emoji} ${C_BOLD}${title}${C_RESET}"
     print "${C_OVERLAY0}${UI_LINE}${C_RESET}"
     print ""
 }
@@ -86,7 +93,7 @@ ui_banner() {
 # Usage: ui_section "Symlinks"
 ui_section() {
     print ""
-    print "${C_OVERLAY0}━━━${C_RESET} $1 ${C_OVERLAY0}━━━${C_RESET}"
+    print "${C_MAUVE}━━━ ${C_BOLD}$1${C_RESET}${C_MAUVE} ━━━${C_RESET}"
 }
 
 # Footer mit Trennlinie
@@ -408,6 +415,49 @@ extract_usage_codeblock() {
     done < "$file"
 
     echo -e "$output"
+}
+
+# ------------------------------------------------------------
+# dothelp: Kategorien aus echten Quellen ermitteln
+# ------------------------------------------------------------
+# Quellen:
+#   - terminal/.config/alias/*.alias → Aliase vorhanden?
+#   - terminal/.zshrc → Shell-Keybindings vorhanden?
+#   - terminal/.config/fzf/init.zsh → fzf-Keybindings vorhanden?
+#   - terminal/.config/alias/*.alias (Ersetzt:-Feld) → Tool-Ersetzungen
+# Rückgabe: Komma-separierte Kategorienliste
+get_dothelp_categories() {
+    local categories=()
+    local zshrc="$DOTFILES_DIR/terminal/.zshrc"
+    local fzf_init="$DOTFILES_DIR/terminal/.config/fzf/init.zsh"
+
+    # Aliase – .alias Dateien vorhanden?
+    local alias_count=$(ls -1 "$ALIAS_DIR"/*.alias 2>/dev/null | wc -l)
+    (( alias_count > 0 )) && categories+=("$DOTHELP_CAT_ALIASES")
+
+    # Shell-Keybindings (Autosuggestions) – Format in .zshrc: #   →  Beschreibung
+    if [[ -f "$zshrc" ]] && grep -q "^#   →" "$zshrc"; then
+        categories+=("$DOTHELP_CAT_KEYBINDINGS")
+    fi
+
+    # fzf-Keybindings – Format in init.zsh: bindkey '^X...# Ctrl+X
+    if [[ -f "$fzf_init" ]] && grep -q "bindkey '^X.*# Ctrl+X" "$fzf_init"; then
+        categories+=("$DOTHELP_CAT_FZF")
+    fi
+
+    # Tool-Ersetzungen – Ersetzt:-Feld in *.alias Dateien
+    local has_replacements=false
+    for alias_file in "$ALIAS_DIR"/*.alias(N); do
+        local ersetzt=$(parse_header_field "$alias_file" "Ersetzt")
+        if [[ -n "$ersetzt" ]]; then
+            has_replacements=true
+            break
+        fi
+    done
+    $has_replacements && categories+=("$DOTHELP_CAT_REPLACEMENTS")
+
+    # Ausgabe als Komma-separierte Liste
+    echo "${(j:, :)categories}"
 }
 
 # ------------------------------------------------------------

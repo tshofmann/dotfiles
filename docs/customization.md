@@ -34,7 +34,7 @@ Das Catppuccin Mocha Theme für Xcode wird automatisch vom Bootstrap-Skript nach
 
 ### Farbpalette (Catppuccin Mocha)
 
-Alle verfügbaren Shell-Farbvariablen aus `~/.config/theme-colors`:
+Alle verfügbaren Shell-Farbvariablen aus `~/.config/theme-style`:
 
 | Farbe | Hex | Variable |
 | ----- | --- | -------- |
@@ -68,7 +68,7 @@ Alle verfügbaren Shell-Farbvariablen aus `~/.config/theme-colors`:
 > **Verwendung in Skripten:**
 
 ```zsh
-source ~/.config/theme-colors
+source ~/.config/theme-style
 echo "${C_GREEN}Erfolg${C_RESET}"
 ```
 

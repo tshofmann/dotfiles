@@ -6,7 +6,7 @@
 # Docs    : https://github.com/junegunn/fzf#environment-variables
 # ============================================================
 # Aliase  : ~/.config/alias/fzf.alias (zf, fkill, fman, fa, fenv)
-# Theme   : ~/.config/theme-colors
+# Theme   : ~/.config/theme-style
 # ============================================================
 
 # ------------------------------------------------------------
@@ -46,6 +46,9 @@
 
 # Ctrl+A : Alle auswählen (im Multi-Modus)
 --bind=ctrl-a:select-all
+
+# Tab : Eintrag zur Auswahl hinzufügen (fzf-Default)
+# (kein --bind nötig, nur dokumentiert)
 
 # ------------------------------------------------------------
 # Performance-Hinweise

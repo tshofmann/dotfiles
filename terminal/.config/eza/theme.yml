@@ -6,7 +6,7 @@
 # Docs    : https://github.com/eza-community/eza/blob/main/man/eza_colors.5.md
 # ============================================================
 # Aliase  : ~/.config/alias/eza.alias (ls, ll, la, lt, lss, lst)
-# Theme   : ~/.config/theme-colors
+# Theme   : ~/.config/theme-style
 # ============================================================
 
 colourful: true

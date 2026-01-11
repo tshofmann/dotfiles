@@ -5,15 +5,19 @@
 
 - dotfiles: Nutzt `tldr (tealdeer)`
 
-- Diese Hilfe anzeigen:
+- Diese Hilfe (Schnellreferenz):
 
 `dothelp`
 
-- Aliase interaktiv durchsuchen (Enter=ausführen, Ctrl+Y=kopieren):
+- Alle Aliase+Funktionen interaktiv durchsuchen:
 
 `fa {{suche}}`
 
-# Shell-Keybindings
+- Vollständige Tool-Dokumentation:
+
+`tldr {{tool}}`
+
+# Keybindings
 
 - Vorschlag komplett übernehmen:
 
@@ -27,7 +31,7 @@
 
 `Escape`
 
-# fzf-Keybindings (Ctrl+X Prefix)
+# fzf-Shortcuts (Ctrl+X Prefix)
 
 - History:
 
@@ -41,7 +45,7 @@
 
 `Ctrl+X 3`
 
-# Moderne Ersetzungen
+# Tool-Ersetzungen
 
 - cat → bat (mit Syntax-Highlighting):
 
@@ -73,12 +77,26 @@
 
 `brewv`
 
-# Verfügbare Hilfeseiten
+# Dotfiles-Wartung
 
-- Tools mit dotfiles-Patches (tldr <tool>):
+- Health-Check:
 
-`bat, brew, btop, eza, fastfetch, fd, fzf, gh, git, lazygit, rg, zoxide`
+`dothealth`
 
-- Eigene Seiten:
+- Dokumentation neu generieren:
 
-`catppuccin, markdownlint, dotfiles`
+`dotdocs`
+
+- Symlinks neu verlinken (nach Änderungen in terminal/ oder editor/):
+
+`dotstow`
+
+# Vollständige Dokumentation
+
+- Jedes Tool hat ALLE Aliase+Funktionen dokumentiert:
+
+`tldr {{bat|brew|btop|eza|fastfetch|fd|fzf|gh|git|lazygit|rg|zoxide|zsh}}`
+
+- Eigene Seiten (ohne offizielle tldr-Basis):
+
+`tldr {{catppuccin|markdownlint|dotfiles}}`

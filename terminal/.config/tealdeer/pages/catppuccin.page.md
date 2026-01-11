@@ -26,11 +26,11 @@
 
 `fastfetch: ~/.config/fastfetch/config.jsonc (kein offizielles Repo)`
 `tealdeer: ~/.config/tealdeer/config.toml (kein offizielles Repo)`
-`theme-colors: ~/.config/theme-colors (kein offizielles Repo)`
+`theme-style: ~/.config/theme-style (kein offizielles Repo)`
 
 - Zentrale Shell-Farbvariablen in Skripten nutzen:
 
-`source ~/.config/theme-colors && echo "\${C_GREEN}Erfolg\${C_RESET}"`
+`source ~/.config/theme-style && echo "\${C_GREEN}Erfolg\${C_RESET}"`
 
 - Upstream Theme-Repositories:
 

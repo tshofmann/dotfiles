@@ -15,7 +15,7 @@ set -euo pipefail
 SCRIPT_DIR="${0:A:h}"
 DOTFILES_DIR="${SCRIPT_DIR:h:h:h}"  # .github/scripts/tests → dotfiles
 LIB_FILE="$DOTFILES_DIR/.github/scripts/generators/lib.sh"
-SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-colors"
+SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-style"
 
 # Farben (Catppuccin Mocha) – zentral definiert
 [[ -f "$SHELL_COLORS" ]] && source "$SHELL_COLORS"

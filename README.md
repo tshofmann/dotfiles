@@ -20,8 +20,6 @@ cd ~/dotfiles && stow --adopt -R terminal editor && git reset --hard HEAD && bat
 ```
 
 > ⚠️ **Achtung:** `git reset --hard` verwirft lokale Änderungen. Siehe [Setup](docs/setup.md) für Details.
->
-> 💡 **Tipp:** Nach der Installation `fa` eingeben für eine interaktive Übersicht aller Aliase und Funktionen. Oder `dothelp` für alle verfügbaren Hilfeseiten.
 
 ## Voraussetzungen
 
@@ -29,10 +27,11 @@ cd ~/dotfiles && stow --adopt -R terminal editor && git reset --hard HEAD && bat
 - **macOS 26+** (Tahoe) – getestet auf macOS 26 (Tahoe)
 - **Internetverbindung** & Admin-Rechte
 
-## Dokumentation
+## Hilfe & Dokumentation
 
 | Thema | Beschreibung |
 | ----- | ------------ |
+| `dothelp` | Hilfe/Dokumentation im Terminal: Aliase, Keybindings, fzf-Shortcuts, Tool-Ersetzungen |
 | [Setup](docs/setup.md) | Schritt-für-Schritt Anleitung |
 | [Anpassung](docs/customization.md) | Starship, Aliase, ZSH anpassen |
 | [Contributing](CONTRIBUTING.md) | Für Entwickler: Architektur, Hooks, Workflow |

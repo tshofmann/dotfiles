@@ -36,7 +36,7 @@ set -uo pipefail
 # ------------------------------------------------------------
 readonly SCRIPT_DIR="${0:A:h}"
 readonly DOTFILES_DIR="${SCRIPT_DIR:h:h}"  # .github/scripts → dotfiles
-readonly SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-colors"
+readonly SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-style"
 
 # Farben (Catppuccin Mocha) – zentral definiert
 [[ -f "$SHELL_COLORS" ]] && source "$SHELL_COLORS"
@@ -56,7 +56,7 @@ typeset -i warnings=0
 pass()    { echo -e "  ${C_GREEN}✔${C_RESET} $*"; (( passed++ )); }
 fail()    { echo -e "  ${C_RED}✖${C_RESET} $*"; (( failed++ )); }
 warn()    { echo -e "  ${C_YELLOW}⚠${C_RESET} $*"; (( warnings++ )); }
-section() { print ""; print "${C_OVERLAY0}━━━${C_RESET} $* ${C_OVERLAY0}━━━${C_RESET}"; }
+section() { print ""; print "${C_MAUVE}━━━ ${C_BOLD}$*${C_RESET}${C_MAUVE} ━━━${C_RESET}"; }
 
 # ------------------------------------------------------------
 # Symlink-Prüfung
@@ -134,11 +134,11 @@ get_tools_from_brewfile() {
 # ------------------------------------------------------------
 print ""
 print "${C_OVERLAY0}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
-print "${C_MAUVE}🔍 dotfiles Health Check${C_RESET}"
+print "${C_MAUVE}🔍 ${C_BOLD}dotfiles Health Check${C_RESET}"
 print "${C_OVERLAY0}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
 print ""
-print "   ${C_SUBTEXT0}Prüft ob alle Komponenten korrekt installiert sind${C_RESET}"
-print "   ${C_SUBTEXT0}ℹ SOLL-IST-Vergleich: Alle Dateien in terminal/ und editor/${C_RESET}"
+print "   ${C_DIM}Prüft ob alle Komponenten korrekt installiert sind${C_RESET}"
+print "   ${C_DIM}ℹ SOLL-IST-Vergleich: Alle Dateien in terminal/ und editor/${C_RESET}"
 
 # --- Symlinks: SOLL-IST-Vergleich ---
 section "Symlinks (SOLL-IST-Vergleich)"
@@ -189,11 +189,11 @@ done
 
 # Hinweis bei fehlenden Symlinks
 if (( ${#missing_symlinks[@]} > 0 )); then
-  print "\n  💡 Fehlende Symlinks erstellen mit:"
-  print "     cd $DOTFILES_DIR && stow -R terminal editor"
+  print "\n  ${C_DIM}💡 Fehlende Symlinks erstellen mit:${C_RESET}"
+  print "     ${C_BOLD}cd $DOTFILES_DIR && stow -R terminal editor${C_RESET}"
 fi
 
-print "\n  📊 Geprüft: $symlink_count Dateien aus terminal/ und editor/"
+print "\n  ${C_DIM}📊 Geprüft: $symlink_count Dateien aus terminal/ und editor/${C_RESET}"
 
 # --- Homebrew & Tools ---
 section "Homebrew & CLI-Tools"
@@ -307,13 +307,13 @@ fi
 section "Catppuccin Theme-Registry"
 
 # Bidirektionale Prüfung der Theme-Registry:
-# 1. IST → SOLL: Jede Config mit "catppuccin" muss in theme-colors dokumentiert sein
-# 2. SOLL → IST: Jeder Eintrag in theme-colors muss existierende Config haben
+# 1. IST → SOLL: Jede Config mit "catppuccin" muss in theme-style dokumentiert sein
+# 2. SOLL → IST: Jeder Eintrag in theme-style muss existierende Config haben
 check_theme_registry() {
-  local theme_colors="$DOTFILES_DIR/terminal/.config/theme-colors"
-  [[ -f "$theme_colors" ]] || { warn "theme-colors nicht gefunden"; return 1; }
+  local theme_style="$DOTFILES_DIR/terminal/.config/theme-style"
+  [[ -f "$theme_style" ]] || { warn "theme-style nicht gefunden"; return 1; }
 
-  # Extrahiere dokumentierte Tools + Pfade aus theme-colors
+  # Extrahiere dokumentierte Tools + Pfade aus theme-style
   # Format: #   tool   | config-path | upstream | status
   # Tool-Zeilen: beginnen mit "#   " UND enthalten "|"
   typeset -A documented_paths=()
@@ -334,7 +334,7 @@ check_theme_registry() {
 
     documented_tools+=("$tool_name")
     documented_paths[$tool_name]="$cfg_path"
-  done < "$theme_colors"
+  done < "$theme_style"
 
   local has_errors=0
 
@@ -350,7 +350,7 @@ check_theme_registry() {
       */zsh/*syntax*)                  tool="zsh-syntax" ;;
       *catppuccin-mocha.terminal)      tool="Terminal.app" ;;
       *Catppuccin\ Mocha.xccolortheme) tool="Xcode" ;;
-      */theme-colors)                  tool="theme-colors" ;;
+      */theme-style)                  tool="theme-style" ;;
       */docs/*|*/tests/*|*.page.md|*.sh|*.alias) continue ;;
       */.config/*/*)
         tool="${file#*/.config/}"
@@ -364,7 +364,7 @@ check_theme_registry() {
       undocumented+=("$tool")
       has_errors=1
     fi
-  done < <(grep -rlI -E "catppuccin|Catppuccin" "$DOTFILES_DIR" --include="*.yml" --include="*.yaml" --include="*.toml" --include="*.json" --include="*.jsonc" --include="*.theme" --include="*.tmTheme" --include="*.terminal" --include="*.xccolortheme" --include="config" --include="theme-colors" 2>/dev/null | grep -v ".git" | grep -v "node_modules")
+  done < <(grep -rlI -E "catppuccin|Catppuccin" "$DOTFILES_DIR" --include="*.yml" --include="*.yaml" --include="*.toml" --include="*.json" --include="*.jsonc" --include="*.theme" --include="*.tmTheme" --include="*.terminal" --include="*.xccolortheme" --include="config" --include="theme-style" 2>/dev/null | grep -v ".git" | grep -v "node_modules")
 
   # ━━━ Richtung 2: SOLL → IST ━━━
   # Prüfe ob alle dokumentierten Tools auch existieren
@@ -394,19 +394,19 @@ check_theme_registry() {
 
   # ━━━ Ergebnis ausgeben ━━━
   if (( ${#undocumented[@]} > 0 )); then
-    fail "Config mit Catppuccin aber nicht in theme-colors:"
+    fail "Config mit Catppuccin aber nicht in theme-style:"
     for item in "${(@u)undocumented[@]}"; do  # (@u) = unique
       print "       → $item"
     done
-    print "       💡 Füge das Tool zu terminal/.config/theme-colors hinzu"
+    print "       💡 Füge das Tool zu terminal/.config/theme-style hinzu"
   fi
 
   if (( ${#missing_configs[@]} > 0 )); then
-    fail "In theme-colors dokumentiert aber Config fehlt:"
+    fail "In theme-style dokumentiert aber Config fehlt:"
     for item in "${missing_configs[@]}"; do
       print "       → $item"
     done
-    print "       💡 Entferne veraltete Einträge aus theme-colors"
+    print "       💡 Entferne veraltete Einträge aus theme-style"
   fi
 
   if (( has_errors == 0 )); then
@@ -446,26 +446,26 @@ fi
 # ------------------------------------------------------------
 print ""
 print "${C_OVERLAY0}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
-print "${C_MAUVE}📊 Zusammenfassung${C_RESET}"
+print "${C_MAUVE}📊 ${C_BOLD}Zusammenfassung${C_RESET}"
 print "${C_OVERLAY0}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
 print ""
-print "   ${C_GREEN}✔${C_RESET} Bestanden: $passed"
-print "   ${C_YELLOW}⚠${C_RESET} Warnungen: $warnings"
-print "   ${C_RED}✖${C_RESET} Fehler:    $failed"
+print "   ${C_GREEN}✔${C_RESET} Bestanden: ${C_BOLD}$passed${C_RESET}"
+print "   ${C_YELLOW}⚠${C_RESET} Warnungen: ${C_BOLD}$warnings${C_RESET}"
+print "   ${C_RED}✖${C_RESET} Fehler:    ${C_BOLD}$failed${C_RESET}"
 
 if (( failed > 0 )); then
   print ""
-  print "${C_RED}✖ Health Check fehlgeschlagen${C_RESET}"
-  print "   Behebe die Fehler und führe den Check erneut aus."
+  print "${C_RED}✖ ${C_BOLD}Health Check fehlgeschlagen${C_RESET}"
+  print "   ${C_DIM}Behebe die Fehler und führe den Check erneut aus.${C_RESET}"
   exit 1
 elif (( warnings > 0 )); then
   print ""
-  print "${C_YELLOW}⚠ Health Check mit Warnungen${C_RESET}"
-  print "   Das Setup funktioniert, aber einige optionale Komponenten fehlen."
+  print "${C_YELLOW}⚠ ${C_BOLD}Health Check mit Warnungen${C_RESET}"
+  print "   ${C_DIM}Das Setup funktioniert, aber einige optionale Komponenten fehlen.${C_RESET}"
   exit 0
 else
   print ""
-  print "${C_GREEN}✔ Health Check erfolgreich${C_RESET}"
-  print "   Alle Komponenten korrekt installiert."
+  print "${C_GREEN}✔ ${C_BOLD}Health Check erfolgreich${C_RESET}"
+  print "   ${C_DIM}Alle Komponenten korrekt installiert.${C_RESET}"
   exit 0
 fi
