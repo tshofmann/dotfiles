@@ -468,7 +468,7 @@ generate_dotfiles_page() {
 
     # Header
     output+="# dotfiles\n\n"
-    output+="> macOS-Konfiguration mit ZSH, Catppuccin und modernen CLI-Tools.\n"
+    output+="> Dotfiles mit ZSH, Catppuccin-Theme und modernen CLI-Tools.\n"
     output+="> Mehr Informationen: <https://github.com/tshofmann/dotfiles>\n\n"
 
     # Abhängigkeiten aus dotfiles.alias (Konsistenz mit anderen Pages)
