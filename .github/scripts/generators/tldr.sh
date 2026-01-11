@@ -459,15 +459,35 @@ generate_dotfiles_page() {
         [[ -n "$brewv_desc" ]] && output+="- ${brewv_desc}:\n\n\`brewv\`\n"
     fi
 
-    # Dotfiles-Wartung – Beschreibungen aus dotfiles.alias
+    # Dotfiles-Wartung – alle Aliase nach Sektionsheader dynamisch extrahieren
     output+="\n# Dotfiles-Wartung\n\n"
     if [[ -f "$dotfiles_alias" ]]; then
-        local dothealth_desc=$(extract_alias_desc "$dotfiles_alias" "dothealth")
-        local dotdocs_desc=$(extract_alias_desc "$dotfiles_alias" "dotdocs")
-        local dotstow_desc=$(extract_alias_desc "$dotfiles_alias" "dotstow")
-        [[ -n "$dothealth_desc" ]] && output+="- ${dothealth_desc}:\n\n\`dothealth\`\n\n"
-        [[ -n "$dotdocs_desc" ]] && output+="- ${dotdocs_desc}:\n\n\`dotdocs\`\n\n"
-        [[ -n "$dotstow_desc" ]] && output+="- ${dotstow_desc}:\n\n\`dotstow\`\n"
+        local in_wartung_section=false
+        local prev_comment=""
+        while IFS= read -r line; do
+            # Sektionsheader "Dotfiles Wartung" gefunden
+            if [[ "$line" == "# Dotfiles Wartung" ]]; then
+                in_wartung_section=true
+                continue
+            fi
+            # Nächste Sektion oder Dateiende
+            [[ "$in_wartung_section" == true && "$line" == "# ---"* ]] && continue
+            [[ "$in_wartung_section" == true && "$line" == "# ==="* ]] && break
+
+            if [[ "$in_wartung_section" == true ]]; then
+                # Beschreibungskommentar merken
+                if [[ "$line" == "# "* ]]; then
+                    prev_comment="${line#\# }"
+                    prev_comment="${prev_comment%% –*}"  # Teil vor " – "
+                elif [[ "$line" =~ "^alias ([a-z]+)=" && -n "$prev_comment" ]]; then
+                    local alias_name="${match[1]}"
+                    output+="- ${prev_comment}:\n\n\`${alias_name}\`\n\n"
+                    prev_comment=""
+                elif [[ "$line" != "" ]]; then
+                    prev_comment=""
+                fi
+            fi
+        done < "$dotfiles_alias"
     fi
 
     # Verfügbare Hilfeseiten

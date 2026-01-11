@@ -89,6 +89,7 @@
 
 `dotstow`
 
+
 # Verfügbare Hilfeseiten
 
 - Tools mit dotfiles-Patches (tldr <tool>):
