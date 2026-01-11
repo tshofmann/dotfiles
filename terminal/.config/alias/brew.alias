@@ -60,46 +60,47 @@ brewv() {
 
     # Batch-Abfrage aller installierten Versionen (O(1) statt O(n))
     local -A formula_versions cask_versions mas_versions
+    local -a formulae casks mas_apps
+    local line pkg ver id version name entry
 
     # Formulae: Einmalig alle Versionen laden
-    while IFS=' ' read -r pkg ver; do
+    # Format: "pkg 1.2.3" oder "pkg 1.2.3 1.2.4" (mehrere Versionen)
+    while read -r line; do
+        pkg="${line%% *}"
+        ver="${line#* }"
         formula_versions[$pkg]="$ver"
-    done < <(brew list --formula --versions 2>/dev/null | while read -r line; do
-        local pkg="${line%% *}"
-        local ver="${line#* }"
-        echo "$pkg $ver"
-    done)
+    done < <(brew list --formula --versions 2>/dev/null)
 
     # Casks: Einmalig alle Versionen laden
-    while IFS=' ' read -r pkg ver; do
+    while read -r line; do
+        pkg="${line%% *}"
+        ver="${line#* }"
         cask_versions[$pkg]="$ver"
-    done < <(brew list --cask --versions 2>/dev/null | while read -r line; do
-        local pkg="${line%% *}"
-        local ver="${line#* }"
-        echo "$pkg $ver"
-    done)
+    done < <(brew list --cask --versions 2>/dev/null)
 
     # MAS Apps: Einmalig alle laden (wenn mas verfügbar)
+    # Format: "408981434  iMovie       (10.4.3)" – ID, Name mit Spaces, Version in Klammern
     if command -v mas >/dev/null 2>&1; then
-        while IFS=' ' read -r id name_and_ver; do
-            # Format: "123456 AppName (1.2.3)"
-            local version="${name_and_ver##*\(}"
-            version="${version%\)}"
-            mas_versions[$id]="$version"
+        while read -r line; do
+            # Erste Spalte ist immer die ID (nur Ziffern am Anfang)
+            id="${line%%[^0-9]*}"
+            # Version ist immer am Ende in Klammern: extrahiere Text zwischen letztem ( und )
+            version="${line##*'('}"
+            version="${version%')'}"
+            [[ -n "$id" ]] && mas_versions[$id]="$version"
         done < <(mas list 2>/dev/null)
     fi
 
-    # Formulae aus Brewfile (Array statt Pipe)
-    local -a formulae=()
-    while IFS= read -r line; do
-        local pkg="${line#brew \"}"
+    # Formulae aus Brewfile extrahieren
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        pkg="${line#brew \"}"
         pkg="${pkg%%\"*}"
         formulae+=("$pkg")
-    done < <(grep '^brew "' "$brewfile")
+    done < <(grep '^brew "' "$brewfile" 2>/dev/null || true)
 
     print "${C_MAUVE}━━━ Homebrew Formulae ━━━${C_RESET}"
     for pkg in "${formulae[@]}"; do
-        local version="${formula_versions[$pkg]}"
+        version="${formula_versions[$pkg]}"
         if [[ -n "$version" ]]; then
             printf "${C_GREEN}%-30s${C_RESET} ${C_TEXT}%s${C_RESET}\n" "$pkg" "$version"
         else
@@ -107,17 +108,16 @@ brewv() {
         fi
     done
 
-    # Casks aus Brewfile (Array statt Pipe)
-    local -a casks=()
-    while IFS= read -r line; do
-        local pkg="${line#cask \"}"
+    # Casks aus Brewfile extrahieren
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        pkg="${line#cask \"}"
         pkg="${pkg%%\"*}"
         casks+=("$pkg")
-    done < <(grep '^cask "' "$brewfile")
+    done < <(grep '^cask "' "$brewfile" 2>/dev/null || true)
 
     print "\n${C_MAUVE}━━━ Homebrew Casks ━━━${C_RESET}"
     for pkg in "${casks[@]}"; do
-        local version="${cask_versions[$pkg]}"
+        version="${cask_versions[$pkg]}"
         if [[ -n "$version" ]]; then
             printf "${C_BLUE}%-30s${C_RESET} ${C_TEXT}%s${C_RESET}\n" "$pkg" "$version"
         else
@@ -125,23 +125,22 @@ brewv() {
         fi
     done
 
-    # MAS Apps aus Brewfile (robusteres Parsing)
+    # MAS Apps aus Brewfile extrahieren (nur wenn mas verfügbar)
     if command -v mas >/dev/null 2>&1; then
-        local -a mas_apps=()
-        while IFS= read -r line; do
+        while IFS= read -r line || [[ -n "$line" ]]; do
             # Format: mas "Name", id: 123456
-            local name="${line#mas \"}"
+            name="${line#mas \"}"
             name="${name%%\"*}"
-            local id="${line##*id: }"
+            id="${line##*id: }"
             id="${id//[^0-9]/}"
             mas_apps+=("$name:$id")
-        done < <(grep '^mas "' "$brewfile")
+        done < <(grep '^mas "' "$brewfile" 2>/dev/null || true)
 
         print "\n${C_MAUVE}━━━ Mac App Store ━━━${C_RESET}"
         for entry in "${mas_apps[@]}"; do
-            local name="${entry%:*}"
-            local id="${entry#*:}"
-            local version="${mas_versions[$id]}"
+            name="${entry%:*}"
+            id="${entry#*:}"
+            version="${mas_versions[$id]}"
             if [[ -n "$version" ]]; then
                 printf "${C_YELLOW}%-30s${C_RESET} ${C_TEXT}%-12s${C_RESET} ${C_OVERLAY0}#%s${C_RESET}\n" "$name" "$version" "$id"
             else
@@ -150,7 +149,7 @@ brewv() {
         done
     fi
 
-    print "\n${C_OVERLAY0}Brewfile: ${#formulae[@]} Formulae | ${#casks[@]} Casks | ${#mas_apps[@]:-0} MAS${C_RESET}"
+    print "\n${C_OVERLAY0}Brewfile: ${#formulae[@]} Formulae | ${#casks[@]} Casks | ${#mas_apps[@]} MAS${C_RESET}"
 }
 
 # ------------------------------------------------------------
