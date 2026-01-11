@@ -12,7 +12,7 @@
 
 `<Ctrl a>`
 
-- dotfiles: Einzelnen Eintrag zur Auswahl hinzufügen:
+- dotfiles: Eintrag zur Auswahl hinzufügen:
 
 `<Tab>`
 # dotfiles: Helper-Skripte (~/.config/fzf/)

@@ -98,9 +98,11 @@ parse_fzf_config_keybindings() {
     local prev_comment=""
 
     while IFS= read -r line; do
-        if [[ "$line" == "# Ctrl"*":"* || "$line" == "# Alt"*":"* ]]; then
+        # Keybinding-Kommentar gefunden (Ctrl+X : Beschreibung oder Tab : Beschreibung)
+        if [[ "$line" == "# Ctrl"*":"* || "$line" == "# Alt"*":"* || "$line" == "# Tab"*":"* ]]; then
             prev_comment="${line#\# }"
         elif [[ "$line" == "--bind="* && -n "$prev_comment" ]]; then
+            # --bind Zeile folgt → Keybinding ausgeben
             local key="${prev_comment%% :*}"
             local action="${prev_comment#*: }"
 
@@ -114,12 +116,19 @@ parse_fzf_config_keybindings() {
 
             output+="- dotfiles: ${action}:\n\n\`<${key}>\`\n\n"
             prev_comment=""
+        elif [[ "$line" == "# (kein --bind"* && -n "$prev_comment" ]]; then
+            # Dokumentierter Default ohne --bind → trotzdem ausgeben
+            local key="${prev_comment%% :*}"
+            local action="${prev_comment#*: }"
+            # Klammer-Teil entfernen (z.B. "(fzf-Default)")
+            action="${action% \(*}"
+
+            output+="- dotfiles: ${action}:\n\n\`<${key}>\`\n\n"
+            prev_comment=""
         else
             prev_comment=""
         fi
     done < "$config"
-
-    output+="- dotfiles: Einzelnen Eintrag zur Auswahl hinzufügen:\n\n\`<Tab>\`\n\n"
 
     echo -e "$output"
 }
@@ -536,7 +545,7 @@ generate_dotfiles_page() {
     # Verfügbare Hilfeseiten – mit Vollständigkeits-Hinweis
     output+="# Vollständige Dokumentation\n\n"
     output+="- Jedes Tool hat ALLE Aliase+Funktionen dokumentiert:\n\n"
-    
+
     local patches=()
     local pages=()
     for f in "$TEALDEER_DIR"/*.patch.md(N); do
