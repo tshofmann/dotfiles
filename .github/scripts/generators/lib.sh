@@ -112,6 +112,14 @@ extract_macos_tested_version_smart() {
     fi
 }
 
+# Extrahiert STARSHIP_PRESET_DEFAULT aus starship.sh Modul
+extract_starship_default_preset() {
+    local starship_module="$BOOTSTRAP_MODULES/starship.sh"
+    [[ -f "$starship_module" ]] || { echo "catppuccin-powerline"; return; }
+    local preset=$(grep "readonly STARSHIP_PRESET_DEFAULT=" "$starship_module" | sed 's/.*="\([^"]*\)".*/\1/')
+    echo "${preset:-catppuccin-powerline}"
+}
+
 # Extrahiert STEP-Metadaten aus einem Modul (neues Format)
 # Format: # STEP: Name | Beschreibung | Fehlerverhalten
 # Rückgabe: Zeilenweise "Name|Beschreibung|Fehlerverhalten"

@@ -123,10 +123,14 @@ collect_theme_configs() {
     local xcode_file
     xcode_file=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.xccolortheme" | sort | head -1)
 
+    # Starship-Preset dynamisch aus Modul
+    local starship_preset
+    starship_preset=$(extract_starship_default_preset)
+
     # Bekannte Theme-Dateien
     local -A theme_files=(
         ["Terminal.app"]="$terminal_file|Via Bootstrap importiert + als Standard gesetzt"
-        ["Starship"]="catppuccin-powerline Preset|Via Bootstrap konfiguriert"
+        ["Starship"]="$starship_preset Preset|Via Bootstrap konfiguriert"
         ["bat"]="$DOTFILES_DIR/terminal/.config/bat/themes/|Via Stow verlinkt (+ Cache-Build)"
         ["fzf"]="$DOTFILES_DIR/terminal/.config/fzf/config|Farben in Config-Datei (via Stow)"
         ["btop"]="$DOTFILES_DIR/terminal/.config/btop/themes/|Via Stow verlinkt"
@@ -226,41 +230,48 @@ Vollständige Palette: [catppuccin.com/palette](https://catppuccin.com/palette)
 
 ## Starship-Prompt
 
-Das Setup konfiguriert automatisch [Starship](https://starship.rs/) mit dem `catppuccin-powerline` Preset.
+AFTER_COLORS
+
+    # Starship-Preset dynamisch aus Modul extrahieren
+    local starship_preset
+    starship_preset=$(extract_starship_default_preset)
+
+    cat << STARSHIP_SECTION
+Das Setup konfiguriert automatisch [Starship](https://starship.rs/) mit dem \`$starship_preset\` Preset.
 
 ### Standard-Verhalten
 
 | Situation | Verhalten |
 | --------- | --------- |
-| Keine `starship.toml` vorhanden | Wird mit `catppuccin-powerline` erstellt |
-| `starship.toml` bereits vorhanden | Bleibt unverändert |
-| `STARSHIP_PRESET` Variable gesetzt | Wird mit diesem Preset erstellt/überschrieben |
+| Keine \`starship.toml\` vorhanden | Wird mit \`$starship_preset\` erstellt |
+| \`starship.toml\` bereits vorhanden | Bleibt unverändert |
+| \`STARSHIP_PRESET\` Variable gesetzt | Wird mit diesem Preset erstellt/überschrieben |
 
 ### Preset ändern
 
 Du kannst das Preset bei der Installation ändern:
 
-```zsh
+\`\`\`zsh
 # Einmalig mit anderem Preset
 STARSHIP_PRESET="tokyo-night" ./setup/bootstrap.sh
 
 # Persistent für mehrere Runs
 export STARSHIP_PRESET="pure-preset"
 ./setup/bootstrap.sh
-```
+\`\`\`
 
 ### Verfügbare Presets
 
-```zsh
+\`\`\`zsh
 # Nach Installation lokal auflisten
 starship preset --list
-```
+\`\`\`
 
 Oder online: [starship.rs/presets](https://starship.rs/presets/)
 
 ### Fallback bei ungültigem Preset
 
-Bei einem ungültigen Preset-Namen zeigt das Skript eine Warnung und verwendet `catppuccin-powerline` als Fallback.
+Bei einem ungültigen Preset-Namen zeigt das Skript eine Warnung und verwendet \`$starship_preset\` als Fallback.
 
 ---
 
@@ -268,20 +279,27 @@ Bei einem ungültigen Preset-Namen zeigt das Skript eine Warnung und verwendet `
 
 ## Schriftart wechseln
 
+STARSHIP_SECTION
+
+    cat << 'FONT_INTRO'
 Das Terminal-Profil, der Nerd Font und das Starship-Preset sind eng gekoppelt. Wenn du die Schriftart ändern möchtest, musst du alle drei Komponenten berücksichtigen.
-AFTER_COLORS
+FONT_INTRO
 
     # Terminal-Profilname für die Warnung dynamisch ermitteln
     local profile_for_warning
     profile_for_warning=$(extract_terminal_profile_name)
     [[ -z "$profile_for_warning" ]] && profile_for_warning="<profilname>"
 
+    # Starship-Preset für Powerline-Hinweis
+    local starship_preset_font
+    starship_preset_font=$(extract_starship_default_preset)
+
     cat << FONT_WARNING
 > **⚠️ Wichtig:** Die Datei \`$profile_for_warning.terminal\` enthält binäre NSArchiver-Daten. **Niemals direkt editieren** – nur über die Terminal.app GUI ändern und neu exportieren.
 
 ### Voraussetzung
 
-Bei Starship-Presets mit Powerline-Symbolen (wie \`catppuccin-powerline\`) muss die neue Schriftart ein **Nerd Font** sein. Nerd Fonts enthalten zusätzliche Icons und Symbole, die für Powerline-Prompts benötigt werden.
+Bei Starship-Presets mit Powerline-Symbolen (wie \`$starship_preset_font\`) muss die neue Schriftart ein **Nerd Font** sein. Nerd Fonts enthalten zusätzliche Icons und Symbole, die für Powerline-Prompts benötigt werden.
 
 ### Schritt 1: Neuen Nerd Font installieren
 
