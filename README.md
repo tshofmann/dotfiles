@@ -5,7 +5,7 @@
 [![macOS](https://img.shields.io/badge/macOS-26%2B-black?logo=apple)](https://www.apple.com/macos/)
 [![Shell: zsh](https://img.shields.io/badge/Shell-zsh-green?logo=gnubash)](https://www.zsh.org/)
 
-> Terminal-Setup für Apple Silicon – automatisiert, idempotent, minimal.
+> Automatisiertes Dotfile-Setup mit modernen CLI-Ersetzungen.
 
 ## Quickstart
 

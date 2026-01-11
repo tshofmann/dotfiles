@@ -32,7 +32,7 @@ SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-style"
 # Kurzbeschreibung für README, tldr, GitHub Repo Description
 readonly PROJECT_TAGLINE="Dotfiles mit Catppuccin-Theme und modernen CLI-Tools."
 # Erweiterte Beschreibung für README
-readonly PROJECT_DESCRIPTION="Terminal-Setup für Apple Silicon – automatisiert, idempotent, minimal."
+readonly PROJECT_DESCRIPTION="Automatisiertes Dotfile-Setup mit modernen CLI-Ersetzungen."
 
 # dothelp-Kategorien (Single Source of Truth für readme.sh + tldr.sh)
 readonly DOTHELP_CAT_ALIASES="Aliase"
