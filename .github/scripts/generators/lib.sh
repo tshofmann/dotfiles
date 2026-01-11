@@ -18,6 +18,7 @@ FZF_CONFIG="$DOTFILES_DIR/terminal/.config/fzf/config"
 TEALDEER_DIR="$DOTFILES_DIR/terminal/.config/tealdeer/pages"
 BREWFILE="$DOTFILES_DIR/setup/Brewfile"
 BOOTSTRAP="$DOTFILES_DIR/setup/bootstrap.sh"
+BOOTSTRAP_MODULES="$DOTFILES_DIR/setup/modules"
 SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-style"
 
 # Farben (Catppuccin Mocha) – zentral definiert
@@ -58,6 +59,132 @@ extract_macos_tested_version() {
     [[ -f "$BOOTSTRAP" ]] || { echo "26"; return; }
     local version=$(grep "^readonly MACOS_TESTED_VERSION=" "$BOOTSTRAP" | sed 's/.*=\([0-9]*\).*/\1/')
     echo "${version:-26}"
+}
+
+# ------------------------------------------------------------
+# Bootstrap-Modul Parser
+# ------------------------------------------------------------
+# Prüft ob modulare Bootstrap-Struktur existiert
+has_bootstrap_modules() {
+    [[ -d "$BOOTSTRAP_MODULES" && -f "$BOOTSTRAP_MODULES/_core.sh" ]]
+}
+
+# Extrahiert MACOS_MIN_VERSION aus validation.sh (modulare Struktur)
+extract_macos_min_version_from_module() {
+    local validation="$BOOTSTRAP_MODULES/validation.sh"
+    [[ -f "$validation" ]] || { echo "26"; return; }
+    local version=$(grep "^readonly MACOS_MIN_VERSION=" "$validation" | sed 's/.*=\([0-9]*\).*/\1/')
+    echo "${version:-26}"
+}
+
+# Extrahiert MACOS_TESTED_VERSION aus validation.sh (modulare Struktur)
+extract_macos_tested_version_from_module() {
+    local validation="$BOOTSTRAP_MODULES/validation.sh"
+    [[ -f "$validation" ]] || { echo "26"; return; }
+    local version=$(grep "^readonly MACOS_TESTED_VERSION=" "$validation" | sed 's/.*=\([0-9]*\).*/\1/')
+    echo "${version:-26}"
+}
+
+# Smart-Extraktor: Prüft zuerst Module, dann bootstrap.sh
+extract_macos_min_version_smart() {
+    if has_bootstrap_modules; then
+        extract_macos_min_version_from_module
+    else
+        extract_macos_min_version
+    fi
+}
+
+extract_macos_tested_version_smart() {
+    if has_bootstrap_modules; then
+        extract_macos_tested_version_from_module
+    else
+        extract_macos_tested_version
+    fi
+}
+
+# Extrahiert alle CURRENT_STEP Zuweisungen aus einem Modul
+# Rückgabe: Zeilenweise step|description
+extract_module_steps() {
+    local module_file="$1"
+    [[ -f "$module_file" ]] || return 1
+
+    grep "CURRENT_STEP=" "$module_file" 2>/dev/null | while read -r line; do
+        local step="${line#*CURRENT_STEP=}"
+        step="${step#\"}"
+        step="${step%\"}"
+        [[ -n "$step" && "$step" != "Initialisierung" ]] && echo "$step"
+    done
+}
+
+# Extrahiert Header-Feld aus Modul (z.B. "Zweck", "Benötigt", "CURRENT_STEP")
+# Format im Modul: # Feldname   : Wert
+extract_module_header_field() {
+    local module_file="$1"
+    local field="$2"
+    [[ -f "$module_file" ]] || return 1
+
+    # Suche nach "# Feldname" gefolgt von ":" und extrahiere Wert
+    local value
+    value=$(grep -E "^# ${field}[[:space:]]*:" "$module_file" 2>/dev/null | head -1 | sed "s/^# ${field}[[:space:]]*:[[:space:]]*//")
+    echo "$value"
+}
+
+# Liste aller Bootstrap-Module in der definierten Reihenfolge
+# Liest MODULES Array aus bootstrap.sh oder bootstrap-new.sh
+get_bootstrap_module_order() {
+    local bootstrap
+    # Prüfe zuerst neuen Orchestrator, dann alten
+    if [[ -f "$DOTFILES_DIR/setup/bootstrap-new.sh" ]]; then
+        bootstrap="$DOTFILES_DIR/setup/bootstrap-new.sh"
+    else
+        bootstrap="$BOOTSTRAP"
+    fi
+
+    [[ -f "$bootstrap" ]] || return 1
+
+    # Extrahiere MODULES Array
+    local in_modules=false
+    while IFS= read -r line; do
+        # Whitespace trimmen
+        local trimmed="${line#"${line%%[![:space:]]*}"}"
+        trimmed="${trimmed%"${trimmed##*[![:space:]]}"}"
+
+        # Array-Start erkennen
+        if [[ "$trimmed" == "readonly -a MODULES="* || "$trimmed" == "MODULES=("* ]]; then
+            in_modules=true
+            continue
+        fi
+
+        # Array-Ende erkennen
+        if $in_modules && [[ "$trimmed" == ")" ]]; then
+            break
+        fi
+
+        # Modul-Namen extrahieren (Format: "modulname  # Kommentar")
+        if $in_modules; then
+            # Kommentar entfernen und trimmen
+            local module="${trimmed%%#*}"
+            module="${module#"${module%%[![:space:]]*}"}"
+            module="${module%"${module##*[![:space:]]}"}"
+            # Nur gültige Modul-Namen (alphanumerisch + Bindestrich)
+            [[ "$module" =~ ^[a-z][a-z0-9-]*$ ]] && echo "$module"
+        fi
+    done < "$bootstrap"
+}
+
+# Generiert Bootstrap-Schritte-Tabelle aus Modulen
+# Rückgabe: Markdown-Tabelle mit Schritten
+generate_bootstrap_steps_from_modules() {
+    local -a modules
+    modules=($(get_bootstrap_module_order))
+
+    for module in "${modules[@]}"; do
+        local module_file="$BOOTSTRAP_MODULES/${module}.sh"
+        [[ -f "$module_file" ]] || continue
+
+        # CURRENT_STEP Werte aus Modul extrahieren
+        extract_module_steps "$module_file"
+    done
 }
 
 # ------------------------------------------------------------

@@ -2,31 +2,38 @@
 # ============================================================
 # setup.sh - Generator für docs/setup.md
 # ============================================================
-# Zweck   : Generiert Setup-Dokumentation aus bootstrap.sh
+# Zweck   : Generiert Setup-Dokumentation aus bootstrap.sh/Modulen
 # Pfad    : .github/scripts/generators/setup.sh
+# Quelle  : setup/modules/*.sh (modulare Struktur) oder setup/bootstrap.sh (legacy)
 # ============================================================
 
 source "${0:A:h}/lib.sh"
 
 # ------------------------------------------------------------
-# Bootstrap-Schritte extrahieren
+# Bootstrap-Schritte extrahieren (Smart: Module oder Legacy)
 # ------------------------------------------------------------
-# Parst CURRENT_STEP Zuweisungen und Aktionen aus bootstrap.sh
+# Parst CURRENT_STEP Zuweisungen aus Modulen oder bootstrap.sh
 extract_bootstrap_steps() {
-    local output=""
     local step_count=0
 
-    while IFS= read -r line; do
-        # CURRENT_STEP="..." Zuweisungen
-        if [[ "$line" == *'CURRENT_STEP='* ]]; then
-            local step="${line#*CURRENT_STEP=}"
-            step="${step#\"}"
-            step="${step%\"}"
-            [[ -n "$step" && "$step" != "Initialisierung" ]] && {
-                (( step_count++ )) || true
-            }
-        fi
-    done < "$BOOTSTRAP"
+    if has_bootstrap_modules; then
+        # Modulare Struktur: Schritte aus allen Modulen sammeln
+        local steps
+        steps=$(generate_bootstrap_steps_from_modules)
+        step_count=$(echo "$steps" | grep -c "." || echo 0)
+    else
+        # Legacy: Aus bootstrap.sh direkt
+        while IFS= read -r line; do
+            if [[ "$line" == *'CURRENT_STEP='* ]]; then
+                local step="${line#*CURRENT_STEP=}"
+                step="${step#\"}"
+                step="${step%\"}"
+                [[ -n "$step" && "$step" != "Initialisierung" ]] && {
+                    (( step_count++ )) || true
+                }
+            fi
+        done < "$BOOTSTRAP"
+    fi
 
     echo "$step_count"
 }
@@ -35,10 +42,10 @@ extract_bootstrap_steps() {
 # Haupt-Generator für setup.md
 # ------------------------------------------------------------
 generate_setup_md() {
-    # Dynamische macOS-Versionen aus bootstrap.sh
+    # Dynamische macOS-Versionen (Smart: aus Modulen oder bootstrap.sh)
     local macos_min macos_tested macos_min_name macos_tested_name
-    macos_min=$(extract_macos_min_version)
-    macos_tested=$(extract_macos_tested_version)
+    macos_min=$(extract_macos_min_version_smart)
+    macos_tested=$(extract_macos_tested_version_smart)
     macos_min_name=$(get_macos_codename "$macos_min")
     macos_tested_name=$(get_macos_codename "$macos_tested")
 
