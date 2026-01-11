@@ -236,7 +236,7 @@ readonly BREW_PREFIX="/opt/homebrew"
 # ------------------------------------------------------------
 # Hauptprogramm
 # ------------------------------------------------------------
-print "==> macOS Bootstrap (Version $MACOS_VERSION)"
+print "==> ${C_BOLD}macOS Bootstrap${C_RESET} ${C_DIM}(Version $MACOS_VERSION)${C_RESET}"
 
 # Homebrew bei Bedarf installieren
 CURRENT_STEP="Homebrew Installation"
@@ -518,12 +518,12 @@ CURRENT_STEP=""
 print ""
 ok "Setup abgeschlossen"
 print ""
-log "Nächste Schritte:"
-log "  1. Terminal.app neu starten für vollständige Übernahme aller Einstellungen"
-log "  2. Konfigurationsdateien verlinken: cd $DOTFILES_DIR && stow --adopt -R terminal editor && git reset --hard HEAD"
-log "  3. Git-Hooks aktivieren: git config core.hooksPath .github/hooks"
-log "  4. bat Theme-Cache bauen: bat cache --build"
-log "  5. tldr-Pages herunterladen: tldr --update"
+log "${C_BOLD}Nächste Schritte:${C_RESET}"
+log "  ${C_BOLD}1.${C_RESET} Terminal.app neu starten für vollständige Übernahme aller Einstellungen"
+log "  ${C_BOLD}2.${C_RESET} Konfigurationsdateien verlinken: ${C_DIM}cd $DOTFILES_DIR && stow --adopt -R terminal editor && git reset --hard HEAD${C_RESET}"
+log "  ${C_BOLD}3.${C_RESET} Git-Hooks aktivieren: ${C_DIM}git config core.hooksPath .github/hooks${C_RESET}"
+log "  ${C_BOLD}4.${C_RESET} bat Theme-Cache bauen: ${C_DIM}bat cache --build${C_RESET}"
+log "  ${C_BOLD}5.${C_RESET} tldr-Pages herunterladen: ${C_DIM}tldr --update${C_RESET}"
 print ""
 print "  ${C_GREEN}💡 Gib im Terminal '${C_BOLD}dothelp${C_RESET}${C_GREEN}' ein für Hilfe/Dokumentation${C_RESET}"
 print ""

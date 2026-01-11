@@ -98,13 +98,13 @@ brewv() {
         formulae+=("$pkg")
     done < <(grep '^brew "' "$brewfile" 2>/dev/null || true)
 
-    print "${C_MAUVE}━━━ Homebrew Formulae ━━━${C_RESET}"
+    print "${C_MAUVE}━━━ ${C_BOLD}Homebrew Formulae${C_RESET}${C_MAUVE} ━━━${C_RESET}"
     for pkg in "${formulae[@]}"; do
         version="${formula_versions[$pkg]}"
         if [[ -n "$version" ]]; then
-            printf "${C_GREEN}%-30s${C_RESET} ${C_TEXT}%s${C_RESET}\n" "$pkg" "$version"
+            printf "${C_GREEN}%-30s${C_RESET} ${C_DIM}%s${C_RESET}\n" "$pkg" "$version"
         else
-            printf "${C_RED}%-30s${C_RESET} ${C_OVERLAY0}nicht installiert${C_RESET}\n" "$pkg"
+            printf "${C_RED}%-30s${C_RESET} ${C_DIM}nicht installiert${C_RESET}\n" "$pkg"
         fi
     done
 
@@ -115,13 +115,13 @@ brewv() {
         casks+=("$pkg")
     done < <(grep '^cask "' "$brewfile" 2>/dev/null || true)
 
-    print "\n${C_MAUVE}━━━ Homebrew Casks ━━━${C_RESET}"
+    print "\n${C_MAUVE}━━━ ${C_BOLD}Homebrew Casks${C_RESET}${C_MAUVE} ━━━${C_RESET}"
     for pkg in "${casks[@]}"; do
         version="${cask_versions[$pkg]}"
         if [[ -n "$version" ]]; then
-            printf "${C_BLUE}%-30s${C_RESET} ${C_TEXT}%s${C_RESET}\n" "$pkg" "$version"
+            printf "${C_BLUE}%-30s${C_RESET} ${C_DIM}%s${C_RESET}\n" "$pkg" "$version"
         else
-            printf "${C_RED}%-30s${C_RESET} ${C_OVERLAY0}nicht installiert${C_RESET}\n" "$pkg"
+            printf "${C_RED}%-30s${C_RESET} ${C_DIM}nicht installiert${C_RESET}\n" "$pkg"
         fi
     done
 
@@ -140,20 +140,20 @@ brewv() {
             fi
         done < <(grep '^mas "' "$brewfile" 2>/dev/null || true)
 
-        print "\n${C_MAUVE}━━━ Mac App Store ━━━${C_RESET}"
+        print "\n${C_MAUVE}━━━ ${C_BOLD}Mac App Store${C_RESET}${C_MAUVE} ━━━${C_RESET}"
         for entry in "${mas_apps[@]}"; do
             name="${entry%:*}"
             id="${entry#*:}"
             version="${mas_versions[$id]}"
             if [[ -n "$version" ]]; then
-                printf "${C_YELLOW}%-30s${C_RESET} ${C_TEXT}%-12s${C_RESET} ${C_OVERLAY0}#%s${C_RESET}\n" "$name" "$version" "$id"
+                printf "${C_YELLOW}%-30s${C_RESET} ${C_DIM}%-12s${C_RESET} ${C_DIM}#%s${C_RESET}\n" "$name" "$version" "$id"
             else
-                printf "${C_RED}%-30s${C_RESET} ${C_OVERLAY0}nicht installiert${C_RESET} ${C_OVERLAY0}#%s${C_RESET}\n" "$name" "$id"
+                printf "${C_RED}%-30s${C_RESET} ${C_DIM}nicht installiert${C_RESET} ${C_DIM}#%s${C_RESET}\n" "$name" "$id"
             fi
         done
     fi
 
-    print "\n${C_OVERLAY0}Brewfile: ${#formulae[@]} Formulae | ${#casks[@]} Casks | ${#mas_apps[@]} MAS${C_RESET}"
+    print "\n${C_DIM}Brewfile: ${#formulae[@]} Formulae | ${#casks[@]} Casks | ${#mas_apps[@]} MAS${C_RESET}"
 }
 
 # ------------------------------------------------------------

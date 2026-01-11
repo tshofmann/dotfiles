@@ -67,7 +67,8 @@ log()  { echo -e "${C_BLUE}→${C_RESET} $1"; }
 ok()   { echo -e "${C_GREEN}✔${C_RESET} $1"; }
 warn() { echo -e "${C_YELLOW}⚠${C_RESET} $1"; }
 err()  { echo -e "${C_RED}✖${C_RESET} $1" >&2; }
-dim()  { echo -e "${C_OVERLAY0}$1${C_RESET}"; }
+dim()  { echo -e "${C_DIM}$1${C_RESET}"; }
+bold() { echo -e "${C_BOLD}$1${C_RESET}"; }
 
 # ------------------------------------------------------------
 # UI-Komponenten (konsistent für alle Skripte)
@@ -83,7 +84,7 @@ ui_banner() {
     local title="$2"
     print ""
     print "${C_OVERLAY0}${UI_LINE}${C_RESET}"
-    print "${C_MAUVE}${emoji} ${title}${C_RESET}"
+    print "${C_MAUVE}${emoji} ${C_BOLD}${title}${C_RESET}"
     print "${C_OVERLAY0}${UI_LINE}${C_RESET}"
     print ""
 }
@@ -92,7 +93,7 @@ ui_banner() {
 # Usage: ui_section "Symlinks"
 ui_section() {
     print ""
-    print "${C_OVERLAY0}━━━${C_RESET} $1 ${C_OVERLAY0}━━━${C_RESET}"
+    print "${C_OVERLAY0}━━━${C_RESET} ${C_BOLD}$1${C_RESET} ${C_OVERLAY0}━━━${C_RESET}"
 }
 
 # Footer mit Trennlinie

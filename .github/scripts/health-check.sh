@@ -56,7 +56,7 @@ typeset -i warnings=0
 pass()    { echo -e "  ${C_GREEN}✔${C_RESET} $*"; (( passed++ )); }
 fail()    { echo -e "  ${C_RED}✖${C_RESET} $*"; (( failed++ )); }
 warn()    { echo -e "  ${C_YELLOW}⚠${C_RESET} $*"; (( warnings++ )); }
-section() { print ""; print "${C_OVERLAY0}━━━${C_RESET} $* ${C_OVERLAY0}━━━${C_RESET}"; }
+section() { print ""; print "${C_OVERLAY0}━━━${C_RESET} ${C_BOLD}$*${C_RESET} ${C_OVERLAY0}━━━${C_RESET}"; }
 
 # ------------------------------------------------------------
 # Symlink-Prüfung
@@ -134,11 +134,11 @@ get_tools_from_brewfile() {
 # ------------------------------------------------------------
 print ""
 print "${C_OVERLAY0}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
-print "${C_MAUVE}🔍 dotfiles Health Check${C_RESET}"
+print "${C_MAUVE}🔍 ${C_BOLD}dotfiles Health Check${C_RESET}"
 print "${C_OVERLAY0}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
 print ""
-print "   ${C_SUBTEXT0}Prüft ob alle Komponenten korrekt installiert sind${C_RESET}"
-print "   ${C_SUBTEXT0}ℹ SOLL-IST-Vergleich: Alle Dateien in terminal/ und editor/${C_RESET}"
+print "   ${C_DIM}Prüft ob alle Komponenten korrekt installiert sind${C_RESET}"
+print "   ${C_DIM}ℹ SOLL-IST-Vergleich: Alle Dateien in terminal/ und editor/${C_RESET}"
 
 # --- Symlinks: SOLL-IST-Vergleich ---
 section "Symlinks (SOLL-IST-Vergleich)"
@@ -189,11 +189,11 @@ done
 
 # Hinweis bei fehlenden Symlinks
 if (( ${#missing_symlinks[@]} > 0 )); then
-  print "\n  💡 Fehlende Symlinks erstellen mit:"
-  print "     cd $DOTFILES_DIR && stow -R terminal editor"
+  print "\n  ${C_DIM}💡 Fehlende Symlinks erstellen mit:${C_RESET}"
+  print "     ${C_BOLD}cd $DOTFILES_DIR && stow -R terminal editor${C_RESET}"
 fi
 
-print "\n  📊 Geprüft: $symlink_count Dateien aus terminal/ und editor/"
+print "\n  ${C_DIM}📊 Geprüft: $symlink_count Dateien aus terminal/ und editor/${C_RESET}"
 
 # --- Homebrew & Tools ---
 section "Homebrew & CLI-Tools"
@@ -446,26 +446,26 @@ fi
 # ------------------------------------------------------------
 print ""
 print "${C_OVERLAY0}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
-print "${C_MAUVE}📊 Zusammenfassung${C_RESET}"
+print "${C_MAUVE}📊 ${C_BOLD}Zusammenfassung${C_RESET}"
 print "${C_OVERLAY0}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
 print ""
-print "   ${C_GREEN}✔${C_RESET} Bestanden: $passed"
-print "   ${C_YELLOW}⚠${C_RESET} Warnungen: $warnings"
-print "   ${C_RED}✖${C_RESET} Fehler:    $failed"
+print "   ${C_GREEN}✔${C_RESET} Bestanden: ${C_BOLD}$passed${C_RESET}"
+print "   ${C_YELLOW}⚠${C_RESET} Warnungen: ${C_BOLD}$warnings${C_RESET}"
+print "   ${C_RED}✖${C_RESET} Fehler:    ${C_BOLD}$failed${C_RESET}"
 
 if (( failed > 0 )); then
   print ""
-  print "${C_RED}✖ Health Check fehlgeschlagen${C_RESET}"
-  print "   Behebe die Fehler und führe den Check erneut aus."
+  print "${C_RED}✖ ${C_BOLD}Health Check fehlgeschlagen${C_RESET}"
+  print "   ${C_DIM}Behebe die Fehler und führe den Check erneut aus.${C_RESET}"
   exit 1
 elif (( warnings > 0 )); then
   print ""
-  print "${C_YELLOW}⚠ Health Check mit Warnungen${C_RESET}"
-  print "   Das Setup funktioniert, aber einige optionale Komponenten fehlen."
+  print "${C_YELLOW}⚠ ${C_BOLD}Health Check mit Warnungen${C_RESET}"
+  print "   ${C_DIM}Das Setup funktioniert, aber einige optionale Komponenten fehlen.${C_RESET}"
   exit 0
 else
   print ""
-  print "${C_GREEN}✔ Health Check erfolgreich${C_RESET}"
-  print "   Alle Komponenten korrekt installiert."
+  print "${C_GREEN}✔ ${C_BOLD}Health Check erfolgreich${C_RESET}"
+  print "   ${C_DIM}Alle Komponenten korrekt installiert.${C_RESET}"
   exit 0
 fi

@@ -62,10 +62,10 @@ check_docs() {
     if ! "$DOTFILES_DIR/.github/scripts/generate-docs.sh" --check >/dev/null 2>&1; then
         err "Dokumentation ist veraltet!"
         print ""
-        print "  Bitte ausführen:"
-        print "    ${C_YELLOW}./.github/scripts/generate-docs.sh --generate${C_RESET}"
+        print "  ${C_DIM}Bitte ausführen:${C_RESET}"
+        print "    ${C_BOLD}./.github/scripts/generate-docs.sh --generate${C_RESET}"
         print ""
-        print "  Dann erneut committen."
+        print "  ${C_DIM}Dann erneut committen.${C_RESET}"
         return 1
     fi
 
@@ -128,8 +128,8 @@ check_markdown() {
         # Nur relevante Zeilen anzeigen (keine "Finding:", "Linting:", "Summary:")
         echo "$output" | grep -v "^Finding:" | grep -v "^Linting:" | grep -v "^Summary:" | grep -v "^markdownlint-cli2"
         print ""
-        print "  Fehler beheben oder Generatoren anpassen:"
-        print "    ${C_YELLOW}.github/scripts/generators/*.sh${C_RESET}"
+        print "  ${C_DIM}Fehler beheben oder Generatoren anpassen:${C_RESET}"
+        print "    ${C_BOLD}.github/scripts/generators/*.sh${C_RESET}"
         return 1
     fi
 
@@ -142,7 +142,7 @@ check_markdown() {
 # ------------------------------------------------------------
 print ""
 print "${C_OVERLAY0}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
-print "${C_MAUVE}🔍 Pre-Commit Checks${C_RESET}"
+print "${C_MAUVE}🔍 ${C_BOLD}Pre-Commit Checks${C_RESET}"
 print "${C_OVERLAY0}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
 print ""
 
@@ -158,10 +158,10 @@ print "${C_OVERLAY0}━━━━━━━━━━━━━━━━━━━━
 
 if (( failed > 0 )); then
     print ""
-    err "Pre-Commit fehlgeschlagen ($failed Check(s))"
+    err "Pre-Commit fehlgeschlagen (${C_BOLD}$failed${C_RESET}${C_RED} Check(s))"
     print ""
-    print "  ${C_RED}--no-verify ist VERBOTEN!${C_RESET}"
-    print "  Bitte Fehler beheben und erneut committen."
+    print "  ${C_RED}${C_BOLD}--no-verify ist VERBOTEN!${C_RESET}"
+    print "  ${C_DIM}Bitte Fehler beheben und erneut committen.${C_RESET}"
     exit 1
 fi
 
