@@ -36,13 +36,6 @@ brew "zsh-syntax-highlighting"              # Syntax-Highlighting | https://gith
 brew "zsh-autosuggestions"                  # History-Vorschläge | https://github.com/zsh-users/zsh-autosuggestions
 
 # Casks (Fonts & Tools)
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# font-meslo-lg-nerd-font:
-#   Variante: LDZNF (L=Large, DZ=Dotted Zero, NF=Nerd Font)
-#   Speicherort: ~/Library/Fonts/
-#   Zweck: Icons (Powerline, Devicons, Font Awesome, Octicons)
-#   Alternativen: brew search nerd-font
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 cask "font-meslo-lg-nerd-font"              # Nerd Font für Terminal | https://github.com/ryanoasis/nerd-fonts
 cask "claude-code"                          # KI-Coding-Assistent | https://www.anthropic.com/claude-code
 
