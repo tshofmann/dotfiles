@@ -1,16 +1,16 @@
 # ============================================================
-# Brewfile - Homebrew Abhängigkeiten für macOS Setup
+# Brewfile - Homebrew Bundle Konfiguration
 # ============================================================
-# Zweck     : Deklarative Homebrew-Abhängigkeiten (CLI-Tools & Font)
-# Verwendung: brew bundle --file=setup/Brewfile
+# Zweck     : Deklarative Homebrew-Abhängigkeiten
+# Verwendung: brew bundle (via HOMEBREW_BUNDLE_FILE in .zprofile)
 # Docs      : https://github.com/Homebrew/homebrew-bundle
 # ============================================================
 # Format für Doku-Generierung:
 #   brew/cask: # Beschreibung | https://docs-url
-#   mas:       # Beschreibung (URL wird aus ID generiert → apps.apple.com)
+#   mas:       # Beschreibung (URL wird aus ID generiert)
 # ============================================================
 
-# CLI-Tools
+# CLI-Tools (Basis)
 brew "fzf"                                  # Fuzzy Finder | https://github.com/junegunn/fzf
 brew "gh"                                   # GitHub CLI | https://cli.github.com/
 brew "stow"                                 # Symlink-Manager | https://www.gnu.org/software/stow/
@@ -18,36 +18,28 @@ brew "starship"                             # Shell-Prompt | https://starship.rs
 brew "tealdeer"                             # tldr-Client | https://tealdeer-rs.github.io/tealdeer/
 brew "zoxide"                               # Smartes cd | https://github.com/ajeetdsouza/zoxide
 brew "mas"                                  # Mac App Store CLI | https://github.com/mas-cli/mas
+brew "markdownlint-cli2"                    # Markdown-Linter | https://github.com/DavidAnson/markdownlint-cli2
 
 # Moderne CLI-Ersetzungen
-brew "eza"                                  # Moderner ls-Ersatz | https://github.com/eza-community/eza
+brew "eza"                                  # ls-Ersatz mit Icons | https://github.com/eza-community/eza
 brew "bat"                                  # cat mit Syntax-Highlighting | https://github.com/sharkdp/bat
-brew "ripgrep"                              # Ultraschneller grep-Ersatz | https://github.com/BurntSushi/ripgrep
+brew "ripgrep"                              # Schneller grep-Ersatz | https://github.com/BurntSushi/ripgrep
 brew "fd"                                   # Schneller find-Ersatz | https://github.com/sharkdp/fd
 brew "btop"                                 # Ressourcen-Monitor | https://github.com/aristocratos/btop
-brew "fastfetch"                            # Schnelle System-Info | https://github.com/fastfetch-cli/fastfetch
+brew "fastfetch"                            # System-Info | https://github.com/fastfetch-cli/fastfetch
 brew "lazygit"                              # Terminal-UI für Git | https://github.com/jesseduffield/lazygit
-
-# Linting
-brew "markdownlint-cli2"                    # Markdown-Linter | https://github.com/DavidAnson/markdownlint-cli2
 
 # ZSH-Plugins
 brew "zsh-syntax-highlighting"              # Syntax-Highlighting | https://github.com/zsh-users/zsh-syntax-highlighting
 brew "zsh-autosuggestions"                  # History-Vorschläge | https://github.com/zsh-users/zsh-autosuggestions
 
-# Casks (Fonts & Tools)
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# font-meslo-lg-nerd-font:
-#   Variante: LDZNF (L=Large, DZ=Dotted Zero, NF=Nerd Font)
-#   Speicherort: ~/Library/Fonts/
-#   Zweck: Icons (Powerline, Devicons, Font Awesome, Octicons)
-#   Alternativen: brew search nerd-font
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Fonts
 cask "font-meslo-lg-nerd-font"              # Nerd Font für Terminal | https://github.com/ryanoasis/nerd-fonts
+
+# GUI Apps (Casks)
 cask "claude-code"                          # KI-Coding-Assistent | https://www.anthropic.com/claude-code
 
-# Mac App Store Apps (via mas)
-# Hinweis: Benutzer muss im App Store angemeldet sein
+# Mac App Store
 mas "Xcode", id: 497799835                  # Apple IDE
 mas "Pages", id: 409201541                  # Textverarbeitung
 mas "Numbers", id: 409203825                # Tabellenkalkulation

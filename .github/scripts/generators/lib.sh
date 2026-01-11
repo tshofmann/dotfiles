@@ -16,12 +16,23 @@ ALIAS_DIR="$DOTFILES_DIR/terminal/.config/alias"
 DOCS_DIR="$DOTFILES_DIR/docs"
 FZF_CONFIG="$DOTFILES_DIR/terminal/.config/fzf/config"
 TEALDEER_DIR="$DOTFILES_DIR/terminal/.config/tealdeer/pages"
-BREWFILE="$DOTFILES_DIR/setup/Brewfile"
 BOOTSTRAP="$DOTFILES_DIR/setup/bootstrap.sh"
+BOOTSTRAP_MODULES="$DOTFILES_DIR/setup/modules"
 SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-style"
+
+# BREWFILE nur setzen wenn nicht bereits definiert (Konflikt mit homebrew.sh vermeiden)
+[[ -z "${BREWFILE:-}" ]] && BREWFILE="$DOTFILES_DIR/setup/Brewfile"
 
 # Farben (Catppuccin Mocha) – zentral definiert
 [[ -f "$SHELL_COLORS" ]] && source "$SHELL_COLORS"
+
+# ------------------------------------------------------------
+# Projekt-Metadaten (Single Source of Truth)
+# ------------------------------------------------------------
+# Kurzbeschreibung für README, tldr, GitHub Repo Description
+readonly PROJECT_TAGLINE="Dotfiles mit Catppuccin-Theme und modernen CLI-Tools."
+# Erweiterte Beschreibung für README
+readonly PROJECT_DESCRIPTION="Automatisiertes Dotfile-Setup mit modernen CLI-Ersetzungen."
 
 # dothelp-Kategorien (Single Source of Truth für readme.sh + tldr.sh)
 readonly DOTHELP_CAT_ALIASES="Aliase"
@@ -58,6 +69,182 @@ extract_macos_tested_version() {
     [[ -f "$BOOTSTRAP" ]] || { echo "26"; return; }
     local version=$(grep "^readonly MACOS_TESTED_VERSION=" "$BOOTSTRAP" | sed 's/.*=\([0-9]*\).*/\1/')
     echo "${version:-26}"
+}
+
+# ------------------------------------------------------------
+# Bootstrap-Modul Parser
+# ------------------------------------------------------------
+# Prüft ob modulare Bootstrap-Struktur existiert
+has_bootstrap_modules() {
+    [[ -d "$BOOTSTRAP_MODULES" && -f "$BOOTSTRAP_MODULES/_core.sh" ]]
+}
+
+# Extrahiert MACOS_MIN_VERSION aus validation.sh (modulare Struktur)
+extract_macos_min_version_from_module() {
+    local validation="$BOOTSTRAP_MODULES/validation.sh"
+    [[ -f "$validation" ]] || { echo "26"; return; }
+    local version=$(grep "readonly MACOS_MIN_VERSION=" "$validation" | sed 's/.*=\([0-9]*\).*/\1/')
+    echo "${version:-26}"
+}
+
+# Extrahiert MACOS_TESTED_VERSION aus validation.sh (modulare Struktur)
+extract_macos_tested_version_from_module() {
+    local validation="$BOOTSTRAP_MODULES/validation.sh"
+    [[ -f "$validation" ]] || { echo "26"; return; }
+    local version=$(grep "readonly MACOS_TESTED_VERSION=" "$validation" | sed 's/.*=\([0-9]*\).*/\1/')
+    echo "${version:-26}"
+}
+
+# Smart-Extraktor: Prüft zuerst Module, dann bootstrap.sh
+extract_macos_min_version_smart() {
+    if has_bootstrap_modules; then
+        extract_macos_min_version_from_module
+    else
+        extract_macos_min_version
+    fi
+}
+
+extract_macos_tested_version_smart() {
+    if has_bootstrap_modules; then
+        extract_macos_tested_version_from_module
+    else
+        extract_macos_tested_version
+    fi
+}
+
+# Extrahiert STARSHIP_PRESET_DEFAULT aus starship.sh Modul
+extract_starship_default_preset() {
+    local starship_module="$BOOTSTRAP_MODULES/starship.sh"
+    [[ -f "$starship_module" ]] || { echo "catppuccin-powerline"; return; }
+    local preset=$(grep "readonly STARSHIP_PRESET_DEFAULT=" "$starship_module" | sed 's/.*="\([^"]*\)".*/\1/')
+    echo "${preset:-catppuccin-powerline}"
+}
+
+# Extrahiert STEP-Metadaten aus einem Modul (neues Format)
+# Format: # STEP: Name | Beschreibung | Fehlerverhalten
+# Rückgabe: Zeilenweise "Name|Beschreibung|Fehlerverhalten"
+# Ersetzt Platzhalter: ${MACOS_MIN_VERSION} → tatsächlicher Wert
+extract_module_step_metadata() {
+    local module_file="$1"
+    [[ -f "$module_file" ]] || return 1
+
+    # macOS-Version für Platzhalter-Ersetzung holen
+    local macos_min macos_min_name
+    macos_min=$(extract_macos_min_version_smart)
+    macos_min_name=$(get_macos_codename "$macos_min")
+
+    grep "^# STEP:" "$module_file" 2>/dev/null | while read -r line; do
+        # Entferne "# STEP: " Prefix
+        local data="${line#\# STEP: }"
+        # Ersetze Platzhalter
+        data="${data//\$\{MACOS_MIN_VERSION\}/${macos_min}+ (${macos_min_name})}"
+        # Gib Name|Beschreibung|Fehlerverhalten aus
+        echo "$data"
+    done
+}
+
+# Legacy: Extrahiert CURRENT_STEP Zuweisungen (für Abwärtskompatibilität)
+extract_module_steps() {
+    local module_file="$1"
+    [[ -f "$module_file" ]] || return 1
+
+    grep "CURRENT_STEP=" "$module_file" 2>/dev/null | while read -r line; do
+        local step="${line#*CURRENT_STEP=}"
+        step="${step#\"}"
+        step="${step%\"}"
+        [[ -n "$step" && "$step" != "Initialisierung" ]] && echo "$step"
+    done
+}
+
+# Extrahiert Header-Feld aus Modul (z.B. "Zweck", "Benötigt", "CURRENT_STEP")
+# Format im Modul: # Feldname   : Wert
+extract_module_header_field() {
+    local module_file="$1"
+    local field="$2"
+    [[ -f "$module_file" ]] || return 1
+
+    # Suche nach "# Feldname" gefolgt von ":" und extrahiere Wert
+    local value
+    value=$(grep -E "^# ${field}[[:space:]]*:" "$module_file" 2>/dev/null | head -1 | sed "s/^# ${field}[[:space:]]*:[[:space:]]*//")
+    echo "$value"
+}
+
+# Liste aller Bootstrap-Module in der definierten Reihenfolge
+# Liest MODULES Array aus bootstrap.sh
+get_bootstrap_module_order() {
+    local bootstrap="$BOOTSTRAP"
+
+    [[ -f "$bootstrap" ]] || return 1
+
+    # Extrahiere MODULES Array
+    local in_modules=false
+    while IFS= read -r line; do
+        # Whitespace trimmen
+        local trimmed="${line#"${line%%[![:space:]]*}"}"
+        trimmed="${trimmed%"${trimmed##*[![:space:]]}"}"
+
+        # Array-Start erkennen
+        if [[ "$trimmed" == "readonly -a MODULES="* || "$trimmed" == "MODULES=("* ]]; then
+            in_modules=true
+            continue
+        fi
+
+        # Array-Ende erkennen
+        if $in_modules && [[ "$trimmed" == ")" ]]; then
+            break
+        fi
+
+        # Modul-Namen extrahieren (Format: "modulname  # Kommentar" oder "prefix:modulname")
+        if $in_modules; then
+            # Kommentar entfernen und trimmen
+            local module="${trimmed%%#*}"
+            module="${module#"${module%%[![:space:]]*}"}"
+            module="${module%"${module##*[![:space:]]}"}"
+
+            # Plattform-Prefix entfernen falls vorhanden (macos:, linux:, etc.)
+            if [[ "$module" == *":"* ]]; then
+                module="${module#*:}"
+            fi
+
+            # Nur gültige Modul-Namen (alphanumerisch + Bindestrich)
+            [[ "$module" =~ ^[a-z][a-z0-9-]*$ ]] && echo "$module"
+        fi
+    done < "$bootstrap"
+}
+
+# Generiert Bootstrap-Schritte-Tabelle aus Modulen (Markdown-Format)
+# Nutzt STEP-Metadaten: # STEP: Name | Beschreibung | Fehlerverhalten
+# Rückgabe: Markdown-Tabellenzeilen
+generate_bootstrap_steps_table() {
+    local -a modules
+    modules=($(get_bootstrap_module_order))
+
+    for module in "${modules[@]}"; do
+        local module_file="$BOOTSTRAP_MODULES/${module}.sh"
+        [[ -f "$module_file" ]] || continue
+
+        # STEP-Metadaten aus Modul extrahieren
+        while IFS= read -r step_data; do
+            [[ -z "$step_data" ]] && continue
+            # Format: "Name | Beschreibung | Fehlerverhalten"
+            # Umwandeln in Markdown-Tabellenzeile
+            echo "| $step_data |"
+        done < <(extract_module_step_metadata "$module_file")
+    done
+}
+
+# Legacy: Generiert nur Schritt-Namen (für Abwärtskompatibilität)
+generate_bootstrap_steps_from_modules() {
+    local -a modules
+    modules=($(get_bootstrap_module_order))
+
+    for module in "${modules[@]}"; do
+        local module_file="$BOOTSTRAP_MODULES/${module}.sh"
+        [[ -f "$module_file" ]] || continue
+
+        # CURRENT_STEP Werte aus Modul extrahieren
+        extract_module_steps "$module_file"
+    done
 }
 
 # ------------------------------------------------------------
@@ -458,6 +645,135 @@ get_dothelp_categories() {
 
     # Ausgabe als Komma-separierte Liste
     echo "${(j:, :)categories}"
+}
+
+# ------------------------------------------------------------
+# Brewfile-Sektion generieren (respektiert Kategorien)
+# ------------------------------------------------------------
+# Parst Kategorie-Kommentare aus Brewfile und gruppiert Pakete
+# Format im Brewfile: # Kategorie-Name (einzelne Zeile)
+generate_brewfile_section() {
+    local current_category=""
+    local table_started=false
+    local header_end_count=0
+
+    while IFS= read -r line; do
+        # Header-Block: Alles bis zur letzten ====== Zeile überspringen (4 Stück)
+        if [[ "$line" == "# ===="* ]]; then
+            (( header_end_count++ )) || true
+            continue
+        fi
+
+        # Solange wir nicht alle 4x ====== gesehen haben, Header überspringen
+        if (( header_end_count < 4 )); then
+            continue
+        fi
+
+        # Leere Zeilen überspringen
+        [[ -z "$line" ]] && continue
+
+        # Kategorie-Kommentar erkennen (# Kategoriename)
+        if [[ "$line" == "# "* ]]; then
+            local category="${line#\# }"
+            # Nur wenn es eine echte Kategorie ist (keine URL, kein Kommentar zu Paketen)
+            if [[ "$category" != *"http"* && "$category" != *"|"* && ${#category} -lt 40 ]]; then
+                # Neue Kategorie – Tabelle abschließen falls offen
+                if $table_started; then
+                    echo ""
+                fi
+                current_category="$category"
+                echo "### $current_category"
+                echo ""
+                echo "| Paket | Beschreibung |"
+                echo "| ----- | ------------ |"
+                table_started=true
+                continue
+            fi
+        fi
+
+        # Paket-Zeilen parsen
+        local parsed=$(parse_brewfile_entry "$line")
+        [[ -z "$parsed" ]] && continue
+
+        local name="${parsed%%|*}"
+        local rest="${parsed#*|}"
+        local desc="${rest%%|*}"
+        rest="${rest#*|}"
+        local typ="${rest%%|*}"
+
+        # Formatierung nach Typ
+        case "$typ" in
+            brew|cask)
+                echo "| \`$name\` | $desc |"
+                ;;
+            mas)
+                echo "| $name | $desc |"
+                ;;
+        esac
+    done < "$BREWFILE"
+
+    echo ""
+    echo '> **Hinweis:** Die Anmeldung im App Store muss manuell erfolgen – die Befehle `mas account` und `mas signin` sind auf macOS 12+ nicht verfügbar.'
+
+    # Technische Details
+    cat << 'TECH'
+
+---
+
+## Technische Details
+
+### XDG Base Directory Specification
+
+Das Setup folgt der [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html):
+
+| Variable | Pfad | Verwendung |
+| -------- | ---- | ---------- |
+| `XDG_CONFIG_HOME` | `~/.config` | Konfigurationsdateien |
+| `XDG_DATA_HOME` | `~/.local/share` | Anwendungsdaten |
+| `XDG_CACHE_HOME` | `~/.cache` | Cache-Dateien |
+
+### Symlink-Strategie
+
+GNU Stow mit `--no-folding` erstellt Symlinks für **Dateien**, nicht Verzeichnisse:
+
+```zsh
+# Stow mit --no-folding (via .stowrc)
+stow --adopt -R terminal editor
+```
+
+Vorteile:
+
+- Neue lokale Dateien werden nicht ins Repository übernommen
+- Granulare Kontrolle über einzelne Dateien
+- `.gitignore` in `~/.config/` bleibt erhalten
+
+### Setup-Datei-Erkennung
+
+Bootstrap erkennt Theme-Dateien automatisch nach Dateiendung:
+
+| Dateiendung | Sortiert | Warnung bei mehreren |
+| ----------- | -------- | -------------------- |
+| `.terminal` | Ja | Ja |
+| `.xccolortheme` | Ja | Ja |
+
+Dies ermöglicht:
+
+- Freie Benennung der Theme-Dateien
+- Deterministisches Verhalten (alphabetisch erste bei mehreren)
+- Explizite Warnung wenn mehrere Dateien existieren
+
+---
+
+## Troubleshooting
+
+### Icon-Probleme (□ oder ?)
+
+Bei fehlenden oder falschen Icons prüfen:
+
+1. **Font in Terminal.app korrekt?** – `catppuccin-mocha` Profil muss MesloLG Nerd Font verwenden
+2. **Nerd Font installiert?** – `brew list --cask | grep font`
+3. **Terminal neu gestartet?** – Nach Font-Installation erforderlich
+TECH
 }
 
 # ------------------------------------------------------------

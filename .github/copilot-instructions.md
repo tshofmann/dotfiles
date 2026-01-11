@@ -49,12 +49,13 @@
 
 | Aspekt | Wert |
 | -------- | ------ |
-| **Plattform** | macOS Apple Silicon (arm64) |
+| **Plattform** | macOS Apple Silicon (primär), Linux vorbereitet |
 | **Shell** | ZSH (kein POSIX) |
 | **Theme** | Catppuccin Mocha |
 | **Symlinks** | GNU Stow mit `--no-folding` |
 | **Configs** | `~/.config/` (XDG-konform) |
 | **Modularität** | Ein Tool = Eine `.alias`-Datei |
+| **Bootstrap** | Modulare Schritte in `setup/modules/*.sh` |
 
 ### Dokumentation
 

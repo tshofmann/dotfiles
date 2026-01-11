@@ -3,7 +3,7 @@
 Diese Anleitung führt dich durch die vollständige Installation der dotfiles auf einem frischen Apple Silicon Mac.
 
 > Diese Dokumentation wird automatisch aus dem Code generiert.
-> Änderungen direkt in `setup/bootstrap.sh` und `setup/Brewfile` vornehmen.
+> Änderungen in `setup/modules/*.sh` und `setup/Brewfile` vornehmen.
 
 ## Voraussetzungen
 
@@ -42,15 +42,18 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 | Aktion | Beschreibung | Bei Fehler |
 | ------ | ------------ | ---------- |
 | Architektur-Check | Prüft ob arm64 (Apple Silicon) | ❌ Exit |
-| macOS-Version-Check | Prüft ob macOS 26+ (Tahoe) | ❌ Exit |
+| Architektur-Check | Prüft ob arm64 (Apple Silicon) | ❌ Exit |
+| macOS-Version-Check | Prüft ob macOS 26+ (Tahoe) installiert ist | ❌ Exit |
 | Netzwerk-Check | Prüft Internetverbindung | ❌ Exit |
 | Schreibrechte-Check | Prüft ob `$HOME` schreibbar ist | ❌ Exit |
 | Xcode CLI Tools | Installiert/prüft Developer Tools | ❌ Exit |
+| Build-Tools | Installiert Build-Essentials (Linux) | ❌ Exit |
 | Homebrew | Installiert/prüft Homebrew unter `/opt/homebrew` | ❌ Exit |
 | Brewfile | Installiert CLI-Tools via `brew bundle` | ❌ Exit |
 | Font-Verifikation | Prüft MesloLG Nerd Font Installation | ❌ Exit |
 | Terminal-Profil | Importiert `catppuccin-mocha.terminal` als Standard | ⚠️ Warnung |
 | Starship-Theme | Generiert `~/.config/starship.toml` | ⚠️ Warnung |
+| Xcode-Theme | Installiert Catppuccin Mocha Theme | ⚠️ Warnung |
 | ZSH-Sessions | Prüft SHELL_SESSIONS_DISABLE in ~/.zshenv | ⚠️ Warnung |
 
 > **Idempotenz:** Das Skript kann beliebig oft ausgeführt werden – bereits installierte Komponenten werden erkannt und übersprungen.
@@ -141,7 +144,7 @@ ff                                  # System-Info anzeigen
 
 ## Installierte Pakete
 
-### CLI-Tools (via Homebrew)
+### CLI-Tools (Basis)
 
 | Paket | Beschreibung |
 | ----- | ------------ |
@@ -152,28 +155,43 @@ ff                                  # System-Info anzeigen
 | `tealdeer` | tldr-Client |
 | `zoxide` | Smartes cd |
 | `mas` | Mac App Store CLI |
-| `eza` | Moderner ls-Ersatz |
+| `markdownlint-cli2` | Markdown-Linter |
+
+### Moderne CLI-Ersetzungen
+
+| Paket | Beschreibung |
+| ----- | ------------ |
+| `eza` | ls-Ersatz mit Icons |
 | `bat` | cat mit Syntax-Highlighting |
-| `ripgrep` | Ultraschneller grep-Ersatz |
+| `ripgrep` | Schneller grep-Ersatz |
 | `fd` | Schneller find-Ersatz |
 | `btop` | Ressourcen-Monitor |
-| `fastfetch` | Schnelle System-Info |
+| `fastfetch` | System-Info |
 | `lazygit` | Terminal-UI für Git |
-| `markdownlint-cli2` | Markdown-Linter |
+
+### ZSH-Plugins
+
+| Paket | Beschreibung |
+| ----- | ------------ |
 | `zsh-syntax-highlighting` | Syntax-Highlighting |
 | `zsh-autosuggestions` | History-Vorschläge |
 
-### Apps & Fonts (via Cask)
+### Fonts
 
 | Paket | Beschreibung |
 | ----- | ------------ |
 | `font-meslo-lg-nerd-font` | Nerd Font für Terminal |
+
+### GUI Apps (Casks)
+
+| Paket | Beschreibung |
+| ----- | ------------ |
 | `claude-code` | KI-Coding-Assistent |
 
-### Mac App Store Apps (via mas)
+### Mac App Store
 
-| App | Beschreibung |
-| --- | ------------ |
+| Paket | Beschreibung |
+| ----- | ------------ |
 | Xcode | Apple IDE |
 | Pages | Textverarbeitung |
 | Numbers | Tabellenkalkulation |

@@ -34,7 +34,8 @@ Nach Schritt 3 wird bei jedem Commit automatisch geprüft, ob Dokumentation und 
 | `.github/scripts/generators/` | Dokumentations-Generatoren (Single Source of Truth) |
 | `.github/scripts/tests/` | Unit-Tests für Generatoren |
 | `.github/hooks/` | Pre-Commit Hook für Validierung |
-| `setup/` | Bootstrap, Brewfile, Terminal-Profil |
+| `setup/` | Bootstrap-Orchestrator, Module, Brewfile, Terminal-Profil |
+| `setup/modules/` | Modulare Bootstrap-Schritte (Validation, Homebrew, etc.) |
 | `terminal/` | Dotfiles (werden nach `~` verlinkt via Stow) |
 | `terminal/.config/alias/` | Tool-spezifische Aliase und Funktionen |
 | `docs/` | Dokumentation für Endnutzer |
@@ -89,7 +90,7 @@ git config core.hooksPath .github/hooks
 
 | Hook | Zweck |
 | ------ | ------- |
-| `pre-commit` | 1. ZSH-Syntax (`zsh -n`) für `.github/scripts/**/*.sh`, `terminal/.config/alias/*.alias`, `setup/bootstrap.sh` |
+| `pre-commit` | 1. ZSH-Syntax (`zsh -n`) für `.github/scripts/**/*.sh`, `terminal/.config/alias/*.alias`, `setup/*.sh`, `setup/modules/*.sh` |
 | | 2. Doku-Konsistenz (vergleicht generierte mit aktuellen Docs) |
 | | 3. Alias-Format (Header-Block, Guard-Check) |
 
@@ -142,7 +143,7 @@ Die Test-Suite prüft:
 | ------ | --------- |
 | `.alias`-Dateien | tldr-Patches/Pages |
 | `Brewfile` | setup.md (Tool-Liste) |
-| `bootstrap.sh` | setup.md (Schritte) |
+| `setup/modules/*.sh` | setup.md (Bootstrap-Schritte via STEP-Metadaten) |
 | Config-Dateien | customization.md |
 
 ### Bei Fehlern

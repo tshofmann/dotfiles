@@ -2,31 +2,38 @@
 # ============================================================
 # setup.sh - Generator für docs/setup.md
 # ============================================================
-# Zweck   : Generiert Setup-Dokumentation aus bootstrap.sh
+# Zweck   : Generiert Setup-Dokumentation aus bootstrap.sh/Modulen
 # Pfad    : .github/scripts/generators/setup.sh
+# Quelle  : setup/modules/*.sh (modulare Struktur) oder setup/bootstrap.sh (legacy)
 # ============================================================
 
 source "${0:A:h}/lib.sh"
 
 # ------------------------------------------------------------
-# Bootstrap-Schritte extrahieren
+# Bootstrap-Schritte extrahieren (Smart: Module oder Legacy)
 # ------------------------------------------------------------
-# Parst CURRENT_STEP Zuweisungen und Aktionen aus bootstrap.sh
+# Parst CURRENT_STEP Zuweisungen aus Modulen oder bootstrap.sh
 extract_bootstrap_steps() {
-    local output=""
     local step_count=0
 
-    while IFS= read -r line; do
-        # CURRENT_STEP="..." Zuweisungen
-        if [[ "$line" == *'CURRENT_STEP='* ]]; then
-            local step="${line#*CURRENT_STEP=}"
-            step="${step#\"}"
-            step="${step%\"}"
-            [[ -n "$step" && "$step" != "Initialisierung" ]] && {
-                (( step_count++ )) || true
-            }
-        fi
-    done < "$BOOTSTRAP"
+    if has_bootstrap_modules; then
+        # Modulare Struktur: Schritte aus allen Modulen sammeln
+        local steps
+        steps=$(generate_bootstrap_steps_from_modules)
+        step_count=$(echo "$steps" | grep -c "." || echo 0)
+    else
+        # Legacy: Aus bootstrap.sh direkt
+        while IFS= read -r line; do
+            if [[ "$line" == *'CURRENT_STEP='* ]]; then
+                local step="${line#*CURRENT_STEP=}"
+                step="${step#\"}"
+                step="${step%\"}"
+                [[ -n "$step" && "$step" != "Initialisierung" ]] && {
+                    (( step_count++ )) || true
+                }
+            fi
+        done < "$BOOTSTRAP"
+    fi
 
     echo "$step_count"
 }
@@ -35,10 +42,10 @@ extract_bootstrap_steps() {
 # Haupt-Generator für setup.md
 # ------------------------------------------------------------
 generate_setup_md() {
-    # Dynamische macOS-Versionen aus bootstrap.sh
+    # Dynamische macOS-Versionen (Smart: aus Modulen oder bootstrap.sh)
     local macos_min macos_tested macos_min_name macos_tested_name
-    macos_min=$(extract_macos_min_version)
-    macos_tested=$(extract_macos_tested_version)
+    macos_min=$(extract_macos_min_version_smart)
+    macos_tested=$(extract_macos_tested_version_smart)
     macos_min_name=$(get_macos_codename "$macos_min")
     macos_tested_name=$(get_macos_codename "$macos_tested")
 
@@ -48,7 +55,7 @@ generate_setup_md() {
 Diese Anleitung führt dich durch die vollständige Installation der dotfiles auf einem frischen Apple Silicon Mac.
 
 > Diese Dokumentation wird automatisch aus dem Code generiert.
-> Änderungen direkt in `setup/bootstrap.sh` und `setup/Brewfile` vornehmen.
+> Änderungen in `setup/modules/*.sh` und `setup/Brewfile` vornehmen.
 
 ## Voraussetzungen
 
@@ -91,9 +98,14 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 | ------ | ------------ | ---------- |
 | Architektur-Check | Prüft ob arm64 (Apple Silicon) | ❌ Exit |
 PART2
-    # Dynamische macOS-Version-Check Zeile
-    echo "| macOS-Version-Check | Prüft ob macOS ${macos_min}+ (${macos_min_name}) | ❌ Exit |"
-    cat << 'PART3'
+
+    # Dynamische Bootstrap-Schritte-Tabelle aus Modulen generieren
+    if has_bootstrap_modules; then
+        generate_bootstrap_steps_table
+    else
+        # Fallback: Statische Tabelle für Legacy-Bootstrap
+        echo "| macOS-Version-Check | Prüft ob macOS ${macos_min}+ (${macos_min_name}) | ❌ Exit |"
+        cat << 'LEGACY_STEPS'
 | Netzwerk-Check | Prüft Internetverbindung | ❌ Exit |
 | Schreibrechte-Check | Prüft ob `$HOME` schreibbar ist | ❌ Exit |
 | Xcode CLI Tools | Installiert/prüft Developer Tools | ❌ Exit |
@@ -103,7 +115,8 @@ PART2
 | Terminal-Profil | Importiert `catppuccin-mocha.terminal` als Standard | ⚠️ Warnung |
 | Starship-Theme | Generiert `~/.config/starship.toml` | ⚠️ Warnung |
 | ZSH-Sessions | Prüft SHELL_SESSIONS_DISABLE in ~/.zshenv | ⚠️ Warnung |
-PART3
+LEGACY_STEPS
+    fi
 
     cat << 'REST'
 
@@ -197,135 +210,8 @@ ff                                  # System-Info anzeigen
 
 REST
 
-    # CLI-Tools aus Brewfile
-    echo "### CLI-Tools (via Homebrew)"
-    echo ""
-    echo "| Paket | Beschreibung |"
-    echo "| ----- | ------------ |"
-
-    while IFS= read -r line; do
-        [[ "$line" == \#* || -z "$line" ]] && continue
-
-        local parsed=$(parse_brewfile_entry "$line")
-        [[ -z "$parsed" ]] && continue
-
-        local name="${parsed%%|*}"
-        local rest="${parsed#*|}"
-        local desc="${rest%%|*}"
-        rest="${rest#*|}"
-        local typ="${rest%%|*}"
-
-        [[ "$typ" == "brew" ]] && echo "| \`$name\` | $desc |"
-    done < "$BREWFILE"
-
-    echo ""
-
-    # Casks
-    echo "### Apps & Fonts (via Cask)"
-    echo ""
-    echo "| Paket | Beschreibung |"
-    echo "| ----- | ------------ |"
-
-    while IFS= read -r line; do
-        [[ "$line" == \#* || -z "$line" ]] && continue
-
-        local parsed=$(parse_brewfile_entry "$line")
-        [[ -z "$parsed" ]] && continue
-
-        local name="${parsed%%|*}"
-        local rest="${parsed#*|}"
-        local desc="${rest%%|*}"
-        rest="${rest#*|}"
-        local typ="${rest%%|*}"
-
-        [[ "$typ" == "cask" ]] && echo "| \`$name\` | $desc |"
-    done < "$BREWFILE"
-
-    echo ""
-
-    # MAS Apps
-    echo "### Mac App Store Apps (via mas)"
-    echo ""
-    echo "| App | Beschreibung |"
-    echo "| --- | ------------ |"
-
-    while IFS= read -r line; do
-        [[ "$line" == \#* || -z "$line" ]] && continue
-
-        local parsed=$(parse_brewfile_entry "$line")
-        [[ -z "$parsed" ]] && continue
-
-        local name="${parsed%%|*}"
-        local rest="${parsed#*|}"
-        local desc="${rest%%|*}"
-        rest="${rest#*|}"
-        local typ="${rest%%|*}"
-
-        [[ "$typ" == "mas" ]] && echo "| $name | $desc |"
-    done < "$BREWFILE"
-
-    echo ""
-    echo '> **Hinweis:** Die Anmeldung im App Store muss manuell erfolgen – die Befehle `mas account` und `mas signin` sind auf macOS 12+ nicht verfügbar.'
-
-    # Technische Details
-    cat << 'TECH'
-
----
-
-## Technische Details
-
-### XDG Base Directory Specification
-
-Das Setup folgt der [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html):
-
-| Variable | Pfad | Verwendung |
-| -------- | ---- | ---------- |
-| `XDG_CONFIG_HOME` | `~/.config` | Konfigurationsdateien |
-| `XDG_DATA_HOME` | `~/.local/share` | Anwendungsdaten |
-| `XDG_CACHE_HOME` | `~/.cache` | Cache-Dateien |
-
-### Symlink-Strategie
-
-GNU Stow mit `--no-folding` erstellt Symlinks für **Dateien**, nicht Verzeichnisse:
-
-```zsh
-# Stow mit --no-folding (via .stowrc)
-stow --adopt -R terminal editor
-```
-
-Vorteile:
-
-- Neue lokale Dateien werden nicht ins Repository übernommen
-- Granulare Kontrolle über einzelne Dateien
-- `.gitignore` in `~/.config/` bleibt erhalten
-
-### Setup-Datei-Erkennung
-
-Bootstrap erkennt Theme-Dateien automatisch nach Dateiendung:
-
-| Dateiendung | Sortiert | Warnung bei mehreren |
-| ----------- | -------- | -------------------- |
-| `.terminal` | Ja | Ja |
-| `.xccolortheme` | Ja | Ja |
-
-Dies ermöglicht:
-
-- Freie Benennung der Theme-Dateien
-- Deterministisches Verhalten (alphabetisch erste bei mehreren)
-- Explizite Warnung wenn mehrere Dateien existieren
-
----
-
-## Troubleshooting
-
-### Icon-Probleme (□ oder ?)
-
-Bei fehlenden oder falschen Icons prüfen:
-
-1. **Font in Terminal.app korrekt?** – `catppuccin-mocha` Profil muss MesloLG Nerd Font verwenden
-2. **Nerd Font installiert?** – `brew list --cask | grep font`
-3. **Terminal neu gestartet?** – Nach Font-Installation erforderlich
-TECH
+    # Pakete nach Kategorien aus Brewfile generieren
+    generate_brewfile_section
 }
 
 # Nur ausführen wenn direkt aufgerufen (nicht gesourct)
