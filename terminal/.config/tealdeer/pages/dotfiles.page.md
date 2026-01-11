@@ -75,6 +75,10 @@
 
 `brewv`
 
+- Brewfile Versionsübersicht:
+
+`brewv`
+
 # Dotfiles-Wartung
 
 - Health-Check:

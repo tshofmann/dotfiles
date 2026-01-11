@@ -355,14 +355,77 @@ extract_function_desc() {
 }
 
 # ------------------------------------------------------------
+# Helper: Extrahiere alle Items (Aliase UND Funktionen) aus einer Sektion
+# ------------------------------------------------------------
+# Parameter:
+#   $1 = Datei
+#   $2 = Sektionsname (z.B. "Update & Wartung", "Dotfiles Wartung")
+# Ausgabe: Pro Zeile "name|beschreibung" für jedes gefundene Item
+# Erkennt: alias name='...' und name() {
+extract_section_items() {
+    local file="$1"
+    local section_name="$2"
+    local in_section=false
+    local prev_comment=""
+
+    while IFS= read -r line; do
+        # Sektionsheader gefunden (exakter Match)
+        if [[ "$line" == "# ${section_name}" ]]; then
+            in_section=true
+            continue
+        fi
+
+        # Trennlinie überspringen
+        [[ "$in_section" == true && "$line" == "# ---"* ]] && continue
+
+        # Nächste Sektion oder Datei-Header beendet aktuelle Sektion
+        if [[ "$in_section" == true ]]; then
+            # Neue Sektion beginnt (aber nicht Trennlinie)
+            if [[ "$line" == "# "* && "$line" != "# ---"* ]]; then
+                local content="${line#\# }"
+                # Prüfe ob es ein neuer Sektionsheader ist (keine Metadaten)
+                local first_word="${content%% *}"
+                case "$first_word" in
+                    Nutzt|Voraussetzung|Docs|Guard|Hinweis)
+                        # Metadaten ignorieren
+                        ;;
+                    *)
+                        # Prüfe ob nächste Zeile ein Sektionstrennlinie ist
+                        # Wenn der Kommentar kein Metadaten-Keyword hat, ist es eine Beschreibung
+                        prev_comment="${content%% –*}"
+                        ;;
+                esac
+            # Alias gefunden
+            elif [[ "$line" =~ "^alias ([a-z_-]+)=" ]]; then
+                local name="${match[1]}"
+                [[ -n "$prev_comment" ]] && echo "${name}|${prev_comment}"
+                prev_comment=""
+            # Funktion gefunden
+            elif [[ "$line" =~ "^([a-z_-]+)\(\) \{" ]]; then
+                local name="${match[1]}"
+                [[ -n "$prev_comment" ]] && echo "${name}|${prev_comment}"
+                prev_comment=""
+            # Datei-Header beendet alles
+            elif [[ "$line" == "# ==="* ]]; then
+                break
+            # Leere Zeile behält Kommentar (für mehrzeilige Kommentare)
+            elif [[ "$line" != "" ]]; then
+                prev_comment=""
+            fi
+        fi
+    done < "$file"
+}
+
+# ------------------------------------------------------------
 # Generator: dotfiles.page.md Schnellreferenz
 # ------------------------------------------------------------
-# Quellen:
+# Quellen (alle dynamisch extrahiert):
 #   - .zshrc: Shell-Keybindings (Tab, Autosuggestions)
 #   - fzf/init.zsh: Globale Ctrl+X Keybindings
 #   - *.alias Header: Ersetzt-Feld für moderne Ersetzungen
 #   - *.alias Header: Aliase-Feld für Beispiele
-#   - brew.alias: brewup/brewv Funktionsbeschreibungen
+#   - brew.alias: Sektionen "Update & Wartung", "Versionsübersicht"
+#   - dotfiles.alias: Sektion "Dotfiles Wartung"
 #   - pages/*.patch.md, *.page.md: Verfügbare Hilfeseiten
 generate_dotfiles_page() {
     local output=""
@@ -450,44 +513,26 @@ generate_dotfiles_page() {
         fi
     done
 
-    # Homebrew – Beschreibungen aus brew.alias
+    # Homebrew – dynamisch alle Items aus "Update & Wartung" und "Versionsübersicht"
     output+="# Homebrew\n\n"
     if [[ -f "$brew_alias" ]]; then
-        local brewup_desc=$(extract_function_desc "$brew_alias" "brewup")
-        local brewv_desc=$(extract_function_desc "$brew_alias" "brewv")
-        [[ -n "$brewup_desc" ]] && output+="- ${brewup_desc}:\n\n\`brewup\`\n\n"
-        [[ -n "$brewv_desc" ]] && output+="- ${brewv_desc}:\n\n\`brewv\`\n"
+        local item
+        # Update & Wartung Sektion
+        while IFS='|' read -r name desc; do
+            [[ -n "$name" && -n "$desc" ]] && output+="- ${desc}:\n\n\`${name}\`\n\n"
+        done < <(extract_section_items "$brew_alias" "Update & Wartung")
+        # Versionsübersicht Sektion
+        while IFS='|' read -r name desc; do
+            [[ -n "$name" && -n "$desc" ]] && output+="- ${desc}:\n\n\`${name}\`\n\n"
+        done < <(extract_section_items "$brew_alias" "Versionsübersicht")
     fi
 
-    # Dotfiles-Wartung – alle Aliase nach Sektionsheader dynamisch extrahieren
-    output+="\n# Dotfiles-Wartung\n\n"
+    # Dotfiles-Wartung – dynamisch alle Items aus "Dotfiles Wartung"
+    output+="# Dotfiles-Wartung\n\n"
     if [[ -f "$dotfiles_alias" ]]; then
-        local in_wartung_section=false
-        local prev_comment=""
-        while IFS= read -r line; do
-            # Sektionsheader "Dotfiles Wartung" gefunden
-            if [[ "$line" == "# Dotfiles Wartung" ]]; then
-                in_wartung_section=true
-                continue
-            fi
-            # Nächste Sektion oder Dateiende
-            [[ "$in_wartung_section" == true && "$line" == "# ---"* ]] && continue
-            [[ "$in_wartung_section" == true && "$line" == "# ==="* ]] && break
-
-            if [[ "$in_wartung_section" == true ]]; then
-                # Beschreibungskommentar merken
-                if [[ "$line" == "# "* ]]; then
-                    prev_comment="${line#\# }"
-                    prev_comment="${prev_comment%% –*}"  # Teil vor " – "
-                elif [[ "$line" =~ "^alias ([a-z]+)=" && -n "$prev_comment" ]]; then
-                    local alias_name="${match[1]}"
-                    output+="- ${prev_comment}:\n\n\`${alias_name}\`\n\n"
-                    prev_comment=""
-                elif [[ "$line" != "" ]]; then
-                    prev_comment=""
-                fi
-            fi
-        done < "$dotfiles_alias"
+        while IFS='|' read -r name desc; do
+            [[ -n "$name" && -n "$desc" ]] && output+="- ${desc}:\n\n\`${name}\`\n\n"
+        done < <(extract_section_items "$dotfiles_alias" "Dotfiles Wartung")
     fi
 
     # Verfügbare Hilfeseiten
