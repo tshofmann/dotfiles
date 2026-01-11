@@ -5,15 +5,17 @@
 
 - dotfiles: Nutzt `tldr (tealdeer)`
 
-- Diese Hilfe anzeigen:
+- Diese Hilfe (Schnellreferenz):
 
 `dothelp`
 
-# Aliase
-
-- Interaktiv durchsuchen (Enter=ausführen, Ctrl+Y=kopieren):
+- Alle Aliase+Funktionen interaktiv durchsuchen:
 
 `fa {{suche}}`
+
+- Vollständige Tool-Dokumentation:
+
+`tldr {{tool}}`
 
 # Keybindings
 
@@ -93,13 +95,12 @@
 
 `dotstow`
 
+# Vollständige Dokumentation
 
-# Verfügbare Hilfeseiten
+- Jedes Tool hat ALLE Aliase+Funktionen dokumentiert:
 
-- Tools mit dotfiles-Patches (tldr <tool>):
+`tldr {{bat|brew|btop|eza|fastfetch|fd|fzf|gh|git|lazygit|rg|zoxide}}`
 
-`bat, brew, btop, eza, fastfetch, fd, fzf, gh, git, lazygit, rg, zoxide`
+- Eigene Seiten (ohne offizielle tldr-Basis):
 
-- Eigene Seiten:
-
-`catppuccin, markdownlint, dotfiles`
+`tldr {{catppuccin|markdownlint|dotfiles}}`

@@ -443,12 +443,10 @@ generate_dotfiles_page() {
     local nutzt=$(parse_header_field "$dotfiles_alias" "Nutzt")
     [[ -n "$nutzt" ]] && output+="- dotfiles: Nutzt \`${nutzt}\`\n\n"
 
-    # Einstiegspunkte
-    output+="- Diese Hilfe anzeigen:\n\n\`dothelp\`\n"
-
-    # Aliase-Sektion mit fa
-    output+="\n# ${DOTHELP_CAT_ALIASES}\n\n"
-    output+="- Interaktiv durchsuchen (Enter=ausführen, Ctrl+Y=kopieren):\n\n\`fa {{suche}}\`\n"
+    # Einstiegspunkte – prominenter Block
+    output+="- Diese Hilfe (Schnellreferenz):\n\n\`dothelp\`\n\n"
+    output+="- Alle Aliase+Funktionen interaktiv durchsuchen:\n\n\`fa {{suche}}\`\n\n"
+    output+="- Vollständige Tool-Dokumentation:\n\n\`tldr {{tool}}\`\n"
 
     # Shell-Keybindings aus .zshrc (Format: #   Key   Beschreibung)
     output+="\n# ${DOTHELP_CAT_KEYBINDINGS}\n\n"
@@ -535,8 +533,10 @@ generate_dotfiles_page() {
         done < <(extract_section_items "$dotfiles_alias" "Dotfiles Wartung")
     fi
 
-    # Verfügbare Hilfeseiten
-    output+="\n# Verfügbare Hilfeseiten\n\n"
+    # Verfügbare Hilfeseiten – mit Vollständigkeits-Hinweis
+    output+="# Vollständige Dokumentation\n\n"
+    output+="- Jedes Tool hat ALLE Aliase+Funktionen dokumentiert:\n\n"
+    
     local patches=()
     local pages=()
     for f in "$TEALDEER_DIR"/*.patch.md(N); do
@@ -547,14 +547,13 @@ generate_dotfiles_page() {
         [[ "$name" != "dotfiles" ]] && pages+=("$name")
     done
 
-    output+="- Tools mit dotfiles-Patches (tldr <tool>):\n\n"
     local sorted_patches=(${(o)patches})
-    output+="\`${(j:, :)sorted_patches}\`\n\n"
+    output+="\`tldr {{${(j:|:)sorted_patches}}}\`\n\n"
 
     if (( ${#pages[@]} > 0 )); then
-        output+="- Eigene Seiten:\n\n"
+        output+="- Eigene Seiten (ohne offizielle tldr-Basis):\n\n"
         local sorted_pages=(${(o)pages})
-        output+="\`${(j:, :)sorted_pages}, dotfiles\`\n"
+        output+="\`tldr {{${(j:|:)sorted_pages}|dotfiles}}\`\n"
     fi
 
     echo -e "$output"
