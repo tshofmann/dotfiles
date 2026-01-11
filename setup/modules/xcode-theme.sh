@@ -5,7 +5,8 @@
 # Zweck       : Installiert Xcode Syntax-Highlighting Theme
 # Pfad        : setup/modules/xcode-theme.sh
 # Benötigt    : _core.sh
-# CURRENT_STEP: Xcode Theme Installation
+#
+# STEP: Xcode-Theme | Installiert Catppuccin Mocha Theme | ⚠️ Warnung
 # Theme       : Catppuccin Mocha (.xccolortheme-Datei in setup/)
 # Zielort     : ~/Library/Developer/Xcode/UserData/FontAndColorThemes/
 # Aktivierung : Xcode → Settings (⌘,) → Themes → Theme-Name

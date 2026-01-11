@@ -5,7 +5,8 @@
 # Zweck       : Prüft/konfiguriert SHELL_SESSIONS_DISABLE
 # Pfad        : setup/modules/zsh-sessions.sh
 # Benötigt    : _core.sh
-# CURRENT_STEP: ZSH-Sessions Konfiguration
+#
+# STEP: ZSH-Sessions | Prüft SHELL_SESSIONS_DISABLE in ~/.zshenv | ⚠️ Warnung
 #
 # Hintergrund:
 #   macOS Terminal.app speichert standardmäßig separate History pro Tab/Fenster

@@ -5,7 +5,9 @@
 # Zweck       : Installiert Homebrew und führt Brewfile aus
 # Pfad        : setup/modules/homebrew.sh
 # Benötigt    : _core.sh, validation.sh (für BREW_PREFIX)
-# CURRENT_STEP: Homebrew Installation, Brewfile Installation
+#
+# STEP: Homebrew | Installiert/prüft Homebrew unter `/opt/homebrew` | ❌ Exit
+# STEP: Brewfile | Installiert CLI-Tools via `brew bundle` | ❌ Exit
 # ============================================================
 
 # Guard: Core muss geladen sein

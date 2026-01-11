@@ -55,7 +55,7 @@ generate_setup_md() {
 Diese Anleitung führt dich durch die vollständige Installation der dotfiles auf einem frischen Apple Silicon Mac.
 
 > Diese Dokumentation wird automatisch aus dem Code generiert.
-> Änderungen direkt in `setup/bootstrap.sh` und `setup/Brewfile` vornehmen.
+> Änderungen in `setup/modules/*.sh` und `setup/Brewfile` vornehmen.
 
 ## Voraussetzungen
 
@@ -98,9 +98,14 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 | ------ | ------------ | ---------- |
 | Architektur-Check | Prüft ob arm64 (Apple Silicon) | ❌ Exit |
 PART2
-    # Dynamische macOS-Version-Check Zeile
-    echo "| macOS-Version-Check | Prüft ob macOS ${macos_min}+ (${macos_min_name}) | ❌ Exit |"
-    cat << 'PART3'
+
+    # Dynamische Bootstrap-Schritte-Tabelle aus Modulen generieren
+    if has_bootstrap_modules; then
+        generate_bootstrap_steps_table
+    else
+        # Fallback: Statische Tabelle für Legacy-Bootstrap
+        echo "| macOS-Version-Check | Prüft ob macOS ${macos_min}+ (${macos_min_name}) | ❌ Exit |"
+        cat << 'LEGACY_STEPS'
 | Netzwerk-Check | Prüft Internetverbindung | ❌ Exit |
 | Schreibrechte-Check | Prüft ob `$HOME` schreibbar ist | ❌ Exit |
 | Xcode CLI Tools | Installiert/prüft Developer Tools | ❌ Exit |
@@ -110,7 +115,8 @@ PART2
 | Terminal-Profil | Importiert `catppuccin-mocha.terminal` als Standard | ⚠️ Warnung |
 | Starship-Theme | Generiert `~/.config/starship.toml` | ⚠️ Warnung |
 | ZSH-Sessions | Prüft SHELL_SESSIONS_DISABLE in ~/.zshenv | ⚠️ Warnung |
-PART3
+LEGACY_STEPS
+    fi
 
     cat << 'REST'
 

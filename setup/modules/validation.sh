@@ -6,8 +6,12 @@
 # Pfad        : setup/modules/validation.sh
 # Benötigt    : _core.sh
 # Plattform   : Universell (macOS + Linux)
-# CURRENT_STEP: Plattform-Check, Netzwerk-Prüfung, Schreibrechte-Prüfung,
-#               Xcode CLI Tools (macOS), Build-Tools (Linux)
+#
+# STEP: macOS-Version-Check | Prüft ob macOS ${MACOS_MIN_VERSION} | ❌ Exit
+# STEP: Netzwerk-Check | Prüft Internetverbindung | ❌ Exit
+# STEP: Schreibrechte-Check | Prüft ob `$HOME` schreibbar ist | ❌ Exit
+# STEP: Xcode CLI Tools | Installiert/prüft Developer Tools | ❌ Exit
+# STEP: Build-Tools | Installiert Build-Essentials (Linux) | ❌ Exit
 # ============================================================
 
 # Guard: Core muss geladen sein

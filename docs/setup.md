@@ -3,7 +3,7 @@
 Diese Anleitung führt dich durch die vollständige Installation der dotfiles auf einem frischen Apple Silicon Mac.
 
 > Diese Dokumentation wird automatisch aus dem Code generiert.
-> Änderungen direkt in `setup/bootstrap.sh` und `setup/Brewfile` vornehmen.
+> Änderungen in `setup/modules/*.sh` und `setup/Brewfile` vornehmen.
 
 ## Voraussetzungen
 
@@ -46,11 +46,13 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 | Netzwerk-Check | Prüft Internetverbindung | ❌ Exit |
 | Schreibrechte-Check | Prüft ob `$HOME` schreibbar ist | ❌ Exit |
 | Xcode CLI Tools | Installiert/prüft Developer Tools | ❌ Exit |
+| Build-Tools | Installiert Build-Essentials (Linux) | ❌ Exit |
 | Homebrew | Installiert/prüft Homebrew unter `/opt/homebrew` | ❌ Exit |
 | Brewfile | Installiert CLI-Tools via `brew bundle` | ❌ Exit |
 | Font-Verifikation | Prüft MesloLG Nerd Font Installation | ❌ Exit |
 | Terminal-Profil | Importiert `catppuccin-mocha.terminal` als Standard | ⚠️ Warnung |
 | Starship-Theme | Generiert `~/.config/starship.toml` | ⚠️ Warnung |
+| Xcode-Theme | Installiert Catppuccin Mocha Theme | ⚠️ Warnung |
 | ZSH-Sessions | Prüft SHELL_SESSIONS_DISABLE in ~/.zshenv | ⚠️ Warnung |
 
 > **Idempotenz:** Das Skript kann beliebig oft ausgeführt werden – bereits installierte Komponenten werden erkannt und übersprungen.

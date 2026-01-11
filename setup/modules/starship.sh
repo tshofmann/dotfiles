@@ -5,7 +5,8 @@
 # Zweck       : Konfiguriert Starship-Theme via Presets
 # Pfad        : setup/modules/starship.sh
 # Benötigt    : _core.sh
-# CURRENT_STEP: Starship-Theme Konfiguration
+#
+# STEP: Starship-Theme | Generiert `~/.config/starship.toml` | ⚠️ Warnung
 # Config      : ~/.config/starship.toml (NICHT versioniert)
 # Docs        : https://starship.rs/
 # Theme       : Catppuccin Mocha via catppuccin-powerline Preset

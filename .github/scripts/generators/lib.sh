@@ -104,8 +104,30 @@ extract_macos_tested_version_smart() {
     fi
 }
 
-# Extrahiert alle CURRENT_STEP Zuweisungen aus einem Modul
-# Rückgabe: Zeilenweise step|description
+# Extrahiert STEP-Metadaten aus einem Modul (neues Format)
+# Format: # STEP: Name | Beschreibung | Fehlerverhalten
+# Rückgabe: Zeilenweise "Name|Beschreibung|Fehlerverhalten"
+# Ersetzt Platzhalter: ${MACOS_MIN_VERSION} → tatsächlicher Wert
+extract_module_step_metadata() {
+    local module_file="$1"
+    [[ -f "$module_file" ]] || return 1
+
+    # macOS-Version für Platzhalter-Ersetzung holen
+    local macos_min macos_min_name
+    macos_min=$(extract_macos_min_version_smart)
+    macos_min_name=$(get_macos_codename "$macos_min")
+
+    grep "^# STEP:" "$module_file" 2>/dev/null | while read -r line; do
+        # Entferne "# STEP: " Prefix
+        local data="${line#\# STEP: }"
+        # Ersetze Platzhalter
+        data="${data//\$\{MACOS_MIN_VERSION\}/${macos_min}+ (${macos_min_name})}"
+        # Gib Name|Beschreibung|Fehlerverhalten aus
+        echo "$data"
+    done
+}
+
+# Legacy: Extrahiert CURRENT_STEP Zuweisungen (für Abwärtskompatibilität)
 extract_module_steps() {
     local module_file="$1"
     [[ -f "$module_file" ]] || return 1
@@ -180,8 +202,28 @@ get_bootstrap_module_order() {
     done < "$bootstrap"
 }
 
-# Generiert Bootstrap-Schritte-Tabelle aus Modulen
-# Rückgabe: Markdown-Tabelle mit Schritten
+# Generiert Bootstrap-Schritte-Tabelle aus Modulen (Markdown-Format)
+# Nutzt STEP-Metadaten: # STEP: Name | Beschreibung | Fehlerverhalten
+# Rückgabe: Markdown-Tabellenzeilen
+generate_bootstrap_steps_table() {
+    local -a modules
+    modules=($(get_bootstrap_module_order))
+
+    for module in "${modules[@]}"; do
+        local module_file="$BOOTSTRAP_MODULES/${module}.sh"
+        [[ -f "$module_file" ]] || continue
+
+        # STEP-Metadaten aus Modul extrahieren
+        while IFS= read -r step_data; do
+            [[ -z "$step_data" ]] && continue
+            # Format: "Name | Beschreibung | Fehlerverhalten"
+            # Umwandeln in Markdown-Tabellenzeile
+            echo "| $step_data |"
+        done < <(extract_module_step_metadata "$module_file")
+    done
+}
+
+# Legacy: Generiert nur Schritt-Namen (für Abwärtskompatibilität)
 generate_bootstrap_steps_from_modules() {
     local -a modules
     modules=($(get_bootstrap_module_order))
