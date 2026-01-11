@@ -176,7 +176,7 @@ main() {
     print -P "  ${C_MAUVE}4.${C_RESET} bat Cache: ${C_DIM}bat cache --build${C_RESET}"
     print -P "  ${C_MAUVE}5.${C_RESET} tldr Pages: ${C_DIM}tldr --update${C_RESET}"
     print -P ""
-    print -P "  ${C_GREEN}💡${C_RESET} ${C_TEXT}Gib${C_RESET} ${C_BOLD}'dothelp'${C_RESET} ${C_TEXT}ein für Dokumentation${C_RESET}"
+    print -P "  ${C_GREEN}💡 Gib im Terminal '${C_BOLD}dothelp${C_RESET}${C_GREEN}' ein für Hilfe/Dokumentation${C_RESET}"
     print -P ""
 }
 
