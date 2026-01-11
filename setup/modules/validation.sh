@@ -19,18 +19,24 @@
 # ------------------------------------------------------------
 # Konfiguration (plattformspezifisch)
 # ------------------------------------------------------------
+# WICHTIG: Variablen müssen exportiert werden, da Module innerhalb
+# einer Funktion (load_module) gesourced werden!
 if is_macos; then
     # macOS-Versionen (Single Source of Truth für Generatoren)
     # Homebrew Tier 1 Support: macOS 14+, siehe https://docs.brew.sh/Support-Tiers
-    readonly MACOS_MIN_VERSION=26     # Unterstützt ab (ändert sich selten)
-    readonly MACOS_TESTED_VERSION=26  # Zuletzt getestet auf (ändert sich bei Upgrade)
+    MACOS_MIN_VERSION=26     # Unterstützt ab (ändert sich selten)
+    MACOS_TESTED_VERSION=26  # Zuletzt getestet auf (ändert sich bei Upgrade)
+    export MACOS_MIN_VERSION MACOS_TESTED_VERSION
+    readonly MACOS_MIN_VERSION MACOS_TESTED_VERSION
 
     # Homebrew-Prefix für Apple Silicon
-    readonly BREW_PREFIX="/opt/homebrew"
+    BREW_PREFIX="/opt/homebrew"
 elif is_linux; then
     # Linuxbrew-Prefix
-    readonly BREW_PREFIX="/home/linuxbrew/.linuxbrew"
+    BREW_PREFIX="/home/linuxbrew/.linuxbrew"
 fi
+export BREW_PREFIX
+readonly BREW_PREFIX
 
 # ------------------------------------------------------------
 # Plattform-Prüfung
