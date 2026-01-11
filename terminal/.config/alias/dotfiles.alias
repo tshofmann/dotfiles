@@ -15,3 +15,15 @@ fi
 # Schnellreferenz anzeigen (zeigt tldr dotfiles)
 alias dothelp='tldr dotfiles'
 alias dh='dothelp'
+
+# ------------------------------------------------------------
+# Dotfiles Wartung
+# ------------------------------------------------------------
+# Health-Check – Prüft ob alle Komponenten korrekt installiert sind
+alias dothealth='${DOTFILES_DIR:-$HOME/dotfiles}/.github/scripts/health-check.sh'
+
+# Dokumentation neu generieren
+alias dotdocs='${DOTFILES_DIR:-$HOME/dotfiles}/.github/scripts/generate-docs.sh --generate'
+
+# Symlinks neu verlinken (nach Änderungen in terminal/ oder editor/)
+alias dotstow='cd ${DOTFILES_DIR:-$HOME/dotfiles} && stow -R terminal editor'
