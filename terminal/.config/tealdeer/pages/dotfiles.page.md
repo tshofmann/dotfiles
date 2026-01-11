@@ -1,6 +1,6 @@
 # dotfiles
 
-> Dotfiles mit ZSH, Catppuccin-Theme und modernen CLI-Tools.
+> Dotfiles mit Catppuccin-Theme und modernen CLI-Tools.
 > Mehr Informationen: <https://github.com/tshofmann/dotfiles>
 
 - dotfiles: Nutzt `tldr (tealdeer)`

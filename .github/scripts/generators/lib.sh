@@ -30,7 +30,7 @@ SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-style"
 # Projekt-Metadaten (Single Source of Truth)
 # ------------------------------------------------------------
 # Kurzbeschreibung für README, tldr, GitHub Repo Description
-readonly PROJECT_TAGLINE="Dotfiles mit ZSH, Catppuccin-Theme und modernen CLI-Tools."
+readonly PROJECT_TAGLINE="Dotfiles mit Catppuccin-Theme und modernen CLI-Tools."
 # Erweiterte Beschreibung für README
 readonly PROJECT_DESCRIPTION="Terminal-Setup für Apple Silicon – automatisiert, idempotent, minimal."
 
