@@ -1,5 +1,16 @@
 # Copilot Instructions für dotfiles
 
+## Vor größeren Änderungen
+
+**Lies zuerst `CONTRIBUTING.md`** bei:
+
+- Neue `.alias`-Datei erstellen
+- Neues Tool zum Brewfile hinzufügen
+- Änderungen an `.zshrc` oder `.zshenv`
+- fzf-Funktionen mit Preview/Bindings
+
+---
+
 ## DOs ✓
 
 | Regel | Beispiel |

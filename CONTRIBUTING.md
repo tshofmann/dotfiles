@@ -75,6 +75,52 @@ fi
 
 So bleiben Original-Befehle (`ls`, `cat`) erhalten wenn ein Tool fehlt.
 
+### Pfad-Pattern
+
+Zwei Umgebungsvariablen für unterschiedliche Pfade:
+
+```zsh
+# Für Dateien im Repository (setup/, .github/, etc.)
+"${DOTFILES_DIR:-$HOME/dotfiles}/setup/Brewfile"
+
+# Für User-Configs nach Stow (~/.config/)
+"${XDG_CONFIG_HOME:-$HOME/.config}/fzf/config"
+```
+
+| Variable | Verwendung | Beispiel-Pfade |
+| -------- | ---------- | -------------- |
+| `$DOTFILES_DIR` | Repository-Dateien | `setup/`, `.github/scripts/`, `terminal/` |
+| `$XDG_CONFIG_HOME` | Installierte Configs | `~/.config/fzf/`, `~/.config/bat/` |
+
+> **Wichtig:** Immer mit Fallback `:-$HOME/...` verwenden für Robustheit.
+
+### fzf Helper-Skripte
+
+Wiederverwendbare Skripte für fzf-Previews und -Aktionen in `~/.config/fzf/`:
+
+| Skript | Zweck | Verwendet von |
+| ------ | ----- | ------------- |
+| `preview-file` | Datei-Vorschau mit bat (Fallback: cat) | `rg.alias`, `fd.alias` |
+| `preview-dir` | Verzeichnis-Vorschau mit eza (Fallback: ls) | `zoxide.alias`, `fd.alias` |
+| `safe-action` | Sichere Aktionen (copy, edit, git-diff) | Mehrere `.alias`-Dateien |
+| `fman-preview` | Man/tldr Vorschau | `fzf.alias` |
+| `fa-preview` | Alias-Browser Vorschau | `fzf.alias` |
+| `fkill-list` | Prozessliste | `fzf.alias` |
+
+**Warum Helper statt Inline-Code?**
+
+- Shell-Injection-sicher (Argumente statt String-Interpolation)
+- Wiederverwendbar über mehrere `.alias`-Dateien
+- Testbar und wartbar
+
+```zsh
+# RICHTIG: Helper-Skript aufrufen
+--preview "$helper/preview-file {1}"
+
+# FALSCH: Inline-Code (Shell-Injection-Risiko)
+--preview 'bat {}'
+```
+
 ---
 
 ## Git Hooks
@@ -454,8 +500,30 @@ Nach PR-Erstellung das passende Label hinzufügen:
 
 1. **Brewfile** erweitern: `setup/Brewfile`
 2. **Alias-Datei** erstellen: `terminal/.config/alias/tool.alias`
-3. `./.github/scripts/generate-docs.sh --generate` ausführen (generiert tldr-Patch automatisch)
-4. Änderungen prüfen und committen
+3. **Falls Tool Shell-Init braucht:** `terminal/.zshrc` erweitern (siehe unten)
+4. `./.github/scripts/generate-docs.sh --generate` ausführen (generiert tldr-Patch automatisch)
+5. Änderungen prüfen und committen
+
+#### Tool-Initialisierung in .zshrc
+
+Manche Tools benötigen Shell-Integration (Completions, Prompts, etc.):
+
+```zsh
+# Pattern: Guard + Init
+if command -v newtool >/dev/null 2>&1; then
+    eval "$(newtool init zsh)"  # oder: source <(newtool completion zsh)
+fi
+```
+
+**Wann ist .zshrc-Init nötig?**
+
+| Tool-Typ | Beispiele | .zshrc nötig? |
+| -------- | --------- | ------------- |
+| Shell-Integration | zoxide, starship, fzf | ✅ Ja |
+| Completions | gh, docker | ✅ Ja |
+| Nur Aliase | bat, eza, fd | ❌ Nein |
+
+> **Reihenfolge beachten:** In `.zshrc` werden Tools nach den Alias-Dateien initialisiert.
 
 ### Dokumentation ändern
 
