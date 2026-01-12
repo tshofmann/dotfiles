@@ -14,14 +14,17 @@ if ! command -v markdownlint-cli2 >/dev/null 2>&1; then return 0; fi
 # Aliase (markdownlint-cli2 findet ~/.config nicht automatisch)
 # ------------------------------------------------------------
 
+# Config-Pfad zentral definiert (DRY)
+_MDL_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/markdownlint-cli2/.markdownlint-cli2.jsonc"
+
 # Alle Markdown-Dateien im aktuellen Verzeichnis prüfen
-alias mdl='markdownlint-cli2 --config "${XDG_CONFIG_HOME:-$HOME/.config}/markdownlint-cli2/.markdownlint-cli2.jsonc"'
+alias mdl='markdownlint-cli2 --config "$_MDL_CONFIG"'
 
 # Alle Markdown-Dateien rekursiv prüfen
-alias mdla='markdownlint-cli2 --config "${XDG_CONFIG_HOME:-$HOME/.config}/markdownlint-cli2/.markdownlint-cli2.jsonc" "**/*.md"'
+alias mdla='markdownlint-cli2 --config "$_MDL_CONFIG" "**/*.md"'
 
 # Mit Fix-Modus (automatische Korrekturen)
-alias mdlf='markdownlint-cli2 --config "${XDG_CONFIG_HOME:-$HOME/.config}/markdownlint-cli2/.markdownlint-cli2.jsonc" --fix'
+alias mdlf='markdownlint-cli2 --config "$_MDL_CONFIG" --fix'
 
 # Alle Markdown-Dateien rekursiv fixen
-alias mdlaf='markdownlint-cli2 --config "${XDG_CONFIG_HOME:-$HOME/.config}/markdownlint-cli2/.markdownlint-cli2.jsonc" --fix "**/*.md"'
+alias mdlaf='markdownlint-cli2 --config "$_MDL_CONFIG" --fix "**/*.md"'
