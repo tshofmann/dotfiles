@@ -22,7 +22,7 @@ DOTFILES_DIR="${SCRIPT_DIR:h:h}"  # .github/scripts → dotfiles
 DOCS_DIR="$DOTFILES_DIR/docs"
 
 # Laden der gemeinsamen Bibliothek
-source "$GENERATORS_DIR/lib.sh"
+source "$GENERATORS_DIR/common.sh"
 
 # ------------------------------------------------------------
 # Generator-Funktionen direkt einbinden (nicht source!)

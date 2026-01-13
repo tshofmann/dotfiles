@@ -6,7 +6,7 @@
 # Pfad    : .github/scripts/generators/customization.sh
 # ============================================================
 
-source "${0:A:h}/lib.sh"
+source "${0:A:h}/common.sh"
 
 # ------------------------------------------------------------
 # Extraktionsfunktionen (Single Source of Truth)

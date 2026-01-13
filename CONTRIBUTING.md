@@ -342,7 +342,7 @@ Diese Dateien werden vom Pre-Commit Hook nicht auf Header-Format geprüft.
 #!/usr/bin/env zsh
 set -euo pipefail
 
-# Logging-Helper verwenden (siehe lib.sh)
+# Logging-Helper verwenden (siehe common.sh)
 log()  { echo -e "${C_BLUE}→${C_RESET} $*"; }
 ok()   { echo -e "${C_GREEN}✔${C_RESET} $*"; }
 err()  { echo -e "${C_RED}✖${C_RESET} $*" >&2; }
