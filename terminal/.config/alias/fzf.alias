@@ -19,6 +19,7 @@
 #   fa-preview   – Alias/Funktions-Code-Vorschau für fa-Funktion
 #   fkill-list   – Prozessliste für fkill-Funktion
 #   safe-action  – Sichere Aktionen (copy, edit, git-diff, etc.)
+# Aliase  : fkill, fman, fa, fenv
 # ============================================================
 
 # Guard   : Nur wenn fzf installiert ist

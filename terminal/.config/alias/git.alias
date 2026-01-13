@@ -5,6 +5,7 @@
 # Pfad    : ~/.config/alias/git.alias
 # Docs    : https://git-scm.com/docs
 # Nutzt   : fzf (Interactive), bat (Diff-Highlighting)
+# Aliase  : ga, gc, gcm, gacm, gp, gpl, gco, gs, gd, glog
 # ============================================================
 # Hinweis : Interaktive Git-Funktionen (mit fzf) sind unten
 #           definiert: glog, gbr, gst, gstash
