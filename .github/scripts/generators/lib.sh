@@ -13,6 +13,7 @@ SCRIPT_DIR="${0:A:h}"
 GENERATORS_DIR="${SCRIPT_DIR}"                # .github/scripts/generators
 DOTFILES_DIR="${GENERATORS_DIR:h:h:h}"        # .github/scripts/generators → dotfiles
 ALIAS_DIR="$DOTFILES_DIR/terminal/.config/alias"
+FZF_DIR="$DOTFILES_DIR/terminal/.config/fzf"
 DOCS_DIR="$DOTFILES_DIR/docs"
 FZF_CONFIG="$DOTFILES_DIR/terminal/.config/fzf/config"
 TEALDEER_DIR="$DOTFILES_DIR/terminal/.config/tealdeer/pages"

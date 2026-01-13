@@ -285,6 +285,42 @@ generate_cross_references() {
 }
 
 # ------------------------------------------------------------
+# Generator: fzf Helper-Beschreibungen aus Dateien (SSOT)
+# ------------------------------------------------------------
+# Extrahiert # Zweck aus allen fzf-Helper-Skripten dynamisch
+generate_fzf_helper_descriptions() {
+    local output=""
+
+    # Alle Dateien im fzf-Verzeichnis durchgehen (außer versteckte)
+    for helper in "$FZF_DIR"/*(.N); do
+        local name="${helper:t}"
+
+        # Überspringe Dateien die nicht dokumentiert werden sollen
+        [[ "$name" == "fzf-lib" ]] && continue
+
+        # Extrahiere # Zweck aus der Datei
+        local zweck=""
+        local _line_count=0
+        while IFS= read -r line; do
+            if [[ "$line" == "# Zweck"*":"* ]]; then
+                zweck="${line#*: }"
+                zweck="${zweck## }"  # Führende Leerzeichen entfernen
+                break
+            fi
+            # Abbrechen nach den ersten 15 Zeilen (Header-Bereich)
+            (( ++_line_count > 15 )) && break
+        done < "$helper"
+
+        # Nur ausgeben wenn Zweck gefunden wurde
+        if [[ -n "$zweck" ]]; then
+            output+="- dotfiles: \`${name}\` – ${zweck}\n\n"
+        fi
+    done
+
+    echo -e "$output"
+}
+
+# ------------------------------------------------------------
 # Helper: Extrahiere erste N Alias-Namen aus einer .alias Datei
 # ------------------------------------------------------------
 extract_alias_names() {
@@ -1007,14 +1043,7 @@ generate_complete_patch() {
         output+="# dotfiles: Globale Tastenkürzel (in allen fzf-Dialogen)\n\n"
         output+=$(parse_fzf_config_keybindings "$FZF_CONFIG")
         output+="\n# dotfiles: Helper-Skripte (~/.config/fzf/)\n\n"
-        output+="- dotfiles: \`config\` – Globale fzf-Optionen (Farben, Layout, Keybindings)\n\n"
-        output+="- dotfiles: \`init.zsh\` – Shell-Integration (Ctrl+X Keybindings, FZF_DEFAULT_COMMAND)\n\n"
-        output+="- dotfiles: \`preview-file\` – Universelle Vorschau (Code, PDF, Archive, Bilder, Video)\n\n"
-        output+="- dotfiles: \`preview-dir\` – Verzeichnis-Vorschau mit eza --tree\n\n"
-        output+="- dotfiles: \`fman-preview\` – Man-Page/tldr Vorschau für fman-Funktion\n\n"
-        output+="- dotfiles: \`fa-preview\` – Alias/Funktions-Code-Vorschau für fa-Funktion\n\n"
-        output+="- dotfiles: \`fkill-list\` – Prozessliste für fkill-Funktion\n\n"
-        output+="- dotfiles: \`safe-action\` – Sichere Aktionen (copy, edit, git-diff, etc.)\n\n"
+        output+=$(generate_fzf_helper_descriptions)
         output+="\n# dotfiles: Funktionen (aus fzf.alias)\n\n"
     fi
 
