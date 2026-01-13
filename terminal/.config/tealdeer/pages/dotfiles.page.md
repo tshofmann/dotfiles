@@ -53,7 +53,7 @@
 
 - ls → eza (mit Icons und Git-Status):
 
-`ls, ll, la, tree`
+`ls, ll, la, lt, lt3, lss, lsn`
 
 - find → fd (schneller, intuitive Syntax):
 

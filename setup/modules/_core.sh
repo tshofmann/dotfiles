@@ -95,6 +95,7 @@ log()  { print -P "${C_BLUE}→${C_RESET} $*"; }
 ok()   { print -P "${C_GREEN}✔${C_RESET} $*"; }
 err()  { print -P "${C_RED}✖${C_RESET} $*" >&2; }
 warn() { print -P "${C_YELLOW}⚠${C_RESET} $*"; }
+skip() { print -P "${C_OVERLAY0}⏭${C_RESET} $*"; }
 
 # Sektions-Header (wie brewv)
 # Verwendung: section "Titel"
