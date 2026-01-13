@@ -121,6 +121,7 @@ readonly -a MODULES=(
     font                    # Font-Verifikation
     macos:terminal-profile  # Terminal-Profil Import (nur macOS)
     starship                # Starship-Theme (plattformübergreifend)
+    yazi                    # Yazi Flavors/Plugins (nach stow)
     macos:xcode-theme       # Xcode Theme (nur macOS)
     macos:zsh-sessions      # ZSH Sessions Check (nur macOS)
 )
