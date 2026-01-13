@@ -7,7 +7,7 @@
 # Config  : ~/.config/ImageMagick/policy.xml (Sicherheit)
 # Nutzt   : -
 # Ersetzt : -
-# Aliase  : imgresize, img2webp, imginfo, imgcrop
+# Aliase  : imgresize, img2webp, imginfo, imgsize, imgcrop
 # ============================================================
 
 # Guard   : Nur wenn ImageMagick installiert ist

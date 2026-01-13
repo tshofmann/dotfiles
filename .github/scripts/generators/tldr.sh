@@ -223,7 +223,7 @@ generate_patch_for_alias() {
         fi
 
         # Funktionen: func() {
-        if [[ "$trimmed" =~ "^[a-zA-Z][a-zA-Z0-9_-]*\(\) \{" ]]; then
+        if [[ "$trimmed" =~ "^[a-zA-Z0-9][a-zA-Z0-9_-]*\(\) \{" ]]; then
             local func_name="${trimmed%%\(*}"
 
             [[ "$func_name" == _* ]] && { prev_comment=""; continue; }
@@ -251,7 +251,7 @@ generate_patch_for_alias() {
         fi
 
         # Aliase: alias name='command' (auch eingerückte)
-        if [[ "$trimmed" =~ "^alias[[:space:]]+[a-zA-Z][a-zA-Z0-9_-]*=" ]]; then
+        if [[ "$trimmed" =~ "^alias[[:space:]]+[a-zA-Z0-9][a-zA-Z0-9_-]*=" ]]; then
             local alias_def="${trimmed#alias }"
             local alias_name="${alias_def%%=*}"
 
@@ -464,12 +464,12 @@ extract_section_items() {
                         ;;
                 esac
             # Alias gefunden
-            elif [[ "$line" =~ "^alias ([a-z_-]+)=" ]]; then
+            elif [[ "$line" =~ "^alias ([a-z0-9][a-z0-9_-]*)=" ]]; then
                 local name="${match[1]}"
                 [[ -n "$prev_comment" ]] && echo "${name}|${prev_comment}"
                 prev_comment=""
             # Funktion gefunden
-            elif [[ "$line" =~ "^([a-z_-]+)\(\) \{" ]]; then
+            elif [[ "$line" =~ "^([a-z0-9][a-z0-9_-]*)\(\) \{" ]]; then
                 local name="${match[1]}"
                 [[ -n "$prev_comment" ]] && echo "${name}|${prev_comment}"
                 prev_comment=""
