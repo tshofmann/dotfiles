@@ -237,4 +237,3 @@ fenv() {
         print -z "export ${name}=\"${value}\""
     fi
 }
-

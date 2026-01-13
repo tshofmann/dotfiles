@@ -24,7 +24,7 @@
 # Datenbank: ~/Library/Application Support/zoxide/db.zo
 # ============================================================
 
-# Guard: Nur wenn zoxide installiert ist
+# Guard   : Nur wenn zoxide installiert ist
 if ! command -v zoxide >/dev/null 2>&1; then
     return 0
 fi

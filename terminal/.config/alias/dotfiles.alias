@@ -7,7 +7,7 @@
 # Nutzt   : tldr (tealdeer)
 # ============================================================
 
-# Guard: tldr (tealdeer) muss installiert sein für dothelp
+# Guard   : tldr (tealdeer) muss installiert sein für dothelp
 if ! command -v tldr >/dev/null 2>&1; then
     return 0
 fi
