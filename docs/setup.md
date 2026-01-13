@@ -145,32 +145,35 @@ ff                                  # System-Info anzeigen
 
 ## Installierte Pakete
 
-### Shell-Grundlagen
+### Shell-Erweiterungen
 
 | Paket | Beschreibung |
 | ----- | ------------ |
 | `starship` | Shell-Prompt |
 | `zsh-syntax-highlighting` | Syntax-Highlighting |
 | `zsh-autosuggestions` | History-Vorschläge |
-
-### Unix-Moderne
-
-| Paket | Beschreibung |
-| ----- | ------------ |
 | `bat` | cat-Ersatz mit Syntax-Highlighting |
 | `eza` | ls-Ersatz mit Git-Status und Icons |
 | `fd` | find-Ersatz, schnell und intuitiv |
 | `ripgrep` | grep-Ersatz, schnellste Textsuche |
+| `fzf` | Fuzzy Finder |
+| `zoxide` | Smartes cd mit Frecency |
 
-### Navigation & Suche
+### Terminal-Anwendungen
 
 | Paket | Beschreibung |
 | ----- | ------------ |
-| `fzf` | Fuzzy Finder für alles |
-| `zoxide` | Smartes cd mit Frecency |
-| `yazi` | Terminal File Manager |
 
-### Medien-Codecs
+### Eigenständige TUI-Programme
+
+| Paket | Beschreibung |
+| ----- | ------------ |
+| `yazi` | File Manager |
+| `btop` | Ressourcen-Monitor |
+| `fastfetch` | System-Info |
+| `lazygit` | Git-TUI |
+
+### Medien-Bibliotheken
 
 | Paket | Beschreibung |
 | ----- | ------------ |
@@ -180,49 +183,21 @@ ff                                  # System-Info anzeigen
 | `resvg` | SVG-Rendering |
 | `sevenzip` | Archiv-Extraktion |
 
-### Monitoring & Git
+### Entwicklung
 
 | Paket | Beschreibung |
 | ----- | ------------ |
-
-### System-Status und Versionskontrolle
-
-| Paket | Beschreibung |
-| ----- | ------------ |
-| `btop` | Ressourcen-Monitor |
-| `fastfetch` | System-Info |
-| `lazygit` | Git-TUI |
 | `gh` | GitHub CLI |
-
-### dotfiles-Meta
-
-| Paket | Beschreibung |
-| ----- | ------------ |
-
-### Tools für dieses Repository
-
-| Paket | Beschreibung |
-| ----- | ------------ |
+| `claude-code` | Agentic Coding |
 | `stow` | Symlink-Manager |
 | `tealdeer` | tldr-Client |
 | `markdownlint-cli2` | Markdown-Linter |
 
-### KI-Assistenten
-
-| Paket | Beschreibung |
-| ----- | ------------ |
-| `claude-code` | Agentic Coding |
-
-### Fonts
+### Fonts & macOS
 
 | Paket | Beschreibung |
 | ----- | ------------ |
 | `font-meslo-lg-nerd-font` | Nerd Font für Prompt, eza, yazi |
-
-### Mac App Store
-
-| Paket | Beschreibung |
-| ----- | ------------ |
 | `mas` | Mac App Store CLI |
 | Xcode | Apple IDE |
 | Pages | Textverarbeitung |
