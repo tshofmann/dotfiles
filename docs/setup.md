@@ -145,13 +145,12 @@ ff                                  # System-Info anzeigen
 
 ## Installierte Pakete
 
-### CLI
+### Homebrew Formulae
 
 | Paket | Beschreibung |
 | ----- | ------------ |
 | [`bat`](https://github.com/sharkdp/bat) | cat-Ersatz mit Syntax-Highlighting |
 | [`btop`](https://github.com/aristocratos/btop) | Ressourcen-Monitor |
-| [`claude-code`](https://docs.anthropic.com/en/docs/claude-code) | Agentic Coding |
 | [`eza`](https://github.com/eza-community/eza) | ls-Ersatz mit Git-Status und Icons |
 | [`fastfetch`](https://github.com/fastfetch-cli/fastfetch) | System-Info |
 | [`fd`](https://github.com/sharkdp/fd) | find-Ersatz, schnell und intuitiv |
@@ -172,18 +171,19 @@ ff                                  # System-Info anzeigen
 | [`zoxide`](https://github.com/ajeetdsouza/zoxide) | Smartes cd mit Frecency |
 | [`zsh-autosuggestions`](https://github.com/zsh-users/zsh-autosuggestions) | History-Vorschläge |
 | [`zsh-syntax-highlighting`](https://github.com/zsh-users/zsh-syntax-highlighting) | Syntax-Highlighting |
+| [`mas`](https://github.com/mas-cli/mas) | Mac App Store CLI |
 
-### Fonts
+### Homebrew Casks
 
 | Paket | Beschreibung |
 | ----- | ------------ |
+| [`claude-code`](https://docs.anthropic.com/en/docs/claude-code) | Agentic Coding |
 | [`font-meslo-lg-nerd-font`](https://github.com/ryanoasis/nerd-fonts) | Nerd Font für Prompt, eza, yazi |
 
-### macOS
+### Mac App Store
 
 | Paket | Beschreibung |
 | ----- | ------------ |
-| [`mas`](https://github.com/mas-cli/mas) | Mac App Store CLI |
 | [Xcode](https://apps.apple.com/app/id497799835) | Apple IDE |
 | [Pages](https://apps.apple.com/app/id409201541) | Textverarbeitung |
 | [Numbers](https://apps.apple.com/app/id409203825) | Tabellenkalkulation |
