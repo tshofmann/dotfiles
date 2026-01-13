@@ -16,7 +16,6 @@
 brew "stow"                                 # Symlink-Manager | https://www.gnu.org/software/stow/
 brew "gh"                                   # GitHub CLI | https://cli.github.com/
 brew "tealdeer"                             # tldr-Client | https://tealdeer-rs.github.io/tealdeer/
-brew "mas"                                  # Mac App Store CLI | https://github.com/mas-cli/mas
 brew "markdownlint-cli2"                    # Markdown-Linter | https://github.com/DavidAnson/markdownlint-cli2
 
 # ------------------------------------------------------------
@@ -60,10 +59,10 @@ cask "font-meslo-lg-nerd-font"              # Nerd Font für Terminal | https://
 cask "claude-code"                          # KI-Coding-Assistent | https://www.anthropic.com/claude-code
 
 # ------------------------------------------------------------
-# Mac App Store
+# Mac App Store (nur macOS)
 # ------------------------------------------------------------
+brew "mas"                                  # Mac App Store CLI | https://github.com/mas-cli/mas
 mas "Xcode", id: 497799835                  # Apple IDE
 mas "Pages", id: 409201541                  # Textverarbeitung
 mas "Numbers", id: 409203825                # Tabellenkalkulation
-mas "Keynote", id: 409183694                # Präsentationen
 mas "Keynote", id: 409183694                # Präsentationen

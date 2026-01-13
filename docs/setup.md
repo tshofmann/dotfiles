@@ -152,7 +152,6 @@ ff                                  # System-Info anzeigen
 | `stow` | Symlink-Manager |
 | `gh` | GitHub CLI |
 | `tealdeer` | tldr-Client |
-| `mas` | Mac App Store CLI |
 | `markdownlint-cli2` | Markdown-Linter |
 
 ### Shell-Enhancement
@@ -195,14 +194,14 @@ ff                                  # System-Info anzeigen
 | ----- | ------------ |
 | `claude-code` | KI-Coding-Assistent |
 
-### Mac App Store
+### Mac App Store (nur macOS)
 
 | Paket | Beschreibung |
 | ----- | ------------ |
+| `mas` | Mac App Store CLI |
 | Xcode | Apple IDE |
 | Pages | Textverarbeitung |
 | Numbers | Tabellenkalkulation |
-| Keynote | Präsentationen |
 | Keynote | Präsentationen |
 
 > **Hinweis:** Die Anmeldung im App Store muss manuell erfolgen – die Befehle `mas account` und `mas signin` sind auf macOS 12+ nicht verfügbar.
