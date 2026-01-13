@@ -193,11 +193,16 @@ ff                                  # System-Info anzeigen
 | [`tealdeer`](https://tealdeer-rs.github.io/tealdeer/) | tldr-Client |
 | [`markdownlint-cli2`](https://github.com/DavidAnson/markdownlint-cli2) | Markdown-Linter |
 
-### Fonts & macOS
+### Fonts
 
 | Paket | Beschreibung |
 | ----- | ------------ |
 | [`font-meslo-lg-nerd-font`](https://github.com/ryanoasis/nerd-fonts) | Nerd Font für Prompt, eza, yazi |
+
+### Mac App Store
+
+| Paket | Beschreibung |
+| ----- | ------------ |
 | [`mas`](https://github.com/mas-cli/mas) | Mac App Store CLI |
 | [Xcode](https://apps.apple.com/app/id497799835) | Apple IDE |
 | [Pages](https://apps.apple.com/app/id409201541) | Textverarbeitung |

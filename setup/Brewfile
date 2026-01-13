@@ -54,9 +54,13 @@ brew "tealdeer"                             # tldr-Client | https://tealdeer-rs.
 brew "markdownlint-cli2"                    # Markdown-Linter | https://github.com/DavidAnson/markdownlint-cli2
 
 # ------------------------------------------------------------
-# Fonts & macOS
+# Fonts
 # ------------------------------------------------------------
 cask "font-meslo-lg-nerd-font"              # Nerd Font für Prompt, eza, yazi | https://github.com/ryanoasis/nerd-fonts
+
+# ------------------------------------------------------------
+# Mac App Store
+# ------------------------------------------------------------
 brew "mas"                                  # Mac App Store CLI | https://github.com/mas-cli/mas
 mas "Xcode", id: 497799835                  # Apple IDE
 mas "Pages", id: 409201541                  # Textverarbeitung
