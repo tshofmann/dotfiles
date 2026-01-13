@@ -145,55 +145,80 @@ ff                                  # System-Info anzeigen
 
 ## Installierte Pakete
 
-### Shell & Prompt
+### Shell-Grundlagen
 
 | Paket | Beschreibung |
 | ----- | ------------ |
-| `fzf` | Fuzzy Finder |
 | `starship` | Shell-Prompt |
-| `zoxide` | Smartes cd |
 | `zsh-syntax-highlighting` | Syntax-Highlighting |
 | `zsh-autosuggestions` | History-Vorschläge |
 
-### CLI-Ersetzungen (modern → klassisch)
+### Unix-Moderne
 
 | Paket | Beschreibung |
 | ----- | ------------ |
-| `bat` | cat → bat |
-| `eza` | ls → eza |
-| `fd` | find → fd |
-| `ripgrep` | grep → rg |
+| `bat` | cat-Ersatz mit Syntax-Highlighting |
+| `eza` | ls-Ersatz mit Git-Status und Icons |
+| `fd` | find-Ersatz, schnell und intuitiv |
+| `ripgrep` | grep-Ersatz, schnellste Textsuche |
 
-### Terminal-Apps (TUI)
+### Navigation & Suche
+
+| Paket | Beschreibung |
+| ----- | ------------ |
+| `fzf` | Fuzzy Finder für alles |
+| `zoxide` | Smartes cd mit Frecency |
+| `yazi` | Terminal File Manager |
+
+### Medien-Codecs
+
+| Paket | Beschreibung |
+| ----- | ------------ |
+| `ffmpeg` | Video/Audio-Codec |
+| `imagemagick` | Bild-Manipulation |
+| `poppler` | PDF-Rendering |
+| `resvg` | SVG-Rendering |
+| `sevenzip` | Archiv-Extraktion |
+
+### Monitoring & Git
+
+| Paket | Beschreibung |
+| ----- | ------------ |
+
+### System-Status und Versionskontrolle
 
 | Paket | Beschreibung |
 | ----- | ------------ |
 | `btop` | Ressourcen-Monitor |
 | `fastfetch` | System-Info |
-| `lazygit` | Git-UI |
-| `yazi` | File Manager |
-| `ffmpeg` | Video/Audio |
-| `imagemagick` | Bilder |
-| `poppler` | PDF |
-| `resvg` | SVG |
-| `sevenzip` | Archive |
+| `lazygit` | Git-TUI |
+| `gh` | GitHub CLI |
 
-### Entwickler-Tools
+### dotfiles-Meta
 
 | Paket | Beschreibung |
 | ----- | ------------ |
-| `gh` | GitHub CLI |
-| `markdownlint-cli2` | Markdown-Linter |
+
+### Tools für dieses Repository
+
+| Paket | Beschreibung |
+| ----- | ------------ |
 | `stow` | Symlink-Manager |
 | `tealdeer` | tldr-Client |
+| `markdownlint-cli2` | Markdown-Linter |
 
 ### Fonts
 
 | Paket | Beschreibung |
 | ----- | ------------ |
-| `font-meslo-lg-nerd-font` | Nerd Font für Terminal |
+| `font-meslo-lg-nerd-font` | Nerd Font für Prompt, eza, yazi |
 
-### macOS Apps
+### macOS
+
+| Paket | Beschreibung |
+| ----- | ------------ |
+
+### Plattform-spezifische Apps
 
 | Paket | Beschreibung |
 | ----- | ------------ |
