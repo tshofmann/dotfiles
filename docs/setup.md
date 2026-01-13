@@ -149,15 +149,15 @@ ff                                  # System-Info anzeigen
 
 | Paket | Beschreibung |
 | ----- | ------------ |
-| `starship` | Shell-Prompt |
-| `zsh-syntax-highlighting` | Syntax-Highlighting |
-| `zsh-autosuggestions` | History-Vorschläge |
-| `bat` | cat-Ersatz mit Syntax-Highlighting |
-| `eza` | ls-Ersatz mit Git-Status und Icons |
-| `fd` | find-Ersatz, schnell und intuitiv |
-| `ripgrep` | grep-Ersatz, schnellste Textsuche |
-| `fzf` | Fuzzy Finder |
-| `zoxide` | Smartes cd mit Frecency |
+| [`starship`](https://starship.rs/) | Shell-Prompt |
+| [`zsh-syntax-highlighting`](https://github.com/zsh-users/zsh-syntax-highlighting) | Syntax-Highlighting |
+| [`zsh-autosuggestions`](https://github.com/zsh-users/zsh-autosuggestions) | History-Vorschläge |
+| [`bat`](https://github.com/sharkdp/bat) | cat-Ersatz mit Syntax-Highlighting |
+| [`eza`](https://github.com/eza-community/eza) | ls-Ersatz mit Git-Status und Icons |
+| [`fd`](https://github.com/sharkdp/fd) | find-Ersatz, schnell und intuitiv |
+| [`ripgrep`](https://github.com/BurntSushi/ripgrep) | grep-Ersatz, schnellste Textsuche |
+| [`fzf`](https://github.com/junegunn/fzf) | Fuzzy Finder |
+| [`zoxide`](https://github.com/ajeetdsouza/zoxide) | Smartes cd mit Frecency |
 
 ### Terminal-Anwendungen
 
@@ -168,41 +168,41 @@ ff                                  # System-Info anzeigen
 
 | Paket | Beschreibung |
 | ----- | ------------ |
-| `yazi` | File Manager |
-| `btop` | Ressourcen-Monitor |
-| `fastfetch` | System-Info |
-| `lazygit` | Git-TUI |
+| [`yazi`](https://yazi-rs.github.io/) | File Manager |
+| [`btop`](https://github.com/aristocratos/btop) | Ressourcen-Monitor |
+| [`fastfetch`](https://github.com/fastfetch-cli/fastfetch) | System-Info |
+| [`lazygit`](https://github.com/jesseduffield/lazygit) | Git-TUI |
 
 ### Medien-Bibliotheken
 
 | Paket | Beschreibung |
 | ----- | ------------ |
-| `ffmpeg` | Video/Audio-Codec |
-| `imagemagick` | Bild-Manipulation |
-| `poppler` | PDF-Rendering |
-| `resvg` | SVG-Rendering |
-| `sevenzip` | Archiv-Extraktion |
+| [`ffmpeg`](https://ffmpeg.org/) | Video/Audio-Codec |
+| [`imagemagick`](https://imagemagick.org/) | Bild-Manipulation |
+| [`poppler`](https://poppler.freedesktop.org/) | PDF-Rendering |
+| [`resvg`](https://github.com/RazrFalcon/resvg) | SVG-Rendering |
+| [`sevenzip`](https://7-zip.org/) | Archiv-Extraktion |
 
 ### Entwicklung
 
 | Paket | Beschreibung |
 | ----- | ------------ |
-| `gh` | GitHub CLI |
-| `claude-code` | Agentic Coding |
-| `stow` | Symlink-Manager |
-| `tealdeer` | tldr-Client |
-| `markdownlint-cli2` | Markdown-Linter |
+| [`gh`](https://cli.github.com/) | GitHub CLI |
+| [`claude-code`](https://docs.anthropic.com/en/docs/claude-code) | Agentic Coding |
+| [`stow`](https://www.gnu.org/software/stow/) | Symlink-Manager |
+| [`tealdeer`](https://tealdeer-rs.github.io/tealdeer/) | tldr-Client |
+| [`markdownlint-cli2`](https://github.com/DavidAnson/markdownlint-cli2) | Markdown-Linter |
 
 ### Fonts & macOS
 
 | Paket | Beschreibung |
 | ----- | ------------ |
-| `font-meslo-lg-nerd-font` | Nerd Font für Prompt, eza, yazi |
-| `mas` | Mac App Store CLI |
-| Xcode | Apple IDE |
-| Pages | Textverarbeitung |
-| Numbers | Tabellenkalkulation |
-| Keynote | Präsentationen |
+| [`font-meslo-lg-nerd-font`](https://github.com/ryanoasis/nerd-fonts) | Nerd Font für Prompt, eza, yazi |
+| [`mas`](https://github.com/mas-cli/mas) | Mac App Store CLI |
+| [Xcode](https://apps.apple.com/app/id497799835) | Apple IDE |
+| [Pages](https://apps.apple.com/app/id409201541) | Textverarbeitung |
+| [Numbers](https://apps.apple.com/app/id409203825) | Tabellenkalkulation |
+| [Keynote](https://apps.apple.com/app/id409183694) | Präsentationen |
 
 > **Hinweis:** Die Anmeldung im App Store muss manuell erfolgen – die Befehle `mas account` und `mas signin` sind auf macOS 12+ nicht verfügbar.
 

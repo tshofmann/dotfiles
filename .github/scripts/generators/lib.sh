@@ -701,14 +701,23 @@ generate_brewfile_section() {
         local desc="${rest%%|*}"
         rest="${rest#*|}"
         local typ="${rest%%|*}"
+        local url="${rest#*|}"
 
-        # Formatierung nach Typ
+        # Formatierung nach Typ – mit Link falls URL vorhanden
         case "$typ" in
             brew|cask)
-                echo "| \`$name\` | $desc |"
+                if [[ -n "$url" ]]; then
+                    echo "| [\`$name\`]($url) | $desc |"
+                else
+                    echo "| \`$name\` | $desc |"
+                fi
                 ;;
             mas)
-                echo "| $name | $desc |"
+                if [[ -n "$url" ]]; then
+                    echo "| [$name]($url) | $desc |"
+                else
+                    echo "| $name | $desc |"
+                fi
                 ;;
         esac
     done < "$BREWFILE"
