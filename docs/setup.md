@@ -207,22 +207,22 @@ ff                                  # System-Info anzeigen
 | `tealdeer` | tldr-Client |
 | `markdownlint-cli2` | Markdown-Linter |
 
+### KI-Assistenten
+
+| Paket | Beschreibung |
+| ----- | ------------ |
+| `claude-code` | Agentic Coding |
+
 ### Fonts
 
 | Paket | Beschreibung |
 | ----- | ------------ |
 | `font-meslo-lg-nerd-font` | Nerd Font für Prompt, eza, yazi |
 
-### macOS
+### Mac App Store
 
 | Paket | Beschreibung |
 | ----- | ------------ |
-
-### Plattform-spezifische Apps
-
-| Paket | Beschreibung |
-| ----- | ------------ |
-| `claude-code` | KI-Coding-Assistent |
 | `mas` | Mac App Store CLI |
 | Xcode | Apple IDE |
 | Pages | Textverarbeitung |
