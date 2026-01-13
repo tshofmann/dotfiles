@@ -145,16 +145,7 @@ ff                                  # System-Info anzeigen
 
 ## Installierte Pakete
 
-### Dotfiles-Infrastruktur
-
-| Paket | Beschreibung |
-| ----- | ------------ |
-| `stow` | Symlink-Manager |
-| `gh` | GitHub CLI |
-| `tealdeer` | tldr-Client |
-| `markdownlint-cli2` | Markdown-Linter |
-
-### Shell-Enhancement
+### Shell & Prompt
 
 | Paket | Beschreibung |
 | ----- | ------------ |
@@ -164,23 +155,37 @@ ff                                  # System-Info anzeigen
 | `zsh-syntax-highlighting` | Syntax-Highlighting |
 | `zsh-autosuggestions` | History-Vorschläge |
 
-### Moderne CLI-Ersetzungen
+### CLI-Ersetzungen (modern → klassisch)
 
 | Paket | Beschreibung |
 | ----- | ------------ |
-| `bat` | cat mit Syntax-Highlighting |
-| `eza` | ls-Ersatz mit Icons |
-| `fd` | Schneller find-Ersatz |
-| `ripgrep` | Schneller grep-Ersatz |
+| `bat` | cat → bat |
+| `eza` | ls → eza |
+| `fd` | find → fd |
+| `ripgrep` | grep → rg |
+
+### Terminal-Apps (TUI)
+
+| Paket | Beschreibung |
+| ----- | ------------ |
 | `btop` | Ressourcen-Monitor |
 | `fastfetch` | System-Info |
-| `lazygit` | Terminal-UI für Git |
-| `yazi` | File Manager mit Previews |
-| `ffmpeg` | Video/Audio-Vorschau |
-| `sevenzip` | Archiv-Vorschau |
-| `poppler` | PDF-Vorschau |
-| `resvg` | SVG-Vorschau |
-| `imagemagick` | Bild-Vorschau |
+| `lazygit` | Git-UI |
+| `yazi` | File Manager |
+| `ffmpeg` | Video/Audio |
+| `imagemagick` | Bilder |
+| `poppler` | PDF |
+| `resvg` | SVG |
+| `sevenzip` | Archive |
+
+### Entwickler-Tools
+
+| Paket | Beschreibung |
+| ----- | ------------ |
+| `gh` | GitHub CLI |
+| `markdownlint-cli2` | Markdown-Linter |
+| `stow` | Symlink-Manager |
+| `tealdeer` | tldr-Client |
 
 ### Fonts
 
@@ -188,16 +193,11 @@ ff                                  # System-Info anzeigen
 | ----- | ------------ |
 | `font-meslo-lg-nerd-font` | Nerd Font für Terminal |
 
-### GUI Apps
+### macOS Apps
 
 | Paket | Beschreibung |
 | ----- | ------------ |
 | `claude-code` | KI-Coding-Assistent |
-
-### Mac App Store (nur macOS)
-
-| Paket | Beschreibung |
-| ----- | ------------ |
 | `mas` | Mac App Store CLI |
 | Xcode | Apple IDE |
 | Pages | Textverarbeitung |
