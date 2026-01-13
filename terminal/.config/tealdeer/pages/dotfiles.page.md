@@ -47,10 +47,6 @@
 
 # Tool-Ersetzungen
 
-- - → 7z (keine macOS-Befehle überschrieben):
-
-`7za, 7zx, 7zl, 7zt, unrar, 7zf`
-
 - cat → bat (mit Syntax-Highlighting):
 
 `cat, catn, catd`

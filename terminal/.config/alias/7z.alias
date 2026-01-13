@@ -4,12 +4,12 @@
 # Zweck   : Praktische Aliase für Archiv-Operationen
 # Pfad    : ~/.config/alias/7z.alias
 # Docs    : https://7-zip.org/
-# Nutzt   : fzf (optional für 7zf)
-# Ersetzt : - (keine macOS-Befehle überschrieben)
+# Nutzt   : fzf (7zf), fd (7zf)
+# Ersetzt : -
 # Aliase  : 7za, 7zx, 7zl, 7zt, unrar, 7zf
 # ============================================================
 
-# Guard
+# Guard   : Nur wenn 7-Zip installiert ist
 if ! command -v 7zz >/dev/null 2>&1; then return 0; fi
 
 # ------------------------------------------------------------

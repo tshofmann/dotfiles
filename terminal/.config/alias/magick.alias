@@ -10,7 +10,7 @@
 # Aliase  : imgresize, img2webp, imginfo, imgcrop
 # ============================================================
 
-# Guard
+# Guard   : Nur wenn ImageMagick installiert ist
 if ! command -v magick >/dev/null 2>&1; then return 0; fi
 
 # ------------------------------------------------------------

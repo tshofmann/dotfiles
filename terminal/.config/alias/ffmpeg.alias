@@ -9,7 +9,7 @@
 # Aliase  : v2mp3, vthumb, vcut, vcompress, v2gif, vinfo
 # ============================================================
 
-# Guard
+# Guard   : Nur wenn ffmpeg installiert ist
 if ! command -v ffmpeg >/dev/null 2>&1; then return 0; fi
 
 # ------------------------------------------------------------
