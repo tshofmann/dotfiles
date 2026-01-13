@@ -151,6 +151,7 @@ ff                                  # System-Info anzeigen
 | ----- | ------------ |
 | [`bat`](https://github.com/sharkdp/bat) | cat-Ersatz mit Syntax-Highlighting |
 | [`btop`](https://github.com/aristocratos/btop) | Ressourcen-Monitor |
+| [`claude-code`](https://docs.anthropic.com/en/docs/claude-code) | Agentic Coding |
 | [`eza`](https://github.com/eza-community/eza) | ls-Ersatz mit Git-Status und Icons |
 | [`fastfetch`](https://github.com/fastfetch-cli/fastfetch) | System-Info |
 | [`fd`](https://github.com/sharkdp/fd) | find-Ersatz, schnell und intuitiv |
@@ -182,7 +183,6 @@ ff                                  # System-Info anzeigen
 
 | Paket | Beschreibung |
 | ----- | ------------ |
-| [`claude-code`](https://docs.anthropic.com/en/docs/claude-code) | Agentic Coding |
 | [`mas`](https://github.com/mas-cli/mas) | Mac App Store CLI |
 | [Xcode](https://apps.apple.com/app/id497799835) | Apple IDE |
 | [Pages](https://apps.apple.com/app/id409201541) | Textverarbeitung |
