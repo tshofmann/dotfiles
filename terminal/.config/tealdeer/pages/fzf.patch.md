@@ -1,6 +1,6 @@
 - dotfiles: Config `~/.config/fzf/config`
 
-- dotfiles: Nutzt `bat (Preview), eza (Verzeichnis-Preview), fd (Default-Command), tldr (fman)`
+- dotfiles: Nutzt `pdftotext (PDF), 7zz (Archive), identify (Bilder), ffprobe (Video/Audio)`
 
 # dotfiles: Globale Tastenkürzel (in allen fzf-Dialogen)
 
@@ -21,7 +21,7 @@
 
 - dotfiles: `init.zsh` – Shell-Integration (Ctrl+X Keybindings, FZF_DEFAULT_COMMAND)
 
-- dotfiles: `preview-file` – Datei-Vorschau mit bat und Syntax-Highlighting
+- dotfiles: `preview-file` – Universelle Vorschau (Code, PDF, Archive, Bilder, Video)
 
 - dotfiles: `preview-dir` – Verzeichnis-Vorschau mit eza --tree
 
