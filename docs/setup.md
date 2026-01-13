@@ -145,53 +145,32 @@ ff                                  # System-Info anzeigen
 
 ## Installierte Pakete
 
-### Shell-Erweiterungen
+### CLI
 
 | Paket | Beschreibung |
 | ----- | ------------ |
-| [`starship`](https://starship.rs/) | Shell-Prompt |
-| [`zsh-syntax-highlighting`](https://github.com/zsh-users/zsh-syntax-highlighting) | Syntax-Highlighting |
-| [`zsh-autosuggestions`](https://github.com/zsh-users/zsh-autosuggestions) | History-Vorschläge |
 | [`bat`](https://github.com/sharkdp/bat) | cat-Ersatz mit Syntax-Highlighting |
-| [`eza`](https://github.com/eza-community/eza) | ls-Ersatz mit Git-Status und Icons |
-| [`fd`](https://github.com/sharkdp/fd) | find-Ersatz, schnell und intuitiv |
-| [`ripgrep`](https://github.com/BurntSushi/ripgrep) | grep-Ersatz, schnellste Textsuche |
-| [`fzf`](https://github.com/junegunn/fzf) | Fuzzy Finder |
-| [`zoxide`](https://github.com/ajeetdsouza/zoxide) | Smartes cd mit Frecency |
-
-### Terminal-Anwendungen
-
-| Paket | Beschreibung |
-| ----- | ------------ |
-
-### Eigenständige TUI-Programme
-
-| Paket | Beschreibung |
-| ----- | ------------ |
-| [`yazi`](https://yazi-rs.github.io/) | File Manager |
 | [`btop`](https://github.com/aristocratos/btop) | Ressourcen-Monitor |
+| [`eza`](https://github.com/eza-community/eza) | ls-Ersatz mit Git-Status und Icons |
 | [`fastfetch`](https://github.com/fastfetch-cli/fastfetch) | System-Info |
-| [`lazygit`](https://github.com/jesseduffield/lazygit) | Git-TUI |
-
-### Medien-Bibliotheken
-
-| Paket | Beschreibung |
-| ----- | ------------ |
+| [`fd`](https://github.com/sharkdp/fd) | find-Ersatz, schnell und intuitiv |
 | [`ffmpeg`](https://ffmpeg.org/) | Video/Audio-Codec |
+| [`fzf`](https://github.com/junegunn/fzf) | Fuzzy Finder |
+| [`gh`](https://cli.github.com/) | GitHub CLI |
 | [`imagemagick`](https://imagemagick.org/) | Bild-Manipulation |
+| [`lazygit`](https://github.com/jesseduffield/lazygit) | Git-TUI |
+| [`markdownlint-cli2`](https://github.com/DavidAnson/markdownlint-cli2) | Markdown-Linter |
 | [`poppler`](https://poppler.freedesktop.org/) | PDF-Rendering |
 | [`resvg`](https://github.com/RazrFalcon/resvg) | SVG-Rendering |
+| [`ripgrep`](https://github.com/BurntSushi/ripgrep) | grep-Ersatz, schnellste Textsuche |
 | [`sevenzip`](https://7-zip.org/) | Archiv-Extraktion |
-
-### Entwicklung
-
-| Paket | Beschreibung |
-| ----- | ------------ |
-| [`gh`](https://cli.github.com/) | GitHub CLI |
-| [`claude-code`](https://docs.anthropic.com/en/docs/claude-code) | Agentic Coding |
+| [`starship`](https://starship.rs/) | Shell-Prompt |
 | [`stow`](https://www.gnu.org/software/stow/) | Symlink-Manager |
 | [`tealdeer`](https://tealdeer-rs.github.io/tealdeer/) | tldr-Client |
-| [`markdownlint-cli2`](https://github.com/DavidAnson/markdownlint-cli2) | Markdown-Linter |
+| [`yazi`](https://yazi-rs.github.io/) | File Manager |
+| [`zoxide`](https://github.com/ajeetdsouza/zoxide) | Smartes cd mit Frecency |
+| [`zsh-autosuggestions`](https://github.com/zsh-users/zsh-autosuggestions) | History-Vorschläge |
+| [`zsh-syntax-highlighting`](https://github.com/zsh-users/zsh-syntax-highlighting) | Syntax-Highlighting |
 
 ### Fonts
 
@@ -199,10 +178,11 @@ ff                                  # System-Info anzeigen
 | ----- | ------------ |
 | [`font-meslo-lg-nerd-font`](https://github.com/ryanoasis/nerd-fonts) | Nerd Font für Prompt, eza, yazi |
 
-### Mac App Store
+### macOS
 
 | Paket | Beschreibung |
 | ----- | ------------ |
+| [`claude-code`](https://docs.anthropic.com/en/docs/claude-code) | Agentic Coding |
 | [`mas`](https://github.com/mas-cli/mas) | Mac App Store CLI |
 | [Xcode](https://apps.apple.com/app/id497799835) | Apple IDE |
 | [Pages](https://apps.apple.com/app/id409201541) | Textverarbeitung |
