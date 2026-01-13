@@ -145,53 +145,43 @@ ff                                  # System-Info anzeigen
 
 ## Installierte Pakete
 
-### CLI-Tools (Basis)
+### Dotfiles-Infrastruktur
+
+| Paket | Beschreibung |
+| ----- | ------------ |
+| `stow` | Symlink-Manager |
+| `gh` | GitHub CLI |
+| `tealdeer` | tldr-Client |
+| `mas` | Mac App Store CLI |
+| `markdownlint-cli2` | Markdown-Linter |
+
+### Shell-Enhancement
 
 | Paket | Beschreibung |
 | ----- | ------------ |
 | `fzf` | Fuzzy Finder |
-| `gh` | GitHub CLI |
-| `stow` | Symlink-Manager |
 | `starship` | Shell-Prompt |
-| `tealdeer` | tldr-Client |
 | `zoxide` | Smartes cd |
-| `mas` | Mac App Store CLI |
-| `markdownlint-cli2` | Markdown-Linter |
+| `zsh-syntax-highlighting` | Syntax-Highlighting |
+| `zsh-autosuggestions` | History-Vorschläge |
 
 ### Moderne CLI-Ersetzungen
 
 | Paket | Beschreibung |
 | ----- | ------------ |
-| `eza` | ls-Ersatz mit Icons |
 | `bat` | cat mit Syntax-Highlighting |
-| `ripgrep` | Schneller grep-Ersatz |
+| `eza` | ls-Ersatz mit Icons |
 | `fd` | Schneller find-Ersatz |
+| `ripgrep` | Schneller grep-Ersatz |
 | `btop` | Ressourcen-Monitor |
 | `fastfetch` | System-Info |
 | `lazygit` | Terminal-UI für Git |
-
-### Terminal File Manager
-
-| Paket | Beschreibung |
-| ----- | ------------ |
 | `yazi` | File Manager mit Previews |
-
-### Preview-Abhängigkeiten
-
-| Paket | Beschreibung |
-| ----- | ------------ |
-| `ffmpeg` | Video/Audio-Konvertierung |
-| `sevenzip` | Archiv-Tool (7z) |
-| `poppler` | PDF-Utilities |
-| `resvg` | SVG-Renderer |
-| `imagemagick` | Bildverarbeitung |
-
-### ZSH-Plugins
-
-| Paket | Beschreibung |
-| ----- | ------------ |
-| `zsh-syntax-highlighting` | Syntax-Highlighting |
-| `zsh-autosuggestions` | History-Vorschläge |
+| `ffmpeg` | Video/Audio-Vorschau |
+| `sevenzip` | Archiv-Vorschau |
+| `poppler` | PDF-Vorschau |
+| `resvg` | SVG-Vorschau |
+| `imagemagick` | Bild-Vorschau |
 
 ### Fonts
 
@@ -199,7 +189,7 @@ ff                                  # System-Info anzeigen
 | ----- | ------------ |
 | `font-meslo-lg-nerd-font` | Nerd Font für Terminal |
 
-### GUI Apps (Casks)
+### GUI Apps
 
 | Paket | Beschreibung |
 | ----- | ------------ |
@@ -212,6 +202,7 @@ ff                                  # System-Info anzeigen
 | Xcode | Apple IDE |
 | Pages | Textverarbeitung |
 | Numbers | Tabellenkalkulation |
+| Keynote | Präsentationen |
 | Keynote | Präsentationen |
 
 > **Hinweis:** Die Anmeldung im App Store muss manuell erfolgen – die Befehle `mas account` und `mas signin` sind auf macOS 12+ nicht verfügbar.
