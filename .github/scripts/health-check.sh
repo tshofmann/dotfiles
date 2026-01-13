@@ -108,6 +108,9 @@ get_tools_from_brewfile() {
   typeset -A tool_mapping=(
     [ripgrep]=rg
     [tealdeer]=tldr
+    [sevenzip]=7zz
+    [poppler]=pdftotext
+    [imagemagick]=magick
   )
 
   # Formulae die kein eigenständiges Binary haben (werden separat geprüft)

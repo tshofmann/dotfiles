@@ -1,14 +1,7 @@
-# ============================================================
-# package.toml - Yazi Package Dependencies
-# ============================================================
-# Zweck   : Definiert Flavors und Plugins für ya pkg install
-# Pfad    : ~/.config/yazi/package.toml
-# Docs    : https://yazi-rs.github.io/docs/cli#package
-# Install : ya pkg install (einmalig nach stow)
-# Update  : ya pkg upgrade
-# ============================================================
+[plugin]
+deps = []
 
-# Catppuccin Mocha Flavor
-# Repo: https://github.com/yazi-rs/flavors
 [[flavor.deps]]
 use = "yazi-rs/flavors:catppuccin-mocha"
+rev = "4a1802a"
+hash = "b951d27afe197d154f6da9683b46c5f8"
