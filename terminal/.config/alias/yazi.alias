@@ -8,6 +8,9 @@
 # Nutzt   : fzf, bat, eza, fd, rg, zoxide
 # Aliase  : y
 # ============================================================
+# Keybindings und Bookmarks: siehe ~/.config/yazi/keymap.toml
+# (werden automatisch in tldr yazi angezeigt)
+# ============================================================
 
 # Guard   : Nur wenn yazi installiert ist
 if ! command -v yazi >/dev/null 2>&1; then return 0; fi
@@ -15,7 +18,7 @@ if ! command -v yazi >/dev/null 2>&1; then return 0; fi
 # ------------------------------------------------------------
 # Wrapper
 # ------------------------------------------------------------
-# Yazi mit cd-nach-Exit – q=Beenden, !=Shell, Ctrl+P=Quick Look, .=Hidden toggle
+# Yazi mit cd-nach-Exit (q=Beenden im aktuellen Verzeichnis)
 y() {
     local tmp
     tmp="$(mktemp -t yazi-cwd.XXXXXX)"

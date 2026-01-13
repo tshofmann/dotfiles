@@ -44,5 +44,5 @@ desc = "Papierkorb"
 # ------------------------------------------------------------
 [[mgr.prepend_keymap]]
 on = ["<C-p>"]
-run = "shell 'qlmanage -p \"$@\" &>/dev/null' --confirm"
+run = "shell -- qlmanage -p %s &>/dev/null"
 desc = "Quick Look"
