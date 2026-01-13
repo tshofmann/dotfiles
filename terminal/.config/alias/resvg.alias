@@ -1,0 +1,31 @@
+# ============================================================
+# resvg.alias - Aliase für resvg (SVG-Renderer)
+# ============================================================
+# Zweck   : Praktische Aliase für SVG-Konvertierung
+# Pfad    : ~/.config/alias/resvg.alias
+# Docs    : https://github.com/RazrFalcon/resvg
+# Nutzt   : -
+# Ersetzt : -
+# Aliase  : svg2png, svgscale
+# ============================================================
+
+# Guard
+if ! command -v resvg >/dev/null 2>&1; then return 0; fi
+
+# ------------------------------------------------------------
+# Konvertierung
+# ------------------------------------------------------------
+# SVG zu PNG konvertieren
+alias svg2png='resvg'
+
+# SVG zu PNG mit Skalierung(svg, breite, output)
+svgscale() {
+    if [[ $# -lt 2 ]]; then
+        echo "Verwendung: svgscale <svg> <breite> [output.png]" >&2
+        return 1
+    fi
+    local input="$1"
+    local width="$2"
+    local output="${3:-${input%.*}.png}"
+    resvg --width "$width" "$input" "$output"
+}

@@ -47,6 +47,10 @@
 
 # Tool-Ersetzungen
 
+- - → 7z (keine macOS-Befehle überschrieben):
+
+`7za, 7zx, 7zl, 7zt, unrar, 7zf`
+
 - cat → bat (mit Syntax-Highlighting):
 
 `cat, catn, catd`
@@ -95,8 +99,8 @@
 
 - Jedes Tool hat ALLE Aliase+Funktionen dokumentiert:
 
-`tldr {{bat|brew|btop|eza|fastfetch|fd|fzf|gh|git|lazygit|rg|zoxide|zsh}}`
+`tldr {{7z|bat|brew|btop|eza|fastfetch|fd|ffmpeg|fzf|gh|git|lazygit|magick|rg|yazi|zoxide|zsh}}`
 
 - Eigene Seiten (ohne offizielle tldr-Basis):
 
-`tldr {{catppuccin|markdownlint|dotfiles}}`
+`tldr {{catppuccin|markdownlint|poppler|resvg|dotfiles}}`

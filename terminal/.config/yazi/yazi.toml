@@ -1,0 +1,33 @@
+# ============================================================
+# yazi.toml - Hauptkonfiguration
+# ============================================================
+# Zweck   : Yazi File Manager Einstellungen
+# Pfad    : ~/.config/yazi/yazi.toml
+# Docs    : https://yazi-rs.github.io/docs/configuration/yazi
+# ============================================================
+
+[mgr]
+# Versteckte Dateien anzeigen (Toggle: .)
+show_hidden = true
+
+# Natürliche Sortierung (1 < 2 < 10, wie eza)
+sort_by = "natural"
+
+# Case-insensitive Sortierung
+sort_sensitive = false
+
+# Verzeichnisse zuerst (wie eza --group-directories-first)
+sort_dir_first = true
+
+# Zeige Dateigröße rechts
+linemode = "size"
+
+# Symlink-Ziel anzeigen
+show_symlink = true
+
+# Scroll-Puffer (Zeilen über/unter Cursor)
+scrolloff = 5
+
+[confirm]
+# Papierkorb-Aktionen bestätigen
+trash = true

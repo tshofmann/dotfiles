@@ -169,6 +169,22 @@ ff                                  # System-Info anzeigen
 | `fastfetch` | System-Info |
 | `lazygit` | Terminal-UI für Git |
 
+### Terminal File Manager
+
+| Paket | Beschreibung |
+| ----- | ------------ |
+| `yazi` | File Manager mit Previews |
+
+### Preview-Abhängigkeiten
+
+| Paket | Beschreibung |
+| ----- | ------------ |
+| `ffmpeg` | Video/Audio-Konvertierung |
+| `sevenzip` | Archiv-Tool (7z) |
+| `poppler` | PDF-Utilities |
+| `resvg` | SVG-Renderer |
+| `imagemagick` | Bildverarbeitung |
+
 ### ZSH-Plugins
 
 | Paket | Beschreibung |

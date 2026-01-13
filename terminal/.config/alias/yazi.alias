@@ -1,0 +1,29 @@
+# ============================================================
+# yazi.alias - Aliase für yazi (Terminal File Manager)
+# ============================================================
+# Zweck   : Wrapper für yazi mit cd-nach-Exit
+# Pfad    : ~/.config/alias/yazi.alias
+# Docs    : https://yazi-rs.github.io/
+# Config  : ~/.config/yazi/
+# Nutzt   : fzf, bat, eza, fd, rg, zoxide
+# Aliase  : y
+# ============================================================
+
+# Guard
+if ! command -v yazi >/dev/null 2>&1; then return 0; fi
+
+# ------------------------------------------------------------
+# Wrapper
+# ------------------------------------------------------------
+# Yazi mit cd-nach-Exit – q=Beenden, !=Shell, Ctrl+P=Quick Look, .=Hidden toggle
+y() {
+    local tmp
+    tmp="$(mktemp -t yazi-cwd.XXXXXX)"
+    yazi "$@" --cwd-file="$tmp"
+    if [[ -f "$tmp" ]]; then
+        local cwd
+        cwd="$(<"$tmp")"
+        [[ -n "$cwd" && "$cwd" != "$PWD" ]] && cd "$cwd"
+    fi
+    rm -f "$tmp"
+}

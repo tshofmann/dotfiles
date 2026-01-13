@@ -1,0 +1,51 @@
+# ============================================================
+# 7z.alias - Aliase für 7-Zip (sevenzip)
+# ============================================================
+# Zweck   : Praktische Aliase für Archiv-Operationen
+# Pfad    : ~/.config/alias/7z.alias
+# Docs    : https://7-zip.org/
+# Nutzt   : fzf (optional für 7zf)
+# Ersetzt : - (keine macOS-Befehle überschrieben)
+# Aliase  : 7za, 7zx, 7zl, 7zt, unrar, 7zf
+# ============================================================
+
+# Guard
+if ! command -v 7zz >/dev/null 2>&1; then return 0; fi
+
+# ------------------------------------------------------------
+# Basis-Operationen
+# ------------------------------------------------------------
+# Archiv erstellen (7za archiv.7z datei1 datei2)
+alias 7za='7zz a'
+
+# Archiv entpacken (mit Verzeichnisstruktur)
+alias 7zx='7zz x'
+
+# Archiv-Inhalt auflisten
+alias 7zl='7zz l'
+
+# Archiv testen (Integrität prüfen)
+alias 7zt='7zz t'
+
+# RAR-Archiv entpacken (macOS kann kein RAR nativ)
+alias unrar='7zz x'
+
+# ------------------------------------------------------------
+# Interaktiv
+# ------------------------------------------------------------
+# Archiv Browser – Enter=Entpacken, Ctrl+Y=Pfad kopieren
+7zf() {
+    if ! command -v fzf >/dev/null 2>&1; then
+        echo "fzf benötigt für 7zf" >&2
+        return 1
+    fi
+
+    local archive
+    archive=$(fd -e zip -e 7z -e rar -e tar -e gz -e xz -e bz2 -e tgz -e tbz2 . "${1:-.}" 2>/dev/null | \
+        fzf --preview '7zz l {} 2>/dev/null | head -50' \
+            --preview-window='right:60%' \
+            --header='Enter=Entpacken │ Ctrl+Y=Pfad kopieren' \
+            --bind='ctrl-y:execute-silent(echo -n {} | pbcopy)+abort')
+
+    [[ -n "$archive" ]] && 7zz x "$archive"
+}
