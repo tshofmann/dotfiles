@@ -23,7 +23,11 @@
 
 - dotfiles: `fkill-list` – Generiert Prozessliste für fzf (Apps oder Alle)
 
+- dotfiles: `fman-list` – Datenquelle für fman je nach Modus
+
 - dotfiles: `fman-preview` – Generiert man oder tldr Preview für fzf
+
+- dotfiles: `fman-toggle` – Gibt fzf-Aktionen für Modus-Wechsel aus
 
 - dotfiles: `init.zsh` – fzf Keybindings und fd-Backend aktivieren
 
@@ -38,7 +42,7 @@
 
 `fkill {{signal}}`
 
-- dotfiles: Man/tldr Browser (`<Ctrl s>` Modus wechseln, `<Enter>` je nach Modus öffnen):
+- dotfiles: Man/tldr Browser (`<Ctrl s>` Modus wechseln (Liste + Preview), `<Enter>` öffnen):
 
 `fman`
 
