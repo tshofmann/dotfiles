@@ -247,7 +247,7 @@ extract_usage_codeblock() {
         fi
 
         # Funktion mit vorheriger Beschreibung: name() {
-        if [[ "$trimmed" == [a-z][a-z0-9_-]*"() "* && "$prev_line" == "# "* && "$prev_line" != "# ----"* ]]; then
+        if [[ "$trimmed" == [a-z0-9][a-z0-9_-]*"() "* && "$prev_line" == "# "* && "$prev_line" != "# ----"* ]]; then
             local func_name="${trimmed%%\(*}"
             local desc="${prev_line#\# }"
 
