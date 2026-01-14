@@ -9,7 +9,7 @@ name: Dokumentation validieren
 
 on:
   push:
-    branches: [main, feature/**]
+    branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:  # Manuelles Triggern ermöglichen
