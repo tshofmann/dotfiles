@@ -430,11 +430,20 @@ if [[ -n "${HOMEBREW_BUNDLE_FILE:-}" ]] && [[ -f "$HOMEBREW_BUNDLE_FILE" ]]; the
   if (( check_exit == 0 )); then
     pass "Alle Brewfile-Abhängigkeiten erfüllt"
   elif echo "$check_output" | grep -qE "needs to be installed or updated"; then
-    # Pakete fehlen oder sind veraltet (Formulas und Casks)
-    local outdated
-    outdated=$(echo "$check_output" | grep -oE "(Formula|Cask) [^ ]+ needs" | sed -E 's/(Formula|Cask) ([^ ]+) needs/\2/' | tr '\n' ' ')
-    warn "Brewfile-Pakete fehlen oder sind veraltet:${outdated:+ $outdated}"
-    warn "  → brew bundle --file=$HOMEBREW_BUNDLE_FILE"
+    # Unterscheide zwischen fehlend und veraltet
+    local missing updated
+    missing=$(echo "$check_output" | grep "needs to be installed" | grep -oE "(Formula|Cask) [^ ]+" | sed 's/Formula //' | sed 's/Cask //' | tr '\n' ' ')
+    updated=$(echo "$check_output" | grep "needs to be updated" | grep -oE "(Formula|Cask) [^ ]+" | sed 's/Formula //' | sed 's/Cask //' | tr '\n' ' ')
+
+    if [[ -n "$missing" ]]; then
+      warn "Brewfile-Pakete fehlen:${missing}"
+      warn "  → brew bundle --file=$HOMEBREW_BUNDLE_FILE"
+    fi
+    if [[ -n "$updated" ]]; then
+      # Updates sind informativ, kein echtes Problem
+      pass "Brewfile-Updates verfügbar:${updated}"
+      print "     ${C_DIM}Optional: brew bundle --file=$HOMEBREW_BUNDLE_FILE${C_RESET}"
+    fi
   else
     # Echte fehlende Pakete
     warn "Nicht alle Brewfile-Abhängigkeiten installiert"
