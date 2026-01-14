@@ -58,17 +58,18 @@ fkill() {
 # MAN + FZF + BAT: Man-Pages Browser
 # ------------------------------------------------------------
 # Man-Pages interaktiv durchsuchen mit Syntax-Highlighting
-# Man/tldr Browser – Ctrl+S=Modus wechseln, Enter=je nach Modus öffnen
+# Man/tldr Browser – Ctrl+S=Modus wechseln (Liste + Preview), Enter=öffnen
 fman() {
     local output mode selection page section
-    local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fman-preview"
+    local fzf_dir="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
 
-    output=$(man -k . 2>/dev/null | \
+    # Ctrl+S wechselt sowohl Liste als auch Preview zwischen man und tldr
+    output=$("$fzf_dir/fman-list" man | \
         fzf --prompt='man> ' \
-            --preview "[[ \$FZF_PROMPT == 'tldr> ' ]] && $helper tldr {} || $helper man {}" \
+            --preview="$fzf_dir/fman-preview man {}" \
             --header='Enter: öffnen | Ctrl+S: man ↔ tldr' \
-            --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'man> ' ]] && echo 'change-prompt(tldr> )+refresh-preview' || echo 'change-prompt(man> )+refresh-preview'" \
-            --bind "enter:transform:[[ \$FZF_PROMPT == 'tldr> ' ]] && echo 'print(tldr)+accept' || echo 'print(man)+accept'")
+            --bind="ctrl-s:transform:$fzf_dir/fman-toggle" \
+            --bind="enter:transform:[[ \$FZF_PROMPT == 'tldr> ' ]] && echo 'print(tldr)+accept' || echo 'print(man)+accept'")
 
     [[ -z "$output" ]] && return 0
 
