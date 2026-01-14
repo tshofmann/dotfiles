@@ -40,7 +40,7 @@ pdf2img() {
 # PDF-Metadaten anzeigen
 alias pdfmeta='pdfinfo'
 
-# Seitenzahl anzeigen
+# PDF Seitenzahl anzeigen(pdf)
 pdfpages() {
     if [[ $# -lt 1 ]]; then
         echo "Verwendung: pdfpages <pdf>" >&2

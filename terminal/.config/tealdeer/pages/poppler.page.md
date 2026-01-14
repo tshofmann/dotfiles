@@ -17,6 +17,6 @@
 
 `pdfmeta`
 
-- dotfiles: Seitenzahl anzeigen:
+- dotfiles: PDF Seitenzahl anzeigen:
 
-`pdfpages`
+`pdfpages {{pdf}}`

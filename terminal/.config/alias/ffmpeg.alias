@@ -15,7 +15,8 @@ if ! command -v ffmpeg >/dev/null 2>&1; then return 0; fi
 # ------------------------------------------------------------
 # Audio-Extraktion
 # ------------------------------------------------------------
-# Audio aus Video extrahieren (v2mp3 video.mp4 output.mp3)
+
+# Audio aus Video extrahieren(video, output?)
 v2mp3() {
     if [[ $# -lt 1 ]]; then
         echo "Verwendung: v2mp3 <video> [output.mp3]" >&2
@@ -61,7 +62,8 @@ vcut() {
 # ------------------------------------------------------------
 # Komprimierung
 # ------------------------------------------------------------
-# Video komprimieren – H.264, CRF 23 (vcompress input.mp4 output.mp4)
+
+# Video komprimieren(video, output?, crf=23) – H.264 mit einstellbarem CRF
 vcompress() {
     if [[ $# -lt 1 ]]; then
         echo "Verwendung: vcompress <video> [output] [crf=23]" >&2
@@ -76,7 +78,8 @@ vcompress() {
 # ------------------------------------------------------------
 # GIF-Erstellung
 # ------------------------------------------------------------
-# GIF aus Video erstellen(input, start, dauer, output)
+
+# GIF aus Video erstellen(input, start=0, dauer=5, output?)
 v2gif() {
     if [[ $# -lt 1 ]]; then
         echo "Verwendung: v2gif <video> [start=0] [dauer=5] [output.gif]" >&2
@@ -94,5 +97,6 @@ v2gif() {
 # ------------------------------------------------------------
 # Info
 # ------------------------------------------------------------
+
 # Video-/Audio-Informationen anzeigen
 alias vinfo='ffprobe -hide_banner'

@@ -2,7 +2,7 @@
 
 - dotfiles: Audio aus Video extrahieren:
 
-`v2mp3`
+`v2mp3 {{video, output}}`
 
 - dotfiles: Thumbnails:
 
@@ -14,11 +14,11 @@
 
 - dotfiles: Video komprimieren:
 
-`vcompress`
+`vcompress {{video, output?, crf}}`
 
 - dotfiles: GIF aus Video erstellen:
 
-`v2gif {{input, start, dauer, output}}`
+`v2gif {{input, start}}`
 
 - dotfiles: Video-/Audio-Informationen anzeigen:
 
