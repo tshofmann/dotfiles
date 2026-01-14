@@ -8,7 +8,7 @@
 # Aliase  : lg
 # ============================================================
 
-# Guard: Nur wenn lazygit installiert ist
+# Guard   : Nur wenn lazygit installiert ist
 if ! command -v lazygit >/dev/null 2>&1; then
     return 0
 fi

@@ -5,15 +5,18 @@
 # Pfad    : ~/.config/alias/dotfiles.alias
 # Docs    : https://github.com/tshofmann/dotfiles
 # Nutzt   : tldr (tealdeer)
+# Aliase  : dothelp, dh, dothealth, dotdocs, dotstow
 # ============================================================
 
-# Guard: tldr (tealdeer) muss installiert sein für dothelp
+# Guard   : tldr (tealdeer) muss installiert sein für dothelp
 if ! command -v tldr >/dev/null 2>&1; then
     return 0
 fi
 
 # Schnellreferenz anzeigen (zeigt tldr dotfiles)
 alias dothelp='tldr dotfiles'
+
+# Kurzform für dothelp
 alias dh='dothelp'
 
 # ------------------------------------------------------------

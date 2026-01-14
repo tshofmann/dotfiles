@@ -14,6 +14,7 @@
 `bat: ~/.config/bat/themes/`
 `btop: ~/.config/btop/themes/`
 `lazygit: ~/.config/lazygit/config.yml`
+`yazi: ~/.config/yazi/theme.toml`
 `zsh-syntax: ~/.config/zsh/catppuccin_mocha-*`
 
 - Themes aus Upstream mit lokalen Anpassungen:
@@ -42,5 +43,6 @@
 `fzf: github.com/catppuccin/fzf`
 `lazygit: github.com/catppuccin/lazygit`
 `starship: github.com/catppuccin/starship`
+`yazi: github.com/catppuccin/yazi (via ya pkg)`
 `zsh-syntax: github.com/catppuccin/zsh-syntax-highlighting`
 

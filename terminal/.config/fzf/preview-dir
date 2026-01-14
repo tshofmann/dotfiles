@@ -10,7 +10,7 @@
 # ============================================================
 
 local dir="$1"
-local level="${2:-1}"
+local level="${2:-2}"
 
 # Validierung: Verzeichnis muss existieren
 if [[ ! -d "$dir" ]]; then
@@ -19,7 +19,7 @@ if [[ ! -d "$dir" ]]; then
 fi
 
 if command -v eza >/dev/null 2>&1; then
-    eza --tree --level="$level" --icons --color=always -- "$dir" 2>/dev/null || ls -la -- "$dir"
+    eza --tree --level="$level" --icons --color=always --all -- "$dir" 2>/dev/null || ls -la -- "$dir"
 else
     ls -la -- "$dir"
 fi

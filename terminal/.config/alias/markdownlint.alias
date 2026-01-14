@@ -5,9 +5,10 @@
 # Pfad    : ~/.config/alias/markdownlint.alias
 # Docs    : https://github.com/DavidAnson/markdownlint-cli2
 # Config  : ~/.config/markdownlint-cli2/.markdownlint-cli2.jsonc
+# Aliase  : mdl, mdla, mdlf, mdlaf
 # ============================================================
 
-# Guard: Nur wenn markdownlint-cli2 installiert ist
+# Guard   : Nur wenn markdownlint-cli2 installiert ist
 if ! command -v markdownlint-cli2 >/dev/null 2>&1; then return 0; fi
 
 # ------------------------------------------------------------

@@ -6,7 +6,7 @@
 # Pfad    : .github/scripts/generators/customization.sh
 # ============================================================
 
-source "${0:A:h}/lib.sh"
+source "${0:A:h}/common.sh"
 
 # ------------------------------------------------------------
 # Extraktionsfunktionen (Single Source of Truth)
@@ -135,6 +135,7 @@ collect_theme_configs() {
         ["fzf"]="$DOTFILES_DIR/terminal/.config/fzf/config|Farben in Config-Datei (via Stow)"
         ["btop"]="$DOTFILES_DIR/terminal/.config/btop/themes/|Via Stow verlinkt"
         ["eza"]="$DOTFILES_DIR/terminal/.config/eza/theme.yml|Via Stow verlinkt"
+        ["yazi"]="$DOTFILES_DIR/terminal/.config/yazi/theme.toml|Via Flavor-System (ya pkg install)"
         ["zsh-syntax-highlighting"]="$DOTFILES_DIR/terminal/.config/zsh/|Via Stow verlinkt"
         ["Xcode"]="$xcode_file|Via Bootstrap kopiert (manuelle Aktivierung)"
     )
@@ -142,7 +143,7 @@ collect_theme_configs() {
     output+="| Tool | Theme-Datei | Status |\n"
     output+="| ---- | ----------- | ------ |\n"
 
-    for tool in "Terminal.app" "Starship" "bat" "fzf" "btop" "eza" "zsh-syntax-highlighting" "Xcode"; do
+    for tool in "Terminal.app" "Starship" "bat" "fzf" "btop" "eza" "yazi" "zsh-syntax-highlighting" "Xcode"; do
         local info="${theme_files[$tool]}"
         local file="${info%%|*}"
         local stat="${info##*|}"

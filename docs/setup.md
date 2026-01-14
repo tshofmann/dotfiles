@@ -53,6 +53,7 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 | Font-Verifikation | Prüft MesloLG Nerd Font Installation | ❌ Exit |
 | Terminal-Profil | Importiert `catppuccin-mocha.terminal` als Standard | ⚠️ Warnung |
 | Starship-Theme | Generiert `~/.config/starship.toml` | ⚠️ Warnung |
+| Yazi-Packages | ya pkg install | ⏭ Übersprungen wenn vorhanden |
 | Xcode-Theme | Installiert Catppuccin Mocha Theme | ⚠️ Warnung |
 | ZSH-Sessions | Prüft SHELL_SESSIONS_DISABLE in ~/.zshenv | ⚠️ Warnung |
 
@@ -144,58 +145,49 @@ ff                                  # System-Info anzeigen
 
 ## Installierte Pakete
 
-### CLI-Tools (Basis)
+### Homebrew Formulae
 
 | Paket | Beschreibung |
 | ----- | ------------ |
-| `fzf` | Fuzzy Finder |
-| `gh` | GitHub CLI |
-| `stow` | Symlink-Manager |
-| `starship` | Shell-Prompt |
-| `tealdeer` | tldr-Client |
-| `zoxide` | Smartes cd |
-| `mas` | Mac App Store CLI |
-| `markdownlint-cli2` | Markdown-Linter |
+| [`bat`](https://github.com/sharkdp/bat) | cat-Ersatz mit Syntax-Highlighting |
+| [`btop`](https://github.com/aristocratos/btop) | Ressourcen-Monitor |
+| [`eza`](https://github.com/eza-community/eza) | ls-Ersatz mit Git-Status und Icons |
+| [`fastfetch`](https://github.com/fastfetch-cli/fastfetch) | System-Info |
+| [`fd`](https://github.com/sharkdp/fd) | find-Ersatz, schnell und intuitiv |
+| [`ffmpeg`](https://ffmpeg.org/) | Video/Audio-Codec |
+| [`fzf`](https://github.com/junegunn/fzf) | Fuzzy Finder |
+| [`gh`](https://cli.github.com/) | GitHub CLI |
+| [`imagemagick`](https://imagemagick.org/) | Bild-Manipulation |
+| [`lazygit`](https://github.com/jesseduffield/lazygit) | Git-TUI |
+| [`markdownlint-cli2`](https://github.com/DavidAnson/markdownlint-cli2) | Markdown-Linter |
+| [`poppler`](https://poppler.freedesktop.org/) | PDF-Rendering |
+| [`resvg`](https://github.com/RazrFalcon/resvg) | SVG-Rendering |
+| [`ripgrep`](https://github.com/BurntSushi/ripgrep) | grep-Ersatz, schnellste Textsuche |
+| [`sevenzip`](https://7-zip.org/) | Archiv-Extraktion |
+| [`starship`](https://starship.rs/) | Shell-Prompt |
+| [`stow`](https://www.gnu.org/software/stow/) | Symlink-Manager |
+| [`tealdeer`](https://tealdeer-rs.github.io/tealdeer/) | tldr-Client |
+| [`yazi`](https://yazi-rs.github.io/) | File Manager |
+| [`zoxide`](https://github.com/ajeetdsouza/zoxide) | Smartes cd mit Frecency |
+| [`zsh-autosuggestions`](https://github.com/zsh-users/zsh-autosuggestions) | History-Vorschläge |
+| [`zsh-syntax-highlighting`](https://github.com/zsh-users/zsh-syntax-highlighting) | Syntax-Highlighting |
+| [`mas`](https://github.com/mas-cli/mas) | Mac App Store CLI |
 
-### Moderne CLI-Ersetzungen
-
-| Paket | Beschreibung |
-| ----- | ------------ |
-| `eza` | ls-Ersatz mit Icons |
-| `bat` | cat mit Syntax-Highlighting |
-| `ripgrep` | Schneller grep-Ersatz |
-| `fd` | Schneller find-Ersatz |
-| `btop` | Ressourcen-Monitor |
-| `fastfetch` | System-Info |
-| `lazygit` | Terminal-UI für Git |
-
-### ZSH-Plugins
-
-| Paket | Beschreibung |
-| ----- | ------------ |
-| `zsh-syntax-highlighting` | Syntax-Highlighting |
-| `zsh-autosuggestions` | History-Vorschläge |
-
-### Fonts
+### Homebrew Casks
 
 | Paket | Beschreibung |
 | ----- | ------------ |
-| `font-meslo-lg-nerd-font` | Nerd Font für Terminal |
-
-### GUI Apps (Casks)
-
-| Paket | Beschreibung |
-| ----- | ------------ |
-| `claude-code` | KI-Coding-Assistent |
+| [`claude-code`](https://docs.anthropic.com/en/docs/claude-code) | Agentic Coding |
+| [`font-meslo-lg-nerd-font`](https://github.com/ryanoasis/nerd-fonts) | Nerd Font für Prompt, eza, yazi |
 
 ### Mac App Store
 
 | Paket | Beschreibung |
 | ----- | ------------ |
-| Xcode | Apple IDE |
-| Pages | Textverarbeitung |
-| Numbers | Tabellenkalkulation |
-| Keynote | Präsentationen |
+| [Xcode](https://apps.apple.com/app/id497799835) | Apple IDE |
+| [Pages](https://apps.apple.com/app/id409201541) | Textverarbeitung |
+| [Numbers](https://apps.apple.com/app/id409203825) | Tabellenkalkulation |
+| [Keynote](https://apps.apple.com/app/id409183694) | Präsentationen |
 
 > **Hinweis:** Die Anmeldung im App Store muss manuell erfolgen – die Befehle `mas account` und `mas signin` sind auf macOS 12+ nicht verfügbar.
 

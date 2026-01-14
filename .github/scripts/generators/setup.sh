@@ -7,7 +7,7 @@
 # Quelle  : setup/modules/*.sh (modulare Struktur) oder setup/bootstrap.sh (legacy)
 # ============================================================
 
-source "${0:A:h}/lib.sh"
+source "${0:A:h}/common.sh"
 
 # ------------------------------------------------------------
 # Bootstrap-Schritte extrahieren (Smart: Module oder Legacy)
