@@ -23,6 +23,7 @@
 #   lazygit       | ~/.config/lazygit/config.yml       | github.com/catppuccin/lazygit               | upstream
 #   starship      | ~/.config/starship.toml            | github.com/catppuccin/starship              | generated
 #   tealdeer      | ~/.config/tealdeer/config.toml     | manual                                      | manual
+#   yazi          | ~/.config/yazi/theme.toml          | github.com/catppuccin/yazi (via ya pkg)     | upstream
 #   zsh-syntax    | ~/.config/zsh/catppuccin_mocha-*   | github.com/catppuccin/zsh-syntax-highlighting | upstream
 #   Terminal.app  | ~/dotfiles/setup/                  | github.com/catppuccin/Terminal.app          | upstream
 #   Xcode         | ~/dotfiles/setup/                  | github.com/catppuccin/xcode                 | upstream

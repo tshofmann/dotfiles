@@ -1,0 +1,11 @@
+# ============================================================
+# theme.toml - Yazi Theme-Konfiguration
+# ============================================================
+# Zweck   : Catppuccin Mocha Theme via Flavor-System
+# Pfad    : ~/.config/yazi/theme.toml
+# Docs    : https://yazi-rs.github.io/docs/flavors/overview
+# Install : ya pkg install (liest package.toml)
+# ============================================================
+
+[flavor]
+dark = "catppuccin-mocha"

@@ -1,6 +1,6 @@
 - dotfiles: Config `~/.config/fzf/config`
 
-- dotfiles: Nutzt `bat (Preview), eza (Verzeichnis-Preview), fd (Default-Command), tldr (fman)`
+- dotfiles: Nutzt `pdftotext (PDF), 7zz (Archive), identify (Bilder), ffprobe (Video/Audio)`
 
 # dotfiles: Globale Tastenkürzel (in allen fzf-Dialogen)
 
@@ -17,23 +17,21 @@
 `<Tab>`
 # dotfiles: Helper-Skripte (~/.config/fzf/)
 
-- dotfiles: `config` – Globale fzf-Optionen (Farben, Layout, Keybindings)
+- dotfiles: `config` – Native fzf-Konfiguration (FZF_DEFAULT_OPTS_FILE)
 
-- dotfiles: `init.zsh` – Shell-Integration (Ctrl+X Keybindings, FZF_DEFAULT_COMMAND)
+- dotfiles: `fa-preview` – Preview-Befehle für fa (Alias-Browser) in fzf
 
-- dotfiles: `preview-file` – Datei-Vorschau mit bat und Syntax-Highlighting
+- dotfiles: `fkill-list` – Generiert Prozessliste für fzf (Apps oder Alle)
 
-- dotfiles: `preview-dir` – Verzeichnis-Vorschau mit eza --tree
+- dotfiles: `fman-preview` – Generiert man oder tldr Preview für fzf
 
-- dotfiles: `fman-preview` – Man-Page/tldr Vorschau für fman-Funktion
+- dotfiles: `init.zsh` – fzf Keybindings und fd-Backend aktivieren
 
-- dotfiles: `fa-preview` – Alias/Funktions-Code-Vorschau für fa-Funktion
+- dotfiles: `preview-dir` – Zeigt Verzeichnisinhalt mit eza/ls (Shell-Injection-sicher)
 
-- dotfiles: `fkill-list` – Prozessliste für fkill-Funktion
+- dotfiles: `preview-file` – Zeigt Vorschau für verschiedene Dateitypen
 
-- dotfiles: `safe-action` – Sichere Aktionen (copy, edit, git-diff, etc.)
-
-
+- dotfiles: `safe-action` – Führt Aktionen Shell-Injection-sicher aus
 # dotfiles: Funktionen (aus fzf.alias)
 
 - dotfiles: Prozess Browser (`<Enter>` Beenden, `<Tab>` Mehrfach, `<Ctrl s>` Apps↔Alle):

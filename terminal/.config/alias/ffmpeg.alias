@@ -1,0 +1,102 @@
+# ============================================================
+# ffmpeg.alias - Aliase für ffmpeg (Video/Audio-Konvertierung)
+# ============================================================
+# Zweck   : Praktische Aliase für häufige Video-Operationen
+# Pfad    : ~/.config/alias/ffmpeg.alias
+# Docs    : https://ffmpeg.org/
+# Nutzt   : -
+# Ersetzt : -
+# Aliase  : v2mp3, vthumb, vcut, vcompress, v2gif, vinfo
+# ============================================================
+
+# Guard   : Nur wenn ffmpeg installiert ist
+if ! command -v ffmpeg >/dev/null 2>&1; then return 0; fi
+
+# ------------------------------------------------------------
+# Audio-Extraktion
+# ------------------------------------------------------------
+
+# Audio aus Video extrahieren(video, output?)
+v2mp3() {
+    if [[ $# -lt 1 ]]; then
+        echo "Verwendung: v2mp3 <video> [output.mp3]" >&2
+        return 1
+    fi
+    local input="$1"
+    local output="${2:-${input%.*}.mp3}"
+    ffmpeg -i "$input" -vn -acodec libmp3lame -q:a 2 "$output"
+}
+
+# ------------------------------------------------------------
+# Thumbnails
+# ------------------------------------------------------------
+# Video-Thumbnail erstellen(video, zeit=00:00:01, output)
+vthumb() {
+    if [[ $# -lt 1 ]]; then
+        echo "Verwendung: vthumb <video> [zeit=00:00:01] [output.jpg]" >&2
+        return 1
+    fi
+    local input="$1"
+    local time="${2:-00:00:01}"
+    local output="${3:-${input%.*}_thumb.jpg}"
+    ffmpeg -i "$input" -ss "$time" -vframes 1 -q:v 2 "$output"
+}
+
+# ------------------------------------------------------------
+# Schneiden
+# ------------------------------------------------------------
+# Video schneiden(input, start, ende, output)
+vcut() {
+    if [[ $# -lt 3 ]]; then
+        echo "Verwendung: vcut <video> <start> <ende> [output]" >&2
+        echo "Beispiel:   vcut video.mp4 00:01:00 00:02:30" >&2
+        return 1
+    fi
+    local input="$1"
+    local start="$2"
+    local ende="$3"
+    local output="${4:-${input%.*}_cut.${input##*.}}"
+    ffmpeg -i "$input" -ss "$start" -to "$ende" -c copy "$output"
+}
+
+# ------------------------------------------------------------
+# Komprimierung
+# ------------------------------------------------------------
+
+# Video komprimieren(video, output?, crf=23) – H.264 mit einstellbarem CRF
+vcompress() {
+    if [[ $# -lt 1 ]]; then
+        echo "Verwendung: vcompress <video> [output] [crf=23]" >&2
+        return 1
+    fi
+    local input="$1"
+    local output="${2:-${input%.*}_compressed.mp4}"
+    local crf="${3:-23}"
+    ffmpeg -i "$input" -c:v libx264 -crf "$crf" -preset medium -c:a aac -b:a 128k "$output"
+}
+
+# ------------------------------------------------------------
+# GIF-Erstellung
+# ------------------------------------------------------------
+
+# GIF aus Video erstellen(input, start=0, dauer=5, output?)
+v2gif() {
+    if [[ $# -lt 1 ]]; then
+        echo "Verwendung: v2gif <video> [start=0] [dauer=5] [output.gif]" >&2
+        return 1
+    fi
+    local input="$1"
+    local start="${2:-0}"
+    local dauer="${3:-5}"
+    local output="${4:-${input%.*}.gif}"
+    ffmpeg -i "$input" -ss "$start" -t "$dauer" \
+        -vf "fps=10,scale=480:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" \
+        "$output"
+}
+
+# ------------------------------------------------------------
+# Info
+# ------------------------------------------------------------
+
+# Video-/Audio-Informationen anzeigen
+alias vinfo='ffprobe -hide_banner'

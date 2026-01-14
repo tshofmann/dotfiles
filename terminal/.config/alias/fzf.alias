@@ -5,19 +5,21 @@
 # Pfad    : ~/.config/alias/fzf.alias
 # Docs    : https://github.com/junegunn/fzf
 # Config  : ~/.config/fzf/config
-# Nutzt   : bat (Preview), eza (Verzeichnis-Preview), fd (Default-Command), tldr (fman)
+# Nutzt   : bat (Code), eza (Verzeichnis), fd (Default-Command), tldr (fman)
+# Nutzt   : pdftotext (PDF), 7zz (Archive), identify (Bilder), ffprobe (Video/Audio)
 # ============================================================
 # Tool-spezifische Funktionen in fd/rg/git/brew/gh.alias.
 #
 # Helper-Skripte in ~/.config/fzf/:
 #   config       – Globale fzf-Optionen (Farben, Layout, Keybindings)
 #   init.zsh     – Shell-Integration (Ctrl+X Keybindings, FZF_DEFAULT_COMMAND)
-#   preview-file – Datei-Vorschau mit bat und Syntax-Highlighting
+#   preview-file – Universelle Vorschau (Code, PDF, Archive, Bilder, Video, Audio)
 #   preview-dir  – Verzeichnis-Vorschau mit eza --tree
 #   fman-preview – Man-Page/tldr Vorschau für fman-Funktion
 #   fa-preview   – Alias/Funktions-Code-Vorschau für fa-Funktion
 #   fkill-list   – Prozessliste für fkill-Funktion
 #   safe-action  – Sichere Aktionen (copy, edit, git-diff, etc.)
+# Aliase  : fkill, fman, fa, fenv
 # ============================================================
 
 # Guard   : Nur wenn fzf installiert ist
@@ -236,4 +238,3 @@ fenv() {
         print -z "export ${name}=\"${value}\""
     fi
 }
-

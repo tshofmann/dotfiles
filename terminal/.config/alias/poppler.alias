@@ -1,0 +1,50 @@
+# ============================================================
+# poppler.alias - Aliase für poppler (PDF-Utilities)
+# ============================================================
+# Zweck   : Praktische Aliase für PDF-Operationen
+# Pfad    : ~/.config/alias/poppler.alias
+# Docs    : https://poppler.freedesktop.org/
+# Nutzt   : -
+# Ersetzt : -
+# Aliase  : pdf2txt, pdf2img, pdfmeta, pdfpages
+# ============================================================
+
+# Guard   : Nur wenn poppler installiert ist
+if ! command -v pdftotext >/dev/null 2>&1; then return 0; fi
+
+# ------------------------------------------------------------
+# Text-Extraktion
+# ------------------------------------------------------------
+# PDF zu Text konvertieren (Layout beibehalten)
+alias pdf2txt='pdftotext -layout'
+
+# ------------------------------------------------------------
+# Bild-Konvertierung
+# ------------------------------------------------------------
+# PDF zu Bildern konvertieren(pdf, auflösung=150, format=png)
+pdf2img() {
+    if [[ $# -lt 1 ]]; then
+        echo "Verwendung: pdf2img <pdf> [dpi=150] [format=png]" >&2
+        return 1
+    fi
+    local input="$1"
+    local dpi="${2:-150}"
+    local format="${3:-png}"
+    local output="${input%.*}"
+    pdftoppm -"$format" -r "$dpi" "$input" "$output"
+}
+
+# ------------------------------------------------------------
+# Metadaten
+# ------------------------------------------------------------
+# PDF-Metadaten anzeigen
+alias pdfmeta='pdfinfo'
+
+# PDF Seitenzahl anzeigen(pdf)
+pdfpages() {
+    if [[ $# -lt 1 ]]; then
+        echo "Verwendung: pdfpages <pdf>" >&2
+        return 1
+    fi
+    pdfinfo "$1" | grep "Pages:" | awk '{print $2}'
+}

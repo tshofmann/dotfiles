@@ -53,7 +53,7 @@
 
 - ls → eza (mit Icons und Git-Status):
 
-`ls, ll, la, tree`
+`ls, ll, la, lt, lt3, lss, lsn`
 
 - find → fd (schneller, intuitive Syntax):
 
@@ -95,8 +95,8 @@
 
 - Jedes Tool hat ALLE Aliase+Funktionen dokumentiert:
 
-`tldr {{bat|brew|btop|eza|fastfetch|fd|fzf|gh|git|lazygit|rg|zoxide|zsh}}`
+`tldr {{7z|bat|brew|btop|eza|fastfetch|fd|ffmpeg|fzf|gh|git|lazygit|magick|rg|yazi|zoxide|zsh}}`
 
 - Eigene Seiten (ohne offizielle tldr-Basis):
 
-`tldr {{catppuccin|markdownlint|dotfiles}}`
+`tldr {{catppuccin|markdownlint|poppler|resvg|dotfiles}}`

@@ -1,0 +1,71 @@
+# ============================================================
+# magick.alias - Aliase für ImageMagick
+# ============================================================
+# Zweck   : Praktische Aliase für Bildverarbeitung
+# Pfad    : ~/.config/alias/magick.alias
+# Docs    : https://imagemagick.org/
+# Config  : ~/.config/ImageMagick/policy.xml (Sicherheit)
+# Nutzt   : -
+# Ersetzt : -
+# Aliase  : imgresize, img2webp, imginfo, imgsize, imgcrop
+# ============================================================
+
+# Guard   : Nur wenn ImageMagick installiert ist
+if ! command -v magick >/dev/null 2>&1; then return 0; fi
+
+# ------------------------------------------------------------
+# Skalierung
+# ------------------------------------------------------------
+# Bild skalieren(bild, breite, output)
+imgresize() {
+    if [[ $# -lt 2 ]]; then
+        echo "Verwendung: imgresize <bild> <breite> [output]" >&2
+        return 1
+    fi
+    local input="$1"
+    local width="$2"
+    local output="${3:-${input%.*}_${width}.${input##*.}}"
+    magick "$input" -resize "${width}x" "$output"
+}
+
+# ------------------------------------------------------------
+# Format-Konvertierung
+# ------------------------------------------------------------
+# Bild zu WebP konvertieren(bild, qualität=80, output)
+img2webp() {
+    if [[ $# -lt 1 ]]; then
+        echo "Verwendung: img2webp <bild> [qualität=80] [output.webp]" >&2
+        return 1
+    fi
+    local input="$1"
+    local quality="${2:-80}"
+    local output="${3:-${input%.*}.webp}"
+    magick "$input" -quality "$quality" "$output"
+}
+
+# ------------------------------------------------------------
+# Info
+# ------------------------------------------------------------
+# Bildinfo anzeigen (Format, Größe, Farbtiefe)
+alias imginfo='magick identify -verbose'
+
+# Kurze Bildinfo (nur Basics)
+alias imgsize='magick identify -format "%f: %wx%h (%m)\n"'
+
+# ------------------------------------------------------------
+# Bearbeitung
+# ------------------------------------------------------------
+# Bild zuschneiden(bild, breite, höhe, x, y, output)
+imgcrop() {
+    if [[ $# -lt 5 ]]; then
+        echo "Verwendung: imgcrop <bild> <breite> <höhe> <x> <y> [output]" >&2
+        return 1
+    fi
+    local input="$1"
+    local w="$2"
+    local h="$3"
+    local x="$4"
+    local y="$5"
+    local output="${6:-${input%.*}_crop.${input##*.}}"
+    magick "$input" -crop "${w}x${h}+${x}+${y}" "$output"
+}
