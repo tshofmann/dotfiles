@@ -62,6 +62,33 @@ Nach Schritt 3 wird bei jedem Commit automatisch geprüft, ob Dokumentation und 
 | **Erweiterbarkeit** | Neue Tools durch Hinzufügen einer `.alias`-Datei |
 | **Austauschbarkeit** | Aliase abstrahieren Tool-spezifische Syntax |
 
+### Plattform-Support
+
+Das Bootstrap-System unterstützt plattformspezifische Module:
+
+```zsh
+# In setup/bootstrap.sh – MODULES Array
+readonly -a MODULES=(
+    validation              # Alle Plattformen
+    homebrew                # Alle Plattformen (Linuxbrew auf Linux)
+    macos:terminal-profile  # Nur macOS
+    macos:xcode-theme       # Nur macOS
+    linux:some-module       # Nur Linux (noch nicht implementiert)
+)
+```
+
+| Prefix | Plattform | Erkennung |
+| ------ | --------- | --------- |
+| (ohne) | Alle | Immer ausführen |
+| `macos:` | macOS | `uname -s == Darwin` |
+| `linux:` | Linux (alle Distros) | `uname -s == Linux` |
+| `fedora:` | Fedora | `/etc/fedora-release` |
+| `debian:` | Debian/Ubuntu | `/etc/debian_version` |
+| `arch:` | Arch Linux | `/etc/arch-release` |
+
+> **Status:** macOS ist primär, Linux-Support ist vorbereitet aber nicht getestet.
+> Beiträge für Linux-Module sind willkommen!
+
 ### Guard-System
 
 Alle `.alias`-Dateien prüfen ob das jeweilige Tool installiert ist:

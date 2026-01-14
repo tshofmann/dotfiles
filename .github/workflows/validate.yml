@@ -41,6 +41,32 @@ jobs:
           fi
           echo "✔ Shell-Syntax OK"
 
+      - name: Execute-Berechtigungen prüfen
+        run: |
+          echo "Prüfe Execute-Berechtigungen..."
+          errors=0
+          # fzf-Helper müssen ausführbar sein
+          for file in terminal/.config/fzf/*; do
+            name=$(basename "$file")
+            [[ "$name" == "config" || "$name" == *.zsh ]] && continue
+            if [[ -f "$file" && ! -x "$file" ]]; then
+              echo "✖ fzf/$name: Fehlende Execute-Berechtigung"
+              errors=$((errors + 1))
+            fi
+          done
+          # Haupt-Skripte
+          for file in setup/bootstrap.sh .github/scripts/generate-docs.sh .github/scripts/health-check.sh; do
+            if [[ -f "$file" && ! -x "$file" ]]; then
+              echo "✖ $file: Fehlende Execute-Berechtigung"
+              errors=$((errors + 1))
+            fi
+          done
+          if [[ $errors -gt 0 ]]; then
+            echo "✖ $errors Datei(en) ohne Execute-Berechtigung"
+            exit 1
+          fi
+          echo "✔ Execute-Berechtigungen OK"
+
       - name: tealdeer Cache initialisieren
         run: |
           echo "Initialisiere tealdeer Cache für tldr-Patch/Page-Erkennung..."

@@ -74,7 +74,46 @@ check_docs() {
 }
 
 # ------------------------------------------------------------
-# 3. Alias-Datei-Format prüfen (Guards, Header)
+# 3. Execute-Berechtigungen prüfen
+# ------------------------------------------------------------
+check_executable_permissions() {
+    log "Prüfe Execute-Berechtigungen..."
+    local errors=0
+
+    # fzf-Helper müssen ausführbar sein (außer config und *.zsh)
+    for file in "$DOTFILES_DIR"/terminal/.config/fzf/*(N-.); do
+        local name=$(basename "$file")
+        # Überspringe config und .zsh Dateien (werden gesourced)
+        [[ "$name" == "config" || "$name" == *.zsh ]] && continue
+
+        if [[ ! -x "$file" ]]; then
+            err "fzf/$name: Fehlende Execute-Berechtigung"
+            err "  → chmod +x $file"
+            (( errors++ ))
+        fi
+    done
+
+    # Haupt-Skripte müssen ausführbar sein
+    for file in "$DOTFILES_DIR"/setup/bootstrap.sh \
+                "$DOTFILES_DIR"/.github/scripts/generate-docs.sh \
+                "$DOTFILES_DIR"/.github/scripts/health-check.sh; do
+        if [[ -f "$file" && ! -x "$file" ]]; then
+            err "$(basename $file): Fehlende Execute-Berechtigung"
+            (( errors++ ))
+        fi
+    done
+
+    if (( errors > 0 )); then
+        err "$errors Datei(en) ohne Execute-Berechtigung"
+        return 1
+    fi
+
+    ok "Execute-Berechtigungen OK"
+    return 0
+}
+
+# ------------------------------------------------------------
+# 4. Alias-Datei-Format prüfen (Guards, Header)
 # ------------------------------------------------------------
 check_alias_format() {
     log "Prüfe Alias-Datei-Format..."
@@ -149,6 +188,7 @@ print ""
 failed=0
 
 check_shell_syntax || (( failed++ ))
+check_executable_permissions || (( failed++ ))
 check_docs || (( failed++ ))
 check_alias_format || (( failed++ ))
 check_markdown || (( failed++ ))
