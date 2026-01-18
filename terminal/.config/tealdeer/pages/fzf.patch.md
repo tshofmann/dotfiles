@@ -65,5 +65,3 @@
 - dotfiles: Verzeichnis wechseln mit eza-Vorschau:
 
 `<Ctrl x> 3`
-
-# dotfiles: Tool-spezifische fzf-Funktionen
