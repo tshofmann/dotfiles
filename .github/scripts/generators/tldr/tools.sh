@@ -37,7 +37,7 @@ generate_dotfiles_page() {
 
     # Einstiegspunkte – prominenter Block
     output+="- Diese Hilfe (Schnellreferenz):\n\n\`dothelp\`\n\n"
-    output+="- Alle Aliase+Funktionen interaktiv durchsuchen:\n\n\`fa {{suche}}\`\n\n"
+    output+="- Alle Aliase+Funktionen interaktiv durchsuchen:\n\n\`cmds {{suche}}\`\n\n"
     output+="- Vollständige Tool-Dokumentation:\n\n\`tldr {{tool}}\`\n"
 
     # Shell-Keybindings aus .zshrc (Format: #   Key   Beschreibung)

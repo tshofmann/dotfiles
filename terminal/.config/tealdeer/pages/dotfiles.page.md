@@ -11,7 +11,7 @@
 
 - Alle Aliase+Funktionen interaktiv durchsuchen:
 
-`fa {{suche}}`
+`cmds {{suche}}`
 
 - Vollständige Tool-Dokumentation:
 

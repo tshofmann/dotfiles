@@ -231,7 +231,7 @@ Die Dokumentation wird automatisch aus dem Code generiert (Single Source of Trut
 **Ausnahmen** (Englisch erlaubt):
 
 - **Technische Begriffe** ohne gängige Übersetzung: `Guard`, `Symlink`, `Config`
-- **Code-Bezeichner**: Funktionsnamen (`brewup`), Variablen (`DOTFILES_DIR`)
+- **Code-Bezeichner**: Funktionsnamen (`brew-up`), Variablen (`DOTFILES_DIR`)
 - **Tool-Namen und Referenzen**: `fzf`, `bat`, `ripgrep`
 - **URLs und Pfade**: `~/.config/alias/`
 

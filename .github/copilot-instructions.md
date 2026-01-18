@@ -104,8 +104,8 @@ Format für `terminal/.config/alias/*.alias`:
 
 **Regel:** Ein Alias/Funktion gehört in die `.alias`-Datei des Tools, das er **primär** repräsentiert.
 
-- `zf()` → `zoxide.alias` (zoxide-Workflow, fzf nur UI)
-- `fkill()` → `fzf.alias` (generische fzf-Funktion)
+- `zj()` → `zoxide.alias` (zoxide-Workflow, fzf nur UI)
+- `procs()` → `fzf.alias` (generische fzf-Funktion)
 
 ```zsh
 # ============================================================
@@ -123,7 +123,7 @@ Format für `terminal/.config/alias/*.alias`:
 # Guard
 if ! command -v tool >/dev/null 2>&1; then return 0; fi
 
-# Beschreibung für fa/tldr
+# Beschreibung für cmds/tldr
 alias x='command'
 
 # Funktion(param?) – Enter=Aktion, Ctrl+Y=Kopieren

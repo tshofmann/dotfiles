@@ -136,7 +136,7 @@ Nach der Installation kannst du die Einrichtung prüfen:
 
 \`\`\`zsh
 ./.github/scripts/health-check.sh  # Health-Check ausführen
-fa                                  # Interaktive Alias-Suche
+cmds                                # Interaktive Alias-Suche
 dothelp                             # Tool-Hilfe mit dotfiles-Erweiterungen
 ff                                  # System-Info anzeigen
 \`\`\`
