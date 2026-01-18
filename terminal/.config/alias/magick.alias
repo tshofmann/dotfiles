@@ -7,7 +7,7 @@
 # Config      : ~/.config/ImageMagick/policy.xml (Sicherheit)
 # Nutzt       : -
 # Ersetzt     : -
-# Aliase      : imgresize, img2webp, imginfo, imgsize, imgcrop
+# Aliase      : imgresize, towebp, imgmeta, imgsize, imgcrop
 # ============================================================
 
 # Guard   : Nur wenn ImageMagick installiert ist
@@ -32,9 +32,9 @@ imgresize() {
 # Format-Konvertierung
 # ------------------------------------------------------------
 # Bild zu WebP konvertieren(bild, qualität=80, output)
-img2webp() {
+towebp() {
     if [[ $# -lt 1 ]]; then
-        echo "Verwendung: img2webp <bild> [qualität=80] [output.webp]" >&2
+        echo "Verwendung: towebp <bild> [qualität=80] [output.webp]" >&2
         return 1
     fi
     local input="$1"
@@ -47,7 +47,7 @@ img2webp() {
 # Info
 # ------------------------------------------------------------
 # Bildinfo anzeigen (Format, Größe, Farbtiefe)
-alias imginfo='magick identify -verbose'
+alias imgmeta='magick identify -verbose'
 
 # Kurze Bildinfo (nur Basics)
 alias imgsize='magick identify -format "%f: %wx%h (%m)\n"'
