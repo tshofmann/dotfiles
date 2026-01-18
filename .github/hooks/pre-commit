@@ -168,6 +168,17 @@ check_header_alignment() {
         "Laden       :"
         "Geladen     :"
         "STEP        :"
+        "Benötigt    :"
+        "Plattform   :"
+        "Font        :"
+        "Speicherort :"
+        "Packages    :"
+        "Hooks       :"
+        "Cache       :"
+        "Aktivierung :"
+        "Zielort     :"
+        "Profil      :"
+        "Alternativen:"
     )
 
     # Alle Dateien mit Header-Blöcken prüfen
