@@ -11,6 +11,9 @@
 #   preview <mode> <sel>   – Generiert Preview (code|tldr)
 # ============================================================
 
+# Benötigt für ZSH-Pattern mit # (0+ Zeichen)
+setopt extendedglob
+
 # Gemeinsame Bibliothek laden (Farben, ANSI-Strip)
 source "${0:A:h}/lib.zsh"
 
