@@ -7,7 +7,7 @@
 # Config      : ~/.config/fd/ignore
 # Nutzt       : fzf (Interactive), bat (Preview), eza (Verzeichnis-Preview)
 # Ersetzt     : find (schneller, intuitive Syntax)
-# Aliase      : fdf, fdd, fdh, fda, fdsh, fdpy, fdjs, fdmd, fdjson, fdyaml, go, edit
+# Aliase      : fdf, fdd, fdh, fda, fdsh, fdpy, fdjs, fdmd, fdjson, fdyaml, jump, pick
 # ============================================================
 
 # Guard   : Nur wenn fd installiert ist
@@ -56,7 +56,7 @@ alias fdyaml='fd -e yaml -e yml'
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
     # Verzeichnis wechseln(pfad=.) – Enter=Wechseln, Ctrl+Y=Pfad kopieren
-    go() {
+    jump() {
         local dir
         local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
 
@@ -69,7 +69,7 @@ if command -v fzf >/dev/null 2>&1; then
     }
 
     # Datei öffnen(pfad=.) – Enter=Öffnen, Ctrl+Y=Pfad kopieren
-    edit() {
+    pick() {
         local file
         local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
 
