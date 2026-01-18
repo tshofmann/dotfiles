@@ -1,0 +1,23 @@
+# ============================================================
+# ShellCheck - Konfiguration
+# ============================================================
+# Zweck   : Linting für Bash/sh/dash/ksh-Skripte
+# Pfad    : ~/.config/shellcheckrc (Symlink via Stow)
+# Docs    : https://www.shellcheck.net/wiki/
+# ============================================================
+# HINWEIS: ShellCheck unterstützt KEIN ZSH!
+#          ZSH-Skripte produzieren SC1071 (kann nicht deaktiviert
+#          werden, da Parser-Fehler). Einfach ignorieren.
+# ============================================================
+
+# ------------------------------------------------------------
+# Sinnvolle Ausnahmen für Bash-Projekte
+# ------------------------------------------------------------
+# SC1090: Can't follow non-constant source
+#         → Dynamische source-Pfade sind üblich
+# SC1091: Not following: file not found
+#         → Externe Dateien existieren zur Laufzeit
+# SC2034: Variable appears unused
+#         → Variablen werden oft in anderen Skripten genutzt
+
+disable=SC1090,SC1091,SC2034

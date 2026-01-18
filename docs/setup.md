@@ -164,6 +164,7 @@ ff                                  # System-Info anzeigen
 | [`resvg`](https://github.com/RazrFalcon/resvg) | SVG-Rendering |
 | [`ripgrep`](https://github.com/BurntSushi/ripgrep) | grep-Ersatz, schnellste Textsuche |
 | [`sevenzip`](https://7-zip.org/) | Archiv-Extraktion |
+| [`shellcheck`](https://www.shellcheck.net/) | Shell-Script-Linter (für Bash) |
 | [`starship`](https://starship.rs/) | Shell-Prompt |
 | [`stow`](https://www.gnu.org/software/stow/) | Symlink-Manager |
 | [`tealdeer`](https://tealdeer-rs.github.io/tealdeer/) | tldr-Client |
@@ -178,6 +179,7 @@ ff                                  # System-Info anzeigen
 | Paket | Beschreibung |
 | ----- | ------------ |
 | [`claude-code`](https://docs.anthropic.com/en/docs/claude-code) | Agentic Coding |
+| [`visual-studio-code`](https://code.visualstudio.com/) | Editor |
 | [`font-meslo-lg-nerd-font`](https://github.com/ryanoasis/nerd-fonts) | Nerd Font für Prompt, eza, yazi |
 
 ### Mac App Store
