@@ -326,13 +326,13 @@ Funktionen mit fzf-UI nutzen ein erweitertes Format:
 
 ```zsh
 # zoxide Browser – Enter=Wechseln, Ctrl+D=Löschen, Ctrl+Y=Kopieren
-zf() { ... }  # in zoxide.alias (Tool-Zuordnung!)
+zj() { ... }  # in zoxide.alias (Tool-Zuordnung!)
 
 # Verzeichnis wechseln(pfad=.) – Enter=Wechseln, Ctrl+Y=Pfad kopieren
-cdf() { ... }
+jump() { ... }
 
 # Live-Grep(suche?) – Enter=Datei öffnen, Ctrl+Y=Pfad kopieren
-rgf() { ... }
+rg-live() { ... }
 ```
 
 > **Wichtig:** Diese Kommentare sind die Single Source of Truth für tldr-Patches.
