@@ -54,7 +54,7 @@ _cmds_list() {
 
             # Funktion: "name() {" (keine privaten mit _)
             local trimmed="${line#"${line%%[![:space:]]*}"}"
-            if [[ "$trimmed" == [a-zA-Z]*"() {"* && "$trimmed" != _* ]]; then
+            if [[ "$trimmed" == [a-zA-Z][a-zA-Z0-9_-]#"() {"* && "$trimmed" != _* ]]; then
                 local func_name="${trimmed%%\(*}"
                 if [[ -n "$func_name" && "$func_name" != *" "* ]]; then
                     entries+="${func_name}|func|${category}|${prev_comment}"$'\n'

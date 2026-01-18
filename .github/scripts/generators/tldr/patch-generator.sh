@@ -139,6 +139,8 @@ generate_fzf_helper_descriptions() {
         fi
     done
 
+    # Trailing newlines entfernen – Aufrufer fügt \n\n hinzu
+    output="${output%\\n\\n}"
     echo -e "$output"
 }
 
@@ -186,8 +188,11 @@ generate_complete_patch() {
         output+="# dotfiles: Globale Tastenkürzel (in allen fzf-Dialogen)\n\n"
         output+=$(parse_fzf_config_keybindings "$FZF_CONFIG")
         output+="\n\n# dotfiles: Helper-Skripte (~/.config/fzf/)\n\n"
-        output+=$(generate_fzf_helper_descriptions)
-        output+="# dotfiles: Funktionen (aus fzf.alias)\n\n"
+        # $() entfernt trailing newlines, daher print -rn statt echo -e
+        local helper_desc
+        helper_desc=$(generate_fzf_helper_descriptions)
+        output+="$helper_desc"
+        output+="\n\n# dotfiles: Funktionen (aus fzf.alias)\n\n"
     fi
 
     if [[ "$tool_name" == "yazi" ]]; then

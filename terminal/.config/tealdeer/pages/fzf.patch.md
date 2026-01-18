@@ -32,7 +32,9 @@
 
 - dotfiles: `preview` – Zeigt Vorschau für Dateien und Verzeichnisse
 
-- dotfiles: `procs` – Prozessliste für fzf# dotfiles: Funktionen (aus fzf.alias)
+- dotfiles: `procs` – Prozessliste für fzf
+
+# dotfiles: Funktionen (aus fzf.alias)
 
 - dotfiles: Prozess Browser (`<Enter>` Beenden, `<Tab>` Mehrfach, `<Ctrl s>` Apps↔Alle):
 
