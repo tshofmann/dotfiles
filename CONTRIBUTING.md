@@ -130,9 +130,9 @@ Wiederverwendbare Skripte für fzf-Previews und -Aktionen in `~/.config/fzf/`:
 | `preview-file` | Datei-Vorschau mit bat (Fallback: cat) | `rg.alias`, `fd.alias` |
 | `preview-dir` | Verzeichnis-Vorschau mit eza (Fallback: ls) | `zoxide.alias`, `fd.alias` |
 | `safe-action` | Sichere Aktionen (copy, edit, git-diff) | Mehrere `.alias`-Dateien |
-| `fman-preview` | Man/tldr Vorschau | `fzf.alias` |
-| `fa-preview` | Alias-Browser Vorschau | `fzf.alias` |
-| `fkill-list` | Prozessliste | `fzf.alias` |
+| `help` | Helper für `help()` (list, preview, toggle) | `fzf.alias` |
+| `cmds` | Helper für `cmds()` (preview) | `fzf.alias` |
+| `procs` | Helper für `procs()` (list) | `fzf.alias` |
 
 **Warum Helper statt Inline-Code?**
 
@@ -231,7 +231,7 @@ Die Dokumentation wird automatisch aus dem Code generiert (Single Source of Trut
 **Ausnahmen** (Englisch erlaubt):
 
 - **Technische Begriffe** ohne gängige Übersetzung: `Guard`, `Symlink`, `Config`
-- **Code-Bezeichner**: Funktionsnamen (`brewup`), Variablen (`DOTFILES_DIR`)
+- **Code-Bezeichner**: Funktionsnamen (`brew-up`), Variablen (`DOTFILES_DIR`)
 - **Tool-Namen und Referenzen**: `fzf`, `bat`, `ripgrep`
 - **URLs und Pfade**: `~/.config/alias/`
 
@@ -293,7 +293,7 @@ Der Fallback (`# Pfad :` in Config-Dateien) ist nur für Tools ohne `.alias`-Dat
 alias ls='eza --group-directories-first'
 
 # Man/tldr Browser – Ctrl+S=Modus wechseln, Enter=je nach Modus öffnen
-fman() {
+help() {
     # ... Implementation
 }
 ```
@@ -316,6 +316,16 @@ Funktionen mit fzf-UI nutzen ein erweitertes Format:
 | `(param?)` | Optionaler Parameter | `# Suche(query?)` |
 | `(param=default)` | Optional mit Default | `# Wechseln(pfad=.)` |
 
+> **Warum optionale Parameter bei fzf-Browsern?**
+>
+> Alle fzf-Browser sollten `(suche?)` Parameter haben:
+>
+> 1. **tldr-Sichtbarkeit:** Im tldr wird `{{suche}}` in mauve gefärbt – sofort erkennbar als interaktiv
+> 2. **Vorfilterung:** `brew-add docker` startet fzf mit Vorfilter statt alles zu zeigen
+> 3. **Konsistenz:** Einheitliches UX-Pattern über alle Browser
+>
+> Implementierung: `local query="${1:-}"` und `fzf --query="$query"`
+
 **Keybinding-Format:**
 
 - `Enter=Aktion` – Einzelne Taste
@@ -326,13 +336,13 @@ Funktionen mit fzf-UI nutzen ein erweitertes Format:
 
 ```zsh
 # zoxide Browser – Enter=Wechseln, Ctrl+D=Löschen, Ctrl+Y=Kopieren
-zf() { ... }  # in zoxide.alias (Tool-Zuordnung!)
+zj() { ... }  # in zoxide.alias (Tool-Zuordnung!)
 
 # Verzeichnis wechseln(pfad=.) – Enter=Wechseln, Ctrl+Y=Pfad kopieren
-cdf() { ... }
+jump() { ... }
 
 # Live-Grep(suche?) – Enter=Datei öffnen, Ctrl+Y=Pfad kopieren
-rgf() { ... }
+rg-live() { ... }
 ```
 
 > **Wichtig:** Diese Kommentare sind die Single Source of Truth für tldr-Patches.
@@ -386,6 +396,42 @@ warn() { echo -e "${C_YELLOW}⚠${C_RESET} $*"; }
   - Müssen nicht dokumentiert werden
   - Für interne Helper, Parser, etc.
 
+#### Namenskonvention für Aliase und Funktionen
+
+**Schema:** `<tool>-<aktion>` – intuitiv, merkbar, Tab-Completion-freundlich.
+
+| Kategorie | Schema | Beispiele |
+| --------- | ------ | --------- |
+| **Tool-Wrapper** | `<tool>-<aktion>` | `git-log`, `git-branch`, `gh-pr`, `brew-add` |
+| **Browser/Interaktiv** | Beschreibend | `help`, `cmds`, `procs`, `vars` |
+| **Navigation** | Kurze Verben | `go`, `edit`, `zj` |
+| **Bewusste Ersetzungen** | Original-Name | `cat`, `ls`, `top` (→ bat, eza, btop) |
+
+**Regeln:**
+
+1. **Keine Kollisionen** mit System-Befehlen (außer bewusste Ersetzungen)
+2. **Bindestriche** (`-`) statt Unterstriche für Lesbarkeit
+3. **Tool-Präfix** ermöglicht Tab-Completion: `git-<TAB>` zeigt alle git-Funktionen
+4. **Kurze Namen** nur für sehr häufig genutzte Befehle (`y`, `z`, `ls`)
+
+**Tab-Completion Beispiel:**
+
+```zsh
+$ git-<TAB>
+git-add     git-branch  git-cm      git-diff    git-log
+git-pull    git-push    git-stage   git-stash   git-status
+
+$ brew-<TAB>
+brew-add    brew-list   brew-rm     brew-up
+```
+
+**Kollisionsprüfung vor neuen Namen:**
+
+```zsh
+# Prüfe ob Name frei ist
+command -v mein-alias && echo "KOLLISION!" || echo "Frei"
+```
+
 #### Sektionen für automatische Dokumentation
 
 Bestimmte Sektionen in `.alias`-Dateien werden automatisch in `tldr dotfiles` dokumentiert:
@@ -402,7 +448,7 @@ Bestimmte Sektionen in `.alias`-Dateien werden automatisch in `tldr dotfiles` do
 
 ### Funktions-Syntax
 
-**Verwende diese Form (von `fa()` erkannt):**
+**Verwende diese Form (von `cmds()` erkannt):**
 
 ```zsh
 name() {
@@ -413,7 +459,7 @@ name() {
 **Nicht verwenden:**
 
 ```zsh
-function name {   # ❌ Korn-Shell-Style – nicht von fa() erkannt
+function name {   # ❌ Korn-Shell-Style – nicht von cmds() erkannt
 }
 function name() { # ❌ Hybrid-Style – redundant
 }
@@ -421,11 +467,11 @@ function name() { # ❌ Hybrid-Style – redundant
 
 | Syntax | Status | Grund |
 | -------- | -------- | ------- |
-| `name() {` | ✅ Verwenden | Von `fa()` erkannt, konsistent |
-| `function name {` | ❌ Nicht verwenden | Nicht von `fa()` erkannt |
+| `name() {` | ✅ Verwenden | Von `cmds()` erkannt, konsistent |
+| `function name {` | ❌ Nicht verwenden | Nicht von `cmds()` erkannt |
 | `function name() {` | ❌ Nicht verwenden | Redundant, inkonsistent |
 
-> **Hinweis:** Die `fa()`-Funktion (Alias-Browser) erkennt nur `name() {`-Syntax.
+> **Hinweis:** Die `cmds()`-Funktion (Alias-Browser) erkennt nur `name() {`-Syntax.
 > Diese Einschränkung ist beabsichtigt – Konsistenz im gesamten Projekt.
 
 ### Stil-Regeln

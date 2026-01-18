@@ -5,7 +5,7 @@
 # Pfad        : ~/.config/fzf/config
 # Docs        : https://github.com/junegunn/fzf#environment-variables
 # ============================================================
-# Aliase      : ~/.config/alias/fzf.alias (zf, fkill, fman, fa, fenv)
+# Aliase      : ~/.config/alias/fzf.alias (help, cmds, procs, vars)
 # Theme       : ~/.config/theme-style
 # ============================================================
 

@@ -16,4 +16,4 @@
 
 - dotfiles: Theme Browser (`<Enter>` Aktivieren):
 
-`bat-theme`
+`bat-theme {{suche}}`

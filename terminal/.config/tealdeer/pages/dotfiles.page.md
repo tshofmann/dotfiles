@@ -11,7 +11,7 @@
 
 - Alle Aliase+Funktionen interaktiv durchsuchen:
 
-`fa {{suche}}`
+`cmds {{suche}}`
 
 - Vollständige Tool-Dokumentation:
 
@@ -57,7 +57,7 @@
 
 - find → fd (schneller, intuitive Syntax):
 
-`fdf, fdd, fdh, fda, fdsh, fdpy, fdjs, fdmd, fdjson, fdyaml, cdf, fo`
+`fdf, fdd, fdh, fda, fdsh, fdpy, fdjs, fdmd, fdjson, fdyaml, jump, pick`
 
 - grep → rg (schneller, respektiert .gitignore):
 
@@ -65,17 +65,17 @@
 
 - cd → zoxide (lernt häufige Verzeichnisse):
 
-`z, zi, zf`
+`z, zi, zj`
 
 # Homebrew
 
 - Homebrew Komplett-Update:
 
-`brewup`
+`brew-up`
 
 - Brewfile Versionsübersicht:
 
-`brewv`
+`brew-list`
 
 # Dotfiles-Wartung
 

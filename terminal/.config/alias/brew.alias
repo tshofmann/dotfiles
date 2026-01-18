@@ -4,8 +4,8 @@
 # Zweck       : Aliase für Homebrew Paketverwaltung
 # Pfad        : ~/.config/alias/brew.alias
 # Docs        : https://docs.brew.sh/Manpage
-# Nutzt       : fzf (Interactive), theme-style (Farben für brewv)
-# Aliase      : brewup, brewv, bip, brp
+# Nutzt       : fzf (Interactive), theme-style (Farben für brew-list)
+# Aliase      : brew-up, brew-list, brew-add, brew-rm
 # ============================================================
 # Hinweis     : Kein Guard für brew – ohne Homebrew ist dieses
 #           dotfiles-Repository ohnehin nicht nutzbar.
@@ -15,7 +15,7 @@
 # Update & Wartung
 # ------------------------------------------------------------
 # Homebrew Komplett-Update – update, upgrade, autoremove, cleanup, mas
-brewup() {
+brew-up() {
     brew update && brew upgrade
     command -v mas >/dev/null 2>&1 && mas upgrade
     brew autoremove && brew cleanup
@@ -49,9 +49,9 @@ fi
 # ------------------------------------------------------------
 # Versionsübersicht
 # ------------------------------------------------------------
-# Brewfile Versionsübersicht – zeigt installierte Versionen aller Pakete
 # Nutzt       : theme-style ($C_MAUVE, $C_GREEN, $C_TEXT, $C_RESET)
-brewv() {
+# Brewfile Versionsübersicht – zeigt installierte Versionen aller Pakete
+brew-list() {
     local brewfile="${DOTFILES_DIR:-$HOME/dotfiles}/setup/Brewfile"
 
     if [[ ! -f "$brewfile" ]]; then
@@ -161,13 +161,14 @@ brewv() {
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # Brew Install Browser – Enter=Installieren, Tab=Mehrfach
-    bip() {
+    # Brew Install Browser(suche?) – Enter=Installieren, Tab=Mehrfach
+    brew-add() {
+        local query="${1:-}"
         local selection type pkg
         selection=$({
             brew formulae | sed 's/^/[F] /'
             brew casks | sed 's/^/[C] /'
-        } | fzf --multi \
+        } | fzf --multi --query="$query" \
             --preview 'brew info {2}' \
             --header='[F]=Formula [C]=Cask | Enter: Installieren | Tab: Mehrfach')
 
@@ -184,10 +185,11 @@ if command -v fzf >/dev/null 2>&1; then
         done
     }
 
-    # Brew Remove Browser – Enter=Entfernen, Tab=Mehrfach
-    brp() {
+    # Brew Remove Browser(suche?) – Enter=Entfernen, Tab=Mehrfach
+    brew-rm() {
+        local query="${1:-}"
         local pkg
-        pkg=$(brew leaves | fzf --multi \
+        pkg=$(brew leaves | fzf --multi --query="$query" \
             --preview 'brew info {}' \
             --header='Enter: Entfernen | Tab: Mehrfach')
 

@@ -1,10 +1,10 @@
 #!/usr/bin/env zsh
 # ============================================================
-# fman - Helper für fman() Funktion
+# help - Helper für help() Funktion
 # ============================================================
 # Zweck       : Subcommands für man/tldr Browser
-# Pfad        : ~/.config/fzf/fman
-# Aufruf      : fman <list|preview|toggle> [args...]
+# Pfad        : ~/.config/fzf/help
+# Aufruf      : help <list|preview|toggle> [args...]
 # ============================================================
 # Commands:
 #   list [man|tldr]        – Listet Einträge
@@ -12,23 +12,26 @@
 #   toggle                 – Toggle-Logik für fzf Ctrl+S
 # ============================================================
 
+# Gemeinsame Bibliothek laden (Farben, ANSI-Strip)
+source "${0:A:h}/lib.zsh"
+
 # ------------------------------------------------------------
 # Subcommand: list
 # ------------------------------------------------------------
-_fman_list() {
+_help_list() {
     local mode="${1:-man}"
 
     case "$mode" in
         man)
             # Nur Sektion 1 (Benutzer-Kommandos)
-            # Pattern ohne Leerzeichen vor (1), da macOS-Format variiert
-            man -k . 2>/dev/null | grep '(1)'
+            # Match nur echte Sektion-1-Einträge, nicht "(1)" in Beschreibungen
+            man -k . 2>/dev/null | grep -E ' \(1\) |\(1\) '
             ;;
         tldr)
             tldr --list 2>/dev/null
             ;;
         *)
-            echo "Unbekannter Modus: $mode" >&2
+            echo "${C_RED}Unbekannter Modus:${C_RESET} $mode" >&2
             return 1
             ;;
     esac
@@ -37,7 +40,7 @@ _fman_list() {
 # ------------------------------------------------------------
 # Subcommand: preview
 # ------------------------------------------------------------
-_fman_preview() {
+_help_preview() {
     local mode="$1"
     local entry="$2"
 
@@ -45,7 +48,7 @@ _fman_preview() {
     local page=$(echo "$entry" | sed 's/(.*//' | tr -d ' ')
 
     if [[ "$mode" == "tldr" ]]; then
-        tldr --color=always "$page" 2>/dev/null || echo "Keine tldr-Seite für '$page' verfügbar"
+        tldr --color=always "$page" 2>/dev/null || echo "${C_RED}Keine tldr-Seite für${C_RESET} '$page'"
     else
         man "$page" 2>/dev/null | col -bx | bat --color=always -l man -p
     fi
@@ -54,23 +57,23 @@ _fman_preview() {
 # ------------------------------------------------------------
 # Subcommand: toggle
 # ------------------------------------------------------------
-_fman_toggle() {
+_help_toggle() {
     local fzf_dir="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
 
     # Query bleibt automatisch erhalten, first springt zum ersten Match
     if [[ "$FZF_PROMPT" == "man> " ]]; then
-        echo "reload($fzf_dir/fman list tldr)+change-prompt(tldr> )+change-preview($fzf_dir/fman preview tldr {})+first"
+        echo "reload($fzf_dir/help list tldr)+change-prompt(tldr> )+change-preview($fzf_dir/help preview tldr {})+first"
     else
-        echo "reload($fzf_dir/fman list man)+change-prompt(man> )+change-preview($fzf_dir/fman preview man {})+first"
+        echo "reload($fzf_dir/help list man)+change-prompt(man> )+change-preview($fzf_dir/help preview man {})+first"
     fi
 }
 
 # ------------------------------------------------------------
 # Usage
 # ------------------------------------------------------------
-_fman_usage() {
+_help_usage() {
     cat <<EOF
-Usage: fman <command> [args...]
+Usage: help <command> [args...]
 
 Commands:
   list [man|tldr]        Liste Einträge (Default: man)
@@ -83,15 +86,4 @@ EOF
 # ------------------------------------------------------------
 # Main Dispatch
 # ------------------------------------------------------------
-case "${1:-}" in
-    list)    shift; _fman_list "$@" ;;
-    preview) shift; _fman_preview "$@" ;;
-    toggle)  shift; _fman_toggle "$@" ;;
-    -h|--help) _fman_usage ;;
-    "")      _fman_usage ;;
-    *)
-        echo "Unknown command: $1" >&2
-        _fman_usage >&2
-        exit 1
-        ;;
-esac
+_fzf_dispatch "help" "$@"

@@ -15,40 +15,43 @@
 - dotfiles: Eintrag zur Auswahl hinzufügen:
 
 `<Tab>`
+
 # dotfiles: Helper-Skripte (~/.config/fzf/)
 
 - dotfiles: `action` – Führt Aktionen Shell-Injection-sicher aus
 
+- dotfiles: `cmds` – Liste und Preview für cmds (Alias-Browser) in fzf
+
 - dotfiles: `config` – Native fzf-Konfiguration (FZF_DEFAULT_OPTS_FILE)
 
-- dotfiles: `fa` – Preview-Befehle für fa (Alias-Browser) in fzf
-
-- dotfiles: `fkill` – Prozessliste für fzf
-
-- dotfiles: `fman` – Subcommands für man/tldr Browser
+- dotfiles: `help` – Subcommands für man/tldr Browser
 
 - dotfiles: `init.zsh` – fzf Keybindings und fd-Backend aktivieren
 
 - dotfiles: `lib.zsh` – Geteilte Utilities für alle fzf-Skripte
 
 - dotfiles: `preview` – Zeigt Vorschau für Dateien und Verzeichnisse
+
+- dotfiles: `procs` – Prozessliste für fzf
+
 # dotfiles: Funktionen (aus fzf.alias)
 
 - dotfiles: Prozess Browser (`<Enter>` Beenden, `<Tab>` Mehrfach, `<Ctrl s>` Apps↔Alle):
 
-`fkill {{signal}}`
+`procs {{signal}}`
 
 - dotfiles: Man/tldr Browser (`<Ctrl s>` Modus wechseln (Liste + Preview), `<Enter>` öffnen):
 
-`fman`
+`help`
 
-- dotfiles: fa Browser (`<Enter>` Übernehmen, `<Ctrl s>` tldr↔Code):
+- dotfiles: Befehl Browser (`<Enter>` Übernehmen, `<Ctrl s>` tldr↔Code):
 
-`fa {{suche}}`
+`cmds {{suche}}`
 
-- dotfiles: Env Browser (`<Enter>` Export→Edit, `<Ctrl y>` Kopieren):
+- dotfiles: Variablen Browser (`<Enter>` Export→Edit, `<Ctrl y>` Kopieren):
 
-`fenv`
+`vars`
+
 # dotfiles: Shell-Keybindings (Ctrl+X Prefix)
 
 - dotfiles: History durchsuchen mit Vorschau:
@@ -62,4 +65,3 @@
 - dotfiles: Verzeichnis wechseln mit eza-Vorschau:
 
 `<Ctrl x> 3`
-# dotfiles: Tool-spezifische fzf-Funktionen

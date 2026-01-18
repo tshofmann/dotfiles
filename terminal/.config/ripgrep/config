@@ -5,7 +5,7 @@
 # Pfad        : ~/.config/ripgrep/config
 # Docs        : https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md
 # ============================================================
-# Aliase      : ~/.config/alias/rg.alias (rgc, rgi, rga, rgf, ...)
+# Aliase      : ~/.config/alias/rg.alias (rgc, rgi, rga, rg-live, ...)
 # ============================================================
 
 # ------------------------------------------------------------

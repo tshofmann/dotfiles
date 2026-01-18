@@ -8,11 +8,11 @@
 
 - dotfiles: Bild zu WebP konvertieren:
 
-`img2webp {{bild, qualität}}`
+`towebp {{bild, qualität}}`
 
 - dotfiles: Bildinfo anzeigen (Format, Größe, Farbtiefe):
 
-`imginfo`
+`imgmeta`
 
 - dotfiles: Kurze Bildinfo (nur Basics):
 

@@ -6,7 +6,7 @@
 # Docs        : https://github.com/ajeetdsouza/zoxide
 # Nutzt       : fzf (Interactive), eza (Preview)
 # Ersetzt     : cd (lernt häufige Verzeichnisse)
-# Aliase      : z, zi, zf
+# Aliase      : z, zi, zj
 # ============================================================
 # Kommandos (via `zoxide init zsh`):
 #   z <query>    Wechsle zu Verzeichnis mit höchstem Score
@@ -33,15 +33,16 @@ fi
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # zoxide Browser – Enter=Wechseln, Ctrl+D=Löschen, Ctrl+Y=Kopieren
-    zf() {
+    # zoxide Browser(suche?) – Enter=Wechseln, Ctrl+D=Löschen, Ctrl+Y=Kopieren
+    zj() {
+        local query="${1:-}"
         local selection dir
         local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
 
         # Mit Score anzeigen (Format: "1234.5 /path/to/dir")
         # -n2.. durchsucht nur den Pfad (nicht den Score), unterstützt Leerzeichen
         selection=$(zoxide query -l -s | \
-            fzf -n2.. \
+            fzf -n2.. --query="$query" \
                 --preview "$helper/preview dir {2..} 2" \
                 --bind "ctrl-d:execute-silent($helper/action zoxide-remove {2..})+reload(zoxide query -l -s)" \
                 --bind "ctrl-y:execute-silent($helper/action copy {2..})" \

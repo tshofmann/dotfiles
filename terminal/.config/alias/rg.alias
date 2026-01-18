@@ -63,11 +63,11 @@ alias rggo='rg -t go'
 # ------------------------------------------------------------
 # Interaktive Suche (mit fzf)
 # ------------------------------------------------------------
-# rgf: Live-Grep mit fzf + bat Vorschau (Datei:Zeile bleibt beim Scrollen sichtbar)
-# Verwendung  : rgf [initiale-suche]
+# rg-live: Live-Grep mit fzf + bat Vorschau (Datei:Zeile bleibt beim Scrollen sichtbar)
+# Verwendung  : rg-live [initiale-suche]
 if command -v fzf >/dev/null 2>&1; then
     # Live-Grep(suche?) – Enter=Datei öffnen, Ctrl+Y=Pfad kopieren
-    rgf() {
+    rg-live() {
         local rg_prefix="rg --column --line-number --no-heading --color=always --smart-case"
         local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
 

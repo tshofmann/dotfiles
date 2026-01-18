@@ -97,7 +97,7 @@ err()  { print -P "${C_RED}✖${C_RESET} $*" >&2; }
 warn() { print -P "${C_YELLOW}⚠${C_RESET} $*"; }
 skip() { print -P "${C_OVERLAY0}⏭${C_RESET} $*"; }
 
-# Sektions-Header (wie brewv)
+# Sektions-Header (wie brew-list)
 # Verwendung  : section "Titel"
 section() {
     print -P "\n${C_MAUVE}━━━ ${C_BOLD}$1${C_RESET}${C_MAUVE} ━━━${C_RESET}"

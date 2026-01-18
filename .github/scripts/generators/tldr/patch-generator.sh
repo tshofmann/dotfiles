@@ -139,6 +139,8 @@ generate_fzf_helper_descriptions() {
         fi
     done
 
+    # Trailing newlines entfernen – Aufrufer fügt \n\n hinzu
+    output="${output%\\n\\n}"
     echo -e "$output"
 }
 
@@ -184,10 +186,15 @@ generate_complete_patch() {
 
     if [[ "$tool_name" == "fzf" ]]; then
         output+="# dotfiles: Globale Tastenkürzel (in allen fzf-Dialogen)\n\n"
-        output+=$(parse_fzf_config_keybindings "$FZF_CONFIG")
-        output+="\n# dotfiles: Helper-Skripte (~/.config/fzf/)\n\n"
-        output+=$(generate_fzf_helper_descriptions)
-        output+="\n# dotfiles: Funktionen (aus fzf.alias)\n\n"
+        local fzf_keys
+        fzf_keys=$(parse_fzf_config_keybindings "$FZF_CONFIG")
+        output+="$fzf_keys"
+        output+="\n\n# dotfiles: Helper-Skripte (~/.config/fzf/)\n\n"
+        # $() entfernt trailing newlines, daher in lokale Variable speichern
+        local helper_desc
+        helper_desc=$(generate_fzf_helper_descriptions)
+        output+="$helper_desc"
+        output+="\n\n# dotfiles: Funktionen (aus fzf.alias)\n\n"
     fi
 
     if [[ "$tool_name" == "yazi" ]]; then
@@ -201,10 +208,17 @@ generate_complete_patch() {
     [[ -n "$alias_output" ]] && output+="${alias_output}"
 
     if [[ "$tool_name" == "fzf" ]]; then
-        output+="\n# dotfiles: Shell-Keybindings (Ctrl+X Prefix)\n\n"
-        output+=$(parse_shell_keybindings "$alias_file")
-        output+="\n# dotfiles: Tool-spezifische fzf-Funktionen\n\n"
-        output+=$(generate_cross_references)
+        output+="\n\n# dotfiles: Shell-Keybindings (Ctrl+X Prefix)\n\n"
+        local shell_keys
+        shell_keys=$(parse_shell_keybindings "$alias_file")
+        output+="$shell_keys"
+        # Cross-References nur ausgeben wenn vorhanden
+        local cross_refs
+        cross_refs=$(generate_cross_references)
+        if [[ -n "${cross_refs//[[:space:]]/}" ]]; then
+            output+="\n\n# dotfiles: Tool-spezifische fzf-Funktionen\n\n"
+            output+="$cross_refs"
+        fi
     fi
 
     echo -e "$output"

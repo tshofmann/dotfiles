@@ -5,7 +5,7 @@
 # Pfad        : ~/.config/alias/fzf.alias
 # Docs        : https://github.com/junegunn/fzf
 # Config      : ~/.config/fzf/config
-# Nutzt       : bat (Code), eza (Verzeichnis), fd (Default-Command), tldr (fman)
+# Nutzt       : bat (Code), eza (Verzeichnis), fd (Default-Command), tldr (help)
 # Nutzt       : pdftotext (PDF), 7zz (Archive), identify (Bilder), ffprobe (Video/Audio)
 # ============================================================
 # Tool-spezifische Funktionen in fd/rg/git/brew/gh.alias.
@@ -16,10 +16,10 @@
 #   lib.zsh   – Shared Utilities (Farben, ANSI-Strip)
 #   preview   – Vorschau (file|dir) mit bat/eza
 #   action    – Sichere Aktionen (copy, edit, open, git-*, zoxide-*)
-#   fman      – Man/tldr Browser Helper (list|preview|toggle)
-#   fkill     – Prozessliste Helper (list)
-#   fa        – Alias-Browser Helper (preview)
-# Aliase      : fkill, fman, fa, fenv
+#   help      – Helper für help() (list|preview|toggle)
+#   procs     – Helper für procs() (list)
+#   cmds      – Helper für cmds() (preview)
+# Aliase      : procs, help, cmds, vars
 # ============================================================
 
 # Guard   : Nur wenn fzf installiert ist
@@ -39,16 +39,16 @@ fi
 # ------------------------------------------------------------
 # Prozesse interaktiv suchen und beenden (Tab für Mehrfachauswahl)
 # Prozess Browser(signal=15) – Enter=Beenden, Tab=Mehrfach, Ctrl+S=Apps↔Alle
-fkill() {
+procs() {
     local pid
     local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
 
-    pid=$("$helper/fkill" list apps | \
+    pid=$("$helper/procs" list apps | \
         fzf -m \
             --freeze-left=1 \
             --prompt='Apps> ' \
             --header='Enter: Beenden | Tab: Mehrfach | Ctrl+S: Apps/Alle' \
-            --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Apps> ' ]] && echo 'reload($helper/fkill list all)+change-prompt(Alle> )' || echo 'reload($helper/fkill list apps)+change-prompt(Apps> )'" | \
+            --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Apps> ' ]] && echo 'reload($helper/procs list all)+change-prompt(Alle> )' || echo 'reload($helper/procs list apps)+change-prompt(Apps> )'" | \
         awk '{print $1}')
 
     [[ -n "$pid" ]] && echo "$pid" | xargs kill -${1:-15}
@@ -59,16 +59,16 @@ fkill() {
 # ------------------------------------------------------------
 # Man-Pages interaktiv durchsuchen mit Syntax-Highlighting
 # Man/tldr Browser – Ctrl+S=Modus wechseln (Liste + Preview), Enter=öffnen
-fman() {
+help() {
     local output mode selection page section
     local fzf_dir="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
 
     # Ctrl+S wechselt sowohl Liste als auch Preview zwischen man und tldr
-    output=$("$fzf_dir/fman" list man | \
+    output=$("$fzf_dir/help" list man | \
         fzf --prompt='man> ' \
-            --preview="$fzf_dir/fman preview man {}" \
+            --preview="$fzf_dir/help preview man {}" \
             --header='Enter: öffnen | Ctrl+S: man ↔ tldr' \
-            --bind="ctrl-s:transform:$fzf_dir/fman toggle" \
+            --bind="ctrl-s:transform:$fzf_dir/help toggle" \
             --bind="enter:transform:[[ \$FZF_PROMPT == 'tldr> ' ]] && echo 'print(tldr)+accept' || echo 'print(man)+accept'")
 
     [[ -z "$output" ]] && return 0
@@ -93,69 +93,14 @@ fman() {
 # ALIAS + FZF: Alias-/Funktions-Browser
 # ------------------------------------------------------------
 # Fuzzy-Suche für Aliase und Funktionen aus allen .alias-Dateien
-# fa Browser(suche?) – Enter=Übernehmen, Ctrl+S=tldr↔Code
-fa() {
-    local alias_dir="${XDG_CONFIG_HOME:-$HOME/.config}/alias"
+# Befehl Browser(suche?) – Enter=Übernehmen, Ctrl+S=tldr↔Code
+cmds() {
     local fzf_dir="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
     local query="${1:-}"
-    local selection name entries
-    local file category prev_comment line
-    local strip_ansi="sed 's/\x1b\[[0-9;]*m//g'"
-
-    # Aliase und Funktionen aus allen .alias-Dateien extrahieren
-    # Format: name|typ|kategorie|beschreibung
-    entries=""
-    for file in "$alias_dir"/*.alias; do
-        [[ -f "$file" ]] || continue
-        category="${${file##*/}%.alias}"
-        prev_comment=""
-
-        while IFS= read -r line; do
-            # Kommentar merken (Zeile beginnt mit # oder eingerückt mit #)
-            local trimmed_line="${line#"${line%%[![:space:]]*}"}"
-            if [[ "$trimmed_line" == \#* ]]; then
-                prev_comment="${trimmed_line#\#}"
-                prev_comment="${prev_comment## }"  # Führendes Leerzeichen entfernen
-                continue
-            fi
-
-            # Alias: "alias name='..." oder 'alias name="...'
-            if [[ "$line" == alias\ * ]]; then
-                # Extrahiere Namen zwischen "alias " und "="
-                local alias_part="${line#alias }"
-                local alias_name="${alias_part%%=*}"
-                alias_name="${alias_name## }"  # Trim
-                alias_name="${alias_name%% }"
-                if [[ -n "$alias_name" && "$alias_name" != *" "* ]]; then
-                    entries+="${alias_name}|alias|${category}|${prev_comment}"$'\n'
-                fi
-                prev_comment=""
-                continue
-            fi
-
-            # Funktion: "name() {" (keine privaten mit _)
-            # Erst trimmen, dann Pattern prüfen (ohne EXTENDED_GLOB)
-            local trimmed="${line#"${line%%[![:space:]]*}"}"
-            if [[ "$trimmed" == [a-zA-Z]*"() {"* && "$trimmed" != _* ]]; then
-                local func_name="${trimmed%%\(*}"        # Ab ( abschneiden
-                if [[ -n "$func_name" && "$func_name" != *" "* ]]; then
-                    entries+="${func_name}|func|${category}|${prev_comment}"$'\n'
-                fi
-                prev_comment=""
-                continue
-            fi
-
-            # Andere Zeile = Kommentar zurücksetzen
-            prev_comment=""
-        done < "$file"
-    done
-
-    # Sortieren und Duplikate entfernen
-    entries=$(echo "$entries" | sort -t'|' -k1,1 -u)
+    local selection name
 
     # Formatierte Ausgabe für fzf (Farben aus theme-style)
-    # Preview prüft Prompt für Toggle (wie fman-Pattern)
-    selection=$(echo "$entries" | awk -F'|' \
+    selection=$("$fzf_dir/cmds" list | awk -F'|' \
         -v mauve="$C_MAUVE" -v green="$C_GREEN" -v blue="$C_BLUE" \
         -v text="$C_TEXT" -v reset="$C_RESET" '
         NF >= 3 {
@@ -173,13 +118,13 @@ fa() {
     ' | fzf --ansi --query="$query" \
         --prompt='tldr> ' \
         --header='Enter: Befehl übernehmen | Ctrl+S: tldr ↔ Code' \
-        --preview "[[ \$FZF_PROMPT == 'code> ' ]] && zsh '$fzf_dir/fa' preview code {} || zsh '$fzf_dir/fa' preview tldr {}" \
+        --preview "[[ \$FZF_PROMPT == 'code> ' ]] && zsh '$fzf_dir/cmds' preview code {} || zsh '$fzf_dir/cmds' preview tldr {}" \
         --preview-window='right:50%:wrap' \
         --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'tldr> ' ]] && echo 'change-prompt(code> )+refresh-preview' || echo 'change-prompt(tldr> )+refresh-preview'")
 
     # Bei Enter: Befehl ins Edit-Buffer (kann editiert/ausgeführt werden)
     if [[ -n "$selection" ]]; then
-        name=$(echo "$selection" | eval "$strip_ansi" | awk '{print $1}')
+        name=$(echo "$selection" | sed 's/\x1b\[[0-9;]*m//g' | awk '{print $1}')
         print -z "$name"
     fi
 }
@@ -188,8 +133,8 @@ fa() {
 # ENV + FZF: Umgebungsvariablen-Browser
 # ------------------------------------------------------------
 # Umgebungsvariablen durchsuchen mit formatierter Anzeige
-# Env Browser – Enter=Export→Edit, Ctrl+Y=Kopieren
-fenv() {
+# Variablen Browser – Enter=Export→Edit, Ctrl+Y=Kopieren
+vars() {
     local selection name value
 
     # Farbkodiert KEY=VALUE-Zeilen nach Kategorie (Catppuccin Mocha)

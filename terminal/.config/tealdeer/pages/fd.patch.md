@@ -44,8 +44,8 @@
 
 - dotfiles: Verzeichnis wechseln (`<Enter>` Wechseln, `<Ctrl y>` Pfad kopieren):
 
-`cdf {{pfad}}`
+`jump {{pfad}}`
 
 - dotfiles: Datei öffnen (`<Enter>` Öffnen, `<Ctrl y>` Pfad kopieren):
 
-`fo {{pfad}}`
+`pick {{pfad}}`
