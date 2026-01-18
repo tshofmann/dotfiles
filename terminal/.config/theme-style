@@ -20,6 +20,7 @@
 #   eza           | ~/.config/eza/theme.yml            | github.com/catppuccin/eza                   | upstream+header
 #   fastfetch     | ~/.config/fastfetch/config.jsonc   | manual                                      | manual
 #   fzf           | ~/.config/fzf/config               | github.com/catppuccin/fzf                   | upstream-bg
+#   kitty         | ~/.config/kitty/current-theme.conf | eingebaut (seit v0.26)                      | builtin
 #   lazygit       | ~/.config/lazygit/config.yml       | github.com/catppuccin/lazygit               | upstream
 #   starship      | ~/.config/starship.toml            | github.com/catppuccin/starship              | generated
 #   tealdeer      | ~/.config/tealdeer/config.toml     | manual                                      | manual
@@ -33,6 +34,7 @@
 #   upstream      = Unverändert aus offiziellem Catppuccin-Repo
 #   upstream+X    = Aus Upstream mit Anpassung (X = was geändert)
 #   upstream-X    = Aus Upstream mit Entfernung (X = was entfernt)
+#   builtin       = In Tool eingebaut (kein externes Theme nötig)
 #   generated     = Wird bei bootstrap generiert (starship preset)
 #   manual        = Manuell basierend auf catppuccin.com/palette
 # ------------------------------------------------------------

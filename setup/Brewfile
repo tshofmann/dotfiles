@@ -42,6 +42,7 @@ brew "mas"                                  # Mac App Store CLI | https://github
 # Homebrew Casks
 # ------------------------------------------------------------
 cask "claude-code"                          # Agentic Coding | https://docs.anthropic.com/en/docs/claude-code
+cask "kitty"                                # GPU-Terminal mit Image-Support | https://sw.kovidgoyal.net/kitty/
 cask "visual-studio-code"                   # Editor | https://code.visualstudio.com/
 cask "font-meslo-lg-nerd-font"              # Nerd Font für Prompt, eza, yazi | https://github.com/ryanoasis/nerd-fonts
 

@@ -52,6 +52,7 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 | Brewfile | Installiert CLI-Tools via `brew bundle` | ❌ Exit |
 | Font-Verifikation | Prüft MesloLG Nerd Font Installation | ❌ Exit |
 | Terminal-Profil | Importiert `catppuccin-mocha.terminal` als Standard | ⚠️ Warnung |
+| Kitty Terminal | Setzt Catppuccin Mocha als Theme | ⚠️ Optional |
 | Starship-Theme | Generiert `~/.config/starship.toml` | ⚠️ Warnung |
 | Yazi-Packages | ya pkg install | ⏭ Übersprungen wenn vorhanden |
 | Xcode-Theme | Installiert Catppuccin Mocha Theme | ⚠️ Warnung |
@@ -179,6 +180,7 @@ ff                                  # System-Info anzeigen
 | Paket | Beschreibung |
 | ----- | ------------ |
 | [`claude-code`](https://docs.anthropic.com/en/docs/claude-code) | Agentic Coding |
+| [`kitty`](https://sw.kovidgoyal.net/kitty/) | GPU-Terminal mit Image-Support |
 | [`visual-studio-code`](https://code.visualstudio.com/) | Editor |
 | [`font-meslo-lg-nerd-font`](https://github.com/ryanoasis/nerd-fonts) | Nerd Font für Prompt, eza, yazi |
 
