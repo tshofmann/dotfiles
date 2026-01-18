@@ -31,15 +31,16 @@ alias catd='bat --diff'
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # Theme Browser – Enter=Aktivieren
+    # Theme Browser(suche?) – Enter=Aktivieren
     bat-theme() {
+        local query="${1:-}"
         local theme
         local config_file="$HOME/.config/bat/config"
 
         # Symlink auflösen für sed -i
         [[ -L "$config_file" ]] && config_file=$(readlink -f "$config_file")
 
-        theme=$(bat --list-themes | fzf \
+        theme=$(bat --list-themes | fzf --query="$query" \
             --preview='bat --theme={} --color=always ~/.zshrc' \
             --header='Enter: Theme aktivieren | Esc: Abbrechen')
 

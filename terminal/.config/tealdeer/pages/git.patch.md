@@ -36,18 +36,18 @@
 
 `git-diff`
 
-- dotfiles: Commit-History mit bat-Vorschau (`<Enter>` Anzeigen, `<Ctrl y>` SHA kopieren):
+- dotfiles: Commit-History (`<Enter>` Anzeigen, `<Ctrl y>` SHA kopieren):
 
-`git-log`
+`git-log {{suche}}`
 
-- dotfiles: Branch wechseln mit Log-Vorschau (`<Enter>` Checkout, `<Ctrl d>` Löschen):
+- dotfiles: Branch wechseln (`<Enter>` Checkout, `<Ctrl d>` Löschen):
 
-`git-branch`
+`git-branch {{suche}}`
 
-- dotfiles: Status mit Diff-Vorschau (`<Enter>` Add, `<Tab>` Mehrfach, `<Ctrl r>` Reset):
+- dotfiles: Status (`<Enter>` Add, `<Tab>` Mehrfach, `<Ctrl r>` Reset):
 
-`git-stage`
+`git-stage {{suche}}`
 
 - dotfiles: Stash-Browser (`<Enter>` Apply, `<Ctrl p>` Pop, `<Ctrl d>` Drop):
 
-`git-stash`
+`git-stash {{suche}}`

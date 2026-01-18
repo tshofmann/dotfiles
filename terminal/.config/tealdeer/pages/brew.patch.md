@@ -30,8 +30,8 @@
 
 - dotfiles: Brew Install Browser (`<Enter>` Installieren, `<Tab>` Mehrfach):
 
-`brew-add`
+`brew-add {{suche}}`
 
 - dotfiles: Brew Remove Browser (`<Enter>` Entfernen, `<Tab>` Mehrfach):
 
-`brew-rm`
+`brew-rm {{suche}}`

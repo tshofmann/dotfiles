@@ -30,11 +30,12 @@ alias gh-status='gh status'
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # PRs durchsuchen – Enter=Checkout, Ctrl+D=Diff, Ctrl+O=Browser
+    # PRs durchsuchen(suche?) – Enter=Checkout, Ctrl+D=Diff, Ctrl+O=Browser
     gh-pr() {
+        local query="${1:-}"
         local pr
         pr=$(gh pr list --limit 50 | \
-            fzf --ansi \
+            fzf --ansi --query="$query" \
                 --preview 'gh pr view {1}' \
                 --header='Enter: Checkout | Ctrl+D: Diff | Ctrl+O: Browser' \
                 --bind 'ctrl-o:execute-silent(gh pr view {1} --web)' \
@@ -44,11 +45,12 @@ if command -v fzf >/dev/null 2>&1; then
         [[ -n "$pr" ]] && gh pr checkout "$pr"
     }
 
-    # Issues durchsuchen – Enter=Browser, Ctrl+E=Bearbeiten
+    # Issues durchsuchen(suche?) – Enter=Browser, Ctrl+E=Bearbeiten
     gh-issue() {
+        local query="${1:-}"
         local issue
         issue=$(gh issue list --limit 50 | \
-            fzf --ansi \
+            fzf --ansi --query="$query" \
                 --preview 'gh issue view {1}' \
                 --header='Enter: Browser | Ctrl+E: Bearbeiten' \
                 --bind 'ctrl-e:execute(gh issue edit {1})' | \
@@ -57,11 +59,12 @@ if command -v fzf >/dev/null 2>&1; then
         [[ -n "$issue" ]] && gh issue view "$issue" --web
     }
 
-    # Actions Runs – Enter=Logs, Ctrl+R=Rerun, Ctrl+O=Browser
+    # Actions Runs(suche?) – Enter=Logs, Ctrl+R=Rerun, Ctrl+O=Browser
     gh-run() {
+        local query="${1:-}"
         local run
         run=$(gh run list --limit 20 | \
-            fzf --ansi \
+            fzf --ansi --query="$query" \
                 --delimiter='\t' \
                 --preview 'gh run view {7}' \
                 --header='Enter: Logs | Ctrl+R: Rerun | Ctrl+O: Browser' \
@@ -86,11 +89,12 @@ if command -v fzf >/dev/null 2>&1; then
         [[ -n "$repo" ]] && gh repo clone "$repo"
     }
 
-    # Gists durchsuchen – Enter=Anzeigen, Ctrl+E=Bearbeiten, Ctrl+O=Browser
+    # Gists durchsuchen(suche?) – Enter=Anzeigen, Ctrl+E=Bearbeiten, Ctrl+O=Browser
     gh-gist() {
+        local query="${1:-}"
         local gist
         gist=$(gh gist list --limit 30 | \
-            fzf --ansi \
+            fzf --ansi --query="$query" \
                 --preview 'gh gist view {1}' \
                 --header='Enter: Anzeigen | Ctrl+E: Bearbeiten | Ctrl+O: Browser' \
                 --bind 'ctrl-e:execute(gh gist edit {1})' \

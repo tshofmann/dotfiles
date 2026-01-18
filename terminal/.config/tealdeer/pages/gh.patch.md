@@ -10,15 +10,15 @@
 
 - dotfiles: PRs durchsuchen (`<Enter>` Checkout, `<Ctrl d>` Diff, `<Ctrl o>` Browser):
 
-`gh-pr`
+`gh-pr {{suche}}`
 
 - dotfiles: Issues durchsuchen (`<Enter>` Browser, `<Ctrl e>` Bearbeiten):
 
-`gh-issue`
+`gh-issue {{suche}}`
 
 - dotfiles: Actions Runs (`<Enter>` Logs, `<Ctrl r>` Rerun, `<Ctrl o>` Browser):
 
-`gh-run`
+`gh-run {{suche}}`
 
 - dotfiles: Repo Browser (`<Enter>` Klonen, `<Ctrl o>` Browser):
 
@@ -26,4 +26,4 @@
 
 - dotfiles: Gists durchsuchen (`<Enter>` Anzeigen, `<Ctrl e>` Bearbeiten, `<Ctrl o>` Browser):
 
-`gh-gist`
+`gh-gist {{suche}}`

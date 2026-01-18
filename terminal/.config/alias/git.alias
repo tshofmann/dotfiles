@@ -50,11 +50,12 @@ alias git-diff='git diff'
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # Commit-History mit bat-Vorschau – Enter=Anzeigen, Ctrl+Y=SHA kopieren
+    # Commit-History(suche?) mit bat-Vorschau – Enter=Anzeigen, Ctrl+Y=SHA kopieren
     git-log() {
+        local query="${1:-}"
         local sha
         sha=$(git log --oneline --color=always --decorate | \
-            fzf --ansi --no-sort --reverse \
+            fzf --ansi --no-sort --reverse --query="$query" \
                 --freeze-left=1 \
                 --preview 'git show --color=always {1} | bat --style=numbers --color=always -l diff 2>/dev/null || git show --color=always {1}' \
                 --header='Enter: Anzeigen | Ctrl+Y: SHA kopieren' \
@@ -70,12 +71,13 @@ if command -v fzf >/dev/null 2>&1; then
         fi
     }
 
-    # Branch wechseln mit Log-Vorschau – Enter=Checkout, Ctrl+D=Löschen
+    # Branch wechseln(suche?) mit Log-Vorschau – Enter=Checkout, Ctrl+D=Löschen
     git-branch() {
+        local query="${1:-}"
         local branch
         branch=$(git branch --all --color=always | \
             grep -v HEAD | \
-            fzf --ansi \
+            fzf --ansi --query="$query" \
                 --preview 'git log --oneline --color=always {1} | head -20' \
                 --header='Enter: Checkout | Ctrl+D: Löschen' \
                 --bind 'ctrl-d:execute(git branch -d {1})+reload(git branch --all --color=always | grep -v HEAD)' | \
@@ -84,13 +86,14 @@ if command -v fzf >/dev/null 2>&1; then
         [[ -n "$branch" ]] && git checkout "$branch"
     }
 
-    # Status mit Diff-Vorschau (bat) – Enter=Add, Tab=Mehrfach, Ctrl+R=Reset
+    # Status(suche?) mit Diff-Vorschau (bat) – Enter=Add, Tab=Mehrfach, Ctrl+R=Reset
     git-stage() {
+        local query="${1:-}"
         local files
         local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
 
         files=$(git -c color.status=always status --short | \
-            fzf --ansi --multi \
+            fzf --ansi --multi --query="$query" \
                 --preview "$helper/action git-diff {2..}" \
                 --header='Enter: Add | Tab: Mehrfach | Ctrl+R: Reset' \
                 --bind "ctrl-r:execute($helper/action git-restore {+2..})+reload(git -c color.status=always status --short)" | \
@@ -105,11 +108,12 @@ if command -v fzf >/dev/null 2>&1; then
         fi
     }
 
-    # Stash-Browser – Enter=Apply, Ctrl+P=Pop, Ctrl+D=Drop
+    # Stash-Browser(suche?) – Enter=Apply, Ctrl+P=Pop, Ctrl+D=Drop
     git-stash() {
+        local query="${1:-}"
         local stash
         stash=$(git stash list | \
-            fzf --ansi \
+            fzf --ansi --query="$query" \
                 --preview 'echo {} | cut -d: -f1 | xargs git stash show -p | { bat --style=numbers --color=always -l diff 2>/dev/null || cat; }' \
                 --header='Enter: Apply | Ctrl+P: Pop | Ctrl+D: Drop' \
                 --bind 'ctrl-d:execute(echo {} | cut -d: -f1 | xargs git stash drop)+reload(git stash list)' \

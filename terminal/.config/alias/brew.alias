@@ -161,13 +161,14 @@ brew-list() {
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # Brew Install Browser – Enter=Installieren, Tab=Mehrfach
+    # Brew Install Browser(suche?) – Enter=Installieren, Tab=Mehrfach
     brew-add() {
+        local query="${1:-}"
         local selection type pkg
         selection=$({
             brew formulae | sed 's/^/[F] /'
             brew casks | sed 's/^/[C] /'
-        } | fzf --multi \
+        } | fzf --multi --query="$query" \
             --preview 'brew info {2}' \
             --header='[F]=Formula [C]=Cask | Enter: Installieren | Tab: Mehrfach')
 
@@ -184,10 +185,11 @@ if command -v fzf >/dev/null 2>&1; then
         done
     }
 
-    # Brew Remove Browser – Enter=Entfernen, Tab=Mehrfach
+    # Brew Remove Browser(suche?) – Enter=Entfernen, Tab=Mehrfach
     brew-rm() {
+        local query="${1:-}"
         local pkg
-        pkg=$(brew leaves | fzf --multi \
+        pkg=$(brew leaves | fzf --multi --query="$query" \
             --preview 'brew info {}' \
             --header='Enter: Entfernen | Tab: Mehrfach')
 
