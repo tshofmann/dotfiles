@@ -85,6 +85,7 @@ check_all() {
     # tldr-Patches
     local tldr_ok=true
     (
+        export _SOURCED_BY_GENERATOR=1
         source "$GENERATORS_DIR/tldr.sh"
         generate_tldr_patches --check
     ) || {
@@ -124,6 +125,7 @@ generate_all() {
 
     # tldr-Patches
     (
+        export _SOURCED_BY_GENERATOR=1
         source "$GENERATORS_DIR/tldr.sh"
         generate_tldr_patches --generate
     )
