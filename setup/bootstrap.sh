@@ -5,7 +5,7 @@
 # Zweck       : Lädt und führt Bootstrap-Module in definierter Reihenfolge aus
 # Aufruf      : ./bootstrap.sh
 # Docs        : https://github.com/tshofmann/dotfiles#readme
-# Module      : setup/modules/ (validation, homebrew, stow, git-hooks, font, terminal-profile, kitty, starship, yazi, bat, tealdeer, xcode-theme, zsh-sessions)
+# Module      : setup/modules/ (validation, homebrew, stow, git-hooks, font, terminal-profile, starship, yazi, bat, tealdeer, xcode-theme, zsh-sessions)
 # ============================================================
 
 set -euo pipefail
@@ -122,7 +122,6 @@ readonly -a MODULES=(
     git-hooks               # Pre-Commit Hooks aktivieren
     font                    # Font-Verifikation
     macos:terminal-profile  # Terminal-Profil Import (nur macOS)
-    macos:kitty             # Kitty Theme setzen (nur macOS)
     starship                # Starship-Theme (plattformübergreifend)
     yazi                    # Yazi Flavors/Plugins
     bat                     # bat Theme-Cache bauen

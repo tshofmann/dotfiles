@@ -54,7 +54,6 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 | Git Hooks | Aktiviert Pre-Commit Validierung | ✓ Schnell |
 | Font-Verifikation | Prüft MesloLG Nerd Font Installation | ❌ Exit |
 | Terminal-Profil | Importiert `catppuccin-mocha.terminal` als Standard | ⚠️ Warnung |
-| Kitty Terminal | Setzt Catppuccin Mocha als Theme | ⚠️ Optional |
 | Starship-Theme | Generiert `~/.config/starship.toml` | ⚠️ Warnung |
 | Yazi-Packages | ya pkg install | ⏭ Übersprungen wenn vorhanden |
 | bat Cache | Baut Theme-Cache für Syntax-Highlighting | ✓ Schnell |

@@ -1,6 +1,6 @@
 - dotfiles: Config `~/.config/kitty/kitty.conf`
 
-- dotfiles: Catppuccin Mocha Theme (eingebaut seit v0.26)
+- dotfiles: Catppuccin Mocha Theme (`current-theme.conf` via Stow)
 
 - dotfiles: SSH mit automatischer Kitty-Terminfo-Installation:
 
