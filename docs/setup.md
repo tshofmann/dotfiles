@@ -50,11 +50,15 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 | Build-Tools | Installiert Build-Essentials (Linux) | ❌ Exit |
 | Homebrew | Installiert/prüft Homebrew unter `/opt/homebrew` | ❌ Exit |
 | Brewfile | Installiert CLI-Tools via `brew bundle` | ❌ Exit |
+| Stow Symlinks | Verlinkt terminal/ und editor/ Configs | ⚠️ Kritisch |
+| Git Hooks | Aktiviert Pre-Commit Validierung | ✓ Schnell |
 | Font-Verifikation | Prüft MesloLG Nerd Font Installation | ❌ Exit |
 | Terminal-Profil | Importiert `catppuccin-mocha.terminal` als Standard | ⚠️ Warnung |
 | Kitty Terminal | Setzt Catppuccin Mocha als Theme | ⚠️ Optional |
 | Starship-Theme | Generiert `~/.config/starship.toml` | ⚠️ Warnung |
 | Yazi-Packages | ya pkg install | ⏭ Übersprungen wenn vorhanden |
+| bat Cache | Baut Theme-Cache für Syntax-Highlighting | ✓ Schnell |
+| tldr Cache | Lädt tldr-Pages herunter | ⚠️ Netzwerk |
 | Xcode-Theme | Installiert Catppuccin Mocha Theme | ⚠️ Warnung |
 | ZSH-Sessions | Prüft SHELL_SESSIONS_DISABLE in ~/.zshenv | ⚠️ Warnung |
 
@@ -80,54 +84,21 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 
 ---
 
-## Schritt 2: Konfigurationsdateien verlinken
+## Schritt 2: Terminal neu starten
 
 Nach Abschluss des Bootstrap-Skripts:
 
-**1. Terminal.app neu starten** (für vollständige Übernahme der Profil-Einstellungen)
+**Terminal.app beenden und neu öffnen** (Cmd+Q, dann neu starten)
 
-**2. Dann im neuen Terminal-Fenster:**
+Das ist alles! Das Bootstrap-Skript hat bereits:
 
-```zsh
-cd ~/dotfiles && stow --adopt -R terminal editor && git reset --hard HEAD
-```
+- ✅ Alle Konfigurationsdateien verlinkt (via Stow)
+- ✅ Git-Hooks aktiviert
+- ✅ bat-Cache für das Catppuccin Theme gebaut
+- ✅ tldr-Pages heruntergeladen
+- ✅ Kitty-Theme konfiguriert (falls installiert)
 
-**3. Git-Hooks aktivieren:**
-
-```zsh
-git config core.hooksPath .github/hooks
-```
-
-> **💡 Warum dieser Schritt?** Der Pre-Commit Hook validiert vor jedem Commit ZSH-Syntax, Dokumentation, Alias-Format und Markdown – konsistent mit dem CI-Workflow.
-
-**4. bat-Cache für Catppuccin Theme bauen:**
-
-```zsh
-bat cache --build
-```
-
-> **💡 Warum dieser Schritt?** Das Catppuccin Mocha Theme für bat liegt in `~/.config/bat/themes/` (via Stow verlinkt). bat erkennt neue Themes erst nach einem Cache-Rebuild.
-
-**5. tealdeer-Cache herunterladen (einmalig):**
-
-```zsh
-tldr --update
-```
-
-> **💡 Warum dieser Schritt?** tealdeer benötigt einen initialen Download der tldr-Pages. Danach aktualisiert sich der Cache automatisch (`auto_update = true` in Config).
-
-### Was diese Befehle machen
-
-| Befehl | Beschreibung |
-| ------ | ------------ |
-| `cd ~/dotfiles` | Ins dotfiles-Verzeichnis wechseln |
-| `stow --adopt -R terminal editor` | Symlinks erstellen, existierende Dateien übernehmen |
-| `git reset --hard HEAD` | Adoptierte Dateien auf Repository-Zustand zurücksetzen |
-| `git config core.hooksPath .github/hooks` | Pre-Commit Hook aktivieren |
-| `bat cache --build` | bat Theme-Cache neu aufbauen |
-| `tldr --update` | tldr-Pages herunterladen |
-
-> **⚠️ Vorsicht:** `git reset --hard HEAD` verwirft alle lokalen Änderungen an adoptierten Dateien. Falls du bereits eigene `.zshrc` Anpassungen hattest, sichere diese vorher.
+> **💡 Warum Terminal neu starten?** Terminal.app muss neu gestartet werden, damit das importierte Catppuccin-Mocha-Profil vollständig aktiv wird.
 
 ---
 

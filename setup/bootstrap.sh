@@ -5,7 +5,7 @@
 # Zweck       : Lädt und führt Bootstrap-Module in definierter Reihenfolge aus
 # Aufruf      : ./bootstrap.sh
 # Docs        : https://github.com/tshofmann/dotfiles#readme
-# Module      : setup/modules/ (validation, homebrew, font, terminal-profile, kitty, starship, yazi, xcode-theme, zsh-sessions)
+# Module      : setup/modules/ (validation, homebrew, stow, git-hooks, font, terminal-profile, kitty, starship, yazi, bat, tealdeer, xcode-theme, zsh-sessions)
 # ============================================================
 
 set -euo pipefail
@@ -118,11 +118,15 @@ load_module() {
 readonly -a MODULES=(
     validation              # Architektur, OS, Netzwerk, Rechte (plattformübergreifend)
     homebrew                # Homebrew/Linuxbrew + Brewfile
+    stow                    # Symlinks für Configs (muss vor Tool-spezifischen Modulen laufen)
+    git-hooks               # Pre-Commit Hooks aktivieren
     font                    # Font-Verifikation
     macos:terminal-profile  # Terminal-Profil Import (nur macOS)
     macos:kitty             # Kitty Theme setzen (nur macOS)
     starship                # Starship-Theme (plattformübergreifend)
-    yazi                    # Yazi Flavors/Plugins (nach stow)
+    yazi                    # Yazi Flavors/Plugins
+    bat                     # bat Theme-Cache bauen
+    tealdeer                # tldr-Pages herunterladen
     macos:xcode-theme       # Xcode Theme (nur macOS)
     macos:zsh-sessions      # ZSH Sessions Check (nur macOS)
 )
@@ -171,28 +175,14 @@ main() {
     print -P "${C_GREEN}  ✔ Setup abgeschlossen${C_RESET}"
     print -P "${C_GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
     print -P ""
-    section "Nächste Schritte"
-
-    # Schritt-Zähler
-    local step=1
+    section "Nächster Schritt"
 
     # OS-spezifisch: Terminal neu starten
     if is_macos; then
-        print -P "  ${C_MAUVE}${step}.${C_RESET} Terminal.app neu starten für vollständige Übernahme aller Einstellungen"
-        (( step++ ))
+        print -P "  ${C_MAUVE}1.${C_RESET} Terminal.app neu starten für vollständige Übernahme aller Einstellungen"
     elif is_linux; then
-        print -P "  ${C_MAUVE}${step}.${C_RESET} Terminal neu starten oder Shell neuladen: ${C_DIM}exec zsh${C_RESET}"
-        (( step++ ))
+        print -P "  ${C_MAUVE}1.${C_RESET} Terminal neu starten oder Shell neuladen: ${C_DIM}exec zsh${C_RESET}"
     fi
-
-    # Universell: stow, git-hooks, bat, tldr
-    print -P "  ${C_MAUVE}${step}.${C_RESET} Konfigurationsdateien verlinken: ${C_DIM}cd $DOTFILES_DIR && stow --adopt -R terminal editor && git reset --hard HEAD${C_RESET}"
-    (( step++ ))
-    print -P "  ${C_MAUVE}${step}.${C_RESET} Git-Hooks aktivieren: ${C_DIM}git config core.hooksPath .github/hooks${C_RESET}"
-    (( step++ ))
-    print -P "  ${C_MAUVE}${step}.${C_RESET} bat Theme-Cache bauen: ${C_DIM}bat cache --build${C_RESET}"
-    (( step++ ))
-    print -P "  ${C_MAUVE}${step}.${C_RESET} tldr-Pages herunterladen: ${C_DIM}tldr --update${C_RESET}"
 
     print -P ""
     print -P "  ${C_GREEN}💡 Gib im Terminal '${C_BOLD}dothelp${C_RESET}${C_GREEN}' ein für Hilfe/Dokumentation${C_RESET}"
