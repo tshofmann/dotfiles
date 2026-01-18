@@ -316,6 +316,16 @@ Funktionen mit fzf-UI nutzen ein erweitertes Format:
 | `(param?)` | Optionaler Parameter | `# Suche(query?)` |
 | `(param=default)` | Optional mit Default | `# Wechseln(pfad=.)` |
 
+> **Warum optionale Parameter bei fzf-Browsern?**
+>
+> Alle fzf-Browser sollten `(suche?)` Parameter haben:
+>
+> 1. **tldr-Sichtbarkeit:** Im tldr wird `{{suche}}` in mauve gefärbt – sofort erkennbar als interaktiv
+> 2. **Vorfilterung:** `brew-add docker` startet fzf mit Vorfilter statt alles zu zeigen
+> 3. **Konsistenz:** Einheitliches UX-Pattern über alle Browser
+>
+> Implementierung: `local query="${1:-}"` und `fzf --query="$query"`
+
 **Keybinding-Format:**
 
 - `Enter=Aktion` – Einzelne Taste
