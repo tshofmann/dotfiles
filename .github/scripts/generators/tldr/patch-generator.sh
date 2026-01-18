@@ -185,9 +185,9 @@ generate_complete_patch() {
     if [[ "$tool_name" == "fzf" ]]; then
         output+="# dotfiles: Globale Tastenkürzel (in allen fzf-Dialogen)\n\n"
         output+=$(parse_fzf_config_keybindings "$FZF_CONFIG")
-        output+="\n# dotfiles: Helper-Skripte (~/.config/fzf/)\n\n"
+        output+="\n\n# dotfiles: Helper-Skripte (~/.config/fzf/)\n\n"
         output+=$(generate_fzf_helper_descriptions)
-        output+="\n# dotfiles: Funktionen (aus fzf.alias)\n\n"
+        output+="# dotfiles: Funktionen (aus fzf.alias)\n\n"
     fi
 
     if [[ "$tool_name" == "yazi" ]]; then
@@ -201,9 +201,9 @@ generate_complete_patch() {
     [[ -n "$alias_output" ]] && output+="${alias_output}"
 
     if [[ "$tool_name" == "fzf" ]]; then
-        output+="\n# dotfiles: Shell-Keybindings (Ctrl+X Prefix)\n\n"
+        output+="\n\n# dotfiles: Shell-Keybindings (Ctrl+X Prefix)\n\n"
         output+=$(parse_shell_keybindings "$alias_file")
-        output+="\n# dotfiles: Tool-spezifische fzf-Funktionen\n\n"
+        output+="\n\n# dotfiles: Tool-spezifische fzf-Funktionen\n\n"
         output+=$(generate_cross_references)
     fi
 

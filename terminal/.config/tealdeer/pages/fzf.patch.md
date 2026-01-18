@@ -15,6 +15,7 @@
 - dotfiles: Eintrag zur Auswahl hinzufügen:
 
 `<Tab>`
+
 # dotfiles: Helper-Skripte (~/.config/fzf/)
 
 - dotfiles: `action` – Führt Aktionen Shell-Injection-sicher aus
@@ -31,8 +32,7 @@
 
 - dotfiles: `preview` – Zeigt Vorschau für Dateien und Verzeichnisse
 
-- dotfiles: `procs` – Prozessliste für fzf
-# dotfiles: Funktionen (aus fzf.alias)
+- dotfiles: `procs` – Prozessliste für fzf# dotfiles: Funktionen (aus fzf.alias)
 
 - dotfiles: Prozess Browser (`<Enter>` Beenden, `<Tab>` Mehrfach, `<Ctrl s>` Apps↔Alle):
 
@@ -49,6 +49,7 @@
 - dotfiles: Variablen Browser (`<Enter>` Export→Edit, `<Ctrl y>` Kopieren):
 
 `vars`
+
 # dotfiles: Shell-Keybindings (Ctrl+X Prefix)
 
 - dotfiles: History durchsuchen mit Vorschau:
@@ -62,4 +63,5 @@
 - dotfiles: Verzeichnis wechseln mit eza-Vorschau:
 
 `<Ctrl x> 3`
+
 # dotfiles: Tool-spezifische fzf-Funktionen
