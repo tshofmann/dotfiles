@@ -197,7 +197,7 @@ for stow_dir in "$TERMINAL_DIR" "$EDITOR_DIR"; do
       fail "$display_path → fehlt"
       missing_symlinks+=("$rel_path")
     fi
-  done < <(find "$stow_dir" -type f ! -name '.DS_Store' ! -name '*.patch.md' 2>/dev/null | sort)
+  done < <(find "$stow_dir" -type f ! -name '.DS_Store' 2>/dev/null | sort)
 done
 
 # Hinweis bei fehlenden Symlinks
