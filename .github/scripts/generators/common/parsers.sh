@@ -12,10 +12,10 @@
 # Parser: Header-Block Metadaten
 # ------------------------------------------------------------
 # Extrahiert Metadaten aus Header-Blöcken:
-#   # Zweck   : Beschreibung
-#   # Docs    : https://...
-#   # Hinweis : Kann mehrzeilig sein
-#               Fortsetzung mit Einrückung
+#   # Zweck       : Beschreibung
+#   # Docs        : https://...
+#   # Hinweis     : Kann mehrzeilig sein
+#                   Fortsetzung mit Einrückung
 # Rückgabe: Wert oder leer
 parse_header_field() {
     local file="$1"
