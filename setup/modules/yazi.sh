@@ -2,13 +2,13 @@
 # ============================================================
 # yazi.sh - Yazi Package-Manager Setup
 # ============================================================
-# Zweck       : Installiert Yazi Flavors und Plugins via ya pkg
-# Pfad        : setup/modules/yazi.sh
+# Zweck   : Installiert Yazi Flavors und Plugins via ya pkg
+# Pfad    : setup/modules/yazi.sh
 # Benötigt    : _core.sh, homebrew (yazi muss installiert sein)
 #
 # STEP: Yazi-Packages | ya pkg install | ⏭ Übersprungen wenn vorhanden
-# Config      : ~/.config/yazi/package.toml
-# Docs        : https://yazi-rs.github.io/docs/cli#package
+# Config  : ~/.config/yazi/package.toml
+# Docs    : https://yazi-rs.github.io/docs/cli#package
 #
 # Was wird installiert?
 #   - Catppuccin Mocha Flavor (Theme)

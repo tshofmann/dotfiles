@@ -2,8 +2,8 @@
 # ============================================================
 # homebrew.sh - Homebrew Installation und Brewfile
 # ============================================================
-# Zweck       : Installiert Homebrew und führt Brewfile aus
-# Pfad        : setup/modules/homebrew.sh
+# Zweck   : Installiert Homebrew und führt Brewfile aus
+# Pfad    : setup/modules/homebrew.sh
 # Benötigt    : _core.sh, validation.sh (für BREW_PREFIX)
 #
 # STEP: Homebrew | Installiert/prüft Homebrew unter `/opt/homebrew` | ❌ Exit

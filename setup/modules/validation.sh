@@ -2,8 +2,8 @@
 # ============================================================
 # validation.sh - System-Validierungen für Bootstrap
 # ============================================================
-# Zweck       : Prüft Voraussetzungen (Architektur, OS, Netzwerk, Rechte)
-# Pfad        : setup/modules/validation.sh
+# Zweck   : Prüft Voraussetzungen (Architektur, OS, Netzwerk, Rechte)
+# Pfad    : setup/modules/validation.sh
 # Benötigt    : _core.sh
 # Plattform   : Universell (macOS + Linux)
 #

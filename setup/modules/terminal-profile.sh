@@ -2,8 +2,8 @@
 # ============================================================
 # terminal-profile.sh - Terminal.app Profil-Konfiguration
 # ============================================================
-# Zweck       : Importiert und aktiviert Terminal-Profil
-# Pfad        : setup/modules/terminal-profile.sh
+# Zweck   : Importiert und aktiviert Terminal-Profil
+# Pfad    : setup/modules/terminal-profile.sh
 # Benötigt    : _core.sh, font.sh (Font muss vorhanden sein)
 #
 # STEP: Terminal-Profil | Importiert `catppuccin-mocha.terminal` als Standard | ⚠️ Warnung

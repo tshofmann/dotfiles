@@ -2,8 +2,8 @@
 # ============================================================
 # xcode-theme.sh - Xcode Theme Installation
 # ============================================================
-# Zweck       : Installiert Xcode Syntax-Highlighting Theme
-# Pfad        : setup/modules/xcode-theme.sh
+# Zweck   : Installiert Xcode Syntax-Highlighting Theme
+# Pfad    : setup/modules/xcode-theme.sh
 # Benötigt    : _core.sh
 #
 # STEP: Xcode-Theme | Installiert Catppuccin Mocha Theme | ⚠️ Warnung
