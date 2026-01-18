@@ -2,9 +2,9 @@
 # ============================================================
 # starship.sh - Starship-Konfiguration Helper
 # ============================================================
-# Zweck   : Extrahiert Starship-Preset aus Bootstrap-Modul
-# Pfad    : .github/scripts/generators/common/starship.sh
-# Hinweis : Plattformunabhängig (Starship läuft auf allen OS)
+# Zweck       : Extrahiert Starship-Preset aus Bootstrap-Modul
+# Pfad        : .github/scripts/generators/common/starship.sh
+# Hinweis     : Plattformunabhängig (Starship läuft auf allen OS)
 # ============================================================
 
 # Abhängigkeit: config.sh muss vorher geladen sein (für BOOTSTRAP_MODULES)

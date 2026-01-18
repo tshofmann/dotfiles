@@ -2,8 +2,8 @@
 # ============================================================
 # ui.sh - UI-Komponenten und Logging
 # ============================================================
-# Zweck   : Konsistente Ausgabeformatierung für alle Generatoren
-# Pfad    : .github/scripts/generators/common/ui.sh
+# Zweck       : Konsistente Ausgabeformatierung für alle Generatoren
+# Pfad        : .github/scripts/generators/common/ui.sh
 # ============================================================
 
 # Abhängigkeit: config.sh muss vorher geladen sein (für Farben)

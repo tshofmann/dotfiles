@@ -2,8 +2,8 @@
 # ============================================================
 # customization.sh - Generator für docs/customization.md
 # ============================================================
-# Zweck   : Generiert Anpassungs-Dokumentation aus Config-Dateien
-# Pfad    : .github/scripts/generators/customization.sh
+# Zweck       : Generiert Anpassungs-Dokumentation aus Config-Dateien
+# Pfad        : .github/scripts/generators/customization.sh
 # ============================================================
 
 source "${0:A:h}/common.sh"
@@ -79,7 +79,7 @@ extract_terminal_profile_name() {
 }
 
 # Extrahiert den installierten Nerd Font aus Brewfile
-# Hinweis: Bei mehreren Nerd Fonts wird nur der erste als Beispiel verwendet
+# Hinweis     : Bei mehreren Nerd Fonts wird nur der erste als Beispiel verwendet
 extract_installed_nerd_font() {
     local brewfile="$DOTFILES_DIR/setup/Brewfile"
     [[ -f "$brewfile" ]] || return 1

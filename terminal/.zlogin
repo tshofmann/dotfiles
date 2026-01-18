@@ -1,10 +1,10 @@
 # ============================================================
 # .zlogin - ZSH Post-Login Konfiguration
 # ============================================================
-# Zweck   : Aufgaben nach dem Login (läuft nach .zshrc)
-# Pfad    : ~/.zlogin
-# Laden   : .zshenv → .zprofile → .zshrc → [.zlogin]
-# Docs    : https://zsh.sourceforge.io/Doc/Release/Files.html#Startup_002fShutdown-Files
+# Zweck       : Aufgaben nach dem Login (läuft nach .zshrc)
+# Pfad        : ~/.zlogin
+# Laden       : .zshenv → .zprofile → .zshrc → [.zlogin]
+# Docs        : https://zsh.sourceforge.io/Doc/Release/Files.html#Startup_002fShutdown-Files
 # ============================================================
 
 # ------------------------------------------------------------

@@ -2,8 +2,8 @@
 # ============================================================
 # zsh-sessions.sh - ZSH Session-Wiederherstellung deaktivieren
 # ============================================================
-# Zweck   : Prüft/konfiguriert SHELL_SESSIONS_DISABLE
-# Pfad    : setup/modules/zsh-sessions.sh
+# Zweck       : Prüft/konfiguriert SHELL_SESSIONS_DISABLE
+# Pfad        : setup/modules/zsh-sessions.sh
 # Benötigt    : _core.sh
 #
 # STEP: ZSH-Sessions | Prüft SHELL_SESSIONS_DISABLE in ~/.zshenv | ⚠️ Warnung

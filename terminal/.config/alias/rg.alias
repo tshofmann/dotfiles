@@ -1,13 +1,13 @@
 # ============================================================
 # rg.alias - Aliase für ripgrep (schneller grep-Ersatz)
 # ============================================================
-# Zweck   : Aliase für ripgrep mit häufig genutzten Optionen
-# Pfad    : ~/.config/alias/rg.alias
-# Docs    : https://github.com/BurntSushi/ripgrep
-# Config  : ~/.config/ripgrep/config
-# Nutzt   : fzf (Interactive), bat (Preview)
-# Ersetzt : grep (schneller, respektiert .gitignore)
-# Aliase  : rg, rgc, rgi
+# Zweck       : Aliase für ripgrep mit häufig genutzten Optionen
+# Pfad        : ~/.config/alias/rg.alias
+# Docs        : https://github.com/BurntSushi/ripgrep
+# Config      : ~/.config/ripgrep/config
+# Nutzt       : fzf (Interactive), bat (Preview)
+# Ersetzt     : grep (schneller, respektiert .gitignore)
+# Aliase      : rg, rgc, rgi
 # ============================================================
 
 # Guard   : Nur wenn rg installiert ist
@@ -64,7 +64,7 @@ alias rggo='rg -t go'
 # Interaktive Suche (mit fzf)
 # ------------------------------------------------------------
 # rgf: Live-Grep mit fzf + bat Vorschau (Datei:Zeile bleibt beim Scrollen sichtbar)
-# Verwendung: rgf [initiale-suche]
+# Verwendung  : rgf [initiale-suche]
 if command -v fzf >/dev/null 2>&1; then
     # Live-Grep(suche?) – Enter=Datei öffnen, Ctrl+Y=Pfad kopieren
     rgf() {

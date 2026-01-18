@@ -2,9 +2,9 @@
 # ============================================================
 # fman - Helper für fman() Funktion
 # ============================================================
-# Zweck   : Subcommands für man/tldr Browser
-# Pfad    : ~/.config/fzf/fman
-# Aufruf  : fman <list|preview|toggle> [args...]
+# Zweck       : Subcommands für man/tldr Browser
+# Pfad        : ~/.config/fzf/fman
+# Aufruf      : fman <list|preview|toggle> [args...]
 # ============================================================
 # Commands:
 #   list [man|tldr]        – Listet Einträge

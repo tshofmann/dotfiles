@@ -1,11 +1,11 @@
 # ============================================================
 # init.zsh - fzf Shell-Integration
 # ============================================================
-# Zweck   : fzf Keybindings und fd-Backend aktivieren
-# Pfad    : ~/.config/fzf/init.zsh
-# Docs    : https://github.com/junegunn/fzf#usage
+# Zweck       : fzf Keybindings und fd-Backend aktivieren
+# Pfad        : ~/.config/fzf/init.zsh
+# Docs        : https://github.com/junegunn/fzf#usage
 # ============================================================
-# Hinweis : Wird via .zshrc geladen. Keybindings:
+# Hinweis     : Wird via .zshrc geladen. Keybindings:
 #           Ctrl+X 1 = History, Ctrl+X 2 = Datei, Ctrl+X 3 = Verzeichnis
 # ============================================================
 

@@ -2,13 +2,13 @@
 # ============================================================
 # starship.sh - Starship Shell-Prompt Konfiguration
 # ============================================================
-# Zweck   : Konfiguriert Starship-Theme via Presets
-# Pfad    : setup/modules/starship.sh
+# Zweck       : Konfiguriert Starship-Theme via Presets
+# Pfad        : setup/modules/starship.sh
 # Benötigt    : _core.sh
 #
 # STEP: Starship-Theme | Generiert `~/.config/starship.toml` | ⚠️ Warnung
-# Config  : ~/.config/starship.toml (NICHT versioniert)
-# Docs    : https://starship.rs/
+# Config      : ~/.config/starship.toml (NICHT versioniert)
+# Docs        : https://starship.rs/
 # Theme       : Catppuccin Mocha via catppuccin-powerline Preset
 #
 # Warum nicht versioniert?

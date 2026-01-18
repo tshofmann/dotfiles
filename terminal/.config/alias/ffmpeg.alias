@@ -1,12 +1,12 @@
 # ============================================================
 # ffmpeg.alias - Aliase für ffmpeg (Video/Audio-Konvertierung)
 # ============================================================
-# Zweck   : Praktische Aliase für häufige Video-Operationen
-# Pfad    : ~/.config/alias/ffmpeg.alias
-# Docs    : https://ffmpeg.org/
-# Nutzt   : -
-# Ersetzt : -
-# Aliase  : v2mp3, vthumb, vcut, vcompress, v2gif, vinfo
+# Zweck       : Praktische Aliase für häufige Video-Operationen
+# Pfad        : ~/.config/alias/ffmpeg.alias
+# Docs        : https://ffmpeg.org/
+# Nutzt       : -
+# Ersetzt     : -
+# Aliase      : v2mp3, vthumb, vcut, vcompress, v2gif, vinfo
 # ============================================================
 
 # Guard   : Nur wenn ffmpeg installiert ist

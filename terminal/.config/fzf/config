@@ -1,12 +1,12 @@
 # ============================================================
 # fzf Config - Globale Standardoptionen
 # ============================================================
-# Zweck   : Native fzf-Konfiguration (FZF_DEFAULT_OPTS_FILE)
-# Pfad    : ~/.config/fzf/config
-# Docs    : https://github.com/junegunn/fzf#environment-variables
+# Zweck       : Native fzf-Konfiguration (FZF_DEFAULT_OPTS_FILE)
+# Pfad        : ~/.config/fzf/config
+# Docs        : https://github.com/junegunn/fzf#environment-variables
 # ============================================================
-# Aliase  : ~/.config/alias/fzf.alias (zf, fkill, fman, fa, fenv)
-# Theme   : ~/.config/theme-style
+# Aliase      : ~/.config/alias/fzf.alias (zf, fkill, fman, fa, fenv)
+# Theme       : ~/.config/theme-style
 # ============================================================
 
 # ------------------------------------------------------------

@@ -2,9 +2,9 @@
 # ============================================================
 # fa - Helper für fa() Funktion
 # ============================================================
-# Zweck   : Preview-Befehle für fa (Alias-Browser) in fzf
-# Pfad    : ~/.config/fzf/fa
-# Aufruf  : fa preview <mode> <selection>
+# Zweck       : Preview-Befehle für fa (Alias-Browser) in fzf
+# Pfad        : ~/.config/fzf/fa
+# Aufruf      : fa preview <mode> <selection>
 # ============================================================
 # Hinweis : Ausgelagert wegen komplexem Shell-Escaping in fzf --bind
 #           Modes : code, tldr
@@ -42,7 +42,7 @@ _fa_preview() {
                 echo "${C_RED}Datei nicht gefunden:${C_RESET} $file"
                 return 1
             fi
-            
+
             # AWK-Skript: Sucht Alias oder Funktion mit vorangehendem Kommentar
             # Hinweis: Funktionsende wird durch } auf gleicher Einrückungsebene wie
             #          die Funktionsdefinition erkannt. Das funktioniert sowohl für
@@ -51,20 +51,20 @@ _fa_preview() {
             local extracted
             extracted=$(awk -v name="$name" '
                 BEGIN { found=0; buffer=""; printing=0; indent="" }
-                
+
                 # Kommentar-Zeilen (eingerückt oder nicht) merken
-                /^[[:space:]]*#/ { 
+                /^[[:space:]]*#/ {
                     if (!found) buffer = $0 "\n"
-                    next 
+                    next
                 }
-                
+
                 # Alias-Definition: alias name="..." oder alias name='\''...'\''
-                $0 ~ "^alias[[:space:]]+" name "=" { 
+                $0 ~ "^alias[[:space:]]+" name "=" {
                     printf "%s%s\n", buffer, $0
                     found=1; buffer=""
                     next
                 }
-                
+
                 # Funktions-Definition: name() { (auch eingerückt)
                 # Exakter Namensvergleich verhindert false positives (z.B. fa vs fak)
                 # Pattern erlaubt auch Bindestriche (z.B. bat-theme)
@@ -81,17 +81,17 @@ _fa_preview() {
                         indent = line_indent  # Einrückung merken
                     }
                 }
-                
+
                 # Funktionskörper ausgeben
                 printing { print }
-                
+
                 # Funktionsende: } auf gleicher Einrückungsebene wie Funktionsstart
                 printing && $0 ~ "^" indent "}[[:space:]]*$" { printing=0; exit }
-                
+
                 # Kein Match = Buffer zurücksetzen
                 !found { buffer="" }
             ' "$file")
-            
+
             # Syntax-Highlighting mit bat (falls verfügbar)
             if command -v bat >/dev/null 2>&1; then
                 echo "$extracted" | bat --language=zsh --style=plain --color=always
@@ -99,7 +99,7 @@ _fa_preview() {
                 echo "$extracted"
             fi
             ;;
-            
+
         tldr)
             # tldr-Seite für die Tool-Kategorie anzeigen
             if command -v tldr >/dev/null 2>&1; then
@@ -108,7 +108,7 @@ _fa_preview() {
                 echo "${C_RED}tldr nicht installiert${C_RESET}"
             fi
             ;;
-            
+
         *)
             echo "${C_RED}Unbekannter Modus:${C_RESET} $mode"
             echo "Verfügbar: code, tldr"

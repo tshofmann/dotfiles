@@ -2,8 +2,8 @@
 # ============================================================
 # alias-helpers.sh - Helper für Alias-Datei Verarbeitung
 # ============================================================
-# Zweck   : Extraktion von Alias-Namen, Beschreibungen, Sektionen
-# Pfad    : .github/scripts/generators/tldr/alias-helpers.sh
+# Zweck       : Extraktion von Alias-Namen, Beschreibungen, Sektionen
+# Pfad        : .github/scripts/generators/tldr/alias-helpers.sh
 # ============================================================
 
 # Abhängigkeit: common.sh muss vorher geladen sein

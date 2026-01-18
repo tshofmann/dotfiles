@@ -223,7 +223,7 @@ Die Dokumentation wird automatisch aus dem Code generiert (Single Source of Trut
 | Bereich | Sprache | Beispiel |
 | --------- | --------- | ---------- |
 | **Kommentare im Code** | Deutsch | `# Nur wenn bat installiert ist` |
-| **Header-Beschreibungen** | Deutsch | `# Zweck   : Aliase für bat` |
+| **Header-Beschreibungen** | Deutsch | `# Zweck       : Aliase für bat` |
 | **Dokumentation** | Deutsch | README, CONTRIBUTING, docs/ |
 | **Commit-Messages** | Deutsch | `feat: fzf-Preview für git log` |
 | **Issue-Beschreibungen** | Deutsch | GitHub Issues & PRs |
@@ -243,16 +243,16 @@ Alle Shell-Dateien (`.alias`, `.sh`, `.zsh*`) beginnen mit einem standardisierte
 # ============================================================
 # dateiname.alias - Kurzbeschreibung (max. 50 Zeichen)
 # ============================================================
-# Zweck   : Ausführliche Beschreibung des Datei-Zwecks
-# Pfad    : ~/.config/alias/dateiname.alias
-# Docs    : https://github.com/tool/tool (offizielle Doku)
-# Nutzt   : fzf (Preview), bat (Syntax-Highlighting)
-# Ersetzt : cat (mit Syntax-Highlighting)
-# Aliase  : cmd, cmd2, cmd3
+# Zweck       : Ausführliche Beschreibung des Datei-Zwecks
+# Pfad        : ~/.config/alias/dateiname.alias
+# Docs        : https://github.com/tool/tool (offizielle Doku)
+# Nutzt       : fzf (Preview), bat (Syntax-Highlighting)
+# Ersetzt     : cat (mit Syntax-Highlighting)
+# Aliase      : cmd, cmd2, cmd3
 # ============================================================
 ```
 
-**Metadaten-Felder** (8 Zeichen breit, linksbündig):
+**Metadaten-Felder** (12 Zeichen breit, linksbündig):
 
 | Feld | Pflicht | Beschreibung |
 | ------ | --------- | -------------- |

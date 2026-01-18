@@ -2,8 +2,8 @@
 # ============================================================
 # setup.sh - Generator für docs/setup.md
 # ============================================================
-# Zweck   : Generiert Setup-Dokumentation aus bootstrap.sh/Modulen
-# Pfad    : .github/scripts/generators/setup.sh
+# Zweck       : Generiert Setup-Dokumentation aus bootstrap.sh/Modulen
+# Pfad        : .github/scripts/generators/setup.sh
 # Quelle  : setup/modules/*.sh (modulare Struktur) oder setup/bootstrap.sh (legacy)
 # ============================================================
 

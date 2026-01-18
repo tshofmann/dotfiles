@@ -1,13 +1,13 @@
 # ============================================================
 # fd.alias - fd Aliase (find-Ersatz)
 # ============================================================
-# Zweck   : Aliase für fd – schnelle Alternative zu find
-# Pfad    : ~/.config/alias/fd.alias
-# Docs    : https://github.com/sharkdp/fd
-# Config  : ~/.config/fd/ignore
-# Nutzt   : fzf (Interactive), bat (Preview), eza (Verzeichnis-Preview)
-# Ersetzt : find (schneller, intuitive Syntax)
-# Aliase  : fd, fdf, fdd
+# Zweck       : Aliase für fd – schnelle Alternative zu find
+# Pfad        : ~/.config/alias/fd.alias
+# Docs        : https://github.com/sharkdp/fd
+# Config      : ~/.config/fd/ignore
+# Nutzt       : fzf (Interactive), bat (Preview), eza (Verzeichnis-Preview)
+# Ersetzt     : find (schneller, intuitive Syntax)
+# Aliase      : fd, fdf, fdd
 # ============================================================
 
 # Guard   : Nur wenn fd installiert ist

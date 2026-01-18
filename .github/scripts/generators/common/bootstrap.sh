@@ -2,8 +2,8 @@
 # ============================================================
 # bootstrap.sh - Bootstrap-Modul Parser
 # ============================================================
-# Zweck   : Extrahiert Metadaten aus Bootstrap-Modulen
-# Pfad    : .github/scripts/generators/common/bootstrap.sh
+# Zweck       : Extrahiert Metadaten aus Bootstrap-Modulen
+# Pfad        : .github/scripts/generators/common/bootstrap.sh
 # ============================================================
 
 # Abhängigkeit: config.sh und macos.sh müssen vorher geladen sein

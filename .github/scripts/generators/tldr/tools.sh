@@ -2,8 +2,8 @@
 # ============================================================
 # tools.sh - Spezial-Generatoren für dotfiles, catppuccin, zsh
 # ============================================================
-# Zweck   : Tool-spezifische Page-Generatoren
-# Pfad    : .github/scripts/generators/tldr/tools.sh
+# Zweck       : Tool-spezifische Page-Generatoren
+# Pfad        : .github/scripts/generators/tldr/tools.sh
 # ============================================================
 
 # Abhängigkeiten: common.sh, tldr/parsers.sh, tldr/alias-helpers.sh

@@ -1,12 +1,12 @@
 # ============================================================
 # fzf.alias - Generische fzf-Funktionen
 # ============================================================
-# Zweck   : Tool-unspezifische fzf-Utilities
-# Pfad    : ~/.config/alias/fzf.alias
-# Docs    : https://github.com/junegunn/fzf
-# Config  : ~/.config/fzf/config
-# Nutzt   : bat (Code), eza (Verzeichnis), fd (Default-Command), tldr (fman)
-# Nutzt   : pdftotext (PDF), 7zz (Archive), identify (Bilder), ffprobe (Video/Audio)
+# Zweck       : Tool-unspezifische fzf-Utilities
+# Pfad        : ~/.config/alias/fzf.alias
+# Docs        : https://github.com/junegunn/fzf
+# Config      : ~/.config/fzf/config
+# Nutzt       : bat (Code), eza (Verzeichnis), fd (Default-Command), tldr (fman)
+# Nutzt       : pdftotext (PDF), 7zz (Archive), identify (Bilder), ffprobe (Video/Audio)
 # ============================================================
 # Tool-spezifische Funktionen in fd/rg/git/brew/gh.alias.
 #
@@ -19,7 +19,7 @@
 #   fman      – Man/tldr Browser Helper (list|preview|toggle)
 #   fkill     – Prozessliste Helper (list)
 #   fa        – Alias-Browser Helper (preview)
-# Aliase  : fkill, fman, fa, fenv
+# Aliase      : fkill, fman, fa, fenv
 # ============================================================
 
 # Guard   : Nur wenn fzf installiert ist

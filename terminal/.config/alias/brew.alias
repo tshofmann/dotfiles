@@ -1,13 +1,13 @@
 # ============================================================
 # brew.alias - Homebrew Aliase
 # ============================================================
-# Zweck   : Aliase für Homebrew Paketverwaltung
-# Pfad    : ~/.config/alias/brew.alias
-# Docs    : https://docs.brew.sh/Manpage
-# Nutzt   : fzf (Interactive), theme-style (Farben für brewv)
-# Aliase  : brewup, brewv, bip, brp
+# Zweck       : Aliase für Homebrew Paketverwaltung
+# Pfad        : ~/.config/alias/brew.alias
+# Docs        : https://docs.brew.sh/Manpage
+# Nutzt       : fzf (Interactive), theme-style (Farben für brewv)
+# Aliase      : brewup, brewv, bip, brp
 # ============================================================
-# Hinweis : Kein Guard für brew – ohne Homebrew ist dieses
+# Hinweis     : Kein Guard für brew – ohne Homebrew ist dieses
 #           dotfiles-Repository ohnehin nicht nutzbar.
 # ============================================================
 
@@ -25,8 +25,8 @@ brewup() {
 # Mac App Store (mas)
 # ------------------------------------------------------------
 # Voraussetzung: Anmeldung im App Store über App Store.app
-# Hinweis : mas account/signin sind seit macOS 12+ nicht verfügbar
-# Docs    : https://github.com/mas-cli/mas
+# Hinweis     : mas account/signin sind seit macOS 12+ nicht verfügbar
+# Docs        : https://github.com/mas-cli/mas
 # ------------------------------------------------------------
 # Guard   : Nur wenn mas installiert ist
 if command -v mas >/dev/null 2>&1; then
@@ -50,7 +50,7 @@ fi
 # Versionsübersicht
 # ------------------------------------------------------------
 # Brewfile Versionsübersicht – zeigt installierte Versionen aller Pakete
-# Nutzt   : theme-style ($C_MAUVE, $C_GREEN, $C_TEXT, $C_RESET)
+# Nutzt       : theme-style ($C_MAUVE, $C_GREEN, $C_TEXT, $C_RESET)
 brewv() {
     local brewfile="${DOTFILES_DIR:-$HOME/dotfiles}/setup/Brewfile"
 

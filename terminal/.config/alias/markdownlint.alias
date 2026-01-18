@@ -1,11 +1,11 @@
 # ============================================================
 # markdownlint.alias - Aliase für Markdown-Linting
 # ============================================================
-# Zweck   : Shortcuts für markdownlint-cli2
-# Pfad    : ~/.config/alias/markdownlint.alias
-# Docs    : https://github.com/DavidAnson/markdownlint-cli2
-# Config  : ~/.config/markdownlint-cli2/.markdownlint-cli2.jsonc
-# Aliase  : mdl, mdla, mdlf, mdlaf
+# Zweck       : Shortcuts für markdownlint-cli2
+# Pfad        : ~/.config/alias/markdownlint.alias
+# Docs        : https://github.com/DavidAnson/markdownlint-cli2
+# Config      : ~/.config/markdownlint-cli2/.markdownlint-cli2.jsonc
+# Aliase      : mdl, mdla, mdlf, mdlaf
 # ============================================================
 
 # Guard   : Nur wenn markdownlint-cli2 installiert ist

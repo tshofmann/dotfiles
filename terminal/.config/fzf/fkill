@@ -2,9 +2,9 @@
 # ============================================================
 # fkill - Helper für fkill() Funktion
 # ============================================================
-# Zweck   : Prozessliste für fzf
-# Pfad    : ~/.config/fzf/fkill
-# Aufruf  : fkill list [apps|all]
+# Zweck       : Prozessliste für fzf
+# Pfad        : ~/.config/fzf/fkill
+# Aufruf      : fkill list [apps|all]
 # ============================================================
 # Hinweis : macOS-spezifisch! Das Pattern \.app\/ filtert nach
 #           macOS App-Bundles. Für Linux-Portabilität müsste

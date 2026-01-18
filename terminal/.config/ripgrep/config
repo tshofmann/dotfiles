@@ -1,11 +1,11 @@
 # ============================================================
 # ripgrep Config - Globale Standardoptionen
 # ============================================================
-# Zweck   : Native ripgrep-Konfiguration (RIPGREP_CONFIG_PATH)
-# Pfad    : ~/.config/ripgrep/config
-# Docs    : https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md
+# Zweck       : Native ripgrep-Konfiguration (RIPGREP_CONFIG_PATH)
+# Pfad        : ~/.config/ripgrep/config
+# Docs        : https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md
 # ============================================================
-# Aliase  : ~/.config/alias/rg.alias (rgc, rgi, rga, rgf, ...)
+# Aliase      : ~/.config/alias/rg.alias (rgc, rgi, rga, rgf, ...)
 # ============================================================
 
 # ------------------------------------------------------------

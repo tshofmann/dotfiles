@@ -2,10 +2,10 @@
 # ============================================================
 # preview - Universelle Vorschau für fzf
 # ============================================================
-# Zweck   : Zeigt Vorschau für Dateien und Verzeichnisse
-# Pfad    : ~/.config/fzf/preview
-# Aufruf  : preview <file|dir> <path> [args...]
-# Nutzt   : bat (Code), eza (Dir), pdftotext (PDF), 7zz (Archive),
+# Zweck       : Zeigt Vorschau für Dateien und Verzeichnisse
+# Pfad        : ~/.config/fzf/preview
+# Aufruf      : preview <file|dir> <path> [args...]
+# Nutzt       : bat (Code), eza (Dir), pdftotext (PDF), 7zz (Archive),
 #           identify (Bilder), ffprobe (Video/Audio)
 # ============================================================
 # Hinweis : Pfad wird als Argument übergeben, nicht interpoliert

@@ -1,12 +1,12 @@
 # ============================================================
 # resvg.alias - Aliase für resvg (SVG-Renderer)
 # ============================================================
-# Zweck   : Praktische Aliase für SVG-Konvertierung
-# Pfad    : ~/.config/alias/resvg.alias
-# Docs    : https://github.com/RazrFalcon/resvg
-# Nutzt   : -
-# Ersetzt : -
-# Aliase  : svg2png, svgscale
+# Zweck       : Praktische Aliase für SVG-Konvertierung
+# Pfad        : ~/.config/alias/resvg.alias
+# Docs        : https://github.com/RazrFalcon/resvg
+# Nutzt       : -
+# Ersetzt     : -
+# Aliase      : svg2png, svgscale
 # ============================================================
 
 # Guard   : Nur wenn resvg installiert ist

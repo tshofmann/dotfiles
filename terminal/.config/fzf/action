@@ -2,9 +2,9 @@
 # ============================================================
 # action - Sichere Aktionen für fzf-Bindings
 # ============================================================
-# Zweck   : Führt Aktionen Shell-Injection-sicher aus
-# Pfad    : ~/.config/fzf/action
-# Aufruf  : action <command> "argument" [...]
+# Zweck       : Führt Aktionen Shell-Injection-sicher aus
+# Pfad        : ~/.config/fzf/action
+# Aufruf      : action <command> "argument" [...]
 # ============================================================
 # Commands: copy, edit, open, git-diff, git-restore, git-add,
 #           zoxide-remove

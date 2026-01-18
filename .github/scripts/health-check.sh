@@ -2,7 +2,7 @@
 # ============================================================
 # health-check.sh - Systemprüfung der dotfiles-Installation
 # ============================================================
-# Zweck   : Prüft ob alle Komponenten korrekt INSTALLIERT sind
+# Zweck       : Prüft ob alle Komponenten korrekt INSTALLIERT sind
 #           (Symlinks, Tools, Konfigurationen, Abhängigkeiten)
 #
 # HINWEIS : Dieser Check prüft die INSTALLATION auf dem System.
@@ -25,8 +25,8 @@
 #           → Neue Dateien werden AUTOMATISCH erkannt!
 #           → Keine manuellen Updates bei neuen Configs nötig!
 #
-# Aufruf  : ./scripts/health-check.sh
-# Docs    : https://github.com/tshofmann/dotfiles#readme
+# Aufruf      : ./scripts/health-check.sh
+# Docs        : https://github.com/tshofmann/dotfiles#readme
 # ============================================================
 
 set -uo pipefail

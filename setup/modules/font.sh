@@ -2,8 +2,8 @@
 # ============================================================
 # font.sh - Nerd Font Verifikation
 # ============================================================
-# Zweck   : Verifiziert Installation des Nerd Fonts
-# Pfad    : setup/modules/font.sh
+# Zweck       : Verifiziert Installation des Nerd Fonts
+# Pfad        : setup/modules/font.sh
 # Benötigt    : _core.sh, homebrew.sh (Font wird via Brewfile installiert)
 # Plattform   : Universell (macOS + Linux)
 #

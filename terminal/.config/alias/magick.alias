@@ -1,13 +1,13 @@
 # ============================================================
 # magick.alias - Aliase für ImageMagick
 # ============================================================
-# Zweck   : Praktische Aliase für Bildverarbeitung
-# Pfad    : ~/.config/alias/magick.alias
-# Docs    : https://imagemagick.org/
-# Config  : ~/.config/ImageMagick/policy.xml (Sicherheit)
-# Nutzt   : -
-# Ersetzt : -
-# Aliase  : imgresize, img2webp, imginfo, imgsize, imgcrop
+# Zweck       : Praktische Aliase für Bildverarbeitung
+# Pfad        : ~/.config/alias/magick.alias
+# Docs        : https://imagemagick.org/
+# Config      : ~/.config/ImageMagick/policy.xml (Sicherheit)
+# Nutzt       : -
+# Ersetzt     : -
+# Aliase      : imgresize, img2webp, imginfo, imgsize, imgcrop
 # ============================================================
 
 # Guard   : Nur wenn ImageMagick installiert ist

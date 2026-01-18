@@ -2,11 +2,11 @@
 # ============================================================
 # tldr.sh - Generator für tldr-Patches und Pages
 # ============================================================
-# Zweck   : Generiert tldr-Patches aus .alias-Dateien
+# Zweck       : Generiert tldr-Patches aus .alias-Dateien
 #           Falls keine offizielle tldr-Seite existiert,
 #           wird stattdessen eine .page.md generiert
-# Pfad    : .github/scripts/generators/tldr.sh
-# Hinweis : Modularisierte Version – einzelne Module in tldr/
+# Pfad        : .github/scripts/generators/tldr.sh
+# Hinweis     : Modularisierte Version – einzelne Module in tldr/
 # ============================================================
 
 # Bibliothek laden (Pfade, Parser, UI)

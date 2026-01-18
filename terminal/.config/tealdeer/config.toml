@@ -1,13 +1,13 @@
 # ============================================================
 # tealdeer Config - tldr-Client Konfiguration
 # ============================================================
-# Zweck   : Vereinfachte Man-Pages mit Beispielen (tldr)
-# Pfad    : ~/.config/tealdeer/config.toml
-# Docs    : https://tealdeer-rs.github.io/tealdeer/config.html
+# Zweck       : Vereinfachte Man-Pages mit Beispielen (tldr)
+# Pfad        : ~/.config/tealdeer/config.toml
+# Docs        : https://tealdeer-rs.github.io/tealdeer/config.html
 # ============================================================
-# Aliase  : ~/.config/alias/fzf.alias (fman nutzt tldr als Toggle)
-# Theme   : ~/.config/theme-style
-# Hinweis : Erster Start erfordert `tldr --update` für
+# Aliase      : ~/.config/alias/fzf.alias (fman nutzt tldr als Toggle)
+# Theme       : ~/.config/theme-style
+# Hinweis     : Erster Start erfordert `tldr --update` für
 #           initialen Cache-Download. Danach auto_update.
 # ============================================================
 

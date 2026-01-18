@@ -2,9 +2,9 @@
 # ============================================================
 # common.sh - Gemeinsame Bibliothek für Dokumentations-Generatoren
 # ============================================================
-# Zweck   : Lädt alle Module und stellt API bereit
-# Pfad    : .github/scripts/generators/common.sh
-# Hinweis : Modularisierte Version – einzelne Module in common/
+# Zweck       : Lädt alle Module und stellt API bereit
+# Pfad        : .github/scripts/generators/common.sh
+# Hinweis     : Modularisierte Version – einzelne Module in common/
 # ============================================================
 
 # ------------------------------------------------------------

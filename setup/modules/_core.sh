@@ -2,9 +2,9 @@
 # ============================================================
 # _core.sh - Gemeinsame Basis für Bootstrap-Module
 # ============================================================
-# Zweck   : Farben, Logging, Helper-Funktionen
-# Pfad    : setup/modules/_core.sh
-# Geladen : Automatisch von allen Modulen
+# Zweck       : Farben, Logging, Helper-Funktionen
+# Pfad        : setup/modules/_core.sh
+# Geladen     : Automatisch von allen Modulen
 # ============================================================
 
 # Verhindere mehrfaches Laden
@@ -98,13 +98,13 @@ warn() { print -P "${C_YELLOW}⚠${C_RESET} $*"; }
 skip() { print -P "${C_OVERLAY0}⏭${C_RESET} $*"; }
 
 # Sektions-Header (wie brewv)
-# Verwendung: section "Titel"
+# Verwendung  : section "Titel"
 section() {
     print -P "\n${C_MAUVE}━━━ ${C_BOLD}$1${C_RESET}${C_MAUVE} ━━━${C_RESET}"
 }
 
 # Sektions-Abschluss mit Status
-# Verwendung: section_end "3 Pakete installiert"
+# Verwendung  : section_end "3 Pakete installiert"
 section_end() {
     print -P "${C_OVERLAY0}    └─ $*${C_RESET}"
 }
