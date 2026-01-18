@@ -5,7 +5,7 @@
 # Pfad        : ~/.config/alias/fzf.alias
 # Docs        : https://github.com/junegunn/fzf
 # Config      : ~/.config/fzf/config
-# Nutzt       : bat (Code), eza (Verzeichnis), fd (Default-Command), tldr (fman)
+# Nutzt       : bat (Code), eza (Verzeichnis), fd (Default-Command), tldr (help)
 # Nutzt       : pdftotext (PDF), 7zz (Archive), identify (Bilder), ffprobe (Video/Audio)
 # ============================================================
 # Tool-spezifische Funktionen in fd/rg/git/brew/gh.alias.
@@ -154,7 +154,7 @@ cmds() {
     entries=$(echo "$entries" | sort -t'|' -k1,1 -u)
 
     # Formatierte Ausgabe für fzf (Farben aus theme-style)
-    # Preview prüft Prompt für Toggle (wie fman-Pattern)
+    # Preview prüft Prompt für Toggle (wie help-Pattern)
     selection=$(echo "$entries" | awk -F'|' \
         -v mauve="$C_MAUVE" -v green="$C_GREEN" -v blue="$C_BLUE" \
         -v text="$C_TEXT" -v reset="$C_RESET" '

@@ -293,7 +293,7 @@ Der Fallback (`# Pfad :` in Config-Dateien) ist nur für Tools ohne `.alias`-Dat
 alias ls='eza --group-directories-first'
 
 # Man/tldr Browser – Ctrl+S=Modus wechseln, Enter=je nach Modus öffnen
-fman() {
+help() {
     # ... Implementation
 }
 ```
