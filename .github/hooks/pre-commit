@@ -261,6 +261,32 @@ check_markdown() {
 }
 
 # ------------------------------------------------------------
+# 7. Health-Check ausführen
+# ------------------------------------------------------------
+check_health() {
+    log "Führe Health-Check aus..."
+
+    local health_script="$DOTFILES_DIR/.github/scripts/health-check.sh"
+
+    if [[ ! -x "$health_script" ]]; then
+        warn "health-check.sh nicht ausführbar – übersprungen"
+        return 0
+    fi
+
+    # Health-Check ausführen (Ausgabe unterdrücken, nur Exit-Code prüfen)
+    if ! "$health_script" >/dev/null 2>&1; then
+        err "Health-Check fehlgeschlagen!"
+        print ""
+        print "  ${C_DIM}Details anzeigen mit:${C_RESET}"
+        print "    ${C_BOLD}./.github/scripts/health-check.sh${C_RESET}"
+        return 1
+    fi
+
+    ok "Health-Check OK"
+    return 0
+}
+
+# ------------------------------------------------------------
 # Hauptprogramm
 # ------------------------------------------------------------
 print ""
@@ -277,6 +303,7 @@ check_docs || (( failed++ ))
 check_alias_format || (( failed++ ))
 check_header_alignment || (( failed++ ))
 check_markdown || (( failed++ ))
+check_health || (( failed++ ))
 
 print ""
 print "${C_OVERLAY0}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
