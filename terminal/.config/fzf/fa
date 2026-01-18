@@ -47,7 +47,7 @@ _fa_preview() {
             # Hinweis: Funktionsende wird durch } auf gleicher Einrückungsebene wie
             #          die Funktionsdefinition erkannt. Das funktioniert sowohl für
             #          Top-Level-Funktionen als auch für Funktionen innerhalb von
-            #          if-Blöcken (z.B. rgf() in rg.alias).
+            #          if-Blöcken (z.B. rg-live() in rg.alias).
             local extracted
             extracted=$(awk -v name="$name" '
                 BEGIN { found=0; buffer=""; printing=0; indent="" }
