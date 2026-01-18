@@ -58,12 +58,16 @@ run_stow() {
 
     # Adoptierte Dateien auf Repository-Zustand zurücksetzen
     # (Falls existierende Configs abweichen)
-    if git diff --quiet 2>/dev/null; then
-        log "Keine adoptierten Änderungen"
+    if command -v git >/dev/null 2>&1 && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        if git diff --quiet 2>/dev/null; then
+            log "Keine adoptierten Änderungen"
+        else
+            log "Setze adoptierte Dateien auf Repository-Zustand zurück..."
+            git reset --hard HEAD >/dev/null 2>&1
+            ok "Repository-Zustand wiederhergestellt"
+        fi
     else
-        log "Setze adoptierte Dateien auf Repository-Zustand zurück..."
-        git reset --hard HEAD >/dev/null 2>&1
-        ok "Repository-Zustand wiederhergestellt"
+        warn "Kein Git-Repository in $DOTFILES_DIR – überspringe Reset"
     fi
 
     return 0
