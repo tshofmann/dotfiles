@@ -26,39 +26,39 @@ readonly HOOKS_PATH=".github/hooks"
 # ------------------------------------------------------------
 configure_git_hooks() {
     CURRENT_STEP="Git Hooks"
-    
+
     # Prüfe ob wir in einem Git-Repository sind
     if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
         warn "Kein Git-Repository – Hooks übersprungen"
         return 0
     fi
-    
+
     # Prüfe ob Hooks-Verzeichnis existiert
     local hooks_dir="$DOTFILES_DIR/$HOOKS_PATH"
     if [[ ! -d "$hooks_dir" ]]; then
         warn "Hooks-Verzeichnis nicht gefunden: $hooks_dir"
         return 0
     fi
-    
+
     # Aktuellen hooksPath prüfen
     local current_hooks
     current_hooks=$(git config --get core.hooksPath 2>/dev/null || echo "")
-    
+
     if [[ "$current_hooks" == "$HOOKS_PATH" ]]; then
         ok "Git Hooks bereits aktiviert"
         return 0
     fi
-    
+
     log "Aktiviere Git Pre-Commit Hooks..."
-    
+
     cd "$DOTFILES_DIR" || return 1
-    
+
     if git config core.hooksPath "$HOOKS_PATH"; then
         ok "Git Hooks aktiviert: $HOOKS_PATH"
     else
         warn "Konnte Git Hooks nicht aktivieren"
     fi
-    
+
     return 0
 }
 

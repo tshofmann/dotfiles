@@ -99,4 +99,4 @@
 
 - Eigene Seiten (ohne offizielle tldr-Basis):
 
-`tldr {{catppuccin|markdownlint|poppler|resvg|dotfiles}}`
+`tldr {{catppuccin|kitty|markdownlint|poppler|resvg|dotfiles}}`

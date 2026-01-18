@@ -44,7 +44,7 @@ theme_already_set() {
     if [[ ! -f "$KITTY_CURRENT_THEME" ]]; then
         return 1
     fi
-    
+
     # Prüfe ob es das Catppuccin Mocha Theme ist
     grep -qi "catppuccin" "$KITTY_CURRENT_THEME" 2>/dev/null
 }
@@ -54,22 +54,22 @@ theme_already_set() {
 # ------------------------------------------------------------
 set_kitty_theme() {
     CURRENT_STEP="Kitty Theme"
-    
+
     if ! kitty_installed; then
         log "Kitty nicht installiert – übersprungen"
         return 0
     fi
-    
+
     if theme_already_set; then
         ok "Kitty Theme bereits konfiguriert"
         return 0
     fi
-    
+
     log "Setze Kitty Theme: $KITTY_THEME_NAME"
-    
+
     # Config-Verzeichnis sicherstellen
     [[ -d "$KITTY_CONFIG_DIR" ]] || mkdir -p "$KITTY_CONFIG_DIR"
-    
+
     # Theme setzen via kitten (non-interaktiv)
     # --reload-in=none: Nicht versuchen laufende Instanzen zu reloaden
     # (Kitty läuft noch nicht beim Bootstrap)
@@ -85,14 +85,14 @@ set_kitty_theme() {
             return 0
         }
     fi
-    
+
     # Fallback: Manuelles Theme-File erstellen
     # Das Theme ist in Kitty eingebaut, wir zeigen nur drauf
     warn "kitten nicht gefunden – erstelle manuelles Theme-Include"
-    
+
     # Kitty's eingebaute Themes liegen im App-Bundle
     local builtin_theme="/Applications/kitty.app/Contents/Resources/kitty/themes/Catppuccin-Mocha.conf"
-    
+
     if [[ -f "$builtin_theme" ]]; then
         echo "# Catppuccin Mocha (eingebaut)" > "$KITTY_CURRENT_THEME"
         echo "include $builtin_theme" >> "$KITTY_CURRENT_THEME"
@@ -100,7 +100,7 @@ set_kitty_theme() {
     else
         warn "Eingebautes Theme nicht gefunden – Kitty wird beim ersten Start Theme-Auswahl anbieten"
     fi
-    
+
     return 0
 }
 
@@ -109,10 +109,10 @@ set_kitty_theme() {
 # ------------------------------------------------------------
 setup_kitty() {
     CURRENT_STEP="Kitty Setup"
-    
+
     log "Konfiguriere Kitty Terminal..."
     set_kitty_theme
-    
+
     return 0
 }
 

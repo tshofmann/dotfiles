@@ -36,26 +36,26 @@ themes_exist() {
 # ------------------------------------------------------------
 build_bat_cache() {
     CURRENT_STEP="bat Cache"
-    
+
     if ! bat_installed; then
         log "bat nicht installiert – übersprungen"
         return 0
     fi
-    
+
     if ! themes_exist; then
         log "Keine bat Themes gefunden – übersprungen"
         log "Führe zuerst 'stow terminal' aus"
         return 0
     fi
-    
+
     log "Baue bat Theme-Cache..."
-    
+
     if bat cache --build >/dev/null 2>&1; then
         ok "bat Cache gebaut (Catppuccin Mocha aktiv)"
     else
         warn "bat cache --build fehlgeschlagen"
     fi
-    
+
     return 0
 }
 

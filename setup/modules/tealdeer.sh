@@ -36,28 +36,28 @@ cache_exists() {
 # ------------------------------------------------------------
 update_tldr_cache() {
     CURRENT_STEP="tldr Cache"
-    
+
     if ! tealdeer_installed; then
         log "tealdeer nicht installiert – übersprungen"
         return 0
     fi
-    
+
     # Prüfe ob Cache bereits existiert und aktuell ist
     if cache_exists; then
         ok "tldr Cache bereits vorhanden"
         log "Für Update: tldr --update"
         return 0
     fi
-    
+
     log "Lade tldr-Pages herunter (einmalig)..."
-    
+
     if tldr --update 2>/dev/null; then
         ok "tldr Cache heruntergeladen"
     else
         warn "tldr --update fehlgeschlagen (Netzwerk?)"
         log "Später manuell ausführen: tldr --update"
     fi
-    
+
     return 0
 }
 

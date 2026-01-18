@@ -33,20 +33,20 @@ stow_installed() {
 # ------------------------------------------------------------
 run_stow() {
     CURRENT_STEP="Stow Symlinks"
-    
+
     if ! stow_installed; then
         err "stow nicht installiert"
         return 1
     fi
-    
+
     log "Verlinke Konfigurationsdateien..."
-    
+
     # Ins dotfiles-Verzeichnis wechseln
     cd "$DOTFILES_DIR" || {
         err "Konnte nicht nach $DOTFILES_DIR wechseln"
         return 1
     }
-    
+
     # Stow mit --adopt ausführen (übernimmt existierende Dateien)
     # -R = Restow (erst unstow, dann stow)
     if stow --adopt -R "${STOW_PACKAGES[@]}" 2>/dev/null; then
@@ -55,7 +55,7 @@ run_stow() {
         warn "Stow hatte Probleme – prüfe manuell"
         return 0  # Kein fataler Fehler
     fi
-    
+
     # Adoptierte Dateien auf Repository-Zustand zurücksetzen
     # (Falls existierende Configs abweichen)
     if git diff --quiet 2>/dev/null; then
@@ -65,7 +65,7 @@ run_stow() {
         git reset --hard HEAD >/dev/null 2>&1
         ok "Repository-Zustand wiederhergestellt"
     fi
-    
+
     return 0
 }
 
