@@ -57,7 +57,7 @@
 
 - find → fd (schneller, intuitive Syntax):
 
-`fd, fdf, fdd`
+`fdf, fdd, fdh, fda, fdsh, fdpy, fdjs, fdmd, fdjson, fdyaml, cdf, fo`
 
 - grep → rg (schneller, respektiert .gitignore):
 

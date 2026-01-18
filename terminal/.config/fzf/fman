@@ -21,7 +21,8 @@ _fman_list() {
     case "$mode" in
         man)
             # Nur Sektion 1 (Benutzer-Kommandos)
-            man -k . 2>/dev/null | grep ' (1) '
+            # Pattern ohne Leerzeichen vor (1), da macOS-Format variiert
+            man -k . 2>/dev/null | grep '(1)'
             ;;
         tldr)
             tldr --list 2>/dev/null
