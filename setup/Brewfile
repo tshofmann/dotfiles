@@ -28,6 +28,7 @@ brew "poppler"                              # PDF-Rendering | https://poppler.fr
 brew "resvg"                                # SVG-Rendering | https://github.com/RazrFalcon/resvg
 brew "ripgrep"                              # grep-Ersatz, schnellste Textsuche | https://github.com/BurntSushi/ripgrep
 brew "sevenzip"                             # Archiv-Extraktion | https://7-zip.org/
+brew "shellcheck"                           # Shell-Script-Linter (für Bash) | https://www.shellcheck.net/
 brew "starship"                             # Shell-Prompt | https://starship.rs/
 brew "stow"                                 # Symlink-Manager | https://www.gnu.org/software/stow/
 brew "tealdeer"                             # tldr-Client | https://tealdeer-rs.github.io/tealdeer/
@@ -41,6 +42,7 @@ brew "mas"                                  # Mac App Store CLI | https://github
 # Homebrew Casks
 # ------------------------------------------------------------
 cask "claude-code"                          # Agentic Coding | https://docs.anthropic.com/en/docs/claude-code
+cask "visual-studio-code"                   # Editor | https://code.visualstudio.com/
 cask "font-meslo-lg-nerd-font"              # Nerd Font für Prompt, eza, yazi | https://github.com/ryanoasis/nerd-fonts
 
 # ------------------------------------------------------------
