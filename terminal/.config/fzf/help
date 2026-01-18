@@ -12,6 +12,9 @@
 #   toggle                 – Toggle-Logik für fzf Ctrl+S
 # ============================================================
 
+# Gemeinsame Bibliothek laden (Farben, ANSI-Strip)
+source "${0:A:h}/lib.zsh"
+
 # ------------------------------------------------------------
 # Subcommand: list
 # ------------------------------------------------------------
@@ -28,7 +31,7 @@ _help_list() {
             tldr --list 2>/dev/null
             ;;
         *)
-            echo "Unbekannter Modus: $mode" >&2
+            echo "${C_RED}Unbekannter Modus:${C_RESET} $mode" >&2
             return 1
             ;;
     esac
@@ -45,7 +48,7 @@ _help_preview() {
     local page=$(echo "$entry" | sed 's/(.*//' | tr -d ' ')
 
     if [[ "$mode" == "tldr" ]]; then
-        tldr --color=always "$page" 2>/dev/null || echo "Keine tldr-Seite für '$page' verfügbar"
+        tldr --color=always "$page" 2>/dev/null || echo "${C_RED}Keine tldr-Seite für${C_RESET} '$page'"
     else
         man "$page" 2>/dev/null | col -bx | bat --color=always -l man -p
     fi
@@ -83,15 +86,4 @@ EOF
 # ------------------------------------------------------------
 # Main Dispatch
 # ------------------------------------------------------------
-case "${1:-}" in
-    list)    shift; _help_list "$@" ;;
-    preview) shift; _help_preview "$@" ;;
-    toggle)  shift; _help_toggle "$@" ;;
-    -h|--help) _help_usage ;;
-    "")      _help_usage ;;
-    *)
-        echo "Unknown command: $1" >&2
-        _help_usage >&2
-        exit 1
-        ;;
-esac
+_fzf_dispatch "help" "$@"

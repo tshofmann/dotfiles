@@ -13,6 +13,9 @@
 #               /proc/<pid>/exe Symlink-Analyse).
 # ============================================================
 
+# Gemeinsame Bibliothek laden (Farben, ANSI-Strip)
+source "${0:A:h}/lib.zsh"
+
 # ------------------------------------------------------------
 # Subcommand: list
 # ------------------------------------------------------------
@@ -60,13 +63,4 @@ EOF
 # ------------------------------------------------------------
 # Main Dispatch
 # ------------------------------------------------------------
-case "${1:-}" in
-    list)    shift; _procs_list "$@" ;;
-    -h|--help) _procs_usage ;;
-    "")      _procs_usage ;;
-    *)
-        echo "Unknown command: $1" >&2
-        _procs_usage >&2
-        exit 1
-        ;;
-esac
+_fzf_dispatch "procs" "$@"

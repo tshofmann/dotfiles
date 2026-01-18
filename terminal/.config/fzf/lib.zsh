@@ -37,5 +37,32 @@ _fzf_strip_ansi() {
     sed 's/\x1b\[[0-9;]*m//g'
 }
 
+# ------------------------------------------------------------
+# Generischer Dispatcher für Helper-Skripte
+# ------------------------------------------------------------
+# Verwendung  : _fzf_dispatch "helper-name" "$@"
+# Erwartet    : Funktionen _<name>_<cmd>() und _<name>_usage()
+_fzf_dispatch() {
+    local name="$1"
+    shift
+    local cmd="${1:-}"
+
+    case "$cmd" in
+        -h|--help|"")
+            "_${name}_usage"
+            ;;
+        *)
+            if typeset -f "_${name}_${cmd}" >/dev/null 2>&1; then
+                shift
+                "_${name}_${cmd}" "$@"
+            else
+                echo "${C_RED}Unknown command:${C_RESET} $cmd" >&2
+                "_${name}_usage" >&2
+                return 1
+            fi
+            ;;
+    esac
+}
+
 # Farben beim Laden initialisieren
 _fzf_load_colors

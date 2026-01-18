@@ -49,8 +49,8 @@ fi
 # ------------------------------------------------------------
 # Versionsübersicht
 # ------------------------------------------------------------
-# Brewfile Versionsübersicht – zeigt installierte Versionen aller Pakete
 # Nutzt       : theme-style ($C_MAUVE, $C_GREEN, $C_TEXT, $C_RESET)
+# Brewfile Versionsübersicht – zeigt installierte Versionen aller Pakete
 brew-list() {
     local brewfile="${DOTFILES_DIR:-$HOME/dotfiles}/setup/Brewfile"
 

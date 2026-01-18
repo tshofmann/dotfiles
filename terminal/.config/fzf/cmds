@@ -2,16 +2,75 @@
 # ============================================================
 # cmds - Helper für cmds() Funktion
 # ============================================================
-# Zweck       : Preview-Befehle für cmds (Alias-Browser) in fzf
+# Zweck       : Liste und Preview für cmds (Alias-Browser) in fzf
 # Pfad        : ~/.config/fzf/cmds
-# Aufruf      : cmds preview <mode> <selection>
+# Aufruf      : cmds <list|preview> [args...]
 # ============================================================
-# Hinweis     : Ausgelagert wegen komplexem Shell-Escaping in fzf --bind
-#               Modes : code, tldr
+# Commands:
+#   list                   – Listet alle Aliase und Funktionen
+#   preview <mode> <sel>   – Generiert Preview (code|tldr)
 # ============================================================
 
 # Gemeinsame Bibliothek laden (Farben, ANSI-Strip)
 source "${0:A:h}/lib.zsh"
+
+# ------------------------------------------------------------
+# Subcommand: list
+# ------------------------------------------------------------
+# Extrahiert Aliase und Funktionen aus allen .alias-Dateien
+# Format: name|typ|kategorie|beschreibung (pipe-separiert)
+_cmds_list() {
+    local alias_dir="${XDG_CONFIG_HOME:-$HOME/.config}/alias"
+    local entries=""
+    local file category prev_comment line
+
+    for file in "$alias_dir"/*.alias; do
+        [[ -f "$file" ]] || continue
+        category="${${file##*/}%.alias}"
+        prev_comment=""
+
+        while IFS= read -r line; do
+            # Kommentar merken (Zeile beginnt mit # oder eingerückt mit #)
+            local trimmed_line="${line#"${line%%[![:space:]]*}"}"
+            if [[ "$trimmed_line" == \#* ]]; then
+                prev_comment="${trimmed_line#\#}"
+                prev_comment="${prev_comment## }"  # Führendes Leerzeichen entfernen
+                continue
+            fi
+
+            # Alias: "alias name='..." oder 'alias name="...'
+            if [[ "$line" == alias\ * ]]; then
+                # Extrahiere Namen zwischen "alias " und "="
+                local alias_part="${line#alias }"
+                local alias_name="${alias_part%%=*}"
+                alias_name="${alias_name## }"  # Trim
+                alias_name="${alias_name%% }"
+                if [[ -n "$alias_name" && "$alias_name" != *" "* ]]; then
+                    entries+="${alias_name}|alias|${category}|${prev_comment}"$'\n'
+                fi
+                prev_comment=""
+                continue
+            fi
+
+            # Funktion: "name() {" (keine privaten mit _)
+            local trimmed="${line#"${line%%[![:space:]]*}"}"
+            if [[ "$trimmed" == [a-zA-Z]*"() {"* && "$trimmed" != _* ]]; then
+                local func_name="${trimmed%%\(*}"
+                if [[ -n "$func_name" && "$func_name" != *" "* ]]; then
+                    entries+="${func_name}|func|${category}|${prev_comment}"$'\n'
+                fi
+                prev_comment=""
+                continue
+            fi
+
+            # Andere Zeile = Kommentar zurücksetzen
+            prev_comment=""
+        done < "$file"
+    done
+
+    # Sortieren und Duplikate entfernen
+    echo "$entries" | sort -t'|' -k1,1 -u
+}
 
 # ------------------------------------------------------------
 # Subcommand: preview
@@ -125,6 +184,7 @@ _cmds_usage() {
 Usage: cmds <command> [args...]
 
 Commands:
+  list                        Liste aller Aliase und Funktionen
   preview <mode> <selection>  Generiere Preview für Auswahl
                               Modes: code, tldr
 
@@ -134,13 +194,4 @@ EOF
 # ------------------------------------------------------------
 # Main Dispatch
 # ------------------------------------------------------------
-case "${1:-}" in
-    preview) shift; _cmds_preview "$@" ;;
-    -h|--help) _cmds_usage ;;
-    "")      _cmds_usage ;;
-    *)
-        echo "Unknown command: $1" >&2
-        _cmds_usage >&2
-        exit 1
-        ;;
-esac
+_fzf_dispatch "cmds" "$@"

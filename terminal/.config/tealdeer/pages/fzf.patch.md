@@ -19,7 +19,7 @@
 
 - dotfiles: `action` – Führt Aktionen Shell-Injection-sicher aus
 
-- dotfiles: `cmds` – Preview-Befehle für cmds (Alias-Browser) in fzf
+- dotfiles: `cmds` – Liste und Preview für cmds (Alias-Browser) in fzf
 
 - dotfiles: `config` – Native fzf-Konfiguration (FZF_DEFAULT_OPTS_FILE)
 
