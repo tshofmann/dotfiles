@@ -7,7 +7,7 @@
 # Config      : ~/.config/fd/ignore
 # Nutzt       : fzf (Interactive), bat (Preview), eza (Verzeichnis-Preview)
 # Ersetzt     : find (schneller, intuitive Syntax)
-# Aliase      : fd, fdf, fdd
+# Aliase      : fdf, fdd, fdh, fda, fdsh, fdpy, fdjs, fdmd, fdjson, fdyaml, cdf, fo
 # ============================================================
 
 # Guard   : Nur wenn fd installiert ist
