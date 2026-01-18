@@ -16,9 +16,9 @@
 #   lib.zsh   – Shared Utilities (Farben, ANSI-Strip)
 #   preview   – Vorschau (file|dir) mit bat/eza
 #   action    – Sichere Aktionen (copy, edit, open, git-*, zoxide-*)
-#   fman      – Man/tldr Browser Helper (list|preview|toggle)
-#   fkill     – Prozessliste Helper (list)
-#   fa        – Alias-Browser Helper (preview)
+#   fman      – Helper für help() (list|preview|toggle)
+#   fkill     – Helper für procs() (list)
+#   fa        – Helper für cmds() (preview)
 # Aliase      : procs, help, cmds, vars
 # ============================================================
 
