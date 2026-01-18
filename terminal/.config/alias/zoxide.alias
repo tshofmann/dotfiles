@@ -47,7 +47,7 @@ if command -v fzf >/dev/null 2>&1; then
                 --bind "ctrl-y:execute-silent($helper/action copy {2..})" \
                 --header='Enter: Wechseln | Ctrl+D: Eintrag löschen | Ctrl+Y: Pfad kopieren')
 
-        # Pfad extrahieren (alles nach dem Score)
-        [[ -n "$selection" ]] && dir="${selection#* }" && cd "$dir"
+        # Pfad extrahieren: Score entfernen (awk ist sicherer bei Leerzeichen)
+        [[ -n "$selection" ]] && dir=$(echo "$selection" | awk '{$1=""; print substr($0,2)}') && cd "$dir"
     }
 fi
