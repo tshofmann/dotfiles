@@ -2,8 +2,8 @@
 # ============================================================
 # core.sh - Hauptlogik für tldr-Patch/Page Generierung
 # ============================================================
-# Zweck   : Öffentliche API: generate_tldr_patches()
-# Pfad    : .github/scripts/generators/tldr/core.sh
+# Zweck       : Öffentliche API: generate_tldr_patches()
+# Pfad        : .github/scripts/generators/tldr/core.sh
 # ============================================================
 
 # Abhängigkeiten: common.sh, tldr/*.sh Module

@@ -2,8 +2,8 @@
 # ============================================================
 # brewfile.sh - Brewfile Parser und Sektion-Generator
 # ============================================================
-# Zweck   : Parst Brewfile und generiert Markdown-Tabellen
-# Pfad    : .github/scripts/generators/common/brewfile.sh
+# Zweck       : Parst Brewfile und generiert Markdown-Tabellen
+# Pfad        : .github/scripts/generators/common/brewfile.sh
 # ============================================================
 
 # Abhängigkeit: config.sh muss vorher geladen sein

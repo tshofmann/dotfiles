@@ -1,12 +1,12 @@
 # ============================================================
 # theme.yml - eza Farbschema (Catppuccin Mocha)
 # ============================================================
-# Zweck   : Dateityp-Farben für eza (ls-Ersatz)
-# Pfad    : ~/.config/eza/theme.yml
-# Docs    : https://github.com/eza-community/eza/blob/main/man/eza_colors.5.md
+# Zweck       : Dateityp-Farben für eza (ls-Ersatz)
+# Pfad        : ~/.config/eza/theme.yml
+# Docs        : https://github.com/eza-community/eza/blob/main/man/eza_colors.5.md
 # ============================================================
-# Aliase  : ~/.config/alias/eza.alias (ls, ll, la, lt, lss, lst)
-# Theme   : ~/.config/theme-style
+# Aliase      : ~/.config/alias/eza.alias (ls, ll, la, lt, lss, lst)
+# Theme       : ~/.config/theme-style
 # ============================================================
 
 colourful: true
@@ -140,4 +140,3 @@ symlink_path: {foreground: "#89dceb"}
 control_char: {foreground: "#74c7ec"}
 broken_symlink: {foreground: "#f38ba8"}
 broken_path_overlay: {foreground: "#585b70"}
-

@@ -1,0 +1,58 @@
+#!/usr/bin/env zsh
+# ============================================================
+# fkill - Helper für fkill() Funktion
+# ============================================================
+# Zweck       : Prozessliste für fzf
+# Pfad        : ~/.config/fzf/fkill
+# Aufruf      : fkill list [apps|all]
+# ============================================================
+# Hinweis     : macOS-spezifisch! Das Pattern \.app\/ filtert nach
+#               macOS App-Bundles. Für Linux-Portabilität müsste
+#               dieses Pattern durch Desktop-Anwendungserkennung
+#               ersetzt werden (z.B. via .desktop-Dateien oder
+#               /proc/<pid>/exe Symlink-Analyse).
+# ============================================================
+
+# ------------------------------------------------------------
+# Subcommand: list
+# ------------------------------------------------------------
+_fkill_list() {
+    local mode="${1:-apps}"
+
+    if [[ "$mode" == "apps" ]]; then
+        # Nur .app Prozesse (macOS-spezifisch – siehe Hinweis oben)
+        ps -u "$USER" -o pid,pcpu,pmem,comm | \
+            awk '/\.app\// {n=split($4,a,"/"); printf "%7s %5s%% %5s%%  %s\n", $1, $2, $3, a[n]}'
+    else
+        # Alle User-Prozesse
+        ps -u "$USER" -o pid,pcpu,pmem,comm | \
+            awk 'NR>1 {n=split($4,a,"/"); printf "%7s %5s%% %5s%%  %s\n", $1, $2, $3, a[n]}'
+    fi
+}
+
+# ------------------------------------------------------------
+# Usage
+# ------------------------------------------------------------
+_fkill_usage() {
+    cat <<EOF
+Usage: fkill <command> [args...]
+
+Commands:
+  list [apps|all]  Prozessliste generieren (Default: apps)
+
+EOF
+}
+
+# ------------------------------------------------------------
+# Main Dispatch
+# ------------------------------------------------------------
+case "${1:-}" in
+    list)    shift; _fkill_list "$@" ;;
+    -h|--help) _fkill_usage ;;
+    "")      _fkill_usage ;;
+    *)
+        echo "Unknown command: $1" >&2
+        _fkill_usage >&2
+        exit 1
+        ;;
+esac

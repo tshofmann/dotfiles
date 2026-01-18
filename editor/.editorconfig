@@ -1,9 +1,9 @@
 # ============================================================
 # EditorConfig - Editor-übergreifende Formatierungsregeln
 # ============================================================
-# Zweck   : Konsistente Formatierung in allen Editoren
-# Pfad    : ~/.editorconfig
-# Docs    : https://editorconfig.org/
+# Zweck       : Konsistente Formatierung in allen Editoren
+# Pfad        : ~/.editorconfig
+# Docs        : https://editorconfig.org/
 # ============================================================
 # Support : VS Code (Plugin), Neovim (Plugin), JetBrains (nativ)
 # Plugin  : https://github.com/editorconfig/editorconfig-vim

@@ -1,25 +1,24 @@
 #!/usr/bin/env zsh
 # ============================================================
-# safe-action - Sichere Aktionen für fzf-Bindings
+# action - Sichere Aktionen für fzf-Bindings
 # ============================================================
-# Zweck   : Führt Aktionen Shell-Injection-sicher aus
-# Pfad    : ~/.config/fzf/safe-action
-# Aufruf  : safe-action <action> "argument" [...]
+# Zweck       : Führt Aktionen Shell-Injection-sicher aus
+# Pfad        : ~/.config/fzf/action
+# Aufruf      : action <command> "argument" [...]
 # ============================================================
-# Actions : copy, edit, open, git-diff, git-restore, git-add,
+# Commands: copy, edit, open, git-diff, git-restore, git-add,
 #           zoxide-remove
 # ============================================================
 
-local action="$1"
-shift
-
-case "$action" in
+case "${1:-}" in
     copy)
         # Pfad ins Clipboard kopieren
+        shift
         printf '%s' "$1" | pbcopy
         ;;
     edit)
         # Datei im Editor öffnen (optional mit Zeile)
+        shift
         local file="$1"
         local line="${2:-}"
         if [[ -n "$line" ]]; then
@@ -30,30 +29,55 @@ case "$action" in
         ;;
     open)
         # Datei mit Standard-App öffnen
+        shift
         open -- "$1"
         ;;
     git-diff)
         # Git diff für Datei
+        shift
         git diff --color=always -- "$1" | bat --style=numbers --color=always -l diff 2>/dev/null || git diff --color=always -- "$1"
         ;;
     git-restore)
         # Git restore für Datei(en)
+        shift
         for file in "$@"; do
             git restore -- "$file"
         done
         ;;
     git-add)
         # Git add für Datei(en)
+        shift
         for file in "$@"; do
             git add -- "$file"
         done
         ;;
     zoxide-remove)
         # Zoxide Eintrag entfernen
+        shift
         zoxide remove -- "$1"
         ;;
+    -h|--help)
+        cat <<EOF
+Usage: action <command> [args...]
+
+Commands:
+  copy <path>            Pfad ins Clipboard kopieren
+  edit <file> [line]     Datei im Editor öffnen
+  open <file>            Datei mit Standard-App öffnen
+  git-diff <file>        Git diff für Datei anzeigen
+  git-restore <files...> Git restore für Datei(en)
+  git-add <files...>     Git add für Datei(en)
+  zoxide-remove <path>   Zoxide Eintrag entfernen
+
+EOF
+        ;;
+    "")
+        echo "Usage: action <command> [args...]" >&2
+        echo "Try 'action --help' for more information." >&2
+        exit 1
+        ;;
     *)
-        echo "Unbekannte Aktion: $action" >&2
-        return 1
+        echo "Unknown action: $1" >&2
+        exit 1
         ;;
 esac

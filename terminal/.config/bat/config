@@ -1,12 +1,12 @@
 # ============================================================
 # bat Config - Globale Standardoptionen
 # ============================================================
-# Zweck   : Native bat-Konfiguration (cat mit Syntax-Highlighting)
-# Pfad    : ~/.config/bat/config
-# Docs    : https://github.com/sharkdp/bat#configuration-file
+# Zweck       : Native bat-Konfiguration (cat mit Syntax-Highlighting)
+# Pfad        : ~/.config/bat/config
+# Docs        : https://github.com/sharkdp/bat#configuration-file
 # ============================================================
-# Aliase  : ~/.config/alias/bat.alias (cat, catn, catd)
-# Theme   : ~/.config/theme-style
+# Aliase      : ~/.config/alias/bat.alias (cat, catn, catd)
+# Theme       : ~/.config/theme-style
 # ============================================================
 
 # ------------------------------------------------------------

@@ -17,25 +17,21 @@
 `<Tab>`
 # dotfiles: Helper-Skripte (~/.config/fzf/)
 
+- dotfiles: `action` – Führt Aktionen Shell-Injection-sicher aus
+
 - dotfiles: `config` – Native fzf-Konfiguration (FZF_DEFAULT_OPTS_FILE)
 
-- dotfiles: `fa-preview` – Preview-Befehle für fa (Alias-Browser) in fzf
+- dotfiles: `fa` – Preview-Befehle für fa (Alias-Browser) in fzf
 
-- dotfiles: `fkill-list` – Generiert Prozessliste für fzf (Apps oder Alle)
+- dotfiles: `fkill` – Prozessliste für fzf
 
-- dotfiles: `fman-list` – Datenquelle für fman je nach Modus
-
-- dotfiles: `fman-preview` – Generiert man oder tldr Preview für fzf
-
-- dotfiles: `fman-toggle` – Gibt fzf-Aktionen für Modus-Wechsel aus
+- dotfiles: `fman` – Subcommands für man/tldr Browser
 
 - dotfiles: `init.zsh` – fzf Keybindings und fd-Backend aktivieren
 
-- dotfiles: `preview-dir` – Zeigt Verzeichnisinhalt mit eza/ls (Shell-Injection-sicher)
+- dotfiles: `lib.zsh` – Geteilte Utilities für alle fzf-Skripte
 
-- dotfiles: `preview-file` – Zeigt Vorschau für verschiedene Dateitypen
-
-- dotfiles: `safe-action` – Führt Aktionen Shell-Injection-sicher aus
+- dotfiles: `preview` – Zeigt Vorschau für Dateien und Verzeichnisse
 # dotfiles: Funktionen (aus fzf.alias)
 
 - dotfiles: Prozess Browser (`<Enter>` Beenden, `<Tab>` Mehrfach, `<Ctrl s>` Apps↔Alle):

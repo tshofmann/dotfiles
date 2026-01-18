@@ -2,8 +2,8 @@
 # ============================================================
 # parsers.sh - Parser für tldr-spezifische Formate
 # ============================================================
-# Zweck   : Keybindings, Parameter, fzf-Config, Yazi-Keymap Parser
-# Pfad    : .github/scripts/generators/tldr/parsers.sh
+# Zweck       : Keybindings, Parameter, fzf-Config, Yazi-Keymap Parser
+# Pfad        : .github/scripts/generators/tldr/parsers.sh
 # ============================================================
 
 # Abhängigkeit: common.sh muss vorher geladen sein

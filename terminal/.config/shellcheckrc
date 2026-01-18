@@ -1,9 +1,9 @@
 # ============================================================
 # ShellCheck - Konfiguration
 # ============================================================
-# Zweck   : Linting für Bash/sh/dash/ksh-Skripte
-# Pfad    : ~/.config/shellcheckrc (Symlink via Stow)
-# Docs    : https://www.shellcheck.net/wiki/
+# Zweck       : Linting für Bash/sh/dash/ksh-Skripte
+# Pfad        : ~/.config/shellcheckrc (Symlink via Stow)
+# Docs        : https://www.shellcheck.net/wiki/
 # ============================================================
 # HINWEIS: ShellCheck unterstützt KEIN ZSH!
 #          ZSH-Skripte produzieren SC1071 (kann nicht deaktiviert

@@ -1,13 +1,13 @@
 # ============================================================
 # rg.alias - Aliase für ripgrep (schneller grep-Ersatz)
 # ============================================================
-# Zweck   : Aliase für ripgrep mit häufig genutzten Optionen
-# Pfad    : ~/.config/alias/rg.alias
-# Docs    : https://github.com/BurntSushi/ripgrep
-# Config  : ~/.config/ripgrep/config
-# Nutzt   : fzf (Interactive), bat (Preview)
-# Ersetzt : grep (schneller, respektiert .gitignore)
-# Aliase  : rg, rgc, rgi
+# Zweck       : Aliase für ripgrep mit häufig genutzten Optionen
+# Pfad        : ~/.config/alias/rg.alias
+# Docs        : https://github.com/BurntSushi/ripgrep
+# Config      : ~/.config/ripgrep/config
+# Nutzt       : fzf (Interactive), bat (Preview)
+# Ersetzt     : grep (schneller, respektiert .gitignore)
+# Aliase      : rg, rgc, rgi
 # ============================================================
 
 # Guard   : Nur wenn rg installiert ist
@@ -64,7 +64,7 @@ alias rggo='rg -t go'
 # Interaktive Suche (mit fzf)
 # ------------------------------------------------------------
 # rgf: Live-Grep mit fzf + bat Vorschau (Datei:Zeile bleibt beim Scrollen sichtbar)
-# Verwendung: rgf [initiale-suche]
+# Verwendung  : rgf [initiale-suche]
 if command -v fzf >/dev/null 2>&1; then
     # Live-Grep(suche?) – Enter=Datei öffnen, Ctrl+Y=Pfad kopieren
     rgf() {
@@ -76,10 +76,10 @@ if command -v fzf >/dev/null 2>&1; then
             --bind "change:reload:sleep 0.1; $rg_prefix {q} || true" \
             --delimiter : \
             --freeze-left=1 \
-            --preview "$helper/preview-file {1} {2}" \
+            --preview "$helper/preview file {1} {2}" \
             --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' \
             --header='Enter: Datei öffnen | Ctrl+Y: Pfad kopieren' \
-            --bind "ctrl-y:execute-silent($helper/safe-action copy {1})+abort" \
-            --bind "enter:become($helper/safe-action edit {1} {2})"
+            --bind "ctrl-y:execute-silent($helper/action copy {1})+abort" \
+            --bind "enter:become($helper/action edit {1} {2})"
     }
 fi

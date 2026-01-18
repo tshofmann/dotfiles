@@ -1,0 +1,156 @@
+#!/usr/bin/env zsh
+# ============================================================
+# preview - Universelle Vorschau für fzf
+# ============================================================
+# Zweck       : Zeigt Vorschau für Dateien und Verzeichnisse
+# Pfad        : ~/.config/fzf/preview
+# Aufruf      : preview <file|dir> <path> [args...]
+# Nutzt       : bat (Code), eza (Dir), pdftotext (PDF), 7zz (Archive),
+#               identify (Bilder), ffprobe (Video/Audio)
+# ============================================================
+# Hinweis     : Pfad wird als Argument übergeben, nicht interpoliert
+# ============================================================
+
+# ------------------------------------------------------------
+# Subcommand: file
+# ------------------------------------------------------------
+_preview_file() {
+    local file="$1"
+    local line="${2:-}"
+
+    # Validierung: Datei muss existieren
+    if [[ ! -f "$file" ]]; then
+        echo "Datei nicht gefunden: $file"
+        return 1
+    fi
+
+    # MIME-Type ermitteln
+    local mime
+    mime=$(file --brief --mime-type -- "$file" 2>/dev/null)
+
+    # Dateierweiterung (lowercase)
+    local ext="${file:e:l}"
+
+    # ----------------------------------------------------------------
+    # Archiv-Vorschau (7zz)
+    # ----------------------------------------------------------------
+    case "$ext" in
+        zip|7z|rar|tar|gz|xz|bz2|tgz|tbz2|zst)
+            if command -v 7zz >/dev/null 2>&1; then
+                echo "📦 Archiv-Inhalt:"
+                7zz l -- "$file" 2>/dev/null | head -50
+                return 0
+            fi
+            ;;
+    esac
+
+    # ----------------------------------------------------------------
+    # PDF-Vorschau (poppler)
+    # ----------------------------------------------------------------
+    if [[ "$mime" == "application/pdf" || "$ext" == "pdf" ]]; then
+        if command -v pdftotext >/dev/null 2>&1; then
+            echo "📄 PDF-Vorschau (erste Seiten):"
+            pdftotext -l 3 -layout -- "$file" - 2>/dev/null | head -80
+            return 0
+        fi
+    fi
+
+    # ----------------------------------------------------------------
+    # Video-Vorschau (ffprobe)
+    # ----------------------------------------------------------------
+    if [[ "$mime" == video/* || "$ext" =~ ^(mp4|mkv|avi|mov|webm|wmv|flv|m4v)$ ]]; then
+        if command -v ffprobe >/dev/null 2>&1; then
+            echo "🎬 Video-Info:"
+            ffprobe -v quiet -show_format -show_streams -- "$file" 2>/dev/null | \
+                grep -E '^(format_name|duration|width|height|codec_name|bit_rate)=' | \
+                sed 's/^/  /'
+            return 0
+        fi
+    fi
+
+    # ----------------------------------------------------------------
+    # Audio-Vorschau (ffprobe)
+    # ----------------------------------------------------------------
+    if [[ "$mime" == audio/* || "$ext" =~ ^(mp3|flac|wav|ogg|m4a|aac|wma)$ ]]; then
+        if command -v ffprobe >/dev/null 2>&1; then
+            echo "🎵 Audio-Info:"
+            ffprobe -v quiet -show_format -- "$file" 2>/dev/null | \
+                grep -E '^(format_name|duration|bit_rate|TAG:)' | \
+                sed 's/^TAG:/  🏷️  /' | sed 's/^/  /'
+            return 0
+        fi
+    fi
+
+    # ----------------------------------------------------------------
+    # Bild-Vorschau (ImageMagick)
+    # ----------------------------------------------------------------
+    if [[ "$mime" == image/* || "$ext" =~ ^(jpg|jpeg|png|gif|webp|svg|heic|tiff|bmp|ico)$ ]]; then
+        if command -v identify >/dev/null 2>&1; then
+            echo "🖼️  Bild-Info:"
+            identify -verbose -- "$file" 2>/dev/null | \
+                grep -E '^\s*(Geometry|Resolution|Colorspace|Type|Filesize|Format):' | \
+                head -10
+            return 0
+        fi
+    fi
+
+    # ----------------------------------------------------------------
+    # Text/Code-Vorschau (bat/cat)
+    # ----------------------------------------------------------------
+    if [[ -n "$line" ]] && command -v bat >/dev/null 2>&1; then
+        bat --color=always --highlight-line "$line" -- "$file" 2>/dev/null || cat -- "$file"
+    elif command -v bat >/dev/null 2>&1; then
+        bat --style=numbers --color=always -- "$file" 2>/dev/null || cat -- "$file"
+    else
+        cat -- "$file"
+    fi
+}
+
+# ------------------------------------------------------------
+# Subcommand: dir
+# ------------------------------------------------------------
+_preview_dir() {
+    local dir="$1"
+    local level="${2:-2}"
+
+    # Validierung: Verzeichnis muss existieren
+    if [[ ! -d "$dir" ]]; then
+        echo "Verzeichnis nicht gefunden: $dir"
+        return 1
+    fi
+
+    if command -v eza >/dev/null 2>&1; then
+        eza --tree --level="$level" --icons --color=always --all -- "$dir" 2>/dev/null || ls -la -- "$dir"
+    else
+        ls -la -- "$dir"
+    fi
+}
+
+# ------------------------------------------------------------
+# Usage
+# ------------------------------------------------------------
+_preview_usage() {
+    cat <<EOF
+Usage: preview <command> [args...]
+
+Commands:
+  file <path> [line]   Datei-Vorschau (optional mit Zeile hervorheben)
+  dir <path> [level]   Verzeichnis-Vorschau (Default level: 2)
+
+EOF
+}
+
+# ------------------------------------------------------------
+# Main Dispatch
+# ------------------------------------------------------------
+case "${1:-}" in
+    file) shift; _preview_file "$@" ;;
+    dir)  shift; _preview_dir "$@" ;;
+    -h|--help) _preview_usage ;;
+    "")   _preview_usage ;;
+    *)
+        echo "Unknown command: $1" >&2
+        _preview_usage >&2
+        exit 1
+        ;;
+esac

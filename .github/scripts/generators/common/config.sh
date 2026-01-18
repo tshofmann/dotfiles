@@ -2,8 +2,8 @@
 # ============================================================
 # config.sh - Zentrale Konfiguration für Dokumentations-Generatoren
 # ============================================================
-# Zweck   : Pfade, Konstanten, Projekt-Metadaten
-# Pfad    : .github/scripts/generators/common/config.sh
+# Zweck       : Pfade, Konstanten, Projekt-Metadaten
+# Pfad        : .github/scripts/generators/common/config.sh
 # ============================================================
 
 # ------------------------------------------------------------

@@ -1,11 +1,11 @@
 # ============================================================
 # fastfetch.alias - fastfetch Aliase (System-Info)
 # ============================================================
-# Zweck   : Aliase für fastfetch – schnelle System-Übersicht
-# Pfad    : ~/.config/alias/fastfetch.alias
-# Docs    : https://github.com/fastfetch-cli/fastfetch
-# Config  : ~/.config/fastfetch/config.jsonc
-# Aliase  : ff, neofetch
+# Zweck       : Aliase für fastfetch – schnelle System-Übersicht
+# Pfad        : ~/.config/alias/fastfetch.alias
+# Docs        : https://github.com/fastfetch-cli/fastfetch
+# Config      : ~/.config/fastfetch/config.jsonc
+# Aliase      : ff, neofetch
 # ============================================================
 
 # Guard   : Nur wenn fastfetch installiert ist

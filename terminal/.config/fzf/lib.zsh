@@ -1,11 +1,11 @@
 #!/usr/bin/env zsh
 # ============================================================
-# fzf-lib - Gemeinsame Funktionen für fzf-Helper
+# lib.zsh - Gemeinsame Funktionen für fzf-Helper
 # ============================================================
-# Zweck   : Geteilte Utilities für fa-preview etc.
-# Pfad    : ~/.config/fzf/fzf-lib
+# Zweck       : Geteilte Utilities für alle fzf-Skripte
+# Pfad        : ~/.config/fzf/lib.zsh
 # ============================================================
-# Hinweis : Wird von fzf-Helpern per 'source' eingebunden
+# Hinweis     : Wird von fzf-Helpern per 'source' eingebunden
 #           Keine direkte Ausführung vorgesehen
 # ============================================================
 
@@ -32,7 +32,7 @@ _fzf_load_colors() {
 # ------------------------------------------------------------
 # ANSI-Escape-Codes entfernen
 # ------------------------------------------------------------
-# Verwendung: echo "$text" | _fzf_strip_ansi
+# Verwendung  : echo "$text" | _fzf_strip_ansi
 _fzf_strip_ansi() {
     sed 's/\x1b\[[0-9;]*m//g'
 }

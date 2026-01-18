@@ -2,8 +2,8 @@
 # ============================================================
 # parsers.sh - Text-Parser für Alias/Config-Dateien
 # ============================================================
-# Zweck   : Parser für Header-Blöcke, Beschreibungskommentare, Aliase
-# Pfad    : .github/scripts/generators/common/parsers.sh
+# Zweck       : Parser für Header-Blöcke, Beschreibungskommentare, Aliase
+# Pfad        : .github/scripts/generators/common/parsers.sh
 # ============================================================
 
 # Abhängigkeit: config.sh muss vorher geladen sein
@@ -12,10 +12,10 @@
 # Parser: Header-Block Metadaten
 # ------------------------------------------------------------
 # Extrahiert Metadaten aus Header-Blöcken:
-#   # Zweck   : Beschreibung
-#   # Docs    : https://...
-#   # Hinweis : Kann mehrzeilig sein
-#               Fortsetzung mit Einrückung
+#   # Zweck       : Beschreibung
+#   # Docs        : https://...
+#   # Hinweis     : Kann mehrzeilig sein
+#                   Fortsetzung mit Einrückung
 # Rückgabe: Wert oder leer
 parse_header_field() {
     local file="$1"

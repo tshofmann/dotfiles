@@ -1,9 +1,9 @@
 # ============================================================
 # Brewfile - Homebrew Bundle Konfiguration
 # ============================================================
-# Zweck     : Deklarative Homebrew-Abhängigkeiten
-# Verwendung: brew bundle (via HOMEBREW_BUNDLE_FILE in .zprofile)
-# Docs      : https://github.com/Homebrew/homebrew-bundle
+# Zweck       : Deklarative Homebrew-Abhängigkeiten
+# Verwendung  : brew bundle (via HOMEBREW_BUNDLE_FILE in .zprofile)
+# Docs        : https://github.com/Homebrew/homebrew-bundle
 # ============================================================
 # Format für Doku-Generierung:
 #   brew/cask: # Beschreibung | https://docs-url

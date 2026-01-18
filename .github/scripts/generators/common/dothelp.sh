@@ -2,8 +2,8 @@
 # ============================================================
 # dothelp.sh - dothelp Kategorien-Generator
 # ============================================================
-# Zweck   : Ermittelt dothelp-Kategorien aus echten Quellen
-# Pfad    : .github/scripts/generators/common/dothelp.sh
+# Zweck       : Ermittelt dothelp-Kategorien aus echten Quellen
+# Pfad        : .github/scripts/generators/common/dothelp.sh
 # ============================================================
 
 # Abhängigkeit: config.sh und parsers.sh müssen vorher geladen sein

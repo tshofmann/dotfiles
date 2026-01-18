@@ -1,9 +1,9 @@
 # ============================================================
 # keymap.toml - Yazi Tastenbelegungen
 # ============================================================
-# Zweck   : Custom Keybindings für Yazi
-# Pfad    : ~/.config/yazi/keymap.toml
-# Docs    : https://yazi-rs.github.io/docs/configuration/keymap
+# Zweck       : Custom Keybindings für Yazi
+# Pfad        : ~/.config/yazi/keymap.toml
+# Docs        : https://yazi-rs.github.io/docs/configuration/keymap
 # ============================================================
 
 # ------------------------------------------------------------

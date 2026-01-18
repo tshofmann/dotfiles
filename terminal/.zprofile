@@ -1,10 +1,10 @@
 # ============================================================
 # .zprofile - ZSH Login-Shell Konfiguration
 # ============================================================
-# Zweck   : Umgebungsvariablen für Login-Shells (einmalig)
-# Pfad    : ~/.zprofile
-# Laden   : .zshenv → [.zprofile] → .zshrc → .zlogin
-# Docs    : https://zsh.sourceforge.io/Doc/Release/Files.html#Startup_002fShutdown-Files
+# Zweck       : Umgebungsvariablen für Login-Shells (einmalig)
+# Pfad        : ~/.zprofile
+# Laden       : .zshenv → [.zprofile] → .zshrc → .zlogin
+# Docs        : https://zsh.sourceforge.io/Doc/Release/Files.html#Startup_002fShutdown-Files
 # ============================================================
 
 # ------------------------------------------------------------

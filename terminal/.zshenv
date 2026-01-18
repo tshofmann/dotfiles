@@ -1,10 +1,10 @@
 # ============================================================
 # .zshenv - ZSH Environment (wird als erstes geladen)
 # ============================================================
-# Zweck   : Umgebungsvariablen die VOR allen anderen Configs geladen werden
-# Pfad    : ~/.zshenv
-# Laden   : [.zshenv] → .zprofile → .zshrc → .zlogin
-# Docs    : https://zsh.sourceforge.io/Doc/Release/Files.html#Startup_002fShutdown-Files
+# Zweck       : Umgebungsvariablen die VOR allen anderen Configs geladen werden
+# Pfad        : ~/.zshenv
+# Laden       : [.zshenv] → .zprofile → .zshrc → .zlogin
+# Docs        : https://zsh.sourceforge.io/Doc/Release/Files.html#Startup_002fShutdown-Files
 # ============================================================
 
 # ------------------------------------------------------------

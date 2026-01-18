@@ -2,9 +2,9 @@
 # ============================================================
 # macos.sh - macOS Version Helper
 # ============================================================
-# Zweck   : macOS-Versionen und Codenamen aus Bootstrap extrahieren
-# Pfad    : .github/scripts/generators/common/macos.sh
-# Hinweis : macOS-spezifische Funktionen – plattformunabhängige
+# Zweck       : macOS-Versionen und Codenamen aus Bootstrap extrahieren
+# Pfad        : .github/scripts/generators/common/macos.sh
+# Hinweis     : macOS-spezifische Funktionen – plattformunabhängige
 #           Funktionen gehören in separate Module (z.B. starship.sh)
 # ============================================================
 

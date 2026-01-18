@@ -2,9 +2,9 @@
 # ============================================================
 # generate-docs.sh - Dokumentations-Generator (Single Source of Truth)
 # ============================================================
-# Zweck   : Generiert alle Dokumentation aus Code-Kommentaren
-# Pfad    : scripts/generate-docs.sh
-# Aufruf  : ./scripts/generate-docs.sh [--check|--generate]
+# Zweck       : Generiert alle Dokumentation aus Code-Kommentaren
+# Pfad        : scripts/generate-docs.sh
+# Aufruf      : ./scripts/generate-docs.sh [--check|--generate]
 # ============================================================
 # Architektur:
 #   Code (.alias, Brewfile, configs) → Generator → Docs
@@ -85,6 +85,7 @@ check_all() {
     # tldr-Patches
     local tldr_ok=true
     (
+        export _SOURCED_BY_GENERATOR=1
         source "$GENERATORS_DIR/tldr.sh"
         generate_tldr_patches --check
     ) || {
@@ -124,6 +125,7 @@ generate_all() {
 
     # tldr-Patches
     (
+        export _SOURCED_BY_GENERATOR=1
         source "$GENERATORS_DIR/tldr.sh"
         generate_tldr_patches --generate
     )

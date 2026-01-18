@@ -1,11 +1,11 @@
 # ============================================================
 # .zshrc - ZSH Konfiguration
 # ============================================================
-# Zweck   : Hauptkonfiguration für interaktive ZSH Shells
-# Pfad    : ~/.zshrc
-# Laden   : .zshenv → .zprofile → [.zshrc] → .zlogin
-# Theme   : ~/.config/theme-style (tldr catppuccin)
-# Docs    : https://zsh.sourceforge.io/Doc/Release/Files.html#Startup_002fShutdown-Files
+# Zweck       : Hauptkonfiguration für interaktive ZSH Shells
+# Pfad        : ~/.zshrc
+# Laden       : .zshenv → .zprofile → [.zshrc] → .zlogin
+# Theme       : ~/.config/theme-style (tldr catppuccin)
+# Docs        : https://zsh.sourceforge.io/Doc/Release/Files.html#Startup_002fShutdown-Files
 # ============================================================
 
 # ------------------------------------------------------------

@@ -1,12 +1,12 @@
 # ============================================================
 # yazi.alias - Aliase für yazi (Terminal File Manager)
 # ============================================================
-# Zweck   : Wrapper für yazi mit cd-nach-Exit
-# Pfad    : ~/.config/alias/yazi.alias
-# Docs    : https://yazi-rs.github.io/
-# Config  : ~/.config/yazi/
-# Nutzt   : fzf, bat, eza, fd, rg, zoxide
-# Aliase  : y
+# Zweck       : Wrapper für yazi mit cd-nach-Exit
+# Pfad        : ~/.config/alias/yazi.alias
+# Docs        : https://yazi-rs.github.io/
+# Config      : ~/.config/yazi/
+# Nutzt       : fzf, bat, eza, fd, rg, zoxide
+# Aliase      : y
 # ============================================================
 # Keybindings und Bookmarks: siehe ~/.config/yazi/keymap.toml
 # (werden automatisch in tldr yazi angezeigt)

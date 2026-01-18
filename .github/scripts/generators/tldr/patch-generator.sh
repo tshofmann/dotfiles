@@ -2,8 +2,8 @@
 # ============================================================
 # patch-generator.sh - Generator für Tool-Patches
 # ============================================================
-# Zweck   : Generiert Patch/Page für einzelne .alias-Dateien
-# Pfad    : .github/scripts/generators/tldr/patch-generator.sh
+# Zweck       : Generiert Patch/Page für einzelne .alias-Dateien
+# Pfad        : .github/scripts/generators/tldr/patch-generator.sh
 # ============================================================
 
 # Abhängigkeiten: common.sh, tldr/parsers.sh, tldr/alias-helpers.sh

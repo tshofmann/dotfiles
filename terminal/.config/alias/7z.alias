@@ -1,12 +1,12 @@
 # ============================================================
 # 7z.alias - Aliase für 7-Zip (sevenzip)
 # ============================================================
-# Zweck   : Praktische Aliase für Archiv-Operationen
-# Pfad    : ~/.config/alias/7z.alias
-# Docs    : https://7-zip.org/
-# Nutzt   : fzf (7zf), fd (7zf)
-# Ersetzt : -
-# Aliase  : 7za, 7zx, 7zl, 7zt, unrar, 7zf
+# Zweck       : Praktische Aliase für Archiv-Operationen
+# Pfad        : ~/.config/alias/7z.alias
+# Docs        : https://7-zip.org/
+# Nutzt       : fzf (7zf), fd (7zf)
+# Ersetzt     : -
+# Aliase      : 7za, 7zx, 7zl, 7zt, unrar, 7zf
 # ============================================================
 
 # Guard   : Nur wenn 7-Zip installiert ist

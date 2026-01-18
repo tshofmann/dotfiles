@@ -1,12 +1,12 @@
 # ============================================================
 # eza.alias - Aliase für eza (moderner ls-Ersatz)
 # ============================================================
-# Zweck   : Aliase für eza mit Icons und Git-Integration
-# Pfad    : ~/.config/alias/eza.alias
-# Docs    : https://eza.rocks
-# Config  : ~/.config/eza/theme.yml
-# Ersetzt : ls (mit Icons und Git-Status)
-# Aliase  : ls, ll, la, lt, lt3, lss, lsn
+# Zweck       : Aliase für eza mit Icons und Git-Integration
+# Pfad        : ~/.config/alias/eza.alias
+# Docs        : https://eza.rocks
+# Config      : ~/.config/eza/theme.yml
+# Ersetzt     : ls (mit Icons und Git-Status)
+# Aliase      : ls, ll, la, lt, lt3, lss, lsn
 #
 # Git-Integration:
 #   --git ist standardmäßig aktiv in allen -l Aliase. Performance:
