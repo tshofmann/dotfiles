@@ -4,6 +4,7 @@
 # ============================================================
 # Zweck       : Öffentliche API: generate_tldr_patches()
 # Pfad        : .github/scripts/generators/tldr/core.sh
+# Quellen     : .alias-Dateien (primär), Config-Verzeichnisse (sekundär)
 # ============================================================
 
 # Abhängigkeiten: common.sh, tldr/*.sh Module
@@ -17,6 +18,7 @@ generate_tldr_patches() {
 
     case "$mode" in
         --check)
+            # 1. Alias-basierte Patches prüfen
             for alias_file in "$ALIAS_DIR"/*.alias(N); do
                 local tool_name=$(basename "$alias_file" .alias)
                 local patch_file="$TEALDEER_DIR/${tool_name}.patch.md"
@@ -72,19 +74,54 @@ generate_tldr_patches() {
                 fi
             done
 
-            # Prüfe dotfiles.page.md
+            # 2. Config-only Tools prüfen (Tools ohne .alias aber mit Config)
+            for tool_name in $(find_config_only_tools); do
+                local patch_file="$TEALDEER_DIR/${tool_name}.patch.md"
+                local page_file="$TEALDEER_DIR/${tool_name}.page.md"
+
+                local is_page=false
+                has_official_tldr_page "$tool_name" || is_page=true
+
+                local generated=$(generate_config_only_patch "$tool_name" "$is_page")
+                local trimmed="${generated//[[:space:]]/}"
+
+                [[ -z "$trimmed" ]] && continue
+
+                if [[ "$is_page" == "false" ]]; then
+                    if [[ -f "$patch_file" ]]; then
+                        local current=$(cat "$patch_file")
+                        if [[ "$generated" != "$current" ]]; then
+                            err "${tool_name}.patch.md ist veraltet (Config-only Tool)"
+                            (( errors++ )) || true
+                        fi
+                    else
+                        err "${tool_name}.patch.md fehlt (Config-only Tool)"
+                        (( errors++ )) || true
+                    fi
+                else
+                    if [[ -f "$page_file" ]]; then
+                        local current=$(cat "$page_file")
+                        if [[ "$generated" != "$current" ]]; then
+                            err "${tool_name}.page.md ist veraltet (Config-only Tool)"
+                            (( errors++ )) || true
+                        fi
+                    else
+                        err "${tool_name}.page.md fehlt (Config-only Tool)"
+                        (( errors++ )) || true
+                    fi
+                fi
+            done
+
+            # 3. Spezial-Generatoren prüfen
             generate_dotfiles_tldr --check || (( errors++ )) || true
-
-            # Prüfe catppuccin.page.md
             generate_catppuccin_tldr --check || (( errors++ )) || true
-
-            # Prüfe zsh.patch.md
             generate_zsh_tldr --check || (( errors++ )) || true
 
             return $errors
             ;;
 
         --generate)
+            # 1. Alias-basierte Patches generieren
             for alias_file in "$ALIAS_DIR"/*.alias(N); do
                 local tool_name=$(basename "$alias_file" .alias)
                 local patch_file="$TEALDEER_DIR/${tool_name}.patch.md"
@@ -118,13 +155,35 @@ generate_tldr_patches() {
                 fi
             done
 
-            # Generiere dotfiles.page.md
+            # 2. Config-only Tools generieren
+            for tool_name in $(find_config_only_tools); do
+                local patch_file="$TEALDEER_DIR/${tool_name}.patch.md"
+                local page_file="$TEALDEER_DIR/${tool_name}.page.md"
+
+                local is_page=false
+                has_official_tldr_page "$tool_name" || is_page=true
+
+                local generated=$(generate_config_only_patch "$tool_name" "$is_page")
+                local trimmed="${generated//[[:space:]]/}"
+
+                if [[ -z "$trimmed" ]]; then
+                    [[ -f "$patch_file" ]] && rm "$patch_file"
+                    [[ -f "$page_file" ]] && rm "$page_file"
+                    continue
+                fi
+
+                if [[ "$is_page" == "false" ]]; then
+                    [[ -f "$page_file" ]] && rm "$page_file" && dim "  Gelöscht: ${tool_name}.page.md (offizielle tldr-Seite existiert)"
+                    write_if_changed "$patch_file" "$generated"
+                else
+                    [[ -f "$patch_file" ]] && rm "$patch_file" && dim "  Gelöscht: ${tool_name}.patch.md (keine offizielle tldr-Seite)"
+                    write_if_changed "$page_file" "$generated"
+                fi
+            done
+
+            # 3. Spezial-Generatoren ausführen
             generate_dotfiles_tldr --generate
-
-            # Generiere catppuccin.page.md
             generate_catppuccin_tldr --generate
-
-            # Generiere zsh.patch.md
             generate_zsh_tldr --generate
             ;;
     esac

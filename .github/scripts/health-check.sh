@@ -143,20 +143,27 @@ print ""
 print "   ${C_DIM}Prüft ob alle Komponenten korrekt installiert sind${C_RESET}"
 print "   ${C_DIM}ℹ SOLL-IST-Vergleich: Alle Dateien in terminal/ und editor/${C_RESET}"
 
-# --- Symlinks: SOLL-IST-Vergleich ---
-section "Symlinks (SOLL-IST-Vergleich)"
+# --- Symlinks: Bidirektionaler SOLL-IST-Vergleich ---
+section "Symlinks (bidirektional)"
 
 # VOLLSTÄNDIG DYNAMISCH: Scannt ALLE Dateien in terminal/
 # und prüft ob entsprechende Symlinks im Home-Verzeichnis existieren
 #
-# SOLL = Alle Dateien in terminal/ (außer .DS_Store, *.patch.md)
-# IST  = Entsprechende Symlinks in ~/ bzw. ~/.config/
+# Richtung 1: SOLL → IST
+#   SOLL = Alle Dateien in terminal/ (außer .DS_Store, *.patch.md)
+#   IST  = Entsprechende Symlinks in ~/ bzw. ~/.config/
+#
+# Richtung 2: IST → SOLL
+#   IST  = Alle Symlinks in ~/.config/ die auf dotfiles zeigen
+#   SOLL = Entsprechende Dateien in terminal/ oder editor/
 #
 # Bei neuen Dateien in terminal/ oder editor/ wird der Check automatisch erweitert!
 
 typeset -i symlink_count=0
 typeset -a missing_symlinks=()
+typeset -a expected_symlinks=()  # Für bidirektionale Prüfung
 
+# ━━━ Richtung 1: SOLL → IST ━━━
 # Prüfe terminal/ und editor/ Verzeichnisse
 for stow_dir in "$TERMINAL_DIR" "$EDITOR_DIR"; do
   [[ -d "$stow_dir" ]] || continue
@@ -171,6 +178,9 @@ for stow_dir in "$TERMINAL_DIR" "$EDITOR_DIR"; do
     # Ziel-Pfad im Home-Verzeichnis
     local target_path="$HOME/$rel_path"
     local display_path="~/$rel_path"
+
+    # Für bidirektionale Prüfung merken
+    expected_symlinks+=("$target_path")
 
     (( symlink_count++ )) || true
 
@@ -187,7 +197,7 @@ for stow_dir in "$TERMINAL_DIR" "$EDITOR_DIR"; do
       fail "$display_path → fehlt"
       missing_symlinks+=("$rel_path")
     fi
-  done < <(find "$stow_dir" -type f ! -name '.DS_Store' ! -name '*.patch.md' 2>/dev/null | sort)
+  done < <(find "$stow_dir" -type f ! -name '.DS_Store' 2>/dev/null | sort)
 done
 
 # Hinweis bei fehlenden Symlinks
@@ -196,7 +206,77 @@ if (( ${#missing_symlinks[@]} > 0 )); then
   print "     ${C_BOLD}cd $DOTFILES_DIR && stow -R terminal editor${C_RESET}"
 fi
 
-print "\n  ${C_DIM}📊 Geprüft: $symlink_count Dateien aus terminal/ und editor/${C_RESET}"
+print "\n  ${C_DIM}📊 Richtung 1: $symlink_count Dateien aus terminal/ und editor/${C_RESET}"
+
+# ━━━ Richtung 2: IST → SOLL ━━━
+# Finde Orphan-Symlinks in ~/.config/ die auf dotfiles zeigen aber nicht mehr im Repo sind
+typeset -i orphan_count=0
+typeset -a orphan_symlinks=()
+
+# Prüfe alle Symlinks in ~/.config/ die auf dotfiles zeigen
+while IFS= read -r symlink; do
+  [[ -z "$symlink" ]] && continue
+
+  # readlink ohne local (vermeidet typeset output)
+  local link_target=""
+  link_target=$(readlink "$symlink" 2>/dev/null) || continue
+
+  # Nur Symlinks die auf dotfiles zeigen
+  [[ "$link_target" == *"dotfiles/"* ]] || continue
+
+  # Prüfe ob die Quelle tatsächlich im Repo existiert
+  # (absoluter Pfad zur Quelldatei rekonstruieren)
+  local source_file=""
+  if [[ "$link_target" == /* ]]; then
+    # Absoluter Pfad
+    source_file="$link_target"
+  else
+    # Relativer Pfad - von Symlink-Verzeichnis aus auflösen
+    source_file="$(cd "$(dirname "$symlink")" && cd "$(dirname "$link_target")" && pwd)/$(basename "$link_target")"
+  fi
+
+  # Wenn Quelle existiert → kein Orphan
+  [[ -f "$source_file" ]] && continue
+
+  # Orphan gefunden - Symlink zeigt auf dotfiles aber Quelle fehlt
+  local display_path="${symlink/#$HOME/~}"
+  orphan_symlinks+=("$display_path")
+  (( orphan_count++ )) || true
+done < <(find "$HOME/.config" -maxdepth 3 -type l 2>/dev/null | sort)
+
+# Prüfe auch Root-Level Dotfiles (~/.zshrc, ~/.zshenv, etc.)
+for dotfile in ~/.zshrc ~/.zshenv ~/.zprofile ~/.zlogin ~/.editorconfig; do
+  [[ -L "$dotfile" ]] || continue
+
+  local link_target2=""
+  link_target2=$(readlink "$dotfile" 2>/dev/null) || continue
+  [[ "$link_target2" == *"dotfiles/"* ]] || continue
+
+  # Prüfe ob die Quelle tatsächlich existiert
+  local source_file=""
+  if [[ "$link_target2" == /* ]]; then
+    source_file="$link_target2"
+  else
+    source_file="$(cd "$(dirname "$dotfile")" && cd "$(dirname "$link_target2")" && pwd)/$(basename "$link_target2")"
+  fi
+
+  # Wenn Quelle existiert → kein Orphan
+  [[ -f "$source_file" ]] && continue
+
+  local display_path="${dotfile/#$HOME/~}"
+  orphan_symlinks+=("$display_path")
+  (( orphan_count++ )) || true
+done
+
+if (( ${#orphan_symlinks[@]} > 0 )); then
+  fail "Orphan-Symlinks (zeigen auf dotfiles, aber Quelle fehlt im Repo):"
+  for orphan in "${orphan_symlinks[@]}"; do
+    print "       → $orphan"
+  done
+  print "\n  ${C_DIM}💡 Entfernen mit: rm <symlink> oder Quelle wiederherstellen${C_RESET}"
+else
+  print "  ${C_DIM}📊 Richtung 2: Keine Orphan-Symlinks gefunden${C_RESET}"
+fi
 
 # --- Homebrew & Tools ---
 section "Homebrew & CLI-Tools"

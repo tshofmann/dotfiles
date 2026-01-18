@@ -7,12 +7,12 @@
 # Benötigt    : _core.sh
 # Plattform   : Universell (macOS + Linux)
 #
-# STEP: Architektur-Check | Prüft ob arm64 (Apple Silicon) | ❌ Exit
-# STEP: macOS-Version-Check | Prüft ob macOS ${MACOS_MIN_VERSION} installiert ist | ❌ Exit
-# STEP: Netzwerk-Check | Prüft Internetverbindung | ❌ Exit
-# STEP: Schreibrechte-Check | Prüft ob `$HOME` schreibbar ist | ❌ Exit
-# STEP: Xcode CLI Tools | Installiert/prüft Developer Tools | ❌ Exit
-# STEP: Build-Tools | Installiert Build-Essentials (Linux) | ❌ Exit
+# STEP        : Architektur-Check | Prüft ob arm64 (Apple Silicon) | ❌ Exit
+# STEP        : macOS-Version-Check | Prüft ob macOS ${MACOS_MIN_VERSION} installiert ist | ❌ Exit
+# STEP        : Netzwerk-Check | Prüft Internetverbindung | ❌ Exit
+# STEP        : Schreibrechte-Check | Prüft ob `$HOME` schreibbar ist | ❌ Exit
+# STEP        : Xcode CLI Tools | Installiert/prüft Developer Tools | ❌ Exit
+# STEP        : Build-Tools | Installiert Build-Essentials (Linux) | ❌ Exit
 # ============================================================
 
 # Guard: Core muss geladen sein

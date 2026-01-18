@@ -6,7 +6,7 @@
 # Pfad        : setup/modules/starship.sh
 # Benötigt    : _core.sh
 #
-# STEP: Starship-Theme | Generiert `~/.config/starship.toml` | ⚠️ Warnung
+# STEP        : Starship-Theme | Generiert `~/.config/starship.toml` | ⚠️ Warnung
 # Config      : ~/.config/starship.toml (NICHT versioniert)
 # Docs        : https://starship.rs/
 # Theme       : Catppuccin Mocha via catppuccin-powerline Preset

@@ -11,8 +11,8 @@
 # ------------------------------------------------------------
 # Modul-Metadaten Extraktion
 # ------------------------------------------------------------
-# Extrahiert STEP-Metadaten aus einem Modul (neues Format)
-# Format: # STEP: Name | Beschreibung | Fehlerverhalten
+# Extrahiert STEP-Metadaten aus einem Modul
+# Format: # STEP        : Name | Beschreibung | Fehlerverhalten
 # Rückgabe: Zeilenweise "Name|Beschreibung|Fehlerverhalten"
 # Ersetzt Platzhalter: ${MACOS_MIN_VERSION} → tatsächlicher Wert
 extract_module_step_metadata() {
@@ -24,9 +24,12 @@ extract_module_step_metadata() {
     macos_min=$(extract_macos_min_version_smart)
     macos_min_name=$(get_macos_codename "$macos_min")
 
-    grep "^# STEP:" "$module_file" 2>/dev/null | while read -r line; do
-        # Entferne "# STEP: " Prefix
-        local data="${line#\# STEP: }"
+    grep "^# STEP[[:space:]]*:" "$module_file" 2>/dev/null | while read -r line; do
+        # Entferne "# STEP        : " Prefix (flexibel mit beliebig vielen Spaces)
+        local data="${line#\# STEP}"
+        data="${data#"${data%%[^[:space:]]*}"}"  # Trim leading spaces
+        data="${data#:}"                          # Remove colon
+        data="${data#"${data%%[^[:space:]]*}"}"  # Trim spaces after colon
         # Ersetze Platzhalter
         data="${data//\$\{MACOS_MIN_VERSION\}/${macos_min}+ (${macos_min_name})}"
         # Gib Name|Beschreibung|Fehlerverhalten aus
@@ -110,7 +113,7 @@ get_bootstrap_module_order() {
 # Bootstrap-Schritte-Tabelle (Markdown)
 # ------------------------------------------------------------
 # Generiert Bootstrap-Schritte-Tabelle aus Modulen (Markdown-Format)
-# Nutzt STEP-Metadaten: # STEP: Name | Beschreibung | Fehlerverhalten
+# Nutzt STEP-Metadaten: # STEP        : Name | Beschreibung | Fehlerverhalten
 # Rückgabe: Markdown-Tabellenzeilen
 generate_bootstrap_steps_table() {
     local -a modules

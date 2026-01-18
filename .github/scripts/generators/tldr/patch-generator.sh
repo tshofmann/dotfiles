@@ -223,3 +223,77 @@ generate_complete_patch() {
 
     echo -e "$output"
 }
+
+# ------------------------------------------------------------
+# Generator: Patch für Config-only Tools (ohne .alias)
+# ------------------------------------------------------------
+# Generiert tldr-Patch aus Config-Datei Header-Informationen
+generate_config_only_patch() {
+    local tool_name="$1"
+    local for_page="${2:-false}"
+    local config_dir="$DOTFILES_DIR/terminal/.config/${tool_name}"
+    local output=""
+
+    # Finde Haupt-Config-Datei
+    local config_file=$(find_main_config_file "$config_dir")
+    [[ -z "$config_file" ]] && return 1
+
+    # Header-Felder parsen
+    local -A fields=()
+    while IFS='|' read -r key value; do
+        [[ -n "$key" ]] && fields[$key]="$value"
+    done < <(parse_config_file_header "$config_file")
+
+    # Für Pages: vollständigen Header generieren
+    if [[ "$for_page" == "true" ]]; then
+        output+="# ${tool_name}\n\n"
+        [[ -n "${fields[Zweck]}" ]] && output+="> ${fields[Zweck]}.\n"
+        [[ -n "${fields[Docs]}" ]] && output+="> Mehr Informationen: <${fields[Docs]}>\n"
+        output+="\n"
+    fi
+
+    # Config-Pfad
+    [[ -n "${fields[Pfad]}" ]] && output+="- dotfiles: Config \`${fields[Pfad]}\`\n\n"
+
+    # Theme (z.B. für Kitty)
+    if [[ -n "${fields[Theme]}" ]]; then
+        # Prüfe ob Theme-Datei existiert
+        local theme_file="$config_dir/current-theme.conf"
+        if [[ -f "$theme_file" ]]; then
+            output+="- dotfiles: Catppuccin Mocha Theme (\`current-theme.conf\` via Stow)\n\n"
+        fi
+    fi
+
+    # Reload-Shortcut
+    [[ -n "${fields[Reload]}" ]] && output+="- dotfiles: Config neu laden ohne Neustart:\n\n\`${fields[Reload]}\`\n\n"
+
+    # Tool-spezifische Erweiterungen
+    case "$tool_name" in
+        kitty)
+            output+=$(generate_kitty_specific_entries "$config_file")
+            ;;
+    esac
+
+    echo -e "$output"
+}
+
+# ------------------------------------------------------------
+# Generator: Kitty-spezifische tldr-Einträge
+# ------------------------------------------------------------
+generate_kitty_specific_entries() {
+    local config_file="$1"
+    local output=""
+
+    # SSH mit Terminfo
+    output+="- dotfiles: SSH mit automatischer Kitty-Terminfo-Installation:\n\n\`kitten ssh benutzer@host\`\n\n"
+
+    # Theme anzeigen
+    output+="- dotfiles: Aktuelles Theme anzeigen:\n\n\`cat ~/.config/kitty/current-theme.conf\`\n\n"
+
+    # Shell-Integration Features
+    output+="- dotfiles: Shell-Integration für ZSH (Jump-to-Prompt, Scroll-to-Last-Output)\n"
+    output+="- dotfiles: macOS-optimiert (Option als Alt, Titlebar-Farbe)\n"
+    output+="- dotfiles: Yazi-Previews funktionieren (Image-Protokoll)\n"
+
+    echo -e "$output"
+}
