@@ -19,19 +19,19 @@
 
 - dotfiles: `action` – Führt Aktionen Shell-Injection-sicher aus
 
+- dotfiles: `cmds` – Preview-Befehle für cmds (Alias-Browser) in fzf
+
 - dotfiles: `config` – Native fzf-Konfiguration (FZF_DEFAULT_OPTS_FILE)
 
-- dotfiles: `fa` – Preview-Befehle für cmds (Alias-Browser) in fzf
-
-- dotfiles: `fkill` – Prozessliste für fzf
-
-- dotfiles: `fman` – Subcommands für man/tldr Browser
+- dotfiles: `help` – Subcommands für man/tldr Browser
 
 - dotfiles: `init.zsh` – fzf Keybindings und fd-Backend aktivieren
 
 - dotfiles: `lib.zsh` – Geteilte Utilities für alle fzf-Skripte
 
 - dotfiles: `preview` – Zeigt Vorschau für Dateien und Verzeichnisse
+
+- dotfiles: `procs` – Prozessliste für fzf
 # dotfiles: Funktionen (aus fzf.alias)
 
 - dotfiles: Prozess Browser (`<Enter>` Beenden, `<Tab>` Mehrfach, `<Ctrl s>` Apps↔Alle):

@@ -1,10 +1,10 @@
 #!/usr/bin/env zsh
 # ============================================================
-# fa - Helper für cmds() Funktion
+# cmds - Helper für cmds() Funktion
 # ============================================================
 # Zweck       : Preview-Befehle für cmds (Alias-Browser) in fzf
-# Pfad        : ~/.config/fzf/fa
-# Aufruf      : fa preview <mode> <selection>
+# Pfad        : ~/.config/fzf/cmds
+# Aufruf      : cmds preview <mode> <selection>
 # ============================================================
 # Hinweis     : Ausgelagert wegen komplexem Shell-Escaping in fzf --bind
 #               Modes : code, tldr
@@ -16,12 +16,12 @@ source "${0:A:h}/lib.zsh"
 # ------------------------------------------------------------
 # Subcommand: preview
 # ------------------------------------------------------------
-_fa_preview() {
+_cmds_preview() {
     local mode="${1:-code}"
     local selection="${2:-}"
 
     if [[ -z "$selection" ]]; then
-        echo "${C_RED}Fehler:${C_RESET} fa preview benötigt eine Auswahl als zweites Argument." >&2
+        echo "${C_RED}Fehler:${C_RESET} cmds preview benötigt eine Auswahl als zweites Argument." >&2
         return 1
     fi
 
@@ -120,9 +120,9 @@ _fa_preview() {
 # ------------------------------------------------------------
 # Usage
 # ------------------------------------------------------------
-_fa_usage() {
+_cmds_usage() {
     cat <<EOF
-Usage: fa <command> [args...]
+Usage: cmds <command> [args...]
 
 Commands:
   preview <mode> <selection>  Generiere Preview für Auswahl
@@ -135,12 +135,12 @@ EOF
 # Main Dispatch
 # ------------------------------------------------------------
 case "${1:-}" in
-    preview) shift; _fa_preview "$@" ;;
-    -h|--help) _fa_usage ;;
-    "")      _fa_usage ;;
+    preview) shift; _cmds_preview "$@" ;;
+    -h|--help) _cmds_usage ;;
+    "")      _cmds_usage ;;
     *)
         echo "Unknown command: $1" >&2
-        _fa_usage >&2
+        _cmds_usage >&2
         exit 1
         ;;
 esac

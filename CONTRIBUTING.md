@@ -130,9 +130,9 @@ Wiederverwendbare Skripte für fzf-Previews und -Aktionen in `~/.config/fzf/`:
 | `preview-file` | Datei-Vorschau mit bat (Fallback: cat) | `rg.alias`, `fd.alias` |
 | `preview-dir` | Verzeichnis-Vorschau mit eza (Fallback: ls) | `zoxide.alias`, `fd.alias` |
 | `safe-action` | Sichere Aktionen (copy, edit, git-diff) | Mehrere `.alias`-Dateien |
-| `fman` | Man/tldr Vorschau (für `help`) | `fzf.alias` |
-| `fa` | Alias-Browser Vorschau (für `cmds`) | `fzf.alias` |
-| `fkill` | Prozessliste (für `procs`) | `fzf.alias` |
+| `help` | Helper für `help()` (list, preview, toggle) | `fzf.alias` |
+| `cmds` | Helper für `cmds()` (preview) | `fzf.alias` |
+| `procs` | Helper für `procs()` (list) | `fzf.alias` |
 
 **Warum Helper statt Inline-Code?**
 

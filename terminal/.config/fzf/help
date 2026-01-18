@@ -1,10 +1,10 @@
 #!/usr/bin/env zsh
 # ============================================================
-# fman - Helper für help() Funktion
+# help - Helper für help() Funktion
 # ============================================================
 # Zweck       : Subcommands für man/tldr Browser
-# Pfad        : ~/.config/fzf/fman
-# Aufruf      : fman <list|preview|toggle> [args...]
+# Pfad        : ~/.config/fzf/help
+# Aufruf      : help <list|preview|toggle> [args...]
 # ============================================================
 # Commands:
 #   list [man|tldr]        – Listet Einträge
@@ -15,7 +15,7 @@
 # ------------------------------------------------------------
 # Subcommand: list
 # ------------------------------------------------------------
-_fman_list() {
+_help_list() {
     local mode="${1:-man}"
 
     case "$mode" in
@@ -37,7 +37,7 @@ _fman_list() {
 # ------------------------------------------------------------
 # Subcommand: preview
 # ------------------------------------------------------------
-_fman_preview() {
+_help_preview() {
     local mode="$1"
     local entry="$2"
 
@@ -54,23 +54,23 @@ _fman_preview() {
 # ------------------------------------------------------------
 # Subcommand: toggle
 # ------------------------------------------------------------
-_fman_toggle() {
+_help_toggle() {
     local fzf_dir="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
 
     # Query bleibt automatisch erhalten, first springt zum ersten Match
     if [[ "$FZF_PROMPT" == "man> " ]]; then
-        echo "reload($fzf_dir/fman list tldr)+change-prompt(tldr> )+change-preview($fzf_dir/fman preview tldr {})+first"
+        echo "reload($fzf_dir/help list tldr)+change-prompt(tldr> )+change-preview($fzf_dir/help preview tldr {})+first"
     else
-        echo "reload($fzf_dir/fman list man)+change-prompt(man> )+change-preview($fzf_dir/fman preview man {})+first"
+        echo "reload($fzf_dir/help list man)+change-prompt(man> )+change-preview($fzf_dir/help preview man {})+first"
     fi
 }
 
 # ------------------------------------------------------------
 # Usage
 # ------------------------------------------------------------
-_fman_usage() {
+_help_usage() {
     cat <<EOF
-Usage: fman <command> [args...]
+Usage: help <command> [args...]
 
 Commands:
   list [man|tldr]        Liste Einträge (Default: man)
@@ -84,14 +84,14 @@ EOF
 # Main Dispatch
 # ------------------------------------------------------------
 case "${1:-}" in
-    list)    shift; _fman_list "$@" ;;
-    preview) shift; _fman_preview "$@" ;;
-    toggle)  shift; _fman_toggle "$@" ;;
-    -h|--help) _fman_usage ;;
-    "")      _fman_usage ;;
+    list)    shift; _help_list "$@" ;;
+    preview) shift; _help_preview "$@" ;;
+    toggle)  shift; _help_toggle "$@" ;;
+    -h|--help) _help_usage ;;
+    "")      _help_usage ;;
     *)
         echo "Unknown command: $1" >&2
-        _fman_usage >&2
+        _help_usage >&2
         exit 1
         ;;
 esac

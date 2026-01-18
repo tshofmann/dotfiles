@@ -16,9 +16,9 @@
 #   lib.zsh   – Shared Utilities (Farben, ANSI-Strip)
 #   preview   – Vorschau (file|dir) mit bat/eza
 #   action    – Sichere Aktionen (copy, edit, open, git-*, zoxide-*)
-#   fman      – Helper für help() (list|preview|toggle)
-#   fkill     – Helper für procs() (list)
-#   fa        – Helper für cmds() (preview)
+#   help      – Helper für help() (list|preview|toggle)
+#   procs     – Helper für procs() (list)
+#   cmds      – Helper für cmds() (preview)
 # Aliase      : procs, help, cmds, vars
 # ============================================================
 
@@ -43,12 +43,12 @@ procs() {
     local pid
     local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
 
-    pid=$("$helper/fkill" list apps | \
+    pid=$("$helper/procs" list apps | \
         fzf -m \
             --freeze-left=1 \
             --prompt='Apps> ' \
             --header='Enter: Beenden | Tab: Mehrfach | Ctrl+S: Apps/Alle' \
-            --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Apps> ' ]] && echo 'reload($helper/fkill list all)+change-prompt(Alle> )' || echo 'reload($helper/fkill list apps)+change-prompt(Apps> )'" | \
+            --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Apps> ' ]] && echo 'reload($helper/procs list all)+change-prompt(Alle> )' || echo 'reload($helper/procs list apps)+change-prompt(Apps> )'" | \
         awk '{print $1}')
 
     [[ -n "$pid" ]] && echo "$pid" | xargs kill -${1:-15}
@@ -64,11 +64,11 @@ help() {
     local fzf_dir="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
 
     # Ctrl+S wechselt sowohl Liste als auch Preview zwischen man und tldr
-    output=$("$fzf_dir/fman" list man | \
+    output=$("$fzf_dir/help" list man | \
         fzf --prompt='man> ' \
-            --preview="$fzf_dir/fman preview man {}" \
+            --preview="$fzf_dir/help preview man {}" \
             --header='Enter: öffnen | Ctrl+S: man ↔ tldr' \
-            --bind="ctrl-s:transform:$fzf_dir/fman toggle" \
+            --bind="ctrl-s:transform:$fzf_dir/help toggle" \
             --bind="enter:transform:[[ \$FZF_PROMPT == 'tldr> ' ]] && echo 'print(tldr)+accept' || echo 'print(man)+accept'")
 
     [[ -z "$output" ]] && return 0
@@ -173,7 +173,7 @@ cmds() {
     ' | fzf --ansi --query="$query" \
         --prompt='tldr> ' \
         --header='Enter: Befehl übernehmen | Ctrl+S: tldr ↔ Code' \
-        --preview "[[ \$FZF_PROMPT == 'code> ' ]] && zsh '$fzf_dir/fa' preview code {} || zsh '$fzf_dir/fa' preview tldr {}" \
+        --preview "[[ \$FZF_PROMPT == 'code> ' ]] && zsh '$fzf_dir/cmds' preview code {} || zsh '$fzf_dir/cmds' preview tldr {}" \
         --preview-window='right:50%:wrap' \
         --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'tldr> ' ]] && echo 'change-prompt(code> )+refresh-preview' || echo 'change-prompt(tldr> )+refresh-preview'")
 
