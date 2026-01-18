@@ -6,7 +6,7 @@
 # Pfad        : setup/modules/git-hooks.sh
 # Benötigt    : _core.sh
 #
-# STEP: Git Hooks | Aktiviert Pre-Commit Validierung | ✓ Schnell
+# STEP        : Git Hooks | Aktiviert Pre-Commit Validierung | ✓ Schnell
 # Hooks       : .github/hooks/pre-commit
 # ============================================================
 

@@ -6,7 +6,7 @@
 # Pfad        : setup/modules/stow.sh
 # Benötigt    : _core.sh, homebrew.sh (stow muss installiert sein)
 #
-# STEP: Stow Symlinks | Verlinkt terminal/ und editor/ Configs | ⚠️ Kritisch
+# STEP        : Stow Symlinks | Verlinkt terminal/ und editor/ Configs | ⚠️ Kritisch
 # Packages    : terminal, editor
 # ============================================================
 

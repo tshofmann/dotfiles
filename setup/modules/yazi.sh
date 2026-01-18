@@ -6,7 +6,7 @@
 # Pfad        : setup/modules/yazi.sh
 # Benötigt    : _core.sh, homebrew (yazi muss installiert sein)
 #
-# STEP: Yazi-Packages | ya pkg install | ⏭ Übersprungen wenn vorhanden
+# STEP        : Yazi-Packages | ya pkg install | ⏭ Übersprungen wenn vorhanden
 # Config      : ~/.config/yazi/package.toml
 # Docs        : https://yazi-rs.github.io/docs/cli#package
 #

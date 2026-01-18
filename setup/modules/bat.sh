@@ -6,7 +6,7 @@
 # Pfad        : setup/modules/bat.sh
 # Benötigt    : _core.sh, stow.sh (Themes müssen verlinkt sein)
 #
-# STEP: bat Cache | Baut Theme-Cache für Syntax-Highlighting | ✓ Schnell
+# STEP        : bat Cache | Baut Theme-Cache für Syntax-Highlighting | ✓ Schnell
 # Theme       : ~/.config/bat/themes/Catppuccin Mocha.tmTheme
 # ============================================================
 

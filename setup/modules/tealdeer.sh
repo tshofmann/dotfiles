@@ -6,7 +6,7 @@
 # Pfad        : setup/modules/tealdeer.sh
 # Benötigt    : _core.sh, homebrew.sh (tealdeer muss installiert sein)
 #
-# STEP: tldr Cache | Lädt tldr-Pages herunter | ⚠️ Netzwerk
+# STEP        : tldr Cache | Lädt tldr-Pages herunter | ⚠️ Netzwerk
 # Cache       : ~/.cache/tealdeer/
 # ============================================================
 

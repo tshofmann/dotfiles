@@ -7,7 +7,7 @@
 # Benötigt    : _core.sh, homebrew.sh (Font wird via Brewfile installiert)
 # Plattform   : Universell (macOS + Linux)
 #
-# STEP: Font-Verifikation | Prüft MesloLG Nerd Font Installation | ❌ Exit
+# STEP        : Font-Verifikation | Prüft MesloLG Nerd Font Installation | ❌ Exit
 # Font        : MesloLGS Nerd Font (LDZNF = Large, Dotted Zero, Nerd Font)
 # Speicherort : ~/Library/Fonts/ (macOS) oder ~/.local/share/fonts/ (Linux)
 # Verwendung  : Icons in Terminal (Powerline, Devicons, Font Awesome, Octicons)

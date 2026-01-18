@@ -6,7 +6,7 @@
 # Pfad        : setup/modules/xcode-theme.sh
 # Benötigt    : _core.sh
 #
-# STEP: Xcode-Theme | Installiert Catppuccin Mocha Theme | ⚠️ Warnung
+# STEP        : Xcode-Theme | Installiert Catppuccin Mocha Theme | ⚠️ Warnung
 # Theme       : Catppuccin Mocha (.xccolortheme-Datei in setup/)
 # Zielort     : ~/Library/Developer/Xcode/UserData/FontAndColorThemes/
 # Aktivierung : Xcode → Settings (⌘,) → Themes → Theme-Name

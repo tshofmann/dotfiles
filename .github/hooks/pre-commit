@@ -167,6 +167,7 @@ check_header_alignment() {
         "Theme       :"
         "Laden       :"
         "Geladen     :"
+        "STEP        :"
     )
 
     # Alle Dateien mit Header-Blöcken prüfen

@@ -6,7 +6,7 @@
 # Pfad        : setup/modules/kitty.sh
 # Benötigt    : _core.sh
 #
-# STEP: Kitty Terminal | Setzt Catppuccin Mocha als Theme | ⚠️ Optional
+# STEP        : Kitty Terminal | Setzt Catppuccin Mocha als Theme | ⚠️ Optional
 # Theme       : Eingebaut seit Kitty v0.26 (kein Download nötig)
 # Config      : ~/.config/kitty/kitty.conf (via stow)
 # ============================================================

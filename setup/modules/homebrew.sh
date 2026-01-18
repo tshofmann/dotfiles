@@ -6,8 +6,8 @@
 # Pfad        : setup/modules/homebrew.sh
 # Benötigt    : _core.sh, validation.sh (für BREW_PREFIX)
 #
-# STEP: Homebrew | Installiert/prüft Homebrew unter `/opt/homebrew` | ❌ Exit
-# STEP: Brewfile | Installiert CLI-Tools via `brew bundle` | ❌ Exit
+# STEP        : Homebrew | Installiert/prüft Homebrew unter `/opt/homebrew` | ❌ Exit
+# STEP        : Brewfile | Installiert CLI-Tools via `brew bundle` | ❌ Exit
 # ============================================================
 
 # Guard: Core muss geladen sein
