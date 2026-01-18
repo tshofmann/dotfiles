@@ -21,12 +21,26 @@ _fkill_list() {
 
     if [[ "$mode" == "apps" ]]; then
         # Nur .app Prozesse (macOS-spezifisch – siehe Hinweis oben)
+        # Prozessnamen können Leerzeichen enthalten → alles ab $4 als Pfad behandeln
         ps -u "$USER" -o pid,pcpu,pmem,comm | \
-            awk '/\.app\// {n=split($4,a,"/"); printf "%7s %5s%% %5s%%  %s\n", $1, $2, $3, a[n]}'
+            awk '/\.app\// {
+                pid=$1; cpu=$2; mem=$3
+                $1=$2=$3=""
+                sub(/^[[:space:]]+/, "")
+                n=split($0,a,"/")
+                printf "%7s %5s%% %5s%%  %s\n", pid, cpu, mem, a[n]
+            }'
     else
         # Alle User-Prozesse
+        # Prozessnamen können Leerzeichen enthalten → alles ab $4 als Pfad behandeln
         ps -u "$USER" -o pid,pcpu,pmem,comm | \
-            awk 'NR>1 {n=split($4,a,"/"); printf "%7s %5s%% %5s%%  %s\n", $1, $2, $3, a[n]}'
+            awk 'NR>1 {
+                pid=$1; cpu=$2; mem=$3
+                $1=$2=$3=""
+                sub(/^[[:space:]]+/, "")
+                n=split($0,a,"/")
+                printf "%7s %5s%% %5s%%  %s\n", pid, cpu, mem, a[n]
+            }'
     fi
 }
 
