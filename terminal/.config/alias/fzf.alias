@@ -11,14 +11,14 @@
 # Tool-spezifische Funktionen in fd/rg/git/brew/gh.alias.
 #
 # Helper-Skripte in ~/.config/fzf/:
-#   config       – Globale fzf-Optionen (Farben, Layout, Keybindings)
-#   init.zsh     – Shell-Integration (Ctrl+X Keybindings, FZF_DEFAULT_COMMAND)
-#   preview-file – Universelle Vorschau (Code, PDF, Archive, Bilder, Video, Audio)
-#   preview-dir  – Verzeichnis-Vorschau mit eza --tree
-#   fman-preview – Man-Page/tldr Vorschau für fman-Funktion
-#   fa-preview   – Alias/Funktions-Code-Vorschau für fa-Funktion
-#   fkill-list   – Prozessliste für fkill-Funktion
-#   safe-action  – Sichere Aktionen (copy, edit, git-diff, etc.)
+#   config    – Globale fzf-Optionen (Farben, Layout, Keybindings)
+#   init.zsh  – Shell-Integration (Ctrl+X Keybindings, FZF_DEFAULT_COMMAND)
+#   lib.zsh   – Shared Utilities (Farben, ANSI-Strip)
+#   preview   – Vorschau (file|dir) mit bat/eza
+#   action    – Sichere Aktionen (copy, edit, open, git-*, zoxide-*)
+#   fman      – Man/tldr Browser Helper (list|preview|toggle)
+#   fkill     – Prozessliste Helper (list)
+#   fa        – Alias-Browser Helper (preview)
 # Aliase  : fkill, fman, fa, fenv
 # ============================================================
 
@@ -41,14 +41,14 @@ fi
 # Prozess Browser(signal=15) – Enter=Beenden, Tab=Mehrfach, Ctrl+S=Apps↔Alle
 fkill() {
     local pid
-    local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fkill-list"
+    local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
 
-    pid=$("$helper" apps | \
+    pid=$("$helper/fkill" list apps | \
         fzf -m \
             --freeze-left=1 \
             --prompt='Apps> ' \
             --header='Enter: Beenden | Tab: Mehrfach | Ctrl+S: Apps/Alle' \
-            --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Apps> ' ]] && echo 'reload($helper all)+change-prompt(Alle> )' || echo 'reload($helper apps)+change-prompt(Apps> )'" | \
+            --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Apps> ' ]] && echo 'reload($helper/fkill list all)+change-prompt(Alle> )' || echo 'reload($helper/fkill list apps)+change-prompt(Apps> )'" | \
         awk '{print $1}')
 
     [[ -n "$pid" ]] && echo "$pid" | xargs kill -${1:-15}
@@ -64,11 +64,11 @@ fman() {
     local fzf_dir="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
 
     # Ctrl+S wechselt sowohl Liste als auch Preview zwischen man und tldr
-    output=$("$fzf_dir/fman-list" man | \
+    output=$("$fzf_dir/fman" list man | \
         fzf --prompt='man> ' \
-            --preview="$fzf_dir/fman-preview man {}" \
+            --preview="$fzf_dir/fman preview man {}" \
             --header='Enter: öffnen | Ctrl+S: man ↔ tldr' \
-            --bind="ctrl-s:transform:$fzf_dir/fman-toggle" \
+            --bind="ctrl-s:transform:$fzf_dir/fman toggle" \
             --bind="enter:transform:[[ \$FZF_PROMPT == 'tldr> ' ]] && echo 'print(tldr)+accept' || echo 'print(man)+accept'")
 
     [[ -z "$output" ]] && return 0
@@ -173,7 +173,7 @@ fa() {
     ' | fzf --ansi --query="$query" \
         --prompt='tldr> ' \
         --header='Enter: Befehl übernehmen | Ctrl+S: tldr ↔ Code' \
-        --preview "[[ \$FZF_PROMPT == 'code> ' ]] && zsh '$fzf_dir/fa-preview' code {} || zsh '$fzf_dir/fa-preview' tldr {}" \
+        --preview "[[ \$FZF_PROMPT == 'code> ' ]] && zsh '$fzf_dir/fa' preview code {} || zsh '$fzf_dir/fa' preview tldr {}" \
         --preview-window='right:50%:wrap' \
         --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'tldr> ' ]] && echo 'change-prompt(code> )+refresh-preview' || echo 'change-prompt(tldr> )+refresh-preview'")
 

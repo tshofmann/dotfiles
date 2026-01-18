@@ -1,0 +1,146 @@
+#!/usr/bin/env zsh
+# ============================================================
+# fa - Helper für fa() Funktion
+# ============================================================
+# Zweck   : Preview-Befehle für fa (Alias-Browser) in fzf
+# Pfad    : ~/.config/fzf/fa
+# Aufruf  : fa preview <mode> <selection>
+# ============================================================
+# Hinweis : Ausgelagert wegen komplexem Shell-Escaping in fzf --bind
+#           Modes : code, tldr
+# ============================================================
+
+# Gemeinsame Bibliothek laden (Farben, ANSI-Strip)
+source "${0:A:h}/lib.zsh"
+
+# ------------------------------------------------------------
+# Subcommand: preview
+# ------------------------------------------------------------
+_fa_preview() {
+    local mode="${1:-code}"
+    local selection="${2:-}"
+
+    if [[ -z "$selection" ]]; then
+        echo "${C_RED}Fehler:${C_RESET} fa preview benötigt eine Auswahl als zweites Argument." >&2
+        return 1
+    fi
+
+    # Extrahiere Name und Kategorie aus fzf-Zeile (ANSI-Codes entfernen)
+    local line name cat
+    line=$(echo "$selection" | _fzf_strip_ansi)
+    name=$(echo "$line" | awk '{print $1}')
+    cat=$(echo "$line" | awk '{print $3}')
+
+    # Alias-Datei ermitteln
+    local alias_dir="${XDG_CONFIG_HOME:-$HOME/.config}/alias"
+    local file="${alias_dir}/${cat}.alias"
+
+    case "$mode" in
+        code)
+            # Code-Definition aus Alias-Datei extrahieren
+            if [[ ! -f "$file" ]]; then
+                echo "${C_RED}Datei nicht gefunden:${C_RESET} $file"
+                return 1
+            fi
+            
+            # AWK-Skript: Sucht Alias oder Funktion mit vorangehendem Kommentar
+            # Hinweis: Funktionsende wird durch } auf gleicher Einrückungsebene wie
+            #          die Funktionsdefinition erkannt. Das funktioniert sowohl für
+            #          Top-Level-Funktionen als auch für Funktionen innerhalb von
+            #          if-Blöcken (z.B. rgf() in rg.alias).
+            local extracted
+            extracted=$(awk -v name="$name" '
+                BEGIN { found=0; buffer=""; printing=0; indent="" }
+                
+                # Kommentar-Zeilen (eingerückt oder nicht) merken
+                /^[[:space:]]*#/ { 
+                    if (!found) buffer = $0 "\n"
+                    next 
+                }
+                
+                # Alias-Definition: alias name="..." oder alias name='\''...'\''
+                $0 ~ "^alias[[:space:]]+" name "=" { 
+                    printf "%s%s\n", buffer, $0
+                    found=1; buffer=""
+                    next
+                }
+                
+                # Funktions-Definition: name() { (auch eingerückt)
+                # Exakter Namensvergleich verhindert false positives (z.B. fa vs fak)
+                # Pattern erlaubt auch Bindestriche (z.B. bat-theme)
+                /^[[:space:]]*[a-zA-Z_][a-zA-Z0-9_-]*\(\)[[:space:]]*\{/ {
+                    match($0, /^[[:space:]]*/)
+                    line_indent = substr($0, RSTART, RLENGTH)
+                    rest = substr($0, RLENGTH + 1)
+                    match(rest, /^[a-zA-Z_][a-zA-Z0-9_-]*/)
+                    func_name = substr(rest, RSTART, RLENGTH)
+                    if (func_name == name && !found) {
+                        printf "%s", buffer
+                        found=1; buffer=""
+                        printing=1
+                        indent = line_indent  # Einrückung merken
+                    }
+                }
+                
+                # Funktionskörper ausgeben
+                printing { print }
+                
+                # Funktionsende: } auf gleicher Einrückungsebene wie Funktionsstart
+                printing && $0 ~ "^" indent "}[[:space:]]*$" { printing=0; exit }
+                
+                # Kein Match = Buffer zurücksetzen
+                !found { buffer="" }
+            ' "$file")
+            
+            # Syntax-Highlighting mit bat (falls verfügbar)
+            if command -v bat >/dev/null 2>&1; then
+                echo "$extracted" | bat --language=zsh --style=plain --color=always
+            else
+                echo "$extracted"
+            fi
+            ;;
+            
+        tldr)
+            # tldr-Seite für die Tool-Kategorie anzeigen
+            if command -v tldr >/dev/null 2>&1; then
+                tldr --color=always "$cat" 2>/dev/null || echo "Keine tldr-Seite für ${C_MAUVE}${cat}${C_RESET}"
+            else
+                echo "${C_RED}tldr nicht installiert${C_RESET}"
+            fi
+            ;;
+            
+        *)
+            echo "${C_RED}Unbekannter Modus:${C_RESET} $mode"
+            echo "Verfügbar: code, tldr"
+            return 1
+            ;;
+    esac
+}
+
+# ------------------------------------------------------------
+# Usage
+# ------------------------------------------------------------
+_fa_usage() {
+    cat <<EOF
+Usage: fa <command> [args...]
+
+Commands:
+  preview <mode> <selection>  Generiere Preview für Auswahl
+                              Modes: code, tldr
+
+EOF
+}
+
+# ------------------------------------------------------------
+# Main Dispatch
+# ------------------------------------------------------------
+case "${1:-}" in
+    preview) shift; _fa_preview "$@" ;;
+    -h|--help) _fa_usage ;;
+    "")      _fa_usage ;;
+    *)
+        echo "Unknown command: $1" >&2
+        _fa_usage >&2
+        exit 1
+        ;;
+esac

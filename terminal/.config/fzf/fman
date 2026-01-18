@@ -1,0 +1,96 @@
+#!/usr/bin/env zsh
+# ============================================================
+# fman - Helper für fman() Funktion
+# ============================================================
+# Zweck   : Subcommands für man/tldr Browser
+# Pfad    : ~/.config/fzf/fman
+# Aufruf  : fman <list|preview|toggle> [args...]
+# ============================================================
+# Commands:
+#   list [man|tldr]        – Listet Einträge
+#   preview <mode> <entry> – Generiert Preview
+#   toggle                 – Toggle-Logik für fzf Ctrl+S
+# ============================================================
+
+# ------------------------------------------------------------
+# Subcommand: list
+# ------------------------------------------------------------
+_fman_list() {
+    local mode="${1:-man}"
+
+    case "$mode" in
+        man)
+            # Nur Sektion 1 (Benutzer-Kommandos)
+            man -k . 2>/dev/null | grep ' (1) '
+            ;;
+        tldr)
+            tldr --list 2>/dev/null
+            ;;
+        *)
+            echo "Unbekannter Modus: $mode" >&2
+            return 1
+            ;;
+    esac
+}
+
+# ------------------------------------------------------------
+# Subcommand: preview
+# ------------------------------------------------------------
+_fman_preview() {
+    local mode="$1"
+    local entry="$2"
+
+    # Extrahiere Seitenname (alles vor der Klammer)
+    local page=$(echo "$entry" | sed 's/(.*//' | tr -d ' ')
+
+    if [[ "$mode" == "tldr" ]]; then
+        tldr --color=always "$page" 2>/dev/null || echo "Keine tldr-Seite für '$page' verfügbar"
+    else
+        man "$page" 2>/dev/null | col -bx | bat --color=always -l man -p
+    fi
+}
+
+# ------------------------------------------------------------
+# Subcommand: toggle
+# ------------------------------------------------------------
+_fman_toggle() {
+    local fzf_dir="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
+
+    # Query bleibt automatisch erhalten, first springt zum ersten Match
+    if [[ "$FZF_PROMPT" == "man> " ]]; then
+        echo "reload($fzf_dir/fman list tldr)+change-prompt(tldr> )+change-preview($fzf_dir/fman preview tldr {})+first"
+    else
+        echo "reload($fzf_dir/fman list man)+change-prompt(man> )+change-preview($fzf_dir/fman preview man {})+first"
+    fi
+}
+
+# ------------------------------------------------------------
+# Usage
+# ------------------------------------------------------------
+_fman_usage() {
+    cat <<EOF
+Usage: fman <command> [args...]
+
+Commands:
+  list [man|tldr]        Liste Einträge (Default: man)
+  preview <mode> <entry> Generiere Preview für Eintrag
+  toggle                 Toggle-Logik für fzf Ctrl+S
+
+EOF
+}
+
+# ------------------------------------------------------------
+# Main Dispatch
+# ------------------------------------------------------------
+case "${1:-}" in
+    list)    shift; _fman_list "$@" ;;
+    preview) shift; _fman_preview "$@" ;;
+    toggle)  shift; _fman_toggle "$@" ;;
+    -h|--help) _fman_usage ;;
+    "")      _fman_usage ;;
+    *)
+        echo "Unknown command: $1" >&2
+        _fman_usage >&2
+        exit 1
+        ;;
+esac

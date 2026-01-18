@@ -42,9 +42,9 @@ if command -v fzf >/dev/null 2>&1; then
         # -n2.. durchsucht nur den Pfad (nicht den Score), unterstützt Leerzeichen
         selection=$(zoxide query -l -s | \
             fzf -n2.. \
-                --preview "$helper/preview-dir {2..} 2" \
-                --bind "ctrl-d:execute-silent($helper/safe-action zoxide-remove {2..})+reload(zoxide query -l -s)" \
-                --bind "ctrl-y:execute-silent($helper/safe-action copy {2..})" \
+                --preview "$helper/preview dir {2..} 2" \
+                --bind "ctrl-d:execute-silent($helper/action zoxide-remove {2..})+reload(zoxide query -l -s)" \
+                --bind "ctrl-y:execute-silent($helper/action copy {2..})" \
                 --header='Enter: Wechseln | Ctrl+D: Eintrag löschen | Ctrl+Y: Pfad kopieren')
 
         # Pfad extrahieren (alles nach dem Score)

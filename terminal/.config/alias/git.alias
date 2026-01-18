@@ -91,9 +91,9 @@ if command -v fzf >/dev/null 2>&1; then
 
         files=$(git -c color.status=always status --short | \
             fzf --ansi --multi \
-                --preview "$helper/safe-action git-diff {2}" \
+                --preview "$helper/action git-diff {2}" \
                 --header='Enter: Add | Tab: Mehrfach | Ctrl+R: Reset' \
-                --bind "ctrl-r:execute($helper/safe-action git-restore {+2})+reload(git -c color.status=always status --short)" | \
+                --bind "ctrl-r:execute($helper/action git-restore {+2})+reload(git -c color.status=always status --short)" | \
             awk '{print $2}')
 
         if [[ -n "$files" ]]; then

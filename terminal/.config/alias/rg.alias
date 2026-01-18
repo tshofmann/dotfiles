@@ -76,10 +76,10 @@ if command -v fzf >/dev/null 2>&1; then
             --bind "change:reload:sleep 0.1; $rg_prefix {q} || true" \
             --delimiter : \
             --freeze-left=1 \
-            --preview "$helper/preview-file {1} {2}" \
+            --preview "$helper/preview file {1} {2}" \
             --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' \
             --header='Enter: Datei öffnen | Ctrl+Y: Pfad kopieren' \
-            --bind "ctrl-y:execute-silent($helper/safe-action copy {1})+abort" \
-            --bind "enter:become($helper/safe-action edit {1} {2})"
+            --bind "ctrl-y:execute-silent($helper/action copy {1})+abort" \
+            --bind "enter:become($helper/action edit {1} {2})"
     }
 fi
