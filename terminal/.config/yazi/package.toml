@@ -1,7 +1,5 @@
 [plugin]
 deps = []
 
-[[flavor.deps]]
-use = "yazi-rs/flavors:catppuccin-mocha"
-rev = "4a1802a"
-hash = "b951d27afe197d154f6da9683b46c5f8"
+# Theme ist direkt in theme.toml versioniert (catppuccin/yazi mit Mauve-Akzent)
+# Kein Flavor mehr nötig – daher keine flavor.deps
