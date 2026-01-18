@@ -6,11 +6,11 @@
 # Pfad        : ~/.config/fzf/fkill
 # Aufruf      : fkill list [apps|all]
 # ============================================================
-# Hinweis : macOS-spezifisch! Das Pattern \.app\/ filtert nach
-#           macOS App-Bundles. Für Linux-Portabilität müsste
-#           dieses Pattern durch Desktop-Anwendungserkennung
-#           ersetzt werden (z.B. via .desktop-Dateien oder
-#           /proc/<pid>/exe Symlink-Analyse).
+# Hinweis     : macOS-spezifisch! Das Pattern \.app\/ filtert nach
+#               macOS App-Bundles. Für Linux-Portabilität müsste
+#               dieses Pattern durch Desktop-Anwendungserkennung
+#               ersetzt werden (z.B. via .desktop-Dateien oder
+#               /proc/<pid>/exe Symlink-Analyse).
 # ============================================================
 
 # ------------------------------------------------------------

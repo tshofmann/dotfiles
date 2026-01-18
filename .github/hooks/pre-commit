@@ -2,11 +2,11 @@
 # ============================================================
 # pre-commit - Git Pre-Commit Hook für dotfiles
 # ============================================================
-# Zweck   : Verhindert Commits mit veralteter Dokumentation
-#           oder ungültiger Shell-Syntax
-#
-# Install : git config core.hooksPath .github/hooks
-# WICHTIG : --no-verify ist VERBOTEN (siehe copilot-instructions.md)
+# Zweck       : Verhindert Commits mit veralteter Dokumentation,
+#               ungültiger Shell-Syntax oder falscher Formatierung
+# Pfad        : .github/hooks/pre-commit
+# Install     : git config core.hooksPath .github/hooks
+# WICHTIG     : --no-verify ist VERBOTEN (siehe copilot-instructions.md)
 # ============================================================
 
 set -uo pipefail
@@ -145,7 +145,79 @@ check_alias_format() {
 }
 
 # ------------------------------------------------------------
-# 4. Markdown-Lint prüfen
+# 5. Header-Einrückungen prüfen (12 Zeichen Standard)
+# ------------------------------------------------------------
+check_header_alignment() {
+    log "Prüfe Header-Einrückungen..."
+    local errors=0
+
+    # Standard-Felder die auf 12 Zeichen ausgerichtet sein müssen
+    # Format: "# Feldname   :" wobei Feldname + Spaces = 12 Zeichen
+    local -a fields=(
+        "Zweck       :"
+        "Pfad        :"
+        "Docs        :"
+        "Config      :"
+        "Nutzt       :"
+        "Ersetzt     :"
+        "Aliase      :"
+        "Aufruf      :"
+        "Hinweis     :"
+        "Verwendung  :"
+        "Theme       :"
+        "Laden       :"
+        "Geladen     :"
+    )
+
+    # Alle Dateien mit Header-Blöcken prüfen
+    local files=(
+        "$DOTFILES_DIR"/terminal/.config/alias/*.alias(N)
+        "$DOTFILES_DIR"/terminal/.config/fzf/*(N.)
+        "$DOTFILES_DIR"/terminal/.config/*/config(N)
+        "$DOTFILES_DIR"/terminal/.config/*/*.toml(N)
+        "$DOTFILES_DIR"/terminal/.config/*/*.yml(N)
+        "$DOTFILES_DIR"/terminal/.config/theme-style(N)
+        "$DOTFILES_DIR"/terminal/.config/fd/ignore(N)
+        "$DOTFILES_DIR"/terminal/.config/shellcheckrc(N)
+        "$DOTFILES_DIR"/terminal/.zsh*(N)
+        "$DOTFILES_DIR"/setup/*.sh(N)
+        "$DOTFILES_DIR"/setup/modules/*.sh(N)
+        "$DOTFILES_DIR"/setup/Brewfile(N)
+        "$DOTFILES_DIR"/.github/scripts/**/*.sh(N)
+    )
+
+    for file in "${files[@]}"; do
+        [[ ! -f "$file" ]] && continue
+        local relpath="${file#$DOTFILES_DIR/}"
+
+        for field in "${fields[@]}"; do
+            local fieldname="${field%% *}"
+            # Prüfe ob Feld existiert aber falsch eingerückt ist
+            if grep -q "^# ${fieldname}[[:space:]]*:" "$file" 2>/dev/null; then
+                if ! grep -q "^# ${field}" "$file" 2>/dev/null; then
+                    err "$relpath: '# ${fieldname}' falsch eingerückt (Standard: '# ${field}')"
+                    (( errors++ ))
+                fi
+            fi
+        done
+    done
+
+    if (( errors > 0 )); then
+        err "$errors Header-Feld(er) mit falscher Einrückung"
+        print ""
+        print "  ${C_DIM}Standard: 12 Zeichen vor Doppelpunkt${C_RESET}"
+        print "    ${C_BOLD}# Zweck       :${C_RESET}"
+        print "    ${C_BOLD}# Pfad        :${C_RESET}"
+        print "    ${C_BOLD}# Verwendung  :${C_RESET}"
+        return 1
+    fi
+
+    ok "Header-Einrückungen OK"
+    return 0
+}
+
+# ------------------------------------------------------------
+# 6. Markdown-Lint prüfen
 # ------------------------------------------------------------
 check_markdown() {
     log "Prüfe Markdown-Dateien..."
@@ -191,6 +263,7 @@ check_shell_syntax || (( failed++ ))
 check_executable_permissions || (( failed++ ))
 check_docs || (( failed++ ))
 check_alias_format || (( failed++ ))
+check_header_alignment || (( failed++ ))
 check_markdown || (( failed++ ))
 
 print ""

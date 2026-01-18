@@ -6,8 +6,8 @@
 # Pfad        : ~/.config/fzf/fa
 # Aufruf      : fa preview <mode> <selection>
 # ============================================================
-# Hinweis : Ausgelagert wegen komplexem Shell-Escaping in fzf --bind
-#           Modes : code, tldr
+# Hinweis     : Ausgelagert wegen komplexem Shell-Escaping in fzf --bind
+#               Modes : code, tldr
 # ============================================================
 
 # Gemeinsame Bibliothek laden (Farben, ANSI-Strip)
