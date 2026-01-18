@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 # ============================================================
-# fman - Helper für fman() Funktion
+# fman - Helper für help() Funktion
 # ============================================================
 # Zweck       : Subcommands für man/tldr Browser
 # Pfad        : ~/.config/fzf/fman

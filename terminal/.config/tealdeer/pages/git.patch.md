@@ -2,52 +2,52 @@
 
 - dotfiles: Dateien zum Staging hinzufügen:
 
-`ga`
+`git-add`
 
 - dotfiles: Einen neuen Commit erstellen:
 
-`gc`
+`git-commit`
 
 - dotfiles: Commit mit Nachricht:
 
-`gcm`
+`git-cm`
 
 - dotfiles: Alle Änderungen stagen und einen Commit erstellen:
 
-`gacm`
+`git-acm`
 
 - dotfiles: Änderungen pushen:
 
-`gp`
+`git-push`
 
 - dotfiles: Änderungen pullen:
 
-`gpl`
+`git-pull`
 
 - dotfiles: Branch wechseln oder Datei zurücksetzen:
 
-`gco`
+`git-co`
 
 - dotfiles: Status des Repositories anzeigen:
 
-`gs`
+`git-status`
 
 - dotfiles: Änderungen anzeigen:
 
-`gd`
+`git-diff`
 
 - dotfiles: Commit-History mit bat-Vorschau (`<Enter>` Anzeigen, `<Ctrl y>` SHA kopieren):
 
-`glog`
+`git-log`
 
 - dotfiles: Branch wechseln mit Log-Vorschau (`<Enter>` Checkout, `<Ctrl d>` Löschen):
 
-`gbr`
+`git-branch`
 
 - dotfiles: Status mit Diff-Vorschau (`<Enter>` Add, `<Tab>` Mehrfach, `<Ctrl r>` Reset):
 
-`gst`
+`git-stage`
 
 - dotfiles: Stash-Browser (`<Enter>` Apply, `<Ctrl p>` Pop, `<Ctrl d>` Drop):
 
-`gstash`
+`git-stash`

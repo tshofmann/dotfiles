@@ -19,7 +19,7 @@
 #   fman      – Man/tldr Browser Helper (list|preview|toggle)
 #   fkill     – Prozessliste Helper (list)
 #   fa        – Alias-Browser Helper (preview)
-# Aliase      : fkill, fman, fa, fenv
+# Aliase      : procs, help, cmds, vars
 # ============================================================
 
 # Guard   : Nur wenn fzf installiert ist
@@ -39,7 +39,7 @@ fi
 # ------------------------------------------------------------
 # Prozesse interaktiv suchen und beenden (Tab für Mehrfachauswahl)
 # Prozess Browser(signal=15) – Enter=Beenden, Tab=Mehrfach, Ctrl+S=Apps↔Alle
-fkill() {
+procs() {
     local pid
     local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
 
@@ -59,7 +59,7 @@ fkill() {
 # ------------------------------------------------------------
 # Man-Pages interaktiv durchsuchen mit Syntax-Highlighting
 # Man/tldr Browser – Ctrl+S=Modus wechseln (Liste + Preview), Enter=öffnen
-fman() {
+help() {
     local output mode selection page section
     local fzf_dir="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
 
@@ -93,8 +93,8 @@ fman() {
 # ALIAS + FZF: Alias-/Funktions-Browser
 # ------------------------------------------------------------
 # Fuzzy-Suche für Aliase und Funktionen aus allen .alias-Dateien
-# fa Browser(suche?) – Enter=Übernehmen, Ctrl+S=tldr↔Code
-fa() {
+# Befehl Browser(suche?) – Enter=Übernehmen, Ctrl+S=tldr↔Code
+cmds() {
     local alias_dir="${XDG_CONFIG_HOME:-$HOME/.config}/alias"
     local fzf_dir="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
     local query="${1:-}"
@@ -188,8 +188,8 @@ fa() {
 # ENV + FZF: Umgebungsvariablen-Browser
 # ------------------------------------------------------------
 # Umgebungsvariablen durchsuchen mit formatierter Anzeige
-# Env Browser – Enter=Export→Edit, Ctrl+Y=Kopieren
-fenv() {
+# Variablen Browser – Enter=Export→Edit, Ctrl+Y=Kopieren
+vars() {
     local selection name value
 
     # Farbkodiert KEY=VALUE-Zeilen nach Kategorie (Catppuccin Mocha)

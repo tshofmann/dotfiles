@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 # ============================================================
-# fkill - Helper für fkill() Funktion
+# fkill - Helper für procs() Funktion
 # ============================================================
 # Zweck       : Prozessliste für fzf
 # Pfad        : ~/.config/fzf/fkill

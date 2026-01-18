@@ -5,10 +5,10 @@
 # Pfad        : ~/.config/alias/git.alias
 # Docs        : https://git-scm.com/docs
 # Nutzt       : fzf (Interactive), bat (Diff-Highlighting)
-# Aliase      : ga, gc, gcm, gacm, gp, gpl, gco, gs, gd, glog
+# Aliase      : git-add, git-commit, git-cm, git-acm, git-push, git-pull, git-co, git-status, git-diff, git-log, git-branch, git-stage, git-stash
 # ============================================================
 # Hinweis     : Interaktive Git-Funktionen (mit fzf) sind unten
-#           definiert: glog, gbr, gst, gstash
+#           definiert: git-log, git-branch, git-stage, git-stash
 # ============================================================
 
 # Guard   : Nur wenn git installiert ist
@@ -20,38 +20,38 @@ fi
 # Essenzielle Aliase
 # ------------------------------------------------------------
 # Dateien zum Staging hinzufügen
-alias ga='git add'
+alias git-add='git add'
 
 # Einen neuen Commit erstellen
-alias gc='git commit'
+alias git-commit='git commit'
 
 # Commit mit Nachricht
-alias gcm='git commit -m'
+alias git-cm='git commit -m'
 
 # Alle Änderungen stagen und einen Commit erstellen
-alias gacm='git add --all && git commit -m'
+alias git-acm='git add --all && git commit -m'
 
 # Änderungen pushen
-alias gp='git push'
+alias git-push='git push'
 
 # Änderungen pullen
-alias gpl='git pull'
+alias git-pull='git pull'
 
 # Branch wechseln oder Datei zurücksetzen
-alias gco='git checkout'
+alias git-co='git checkout'
 
 # Status des Repositories anzeigen
-alias gs='git status'
+alias git-status='git status'
 
 # Änderungen anzeigen
-alias gd='git diff'
+alias git-diff='git diff'
 
 # ------------------------------------------------------------
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
     # Commit-History mit bat-Vorschau – Enter=Anzeigen, Ctrl+Y=SHA kopieren
-    glog() {
+    git-log() {
         local sha
         sha=$(git log --oneline --color=always --decorate | \
             fzf --ansi --no-sort --reverse \
@@ -71,7 +71,7 @@ if command -v fzf >/dev/null 2>&1; then
     }
 
     # Branch wechseln mit Log-Vorschau – Enter=Checkout, Ctrl+D=Löschen
-    gbr() {
+    git-branch() {
         local branch
         branch=$(git branch --all --color=always | \
             grep -v HEAD | \
@@ -85,7 +85,7 @@ if command -v fzf >/dev/null 2>&1; then
     }
 
     # Status mit Diff-Vorschau (bat) – Enter=Add, Tab=Mehrfach, Ctrl+R=Reset
-    gst() {
+    git-stage() {
         local files
         local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
 
@@ -106,7 +106,7 @@ if command -v fzf >/dev/null 2>&1; then
     }
 
     # Stash-Browser – Enter=Apply, Ctrl+P=Pop, Ctrl+D=Drop
-    gstash() {
+    git-stash() {
         local stash
         stash=$(git stash list | \
             fzf --ansi \

@@ -140,7 +140,7 @@ main() {
         os_version="$PLATFORM_OS"
     fi
 
-    # Banner (minimalistisch wie brewv)
+    # Banner (minimalistisch wie brew-list)
     print -P ""
     print -P "${C_MAUVE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
     print -P "${C_MAUVE}  ${C_BOLD}Dotfiles Bootstrap${C_RESET}  ${C_DIM}$os_version${C_RESET}"

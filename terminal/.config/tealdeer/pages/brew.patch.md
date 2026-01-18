@@ -1,8 +1,8 @@
-- dotfiles: Nutzt `fzf (Interactive), theme-style (Farben für brewv)`
+- dotfiles: Nutzt `fzf (Interactive), theme-style (Farben für brew-list)`
 
 - dotfiles: Homebrew Komplett-Update:
 
-`brewup`
+`brew-up`
 
 - dotfiles: Zeige veraltete Mac App Store Apps:
 
@@ -26,12 +26,12 @@
 
 - dotfiles: Brewfile Versionsübersicht:
 
-`brewv`
+`brew-list`
 
 - dotfiles: Brew Install Browser (`<Enter>` Installieren, `<Tab>` Mehrfach):
 
-`bip`
+`brew-add`
 
 - dotfiles: Brew Remove Browser (`<Enter>` Entfernen, `<Tab>` Mehrfach):
 
-`brp`
+`brew-rm`

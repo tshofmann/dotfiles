@@ -4,8 +4,8 @@
 # Zweck       : Aliase für Homebrew Paketverwaltung
 # Pfad        : ~/.config/alias/brew.alias
 # Docs        : https://docs.brew.sh/Manpage
-# Nutzt       : fzf (Interactive), theme-style (Farben für brewv)
-# Aliase      : brewup, brewv, bip, brp
+# Nutzt       : fzf (Interactive), theme-style (Farben für brew-list)
+# Aliase      : brew-up, brew-list, brew-add, brew-rm
 # ============================================================
 # Hinweis     : Kein Guard für brew – ohne Homebrew ist dieses
 #           dotfiles-Repository ohnehin nicht nutzbar.
@@ -15,7 +15,7 @@
 # Update & Wartung
 # ------------------------------------------------------------
 # Homebrew Komplett-Update – update, upgrade, autoremove, cleanup, mas
-brewup() {
+brew-up() {
     brew update && brew upgrade
     command -v mas >/dev/null 2>&1 && mas upgrade
     brew autoremove && brew cleanup
@@ -51,7 +51,7 @@ fi
 # ------------------------------------------------------------
 # Brewfile Versionsübersicht – zeigt installierte Versionen aller Pakete
 # Nutzt       : theme-style ($C_MAUVE, $C_GREEN, $C_TEXT, $C_RESET)
-brewv() {
+brew-list() {
     local brewfile="${DOTFILES_DIR:-$HOME/dotfiles}/setup/Brewfile"
 
     if [[ ! -f "$brewfile" ]]; then
@@ -162,7 +162,7 @@ brewv() {
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
     # Brew Install Browser – Enter=Installieren, Tab=Mehrfach
-    bip() {
+    brew-add() {
         local selection type pkg
         selection=$({
             brew formulae | sed 's/^/[F] /'
@@ -185,7 +185,7 @@ if command -v fzf >/dev/null 2>&1; then
     }
 
     # Brew Remove Browser – Enter=Entfernen, Tab=Mehrfach
-    brp() {
+    brew-rm() {
         local pkg
         pkg=$(brew leaves | fzf --multi \
             --preview 'brew info {}' \

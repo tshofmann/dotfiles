@@ -1,8 +1,8 @@
 #!/usr/bin/env zsh
 # ============================================================
-# fa - Helper für fa() Funktion
+# fa - Helper für cmds() Funktion
 # ============================================================
-# Zweck       : Preview-Befehle für fa (Alias-Browser) in fzf
+# Zweck       : Preview-Befehle für cmds (Alias-Browser) in fzf
 # Pfad        : ~/.config/fzf/fa
 # Aufruf      : fa preview <mode> <selection>
 # ============================================================

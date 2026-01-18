@@ -21,7 +21,7 @@
 
 - dotfiles: `config` – Native fzf-Konfiguration (FZF_DEFAULT_OPTS_FILE)
 
-- dotfiles: `fa` – Preview-Befehle für fa (Alias-Browser) in fzf
+- dotfiles: `fa` – Preview-Befehle für cmds (Alias-Browser) in fzf
 
 - dotfiles: `fkill` – Prozessliste für fzf
 
@@ -36,19 +36,19 @@
 
 - dotfiles: Prozess Browser (`<Enter>` Beenden, `<Tab>` Mehrfach, `<Ctrl s>` Apps↔Alle):
 
-`fkill {{signal}}`
+`procs {{signal}}`
 
 - dotfiles: Man/tldr Browser (`<Ctrl s>` Modus wechseln (Liste + Preview), `<Enter>` öffnen):
 
-`fman`
+`help`
 
-- dotfiles: fa Browser (`<Enter>` Übernehmen, `<Ctrl s>` tldr↔Code):
+- dotfiles: Befehl Browser (`<Enter>` Übernehmen, `<Ctrl s>` tldr↔Code):
 
-`fa {{suche}}`
+`cmds {{suche}}`
 
-- dotfiles: Env Browser (`<Enter>` Export→Edit, `<Ctrl y>` Kopieren):
+- dotfiles: Variablen Browser (`<Enter>` Export→Edit, `<Ctrl y>` Kopieren):
 
-`fenv`
+`vars`
 # dotfiles: Shell-Keybindings (Ctrl+X Prefix)
 
 - dotfiles: History durchsuchen mit Vorschau:

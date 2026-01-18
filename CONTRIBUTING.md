@@ -130,9 +130,9 @@ Wiederverwendbare Skripte für fzf-Previews und -Aktionen in `~/.config/fzf/`:
 | `preview-file` | Datei-Vorschau mit bat (Fallback: cat) | `rg.alias`, `fd.alias` |
 | `preview-dir` | Verzeichnis-Vorschau mit eza (Fallback: ls) | `zoxide.alias`, `fd.alias` |
 | `safe-action` | Sichere Aktionen (copy, edit, git-diff) | Mehrere `.alias`-Dateien |
-| `fman-preview` | Man/tldr Vorschau | `fzf.alias` |
-| `fa-preview` | Alias-Browser Vorschau | `fzf.alias` |
-| `fkill-list` | Prozessliste | `fzf.alias` |
+| `fman` | Man/tldr Vorschau (für `help`) | `fzf.alias` |
+| `fa` | Alias-Browser Vorschau (für `cmds`) | `fzf.alias` |
+| `fkill` | Prozessliste (für `procs`) | `fzf.alias` |
 
 **Warum Helper statt Inline-Code?**
 
@@ -386,6 +386,42 @@ warn() { echo -e "${C_YELLOW}⚠${C_RESET} $*"; }
   - Müssen nicht dokumentiert werden
   - Für interne Helper, Parser, etc.
 
+#### Namenskonvention für Aliase und Funktionen
+
+**Schema:** `<tool>-<aktion>` – intuitiv, merkbar, Tab-Completion-freundlich.
+
+| Kategorie | Schema | Beispiele |
+| --------- | ------ | --------- |
+| **Tool-Wrapper** | `<tool>-<aktion>` | `git-log`, `git-branch`, `gh-pr`, `brew-add` |
+| **Browser/Interaktiv** | Beschreibend | `help`, `cmds`, `procs`, `vars` |
+| **Navigation** | Kurze Verben | `go`, `edit`, `zj` |
+| **Bewusste Ersetzungen** | Original-Name | `cat`, `ls`, `top` (→ bat, eza, btop) |
+
+**Regeln:**
+
+1. **Keine Kollisionen** mit System-Befehlen (außer bewusste Ersetzungen)
+2. **Bindestriche** (`-`) statt Unterstriche für Lesbarkeit
+3. **Tool-Präfix** ermöglicht Tab-Completion: `git-<TAB>` zeigt alle git-Funktionen
+4. **Kurze Namen** nur für sehr häufig genutzte Befehle (`y`, `z`, `ls`)
+
+**Tab-Completion Beispiel:**
+
+```zsh
+$ git-<TAB>
+git-add     git-branch  git-cm      git-diff    git-log
+git-pull    git-push    git-stage   git-stash   git-status
+
+$ brew-<TAB>
+brew-add    brew-list   brew-rm     brew-up
+```
+
+**Kollisionsprüfung vor neuen Namen:**
+
+```zsh
+# Prüfe ob Name frei ist
+command -v mein-alias && echo "KOLLISION!" || echo "Frei"
+```
+
 #### Sektionen für automatische Dokumentation
 
 Bestimmte Sektionen in `.alias`-Dateien werden automatisch in `tldr dotfiles` dokumentiert:
@@ -402,7 +438,7 @@ Bestimmte Sektionen in `.alias`-Dateien werden automatisch in `tldr dotfiles` do
 
 ### Funktions-Syntax
 
-**Verwende diese Form (von `fa()` erkannt):**
+**Verwende diese Form (von `cmds()` erkannt):**
 
 ```zsh
 name() {
@@ -413,7 +449,7 @@ name() {
 **Nicht verwenden:**
 
 ```zsh
-function name {   # ❌ Korn-Shell-Style – nicht von fa() erkannt
+function name {   # ❌ Korn-Shell-Style – nicht von cmds() erkannt
 }
 function name() { # ❌ Hybrid-Style – redundant
 }
@@ -421,11 +457,11 @@ function name() { # ❌ Hybrid-Style – redundant
 
 | Syntax | Status | Grund |
 | -------- | -------- | ------- |
-| `name() {` | ✅ Verwenden | Von `fa()` erkannt, konsistent |
-| `function name {` | ❌ Nicht verwenden | Nicht von `fa()` erkannt |
+| `name() {` | ✅ Verwenden | Von `cmds()` erkannt, konsistent |
+| `function name {` | ❌ Nicht verwenden | Nicht von `cmds()` erkannt |
 | `function name() {` | ❌ Nicht verwenden | Redundant, inkonsistent |
 
-> **Hinweis:** Die `fa()`-Funktion (Alias-Browser) erkennt nur `name() {`-Syntax.
+> **Hinweis:** Die `cmds()`-Funktion (Alias-Browser) erkennt nur `name() {`-Syntax.
 > Diese Einschränkung ist beabsichtigt – Konsistenz im gesamten Projekt.
 
 ### Stil-Regeln

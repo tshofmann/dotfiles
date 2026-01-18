@@ -5,7 +5,7 @@
 # Pfad        : ~/.config/alias/gh.alias
 # Docs        : https://cli.github.com/manual/
 # Nutzt       : fzf (Interactive), bat (Diff-Highlighting)
-# Aliase      : gho, ghst, ghpr, ghis, ghrun, ghrepo, ghgist
+# Aliase      : gh-open, gh-status, gh-pr, gh-issue, gh-run, gh-repo, gh-gist
 # ============================================================
 # Hinweis     : Erfordert gh auth login für Authentifizierung.
 #           Alle Funktionen nutzen fzf für interaktive Auswahl.
@@ -21,17 +21,17 @@ fi
 # ------------------------------------------------------------
 
 # Repository im Browser öffnen
-alias gho='gh browse'
+alias gh-open='gh browse'
 
 # GitHub Status – zugewiesene Issues, PRs, Mentions
-alias ghst='gh status'
+alias gh-status='gh status'
 
 # ------------------------------------------------------------
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
     # PRs durchsuchen – Enter=Checkout, Ctrl+D=Diff, Ctrl+O=Browser
-    ghpr() {
+    gh-pr() {
         local pr
         pr=$(gh pr list --limit 50 | \
             fzf --ansi \
@@ -45,7 +45,7 @@ if command -v fzf >/dev/null 2>&1; then
     }
 
     # Issues durchsuchen – Enter=Browser, Ctrl+E=Bearbeiten
-    ghis() {
+    gh-issue() {
         local issue
         issue=$(gh issue list --limit 50 | \
             fzf --ansi \
@@ -58,7 +58,7 @@ if command -v fzf >/dev/null 2>&1; then
     }
 
     # Actions Runs – Enter=Logs, Ctrl+R=Rerun, Ctrl+O=Browser
-    ghrun() {
+    gh-run() {
         local run
         run=$(gh run list --limit 20 | \
             fzf --ansi \
@@ -73,7 +73,7 @@ if command -v fzf >/dev/null 2>&1; then
     }
 
     # Repo Browser(suche?) – Enter=Klonen, Ctrl+O=Browser
-    ghrepo() {
+    gh-repo() {
         local repo
         local query="${1:-}"
         repo=$(gh repo list --limit 30 ${query:+--source} | \
@@ -87,7 +87,7 @@ if command -v fzf >/dev/null 2>&1; then
     }
 
     # Gists durchsuchen – Enter=Anzeigen, Ctrl+E=Bearbeiten, Ctrl+O=Browser
-    ghgist() {
+    gh-gist() {
         local gist
         gist=$(gh gist list --limit 30 | \
             fzf --ansi \

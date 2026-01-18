@@ -6,7 +6,7 @@
 # Docs        : https://github.com/ajeetdsouza/zoxide
 # Nutzt       : fzf (Interactive), eza (Preview)
 # Ersetzt     : cd (lernt häufige Verzeichnisse)
-# Aliase      : z, zi, zf
+# Aliase      : z, zi, zj
 # ============================================================
 # Kommandos (via `zoxide init zsh`):
 #   z <query>    Wechsle zu Verzeichnis mit höchstem Score
@@ -34,7 +34,7 @@ fi
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
     # zoxide Browser – Enter=Wechseln, Ctrl+D=Löschen, Ctrl+Y=Kopieren
-    zf() {
+    zj() {
         local selection dir
         local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
 
