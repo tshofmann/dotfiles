@@ -95,8 +95,8 @@
 
 - Jedes Tool hat ALLE Aliase+Funktionen dokumentiert:
 
-`tldr {{7z|bat|brew|btop|eza|fastfetch|fd|ffmpeg|fzf|gh|git|lazygit|magick|rg|yazi|zoxide|zsh}}`
+`tldr {{7z|bat|brew|btop|eza|fastfetch|fd|ffmpeg|fzf|gh|git|kitty|lazygit|magick|rg|yazi|zoxide|zsh}}`
 
 - Eigene Seiten (ohne offizielle tldr-Basis):
 
-`tldr {{catppuccin|kitty|markdownlint|poppler|resvg|dotfiles}}`
+`tldr {{catppuccin|markdownlint|poppler|resvg|dotfiles}}`
