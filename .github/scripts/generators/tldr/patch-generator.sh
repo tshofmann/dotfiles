@@ -186,9 +186,11 @@ generate_complete_patch() {
 
     if [[ "$tool_name" == "fzf" ]]; then
         output+="# dotfiles: Globale Tastenkürzel (in allen fzf-Dialogen)\n\n"
-        output+=$(parse_fzf_config_keybindings "$FZF_CONFIG")
+        local fzf_keys
+        fzf_keys=$(parse_fzf_config_keybindings "$FZF_CONFIG")
+        output+="$fzf_keys"
         output+="\n\n# dotfiles: Helper-Skripte (~/.config/fzf/)\n\n"
-        # $() entfernt trailing newlines, daher print -rn statt echo -e
+        # $() entfernt trailing newlines, daher in lokale Variable speichern
         local helper_desc
         helper_desc=$(generate_fzf_helper_descriptions)
         output+="$helper_desc"
@@ -207,9 +209,13 @@ generate_complete_patch() {
 
     if [[ "$tool_name" == "fzf" ]]; then
         output+="\n\n# dotfiles: Shell-Keybindings (Ctrl+X Prefix)\n\n"
-        output+=$(parse_shell_keybindings "$alias_file")
+        local shell_keys
+        shell_keys=$(parse_shell_keybindings "$alias_file")
+        output+="$shell_keys"
         output+="\n\n# dotfiles: Tool-spezifische fzf-Funktionen\n\n"
-        output+=$(generate_cross_references)
+        local cross_refs
+        cross_refs=$(generate_cross_references)
+        output+="$cross_refs"
     fi
 
     echo -e "$output"
