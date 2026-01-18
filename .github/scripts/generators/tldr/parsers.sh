@@ -2,7 +2,7 @@
 # ============================================================
 # parsers.sh - Parser für tldr-spezifische Formate
 # ============================================================
-# Zweck       : Keybindings, Parameter, fzf-Config, Yazi-Keymap Parser
+# Zweck       : Keybindings, Parameter, fzf-Config, Yazi-Keymap, Config-Dateien Parser
 # Pfad        : .github/scripts/generators/tldr/parsers.sh
 # ============================================================
 
@@ -25,6 +25,126 @@ has_official_tldr_page() {
     done
 
     return 1
+}
+
+# ------------------------------------------------------------
+# Helper: Finde Config-Verzeichnisse ohne .alias-Datei
+# ------------------------------------------------------------
+# Gibt Tool-Namen zurück die Config haben aber keine .alias
+find_config_only_tools() {
+    local config_base="$DOTFILES_DIR/terminal/.config"
+
+    # Alle Verzeichnisse in .config (außer alias, tealdeer, zsh)
+    for dir in "$config_base"/*(N/); do
+        local dir_name="${dir:t}"
+
+        # Überspringe: alias (enthält .alias-Dateien), tealdeer (Pages), zsh (nur Theme)
+        case "$dir_name" in
+            alias|tealdeer|zsh|.DS_Store) continue ;;
+        esac
+
+        # Prüfe ob es eine .alias-Datei für dieses Tool gibt
+        # Berücksichtige Namens-Mappings (ripgrep→rg, markdownlint-cli2→markdownlint)
+        local has_alias=false
+        for alias_file in "$ALIAS_DIR"/*.alias(N); do
+            local alias_name="${${alias_file:t}%.alias}"
+            # Direkter Match oder bekanntes Mapping
+            if [[ "$alias_name" == "$dir_name" ]]; then
+                has_alias=true
+                break
+            fi
+            # Mapping: rg→ripgrep, markdownlint→markdownlint-cli2
+            case "$alias_name" in
+                rg)          [[ "$dir_name" == "ripgrep" ]] && has_alias=true ;;
+                markdownlint) [[ "$dir_name" == "markdownlint-cli2" ]] && has_alias=true ;;
+            esac
+            [[ "$has_alias" == true ]] && break
+        done
+
+        # Kein .alias → prüfe ob Config-Datei mit Header existiert
+        if [[ "$has_alias" == false ]]; then
+            local main_config=$(find_main_config_file "$dir")
+            if [[ -n "$main_config" ]]; then
+                echo "$dir_name"
+            fi
+        fi
+    done
+}
+
+# ------------------------------------------------------------
+# Helper: Finde Haupt-Config-Datei in einem Verzeichnis
+# ------------------------------------------------------------
+# Sucht nach typischen Config-Dateinamen mit gültigem Header
+find_main_config_file() {
+    local dir="$1"
+    local dir_name="${dir:t}"
+
+    # Typische Config-Dateinamen (in Prioritätsreihenfolge)
+    local -a config_names=(
+        "${dir_name}.conf"           # kitty.conf
+        "config"                      # allgemeines Format
+        "config.toml"                 # TOML-Format
+        "config.yaml"                 # YAML-Format
+        "config.yml"                  # YAML-Format alt
+        "config.jsonc"                # JSON mit Kommentaren
+        "${dir_name}.toml"           # package.toml (yazi)
+    )
+
+    for name in "${config_names[@]}"; do
+        local file="$dir/$name"
+        if [[ -f "$file" ]]; then
+            # Prüfe ob Datei gültigen Header hat (# Pfad : oder # Zweck :)
+            if grep -qE "^# (Pfad|Zweck)[[:space:]]*:" "$file" 2>/dev/null; then
+                echo "$file"
+                return 0
+            fi
+        fi
+    done
+
+    return 1
+}
+
+# ------------------------------------------------------------
+# Parser: Config-Datei Header zu tldr-Patch
+# ------------------------------------------------------------
+# Extrahiert Header-Felder und generiert tldr-Einträge
+parse_config_file_header() {
+    local config_file="$1"
+    local -A header_fields=()
+
+    # Header-Felder extrahieren (bis Guard oder leere Zeile nach Header)
+    local in_header=false
+    local header_ended=false
+
+    while IFS= read -r line; do
+        # Header-Block Start erkennen
+        [[ "$line" == "# ===="* ]] && { in_header=true; continue; }
+
+        # Header-Block Ende (zweite ====)
+        if [[ "$in_header" == true && "$line" == "# ===="* ]]; then
+            header_ended=true
+            continue
+        fi
+
+        # Nach Header: Stoppen bei Guard oder leerem Block
+        if [[ "$header_ended" == true ]]; then
+            [[ "$line" == "# Guard"* || -z "$line" ]] && break
+        fi
+
+        # Header-Felder extrahieren
+        if [[ "$in_header" == true || "$header_ended" == true ]]; then
+            if [[ "$line" =~ "^# ([A-Za-z_-]+)[[:space:]]*:[[:space:]]*(.*)" ]]; then
+                local field="${match[1]}"
+                local value="${match[2]}"
+                header_fields[$field]="$value"
+            fi
+        fi
+    done < "$config_file"
+
+    # Rückgabe als assoziatives Array (via printf für zsh-Kompatibilität)
+    for key in "${(@k)header_fields}"; do
+        printf "%s|%s\n" "$key" "${header_fields[$key]}"
+    done
 }
 
 # ------------------------------------------------------------

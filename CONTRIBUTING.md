@@ -276,13 +276,42 @@ Hat das Tool eine .alias-Datei?
 │       (Single Source of Truth für Tool-Dokumentation)
 │
 └─ NEIN → Config-Datei in ~/.config/<tool>/ suchen
-          ├─ Datei mit `# Pfad :` oder `// Pfad :` Header?
-          │  └─ JA → Config-Pfad gefunden ✓
-          └─ NEIN → Kein Config-Pfad
+          ├─ Datei mit `# Pfad :` Header?
+          │  └─ JA → Config-Pfad gefunden + tldr-Patch generierbar ✓
+          └─ NEIN → Kein Config-Pfad, keine tldr-Dokumentation
 ```
 
 **Regel:** `# Config :` in Alias-Datei ist Pflicht, wenn das Tool eine lokale Config hat.
-Der Fallback (`# Pfad :` in Config-Dateien) ist nur für Tools ohne `.alias`-Datei.
+Der Fallback (`# Pfad :` in Config-Dateien) ist für Tools ohne `.alias`-Datei.
+
+### tldr-Dokumentation für Tools ohne Aliase
+
+Einige Tools (z.B. `kitty`) haben keine sinnvollen Shell-Aliase, aber eine umfangreiche Config.
+Der tldr-Generator unterstützt **Config-basierte Patches**:
+
+```text
+tldr-Generator Quellen:
+├─ .alias-Dateien (Primär)
+│   └─ Aliase, Funktionen, Keybindings → .patch.md / .page.md
+│
+└─ Config-Verzeichnisse (Sekundär, ohne .alias)
+    └─ ~/.config/<tool>/ mit Header-Block
+        ├─ # Zweck, # Pfad, # Docs → tldr-Header
+        ├─ # Reload, # Theme, etc. → dotfiles-spezifische Einträge
+        └─ Wichtige Shortcuts aus Kommentaren
+```
+
+**Anforderungen für Config-basierte Patches:**
+
+| Feld | Pflicht | Beispiel |
+| ---- | ------- | -------- |
+| `# Zweck` | ✅ | `# Zweck : GPU-Terminal mit Image-Support` |
+| `# Pfad` | ✅ | `# Pfad : ~/.config/kitty/kitty.conf` |
+| `# Docs` | ✅ | `# Docs : https://sw.kovidgoyal.net/kitty/` |
+| `# Reload` | ⚪ | `# Reload : Ctrl+Shift+F5` |
+| `# Theme` | ⚪ | `# Theme : current-theme.conf (via Stow)` |
+
+Diese Header werden vom Generator automatisch in tldr-Patches umgewandelt.
 
 ### Funktions- und Alias-Kommentare
 
