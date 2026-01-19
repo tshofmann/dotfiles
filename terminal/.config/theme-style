@@ -15,20 +15,20 @@
 # ------------------------------------------------------------
 # Format: tool | config-pfad | upstream-repo | status
 #
-#   bat           | ~/.config/bat/themes/              | github.com/catppuccin/bat                   | upstream
-#   btop          | ~/.config/btop/themes/             | github.com/catppuccin/btop                  | upstream
-#   eza           | ~/.config/eza/theme.yml            | github.com/catppuccin/eza                   | upstream+header
-#   fastfetch     | ~/.config/fastfetch/config.jsonc   | manual                                      | manual
-#   fzf           | ~/.config/fzf/config               | github.com/catppuccin/fzf                   | upstream-bg
-#   kitty         | ~/.config/kitty/current-theme.conf | eingebaut (seit v0.26)                      | builtin
-#   lazygit       | ~/.config/lazygit/config.yml       | github.com/catppuccin/lazygit               | upstream
-#   starship      | ~/.config/starship.toml            | github.com/catppuccin/starship              | generated
-#   tealdeer      | ~/.config/tealdeer/config.toml     | manual                                      | manual
-#   yazi          | ~/.config/yazi/theme.toml          | github.com/catppuccin/yazi (via ya pkg)     | upstream
-#   zsh-syntax    | ~/.config/zsh/catppuccin_mocha-*   | github.com/catppuccin/zsh-syntax-highlighting | upstream
-#   Terminal.app  | ~/dotfiles/setup/                  | github.com/catppuccin/Terminal.app          | upstream
-#   Xcode         | ~/dotfiles/setup/                  | github.com/catppuccin/xcode                 | upstream
-#   theme-style   | ~/.config/theme-style              | manual                                      | manual
+#   bat          | ~/.config/bat/themes/              | github.com/catppuccin/bat                     | upstream
+#   btop         | ~/.config/btop/themes/             | github.com/catppuccin/btop                    | upstream
+#   eza          | ~/.config/eza/theme.yml            | github.com/catppuccin/eza                     | upstream+header
+#   fastfetch    | ~/.config/fastfetch/config.jsonc   | manual                                        | manual
+#   fzf          | ~/.config/fzf/config               | github.com/catppuccin/fzf                     | upstream-bg+header
+#   kitty        | ~/.config/kitty/current-theme.conf | github.com/catppuccin/kitty                   | upstream+header
+#   lazygit      | ~/.config/lazygit/config.yml       | github.com/catppuccin/lazygit                 | upstream+mauve+header
+#   starship     | ~/.config/starship.toml            | github.com/catppuccin/starship                | generated
+#   tealdeer     | ~/.config/tealdeer/config.toml     | manual                                        | manual
+#   yazi         | ~/.config/yazi/theme.toml          | github.com/catppuccin/yazi                    | upstream+mauve+header
+#   zsh-syntax   | ~/.config/zsh/catppuccin_mocha-*   | github.com/catppuccin/zsh-syntax-highlighting | upstream+header
+#   Terminal.app | ~/dotfiles/setup/                  | github.com/catppuccin/Terminal.app            | upstream
+#   Xcode        | ~/dotfiles/setup/                  | github.com/catppuccin/xcode                   | upstream+header
+#   theme-style  | ~/.config/theme-style              | manual                                        | manual
 #
 # Status-Legende:
 #   upstream      = Unverändert aus offiziellem Catppuccin-Repo

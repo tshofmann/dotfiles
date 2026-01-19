@@ -18,7 +18,7 @@ Das gesamte Setup verwendet [Catppuccin Mocha](https://catppuccin.com/) als einh
 | **fzf** | `terminal/.config/fzf/config` | Farben in Config-Datei (via Stow) |
 | **btop** | `terminal/.config/btop/themes/` | Via Stow verlinkt |
 | **eza** | `terminal/.config/eza/theme.yml` | Via Stow verlinkt |
-| **yazi** | `terminal/.config/yazi/theme.toml` | Via Flavor-System (ya pkg install) |
+| **yazi** | `terminal/.config/yazi/theme.toml` | Versioniert (catppuccin/yazi Mauve) |
 | **zsh-syntax-highlighting** | `terminal/.config/zsh/` | Via Stow verlinkt |
 | **Xcode** | `setup/Catppuccin Mocha.xccolortheme` | Via Bootstrap kopiert (manuelle Aktivierung) |
 

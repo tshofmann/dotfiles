@@ -135,7 +135,7 @@ collect_theme_configs() {
         ["fzf"]="$DOTFILES_DIR/terminal/.config/fzf/config|Farben in Config-Datei (via Stow)"
         ["btop"]="$DOTFILES_DIR/terminal/.config/btop/themes/|Via Stow verlinkt"
         ["eza"]="$DOTFILES_DIR/terminal/.config/eza/theme.yml|Via Stow verlinkt"
-        ["yazi"]="$DOTFILES_DIR/terminal/.config/yazi/theme.toml|Via Flavor-System (ya pkg install)"
+        ["yazi"]="$DOTFILES_DIR/terminal/.config/yazi/theme.toml|Versioniert (catppuccin/yazi Mauve)"
         ["zsh-syntax-highlighting"]="$DOTFILES_DIR/terminal/.config/zsh/|Via Stow verlinkt"
         ["Xcode"]="$xcode_file|Via Bootstrap kopiert (manuelle Aktivierung)"
     )
