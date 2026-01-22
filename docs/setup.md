@@ -149,6 +149,7 @@ ff                                  # System-Info anzeigen
 | Paket | Beschreibung |
 | ----- | ------------ |
 | [`claude-code`](https://docs.anthropic.com/en/docs/claude-code) | Agentic Coding |
+| [`github`](https://desktop.github.com/) | GitHub Desktop GUI |
 | [`kitty`](https://sw.kovidgoyal.net/kitty/) | GPU-Terminal mit Image-Support |
 | [`visual-studio-code`](https://code.visualstudio.com/) | Editor |
 | [`font-meslo-lg-nerd-font`](https://github.com/ryanoasis/nerd-fonts) | Nerd Font für Prompt, eza, yazi |
