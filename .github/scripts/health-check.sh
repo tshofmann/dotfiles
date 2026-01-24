@@ -373,7 +373,7 @@ section "Starship Konfiguration"
 if [[ -f "$HOME/.config/starship.toml" ]]; then
   pass "~/.config/starship.toml vorhanden"
 else
-  warn "~/.config/starship.toml fehlt (wird bei Bootstrap erstellt)"
+  warn "~/.config/starship.toml fehlt (stow -R terminal ausführen)"
 fi
 
 # --- ZSH-Sessions ---

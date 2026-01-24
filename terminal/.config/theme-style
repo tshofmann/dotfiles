@@ -22,7 +22,7 @@
 #   fzf          | ~/.config/fzf/config               | github.com/catppuccin/fzf                     | upstream-bg+header
 #   kitty        | ~/.config/kitty/current-theme.conf | github.com/catppuccin/kitty                   | upstream+header
 #   lazygit      | ~/.config/lazygit/config.yml       | github.com/catppuccin/lazygit                 | upstream+mauve+header
-#   starship     | ~/.config/starship.toml            | github.com/catppuccin/starship                | generated
+#   starship     | ~/.config/starship.toml            | github.com/catppuccin/starship                | upstream+header
 #   tealdeer     | ~/.config/tealdeer/config.toml     | manual                                        | manual
 #   yazi         | ~/.config/yazi/theme.toml          | github.com/catppuccin/yazi                    | upstream+mauve+text+header
 #   zsh-syntax   | ~/.config/zsh/catppuccin_mocha-*   | github.com/catppuccin/zsh-syntax-highlighting | upstream+header
@@ -35,7 +35,6 @@
 #   upstream+X    = Aus Upstream mit Anpassung (X = was geändert)
 #   upstream-X    = Aus Upstream mit Entfernung (X = was entfernt)
 #   builtin       = In Tool eingebaut (kein externes Theme nötig)
-#   generated     = Wird bei bootstrap generiert (starship preset)
 #   manual        = Manuell basierend auf catppuccin.com/palette
 # ------------------------------------------------------------
 

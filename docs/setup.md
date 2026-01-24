@@ -53,7 +53,6 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 | Git Hooks | Aktiviert Pre-Commit Validierung | ✓ Schnell |
 | Font-Verifikation | Prüft MesloLG Nerd Font Installation | ❌ Exit |
 | Terminal-Profil | Importiert `catppuccin-mocha.terminal` als Standard | ⚠️ Warnung |
-| Starship-Theme | Generiert `~/.config/starship.toml` | ⚠️ Warnung |
 | bat Cache | Baut Theme-Cache für Syntax-Highlighting | ✓ Schnell |
 | tldr Cache | Lädt tldr-Pages herunter | ⚠️ Netzwerk |
 | Xcode-Theme | Installiert Catppuccin Mocha Theme | ⚠️ Warnung |
@@ -77,7 +76,7 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 > | CI/CD (GitHub Actions) | `60-90` | Shared Resources, variable Performance |
 > | Langsame Netzwerk-Speicher | `90-120` | Bei NFS/SMB-gemounteten Home-Verzeichnissen |
 >
-> **📦 Komponenten-Abhängigkeiten:** Terminal-Profil, Nerd Font und Starship-Preset sind eng gekoppelt. Wenn Icons als □ oder ? angezeigt werden, siehe [Troubleshooting](#troubleshooting) unten.
+> **📦 Komponenten-Abhängigkeiten:** Terminal-Profil, Nerd Font und Starship-Config sind eng gekoppelt. Wenn Icons als □ oder ? angezeigt werden, siehe [Troubleshooting](#troubleshooting) unten.
 
 ---
 

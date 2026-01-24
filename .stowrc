@@ -11,9 +11,6 @@
 --ignore=^\._
 --ignore=\.localized
 
-# Ignore-Patterns (projektspezifisch)
---ignore=starship\.toml
-
 # Stow-Verhalten
 # Verhindert Tree-Folding: ~/.config bleibt ein echtes Verzeichnis
 --no-folding

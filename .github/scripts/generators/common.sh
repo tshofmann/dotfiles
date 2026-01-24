@@ -29,19 +29,16 @@ source "$COMMON_DIR/ui.sh"
 # 3. macOS-Helper (Versionen, Codenamen)
 source "$COMMON_DIR/macos.sh"
 
-# 4. Starship-Helper (Presets – plattformunabhängig)
-source "$COMMON_DIR/starship.sh"
-
-# 5. Bootstrap-Parser (Modul-Metadaten)
+# 4. Bootstrap-Parser (Modul-Metadaten)
 source "$COMMON_DIR/bootstrap.sh"
 
-# 6. Text-Parser (Header, Aliase)
+# 5. Text-Parser (Header, Aliase)
 source "$COMMON_DIR/parsers.sh"
 
-# 7. Brewfile-Parser
+# 6. Brewfile-Parser
 source "$COMMON_DIR/brewfile.sh"
 
-# 8. dothelp-Kategorien
+# 7. dothelp-Kategorien
 source "$COMMON_DIR/dothelp.sh"
 
 # ------------------------------------------------------------
@@ -63,9 +60,6 @@ source "$COMMON_DIR/dothelp.sh"
 #   - extract_macos_min_version_smart()
 #   - extract_macos_tested_version_smart()
 #   - has_bootstrap_modules()
-#
-# Aus starship.sh:
-#   - extract_starship_default_preset()
 #
 # Aus bootstrap.sh:
 #   - extract_module_step_metadata()
