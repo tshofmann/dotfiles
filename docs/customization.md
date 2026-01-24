@@ -13,7 +13,7 @@ Das gesamte Setup verwendet [Catppuccin Mocha](https://catppuccin.com/) als einh
 | Tool | Theme-Datei | Status |
 | ---- | ----------- | ------ |
 | **Terminal.app** | `setup/catppuccin-mocha.terminal` | Via Bootstrap importiert + als Standard gesetzt |
-| **Starship** | catppuccin-powerline Preset | Via Bootstrap konfiguriert |
+| **Starship** | terminal/.config/starship.toml | Via Stow verlinkt |
 | **bat** | `terminal/.config/bat/themes/` | Via Stow verlinkt (+ Cache-Build) |
 | **fzf** | `terminal/.config/fzf/config` | Farben in Config-Datei (via Stow) |
 | **btop** | `terminal/.config/btop/themes/` | Via Stow verlinkt |
@@ -79,41 +79,39 @@ Vollständige Palette: [catppuccin.com/palette](https://catppuccin.com/palette)
 
 ## Starship-Prompt
 
-Das Setup konfiguriert automatisch [Starship](https://starship.rs/) mit dem `catppuccin-powerline` Preset.
+Die [Starship](https://starship.rs/) Prompt-Konfiguration ist versioniert und wird via Stow nach `~/.config/starship.toml` verlinkt.
 
-### Standard-Verhalten
+### Konfiguration
 
-| Situation | Verhalten |
-| --------- | --------- |
-| Keine `starship.toml` vorhanden | Wird mit `catppuccin-powerline` erstellt |
-| `starship.toml` bereits vorhanden | Bleibt unverändert |
-| `STARSHIP_PRESET` Variable gesetzt | Wird mit diesem Preset erstellt/überschrieben |
+Die Datei `terminal/.config/starship.toml` enthält das `catppuccin-powerline` Preset aus dem [catppuccin/starship](https://github.com/catppuccin/starship) Repository.
 
-### Preset ändern
+### Anpassungen
 
-Du kannst das Preset bei der Installation ändern:
+Du kannst die Starship-Konfiguration direkt in `terminal/.config/starship.toml` bearbeiten:
 
 ```zsh
-# Einmalig mit anderem Preset
-STARSHIP_PRESET="tokyo-night" ./setup/bootstrap.sh
-
-# Persistent für mehrere Runs
-export STARSHIP_PRESET="pure-preset"
-./setup/bootstrap.sh
+# Datei öffnen
+$EDITOR ~/dotfiles/terminal/.config/starship.toml
 ```
 
-### Verfügbare Presets
+### Preset wechseln
+
+Falls du ein anderes Preset verwenden möchtest:
 
 ```zsh
-# Nach Installation lokal auflisten
+# Verfügbare Presets auflisten
 starship preset --list
+
+# Neues Preset generieren (überschreibt die Datei)
+starship preset <preset-name> -o ~/dotfiles/terminal/.config/starship.toml
+
+# Änderung committen
+cd ~/dotfiles
+git add terminal/.config/starship.toml
+git commit -m "Starship: <preset-name> Preset"
 ```
 
-Oder online: [starship.rs/presets](https://starship.rs/presets/)
-
-### Fallback bei ungültigem Preset
-
-Bei einem ungültigen Preset-Namen zeigt das Skript eine Warnung und verwendet `catppuccin-powerline` als Fallback.
+Presets online: [starship.rs/presets](https://starship.rs/presets/)
 
 ---
 
@@ -121,12 +119,12 @@ Bei einem ungültigen Preset-Namen zeigt das Skript eine Warnung und verwendet `
 
 ## Schriftart wechseln
 
-Das Terminal-Profil, der Nerd Font und das Starship-Preset sind eng gekoppelt. Wenn du die Schriftart ändern möchtest, musst du alle drei Komponenten berücksichtigen.
+Das Terminal-Profil, der Nerd Font und das Starship-Prompt sind eng gekoppelt. Wenn du die Schriftart ändern möchtest, musst du alle drei Komponenten berücksichtigen.
 > **⚠️ Wichtig:** Die Datei `catppuccin-mocha.terminal` enthält binäre NSArchiver-Daten. **Niemals direkt editieren** – nur über die Terminal.app GUI ändern und neu exportieren.
 
 ### Voraussetzung
 
-Bei Starship-Presets mit Powerline-Symbolen (wie `catppuccin-powerline`) muss die neue Schriftart ein **Nerd Font** sein. Nerd Fonts enthalten zusätzliche Icons und Symbole, die für Powerline-Prompts benötigt werden.
+Bei Starship-Konfigurationen mit Powerline-Symbolen (wie dem `catppuccin-powerline` Preset) muss die Schriftart ein **Nerd Font** sein. Nerd Fonts enthalten zusätzliche Icons und Symbole, die für Powerline-Prompts benötigt werden.
 
 ### Schritt 1: Neuen Nerd Font installieren
 
