@@ -10,6 +10,37 @@
 source "${0:A:h}/common.sh"
 
 # ------------------------------------------------------------
+# Helper: Tool-Ersetzungen aus .alias-Dateien extrahieren
+# ------------------------------------------------------------
+# Parst "# Ersetzt : original (beschreibung)" aus allen .alias-Dateien
+generate_tool_replacements_table() {
+    local -A replacements=()
+
+    for alias_file in "$ALIAS_DIR"/*.alias(N); do
+        local tool_name=$(basename "$alias_file" .alias)
+        local ersetzt=$(parse_header_field "$alias_file" "Ersetzt")
+
+        # Format: "original (beschreibung)" → extrahiere beides
+        if [[ -n "$ersetzt" && "$ersetzt" == *"("* ]]; then
+            local original="${ersetzt%% \(*}"
+            local desc="${ersetzt#*\(}"
+            desc="${desc%\)}"
+            replacements[$original]="${tool_name}|${desc}"
+        fi
+    done
+
+    # Sortiert ausgeben
+    echo "| Vorher | Nachher | Vorteil |"
+    echo "| ------ | ------- | ------- |"
+    for original in ${(ko)replacements}; do
+        local data="${replacements[$original]}"
+        local tool="${data%%|*}"
+        local desc="${data#*|}"
+        echo "| \`${original}\` | \`${tool}\` | ${desc} |"
+    done
+}
+
+# ------------------------------------------------------------
 # Haupt-Generator für README.md
 # ------------------------------------------------------------
 generate_readme_md() {
@@ -20,8 +51,8 @@ generate_readme_md() {
     macos_min_name=$(get_macos_codename "$macos_min")
     macos_tested_name=$(get_macos_codename "$macos_tested")
 
-    # dothelp-Kategorien aus echten Quellen
-    local dothelp_categories=$(get_dothelp_categories)
+    # Tool-Ersetzungen dynamisch generieren
+    local tool_replacements=$(generate_tool_replacements_table)
 
     cat << EOF
 # 🍎 dotfiles
@@ -31,36 +62,39 @@ generate_readme_md() {
 [![macOS](https://img.shields.io/badge/macOS-${macos_min}%2B-black?logo=apple)](https://www.apple.com/macos/)
 [![Shell: zsh](https://img.shields.io/badge/Shell-zsh-green?logo=gnubash)](https://www.zsh.org/)
 
-> ${PROJECT_DESCRIPTION}
+**Dein Mac-Terminal mit modernen Tools, einheitlichem Theme und Dokumentation.**
 
-## Quickstart
+## ✨ Was du bekommst
+
+${tool_replacements}
+
+Dazu: **[Catppuccin Mocha](https://catppuccin.com/) Theme** überall, **Hilfe im Terminal** via \`dothelp\`, **fzf-Integration** für alles.
+
+Alle installierten Pakete: [\`setup/Brewfile\`](setup/Brewfile)
+
+## 🚀 Installation
 
 \`\`\`zsh
 curl -fsSL https://github.com/tshofmann/dotfiles/archive/refs/heads/main.tar.gz | tar -xz -C ~ && mv ~/dotfiles-main ~/dotfiles && ~/dotfiles/setup/bootstrap.sh
 \`\`\`
 
-Nach Terminal-Neustart:
+Danach **Terminal neu starten** (Cmd+Q). Fertig!
 
-\`\`\`zsh
-cd ~/dotfiles && stow --adopt -R terminal editor && git reset --hard HEAD && bat cache --build && tldr --update
-\`\`\`
-
-> ⚠️ **Achtung:** \`git reset --hard\` verwirft lokale Änderungen. Siehe [Setup](docs/setup.md) für Details.
-
-## Voraussetzungen
+### Voraussetzungen
 
 - **Apple Silicon Mac** (arm64)
 - **macOS ${macos_min}+** (${macos_min_name}) – getestet auf macOS ${macos_tested} (${macos_tested_name})
 - **Internetverbindung** & Admin-Rechte
 
-## Hilfe & Dokumentation
+## 📖 Dokumentation
 
-| Thema | Beschreibung |
-| ----- | ------------ |
-| \`dothelp\` | Hilfe/Dokumentation im Terminal: ${dothelp_categories} |
-| [Setup](docs/setup.md) | Schritt-für-Schritt Anleitung |
-| [Anpassung](docs/customization.md) | Starship, Aliase, ZSH anpassen |
-| [Contributing](CONTRIBUTING.md) | Für Entwickler: Architektur, Hooks, Workflow |
+| Befehl | Was es zeigt |
+| ------ | ------------ |
+| \`dothelp\` | Schnellreferenz: Keybindings, Tool-Ersetzungen, Wartung |
+| \`cmds\` | Alle Aliase und Funktionen interaktiv durchsuchen |
+| \`tldr <tool>\` | Vollständige Tool-Doku mit dotfiles-Erweiterungen |
+
+Mehr: [Setup](docs/setup.md) · [Anpassung](docs/customization.md) · [Contributing](CONTRIBUTING.md)
 
 ## Lizenz
 
