@@ -509,7 +509,7 @@ Diese Regeln gelten für alle Shell-Dateien:
 
 | Regel | Format | Beispiel |
 | ------- | -------- | ---------- |
-| **Metadaten-Felder** | 8 Zeichen + `:` | `# Docs    :`, `# Guard   :` |
+| **Metadaten-Felder** | 12 Zeichen + `:` | `# Zweck       :`, `# Docs        :` |
 | **Guard-Kommentar** | Mit Tool-Name | `# Guard   : Nur wenn X installiert ist` |
 | **Sektions-Trenner** | `----` (60 Zeichen) | `# --------------------------------------------------------` |
 | **Header-Block** | `====` nur oben | Erste Zeilen der Datei |

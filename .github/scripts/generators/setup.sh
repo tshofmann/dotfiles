@@ -96,7 +96,6 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 
 | Aktion | Beschreibung | Bei Fehler |
 | ------ | ------------ | ---------- |
-| Architektur-Check | Prüft ob arm64 (Apple Silicon) | ❌ Exit |
 PART2
 
     # Dynamische Bootstrap-Schritte-Tabelle aus Modulen generieren
