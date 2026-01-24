@@ -330,6 +330,9 @@ if (( ${#font_casks[@]} > 0 )); then
       font-meslo-lg-nerd-font)
         font_pattern="MesloLG*NerdFont*"
         ;;
+      font-jetbrains-mono-nerd-font)
+        font_pattern="JetBrainsMono*NerdFont*"
+        ;;
       font-*)
         # Generischer Fallback: Entferne font- Prefix, CamelCase
         font_pattern="${font_cask#font-}"

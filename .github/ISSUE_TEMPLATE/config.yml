@@ -3,6 +3,3 @@ contact_links:
   - name: 📖 Dokumentation
     url: https://github.com/tshofmann/dotfiles/tree/main/docs
     about: Lies die Dokumentation bevor du ein Issue erstellst
-  - name: 💬 Diskussionen
-    url: https://github.com/tshofmann/dotfiles/discussions
-    about: Fragen und Ideen können auch in Discussions besprochen werden
