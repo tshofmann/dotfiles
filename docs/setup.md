@@ -150,16 +150,18 @@ ff                                  # System-Info anzeigen
 | [`github`](https://desktop.github.com/) | GitHub Desktop GUI |
 | [`kitty`](https://sw.kovidgoyal.net/kitty/) | GPU-Terminal mit Image-Support |
 | [`visual-studio-code`](https://code.visualstudio.com/) | Editor |
-| [`font-meslo-lg-nerd-font`](https://github.com/ryanoasis/nerd-fonts) | Nerd Font für Prompt, eza, yazi |
+| [`font-jetbrains-mono-nerd-font`](https://github.com/ryanoasis/nerd-fonts) | Nerd Font |
+| [`font-meslo-lg-nerd-font`](https://github.com/ryanoasis/nerd-fonts) | Nerd Font |
 
 ### Mac App Store
 
 | Paket | Beschreibung |
 | ----- | ------------ |
-| [Xcode](https://apps.apple.com/app/id497799835) | Apple IDE |
-| [Pages](https://apps.apple.com/app/id409201541) | Textverarbeitung |
-| [Numbers](https://apps.apple.com/app/id409203825) | Tabellenkalkulation |
 | [Keynote](https://apps.apple.com/app/id409183694) | Präsentationen |
+| [Numbers](https://apps.apple.com/app/id409203825) | Tabellenkalkulation |
+| [Pages](https://apps.apple.com/app/id409201541) | Textverarbeitung |
+| [Pixelmator Pro](https://apps.apple.com/app/id1289583905) | Bildbearbeitung |
+| [Xcode](https://apps.apple.com/app/id497799835) | Apple IDE |
 
 > **Hinweis:** Die Anmeldung im App Store muss manuell erfolgen – die Befehle `mas account` und `mas signin` sind auf macOS 12+ nicht verfügbar.
 

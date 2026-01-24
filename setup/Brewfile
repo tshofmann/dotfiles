@@ -45,12 +45,14 @@ cask "claude-code"                          # Agentic Coding | https://docs.anth
 cask "github"                               # GitHub Desktop GUI | https://desktop.github.com/
 cask "kitty"                                # GPU-Terminal mit Image-Support | https://sw.kovidgoyal.net/kitty/
 cask "visual-studio-code"                   # Editor | https://code.visualstudio.com/
-cask "font-meslo-lg-nerd-font"              # Nerd Font für Prompt, eza, yazi | https://github.com/ryanoasis/nerd-fonts
+cask "font-jetbrains-mono-nerd-font"        # Nerd Font | https://github.com/ryanoasis/nerd-fonts
+cask "font-meslo-lg-nerd-font"              # Nerd Font | https://github.com/ryanoasis/nerd-fonts
 
 # ------------------------------------------------------------
 # Mac App Store
 # ------------------------------------------------------------
-mas "Xcode", id: 497799835                  # Apple IDE
-mas "Pages", id: 409201541                  # Textverarbeitung
-mas "Numbers", id: 409203825                # Tabellenkalkulation
 mas "Keynote", id: 409183694                # Präsentationen
+mas "Numbers", id: 409203825                # Tabellenkalkulation
+mas "Pages", id: 409201541                  # Textverarbeitung
+mas "Pixelmator Pro", id: 1289583905        # Bildbearbeitung
+mas "Xcode", id: 497799835                  # Apple IDE

@@ -132,8 +132,8 @@ Bei Starship-Konfigurationen mit Powerline-Symbolen (wie dem `catppuccin-powerli
 # Verfügbare Nerd Fonts suchen
 brew search nerd-font
 
-# Beispiel: Nerd Font installieren (z.B. font-meslo-lg-nerd-font)
-brew install --cask font-meslo-lg-nerd-font
+# Beispiel: Nerd Font installieren (z.B. font-jetbrains-mono-nerd-font)
+brew install --cask font-jetbrains-mono-nerd-font
 ```
 
 ### Schritt 2: Terminal.app Profil anpassen
@@ -141,7 +141,7 @@ brew install --cask font-meslo-lg-nerd-font
 1. Terminal.app öffnen
 2. **Terminal** → **Einstellungen** → **Profile** → **catppuccin-mocha**
 3. Tab **Text** → **Schrift** → **Ändern…**
-4. Neuen Nerd Font auswählen (z.B. "MesloLG Nerd Font Mono")
+4. Neuen Nerd Font auswählen (z.B. "JetBrainsMono Nerd Font Mono")
 5. Größe anpassen (empfohlen: 13-14pt)
 6. Profil exportieren: **Einstellungen** → **Profile** → **Zahnrad** → **"...exportieren"**
 
