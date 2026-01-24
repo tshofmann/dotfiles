@@ -119,7 +119,6 @@ cmds() {
         --prompt='tldr> ' \
         --header='Enter: Befehl übernehmen | Ctrl+S: tldr ↔ Code' \
         --preview "[[ \$FZF_PROMPT == 'code> ' ]] && zsh '$fzf_dir/cmds' preview code {} || zsh '$fzf_dir/cmds' preview tldr {}" \
-        --preview-window='right:50%:wrap' \
         --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'tldr> ' ]] && echo 'change-prompt(code> )+refresh-preview' || echo 'change-prompt(tldr> )+refresh-preview'")
 
     # Bei Enter: Befehl ins Edit-Buffer (kann editiert/ausgeführt werden)
@@ -174,7 +173,6 @@ vars() {
             else
                 echo "$v"
             fi' \
-        --preview-window='right:50%,wrap' \
         --bind='ctrl-y:execute-silent(n=$(echo {} | cut -d"│" -f1 | xargs); printenv "$n" | pbcopy)+abort')
 
     if [[ -n "$selection" ]]; then

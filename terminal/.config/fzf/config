@@ -36,7 +36,8 @@
 # Vorschau-Fenster
 # ------------------------------------------------------------
 # Standard für alle Funktionen (kann per --preview-window überschrieben werden)
---preview-window=right:60%:wrap
+# 50% ist optimal für 120-Spalten-Terminals (Kitty: initial_window_width=120c)
+--preview-window=right:50%:wrap
 
 # ------------------------------------------------------------
 # Tastenkürzel (universell)
