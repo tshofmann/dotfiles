@@ -43,7 +43,6 @@ alias unrar='7zz x'
     local archive
     archive=$(fd -e zip -e 7z -e rar -e tar -e gz -e xz -e bz2 -e tgz -e tbz2 . "${1:-.}" 2>/dev/null | \
         fzf --preview='zsh -c '\''7zz l -- "$1" 2>/dev/null | head -50'\'' -- {}' \
-            --preview-window='right:60%' \
             --header='Enter=Entpacken │ Ctrl+Y=Pfad kopieren' \
             --bind='ctrl-y:execute-silent(zsh -c '\''echo -n "$1" | pbcopy'\'' -- {})+abort')
 
