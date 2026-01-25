@@ -266,6 +266,7 @@ Alle Shell-Dateien (`.alias`, `.sh`, `.zsh*`) beginnen mit einem standardisierte
 | `Ersetzt` | ⚪ | Welchen Befehl ersetzt das Tool? (cat, find, ls) |
 | `Aliase` | ⚪ | Liste der definierten Aliase |
 | `Aufruf` | ⚪ | Für Skripte: Wie wird es aufgerufen? |
+| `Lizenz` | ⚪ | Lizenz für externe/upstream Dateien (z.B. MIT) |
 | `Hinweis` | ⚪ | Nur für **einzigartige** kontextuelle Info (siehe SSOT) |
 | `Config` | ⚪ | Nur wenn Config-Datei keine Header unterstützt |
 

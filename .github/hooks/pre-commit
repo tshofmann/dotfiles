@@ -36,6 +36,8 @@ check_shell_syntax() {
                 "$DOTFILES_DIR"/terminal/.config/alias/*.alias(N) \
                 "$DOTFILES_DIR"/terminal/.config/zsh/*.zsh(N) \
                 "$DOTFILES_DIR"/terminal/.zsh*(N) \
+                "$DOTFILES_DIR"/terminal/.zprofile(N) \
+                "$DOTFILES_DIR"/terminal/.zlogin(N) \
                 "$DOTFILES_DIR"/setup/*.sh(N) \
                 "$DOTFILES_DIR"/setup/modules/*.sh(N); do
         if [[ -f "$file" ]]; then
