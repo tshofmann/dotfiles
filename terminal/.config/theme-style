@@ -4,6 +4,7 @@
 # Zweck       : Zentrale Farb- und Text-Style-Variablen für Shell-Ausgaben
 # Pfad        : ~/.config/theme-style (nach stow) oder terminal/.config/theme-style (im Repo)
 # Docs        : https://catppuccin.com/palette
+# Generiert   : docs/customization.md (Farbpalette), tldr/catppuccin.page.md (Theme-Quellen)
 # ============================================================
 # Wird verwendet von:
 #   - setup/modules/_core.sh (Bootstrap lädt direkt aus Repo)

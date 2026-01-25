@@ -6,6 +6,7 @@
 # Aufruf      : ./bootstrap.sh
 # Docs        : https://github.com/tshofmann/dotfiles#readme
 # Module      : setup/modules/ (validation, homebrew, stow, git-hooks, font, terminal-profile, bat, tealdeer, xcode-theme, zsh-sessions)
+# Generiert   : README.md (macOS-Versionen), docs/setup.md (Bootstrap-Schritte)
 # ============================================================
 
 set -euo pipefail

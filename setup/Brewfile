@@ -4,6 +4,7 @@
 # Zweck       : Deklarative Homebrew-Abhängigkeiten
 # Verwendung  : brew bundle (via HOMEBREW_BUNDLE_FILE in .zprofile)
 # Docs        : https://github.com/Homebrew/homebrew-bundle
+# Generiert   : docs/setup.md (Tool-Tabellen)
 # ============================================================
 # Format für Doku-Generierung:
 #   brew/cask: # Beschreibung | https://docs-url

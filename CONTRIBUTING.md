@@ -200,9 +200,11 @@ Die Dokumentation wird automatisch aus dem Code generiert (Single Source of Trut
 
 | Quelle | Generiert |
 | ------ | --------- |
-| `.alias`-Dateien | tldr-Patches/Pages |
-| `Brewfile` | setup.md (Tool-Liste) |
+| `.alias`-Dateien | tldr-Patches/Pages, README.md (Tool-Ersetzungen) |
+| `Brewfile` | setup.md (Tool-Listen) |
+| `bootstrap.sh` | README.md (macOS-Versionen), setup.md (Bootstrap-Schritte) |
 | `setup/modules/*.sh` | setup.md (Bootstrap-Schritte via STEP-Metadaten) |
+| `theme-style` | customization.md (Farbpalette), tldr/catppuccin.page.md |
 | Config-Dateien | customization.md |
 
 ### Bei Fehlern
@@ -259,6 +261,7 @@ Alle Shell-Dateien (`.alias`, `.sh`, `.zsh*`) beginnen mit einem standardisierte
 | `Zweck` | ✅ | Was macht diese Datei? |
 | `Pfad` | ✅ | Wo liegt die Datei nach Stow? |
 | `Docs` | ✅ | Link zur offiziellen Dokumentation |
+| `Generiert` | ⚪ | Welche Doku wird aus dieser Datei generiert? |
 | `Nutzt` | ⚪ | Abhängigkeiten zu anderen Tools (fzf, bat, etc.) |
 | `Ersetzt` | ⚪ | Welchen Befehl ersetzt das Tool? (cat, find, ls) |
 | `Aliase` | ⚪ | Liste der definierten Aliase |
