@@ -183,6 +183,7 @@ check_header_alignment() {
         "Profil      :"
         "Alternativen :"
         "Lizenz      :"
+        "Generiert   :"
     )
 
     # Alle Dateien mit Header-Blöcken prüfen
