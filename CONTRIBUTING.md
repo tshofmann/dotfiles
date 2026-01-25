@@ -513,7 +513,7 @@ Diese Regeln gelten für alle Shell-Dateien:
 
 | Regel | Format | Beispiel |
 | ------- | -------- | ---------- |
-| **Metadaten-Felder** | Feldname auf 12 Zeichen padden, dann Leerzeichen + `:` | `# Zweck       :`, `# Alternativen :` |
+| **Metadaten-Felder** | Feldname auf 12 Zeichen padden + Leerzeichen + `:` | `# Zweck       :`, `# Alternativen :` |
 | **Guard-Kommentar** | Mit Tool-Name | `# Guard   : Nur wenn X installiert ist` |
 | **Sektions-Trenner** | `----` (60 Zeichen) | `# --------------------------------------------------------` |
 | **Header-Block** | `====` nur oben | Erste Zeilen der Datei |
