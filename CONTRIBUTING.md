@@ -162,7 +162,7 @@ git config core.hooksPath .github/hooks
 
 | Hook | Zweck |
 | ------ | ------- |
-| `pre-commit` | 1. ZSH-Syntax (`zsh -n`) für `.github/scripts/**/*.sh`, `terminal/.config/alias/*.alias`, `setup/*.sh`, `setup/modules/*.sh` |
+| `pre-commit` | 1. ZSH-Syntax (`zsh -n`) für `.github/scripts/**/*.sh`, `terminal/.config/alias/*.alias`, `terminal/.config/zsh/*.zsh`, `terminal/.zsh*`, `terminal/.zprofile`, `terminal/.zlogin`, `setup/*.sh`, `setup/modules/*.sh` |
 | | 2. Doku-Konsistenz (vergleicht generierte mit aktuellen Docs) |
 | | 3. Alias-Format (Header-Block, Guard-Check) |
 
@@ -200,10 +200,12 @@ Die Dokumentation wird automatisch aus dem Code generiert (Single Source of Trut
 
 | Quelle | Generiert |
 | ------ | --------- |
-| `.alias`-Dateien | tldr-Patches/Pages |
-| `Brewfile` | setup.md (Tool-Liste) |
-| `setup/modules/*.sh` | setup.md (Bootstrap-Schritte via STEP-Metadaten) |
-| Config-Dateien | customization.md |
+| `.alias`-Dateien | tldr-Patches/Pages, README.md (Tool-Ersetzungen) |
+| `Brewfile` | docs/setup.md (Tool-Listen) |
+| `bootstrap.sh` | README.md (macOS-Versionen), docs/setup.md (Bootstrap-Schritte) |
+| `setup/modules/*.sh` | docs/setup.md (Bootstrap-Schritte via STEP-Metadaten) |
+| `theme-style` | docs/customization.md (Farbpalette), terminal/.config/tealdeer/pages/catppuccin.page.md |
+| Config-Dateien | docs/customization.md |
 
 ### Bei Fehlern
 
@@ -252,17 +254,19 @@ Alle Shell-Dateien (`.alias`, `.sh`, `.zsh*`) beginnen mit einem standardisierte
 # ============================================================
 ```
 
-**Metadaten-Felder** (12 Zeichen breit, linksbündig):
+**Metadaten-Felder** (Format: `# <Feldname> :` – Feldname wird auf 12 Zeichen gepaddet, dann Leerzeichen + `:`):
 
 | Feld | Pflicht | Beschreibung |
 | ------ | --------- | -------------- |
 | `Zweck` | ✅ | Was macht diese Datei? |
 | `Pfad` | ✅ | Wo liegt die Datei nach Stow? |
 | `Docs` | ✅ | Link zur offiziellen Dokumentation |
+| `Generiert` | ⚪ | Welche Doku wird aus dieser Datei generiert? |
 | `Nutzt` | ⚪ | Abhängigkeiten zu anderen Tools (fzf, bat, etc.) |
 | `Ersetzt` | ⚪ | Welchen Befehl ersetzt das Tool? (cat, find, ls) |
 | `Aliase` | ⚪ | Liste der definierten Aliase |
 | `Aufruf` | ⚪ | Für Skripte: Wie wird es aufgerufen? |
+| `Lizenz` | ⚪ | Lizenz für externe/upstream Dateien (z.B. MIT) |
 | `Hinweis` | ⚪ | Nur für **einzigartige** kontextuelle Info (siehe SSOT) |
 | `Config` | ⚪ | Nur wenn Config-Datei keine Header unterstützt |
 
@@ -509,7 +513,7 @@ Diese Regeln gelten für alle Shell-Dateien:
 
 | Regel | Format | Beispiel |
 | ------- | -------- | ---------- |
-| **Metadaten-Felder** | 12 Zeichen + `:` | `# Zweck       :`, `# Docs        :` |
+| **Metadaten-Felder** | Feldname auf 12 Zeichen padden + Leerzeichen + `:` | `# Zweck       :`, `# Alternativen :` |
 | **Guard-Kommentar** | Mit Tool-Name | `# Guard   : Nur wenn X installiert ist` |
 | **Sektions-Trenner** | `----` (60 Zeichen) | `# --------------------------------------------------------` |
 | **Header-Block** | `====` nur oben | Erste Zeilen der Datei |

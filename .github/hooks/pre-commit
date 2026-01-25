@@ -31,10 +31,15 @@ check_shell_syntax() {
     log "Prüfe Shell-Syntax..."
     local errors=0
 
-    # Alle .sh und .alias Dateien prüfen
+    # Alle Shell-Dateien prüfen: .sh, .alias, .zsh, .zshrc, .zshenv, .zprofile, .zlogin
     for file in "$DOTFILES_DIR"/.github/scripts/**/*.sh(N) \
                 "$DOTFILES_DIR"/terminal/.config/alias/*.alias(N) \
-                "$DOTFILES_DIR"/setup/bootstrap.sh; do
+                "$DOTFILES_DIR"/terminal/.config/zsh/*.zsh(N) \
+                "$DOTFILES_DIR"/terminal/.zsh*(N) \
+                "$DOTFILES_DIR"/terminal/.zprofile(N) \
+                "$DOTFILES_DIR"/terminal/.zlogin(N) \
+                "$DOTFILES_DIR"/setup/*.sh(N) \
+                "$DOTFILES_DIR"/setup/modules/*.sh(N); do
         if [[ -f "$file" ]]; then
             if ! zsh -n "$file" 2>/dev/null; then
                 err "Syntax-Fehler in: ${file#$DOTFILES_DIR/}"
@@ -145,14 +150,14 @@ check_alias_format() {
 }
 
 # ------------------------------------------------------------
-# 5. Header-Einrückungen prüfen (12 Zeichen Standard)
+# 5. Header-Einrückungen prüfen (Feldname auf 12 Zeichen gepaddet)
 # ------------------------------------------------------------
 check_header_alignment() {
     log "Prüfe Header-Einrückungen..."
     local errors=0
 
-    # Standard-Felder die auf 12 Zeichen ausgerichtet sein müssen
-    # Format: "# Feldname   :" wobei Feldname + Spaces = 12 Zeichen
+    # Standard-Felder: Feldname wird mit Leerzeichen auf 12 Zeichen gepaddet,
+    # dann folgt " :". Bei 12-Zeichen-Feldnamen (z.B. Alternativen) nur " :" anhängen.
     local -a fields=(
         "Zweck       :"
         "Pfad        :"
@@ -178,13 +183,16 @@ check_header_alignment() {
         "Aktivierung :"
         "Zielort     :"
         "Profil      :"
-        "Alternativen:"
+        "Alternativen :"
+        "Lizenz      :"
+        "Generiert   :"
     )
 
     # Alle Dateien mit Header-Blöcken prüfen
     local files=(
         "$DOTFILES_DIR"/terminal/.config/alias/*.alias(N)
         "$DOTFILES_DIR"/terminal/.config/fzf/*(N.)
+        "$DOTFILES_DIR"/terminal/.config/zsh/*.zsh(N)
         "$DOTFILES_DIR"/terminal/.config/*/config(N)
         "$DOTFILES_DIR"/terminal/.config/*/*.toml(N)
         "$DOTFILES_DIR"/terminal/.config/*/*.yml(N)
@@ -192,6 +200,8 @@ check_header_alignment() {
         "$DOTFILES_DIR"/terminal/.config/fd/ignore(N)
         "$DOTFILES_DIR"/terminal/.config/shellcheckrc(N)
         "$DOTFILES_DIR"/terminal/.zsh*(N)
+        "$DOTFILES_DIR"/terminal/.zprofile(N)
+        "$DOTFILES_DIR"/terminal/.zlogin(N)
         "$DOTFILES_DIR"/setup/*.sh(N)
         "$DOTFILES_DIR"/setup/modules/*.sh(N)
         "$DOTFILES_DIR"/setup/Brewfile(N)
@@ -217,10 +227,9 @@ check_header_alignment() {
     if (( errors > 0 )); then
         err "$errors Header-Feld(er) mit falscher Einrückung"
         print ""
-        print "  ${C_DIM}Standard: 12 Zeichen vor Doppelpunkt${C_RESET}"
-        print "    ${C_BOLD}# Zweck       :${C_RESET}"
-        print "    ${C_BOLD}# Pfad        :${C_RESET}"
-        print "    ${C_BOLD}# Verwendung  :${C_RESET}"
+        print "  ${C_DIM}Standard: Feldname auf 12 Zeichen padden + ' :'${C_RESET}"
+        print "    ${C_BOLD}# Zweck       :${C_RESET}  ${C_DIM}(5 Zeichen + 7 Spaces = 12)${C_RESET}"
+        print "    ${C_BOLD}# Alternativen :${C_RESET}  ${C_DIM}(12 Zeichen + 0 Spaces = 12)${C_RESET}"
         return 1
     fi
 
