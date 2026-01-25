@@ -75,7 +75,7 @@ Doku wird automatisch aus Code generiert (Single Source of Truth):
 - `.alias`-Dateien → tldr-Patches/Pages (`.patch.md` oder `.page.md`), README.md (Tool-Ersetzungen)
 - `Brewfile` → `docs/setup.md` (Tool-Listen)
 - `bootstrap.sh` → README.md (macOS-Versionen), `docs/setup.md` (Bootstrap-Schritte)
-- `theme-style` → `docs/customization.md` (Farbpalette), tldr/catppuccin.page.md
+- `theme-style` → `docs/customization.md` (Farbpalette), `terminal/.config/tealdeer/pages/catppuccin.page.md`
 
 **tldr-Format:** Der Generator prüft automatisch ob eine offizielle tldr-Seite existiert:
 

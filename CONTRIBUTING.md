@@ -201,11 +201,11 @@ Die Dokumentation wird automatisch aus dem Code generiert (Single Source of Trut
 | Quelle | Generiert |
 | ------ | --------- |
 | `.alias`-Dateien | tldr-Patches/Pages, README.md (Tool-Ersetzungen) |
-| `Brewfile` | setup.md (Tool-Listen) |
-| `bootstrap.sh` | README.md (macOS-Versionen), setup.md (Bootstrap-Schritte) |
-| `setup/modules/*.sh` | setup.md (Bootstrap-Schritte via STEP-Metadaten) |
-| `theme-style` | customization.md (Farbpalette), tldr/catppuccin.page.md |
-| Config-Dateien | customization.md |
+| `Brewfile` | docs/setup.md (Tool-Listen) |
+| `bootstrap.sh` | README.md (macOS-Versionen), docs/setup.md (Bootstrap-Schritte) |
+| `setup/modules/*.sh` | docs/setup.md (Bootstrap-Schritte via STEP-Metadaten) |
+| `theme-style` | docs/customization.md (Farbpalette), terminal/.config/tealdeer/pages/catppuccin.page.md |
+| Config-Dateien | docs/customization.md |
 
 ### Bei Fehlern
 
@@ -512,7 +512,7 @@ Diese Regeln gelten für alle Shell-Dateien:
 
 | Regel | Format | Beispiel |
 | ------- | -------- | ---------- |
-| **Metadaten-Felder** | 12 Zeichen + `:` | `# Zweck       :`, `# Alternativen :` |
+| **Metadaten-Felder** | Feldname auf 12 Zeichen padden, dann Leerzeichen + `:` | `# Zweck       :`, `# Alternativen :` |
 | **Guard-Kommentar** | Mit Tool-Name | `# Guard   : Nur wenn X installiert ist` |
 | **Sektions-Trenner** | `----` (60 Zeichen) | `# --------------------------------------------------------` |
 | **Header-Block** | `====` nur oben | Erste Zeilen der Datei |
