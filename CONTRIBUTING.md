@@ -254,7 +254,7 @@ Alle Shell-Dateien (`.alias`, `.sh`, `.zsh*`) beginnen mit einem standardisierte
 # ============================================================
 ```
 
-**Metadaten-Felder** (Feldname auf 12 Zeichen gepaddet, dann `:`):
+**Metadaten-Felder** (Format: `# <Feldname> :` – Feldname wird auf 12 Zeichen gepaddet, dann Leerzeichen + `:`):
 
 | Feld | Pflicht | Beschreibung |
 | ------ | --------- | -------------- |
