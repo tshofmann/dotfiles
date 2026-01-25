@@ -162,7 +162,7 @@ git config core.hooksPath .github/hooks
 
 | Hook | Zweck |
 | ------ | ------- |
-| `pre-commit` | 1. ZSH-Syntax (`zsh -n`) für `.github/scripts/**/*.sh`, `terminal/.config/alias/*.alias`, `setup/*.sh`, `setup/modules/*.sh` |
+| `pre-commit` | 1. ZSH-Syntax (`zsh -n`) für `.github/scripts/**/*.sh`, `terminal/.config/alias/*.alias`, `terminal/.config/zsh/*.zsh`, `terminal/.zsh*`, `terminal/.zprofile`, `terminal/.zlogin`, `setup/*.sh`, `setup/modules/*.sh` |
 | | 2. Doku-Konsistenz (vergleicht generierte mit aktuellen Docs) |
 | | 3. Alias-Format (Header-Block, Guard-Check) |
 

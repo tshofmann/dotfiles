@@ -200,6 +200,8 @@ check_header_alignment() {
         "$DOTFILES_DIR"/terminal/.config/fd/ignore(N)
         "$DOTFILES_DIR"/terminal/.config/shellcheckrc(N)
         "$DOTFILES_DIR"/terminal/.zsh*(N)
+        "$DOTFILES_DIR"/terminal/.zprofile(N)
+        "$DOTFILES_DIR"/terminal/.zlogin(N)
         "$DOTFILES_DIR"/setup/*.sh(N)
         "$DOTFILES_DIR"/setup/modules/*.sh(N)
         "$DOTFILES_DIR"/setup/Brewfile(N)
