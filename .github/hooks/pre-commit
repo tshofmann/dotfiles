@@ -147,14 +147,14 @@ check_alias_format() {
 }
 
 # ------------------------------------------------------------
-# 5. Header-Einrückungen prüfen (12 Zeichen Standard)
+# 5. Header-Einrückungen prüfen (Feldname auf 12 Zeichen gepaddet)
 # ------------------------------------------------------------
 check_header_alignment() {
     log "Prüfe Header-Einrückungen..."
     local errors=0
 
-    # Standard-Felder die auf 12 Zeichen ausgerichtet sein müssen
-    # Format: "# Feldname   :" wobei Feldname + Spaces = 12 Zeichen
+    # Standard-Felder: Feldname wird auf 12 Zeichen gepaddet, dann " :"
+    # Format: "# Feldname   :" (längstes Feld: Alternativen = 12 Zeichen)
     local -a fields=(
         "Zweck       :"
         "Pfad        :"
@@ -221,10 +221,9 @@ check_header_alignment() {
     if (( errors > 0 )); then
         err "$errors Header-Feld(er) mit falscher Einrückung"
         print ""
-        print "  ${C_DIM}Standard: 12 Zeichen vor Doppelpunkt${C_RESET}"
-        print "    ${C_BOLD}# Zweck       :${C_RESET}"
-        print "    ${C_BOLD}# Pfad        :${C_RESET}"
-        print "    ${C_BOLD}# Verwendung  :${C_RESET}"
+        print "  ${C_DIM}Standard: Feldname auf 12 Zeichen + ' :'${C_RESET}"
+        print "    ${C_BOLD}# Zweck       :${C_RESET}  ${C_DIM}(5 Zeichen + 7 Spaces)${C_RESET}"
+        print "    ${C_BOLD}# Alternativen :${C_RESET}  ${C_DIM}(12 Zeichen + 0 Spaces)${C_RESET}"
         return 1
     fi
 

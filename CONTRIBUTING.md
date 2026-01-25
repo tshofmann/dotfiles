@@ -254,7 +254,7 @@ Alle Shell-Dateien (`.alias`, `.sh`, `.zsh*`) beginnen mit einem standardisierte
 # ============================================================
 ```
 
-**Metadaten-Felder** (12 Zeichen breit, linksbündig):
+**Metadaten-Felder** (Feldname auf 12 Zeichen gepaddet, dann `:`):
 
 | Feld | Pflicht | Beschreibung |
 | ------ | --------- | -------------- |
@@ -512,7 +512,7 @@ Diese Regeln gelten für alle Shell-Dateien:
 
 | Regel | Format | Beispiel |
 | ------- | -------- | ---------- |
-| **Metadaten-Felder** | 12 Zeichen + `:` | `# Zweck       :`, `# Docs        :` |
+| **Metadaten-Felder** | 12 Zeichen + `:` | `# Zweck       :`, `# Alternativen :` |
 | **Guard-Kommentar** | Mit Tool-Name | `# Guard   : Nur wenn X installiert ist` |
 | **Sektions-Trenner** | `----` (60 Zeichen) | `# --------------------------------------------------------` |
 | **Header-Block** | `====` nur oben | Erste Zeilen der Datei |
