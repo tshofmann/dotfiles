@@ -7,7 +7,7 @@
 # Config      : ~/.config/ripgrep/config
 # Nutzt       : fzf (Interactive), bat (Preview)
 # Ersetzt     : grep (schneller, respektiert .gitignore)
-# Aliase      : rg, rgc, rgi
+# Aliase      : rgc, rgi, rga, rgh, rgl, rgn, rgts, rgpy, rgmd, rgsh, rgrb, rggo, rg-live
 # ============================================================
 
 # Guard   : Nur wenn rg installiert ist
