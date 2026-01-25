@@ -65,7 +65,21 @@ if command -v fzf >/dev/null 2>&1; then
         local run_id
         # JSON-Output mit Go-Template für stabile ID-Extraktion (Issue #199)
         # Format: ID\tStatus\tWorkflow\tBranch\tTitle
-        local gh_template='{{range .}}{{printf "%.0f" .databaseId}}{{"\t"}}{{if eq .conclusion "success"}}{{autocolor "green" "✓"}}{{else if eq .conclusion "failure"}}{{autocolor "red" "✗"}}{{else if eq .status "in_progress"}}{{autocolor "yellow" "●"}}{{else}}{{autocolor "gray" "○"}}{{end}}{{"\t"}}{{.workflowName}}{{"\t"}}{{.headBranch}}{{"\t"}}{{.displayTitle}}{{"\n"}}{{end}}'
+        # Status: ✓=success ✗=failure/startup_failure ⊘=cancelled ⊝=skipped/neutral
+        #         ⏱=timed_out !=action_required ●=in_progress ◷=queued/waiting ○=other
+        local gh_template='{{range .}}{{printf "%.0f" .databaseId}}{{"\t"}}'\
+'{{if eq .status "completed"}}'\
+'{{if eq .conclusion "success"}}{{autocolor "green" "✓"}}'\
+'{{else if or (eq .conclusion "failure") (eq .conclusion "startup_failure")}}{{autocolor "red" "✗"}}'\
+'{{else if eq .conclusion "cancelled"}}{{autocolor "yellow" "⊘"}}'\
+'{{else if or (eq .conclusion "skipped") (eq .conclusion "neutral")}}{{autocolor "gray" "⊝"}}'\
+'{{else if eq .conclusion "timed_out"}}{{autocolor "red" "⏱"}}'\
+'{{else if eq .conclusion "action_required"}}{{autocolor "yellow" "!"}}'\
+'{{else}}{{autocolor "gray" "○"}}{{end}}'\
+'{{else if or (eq .status "queued") (eq .status "waiting") (eq .status "requested") (eq .status "pending")}}{{autocolor "blue" "◷"}}'\
+'{{else if eq .status "in_progress"}}{{autocolor "yellow" "●"}}'\
+'{{else}}{{autocolor "gray" "○"}}{{end}}'\
+'{{"\t"}}{{.workflowName}}{{"\t"}}{{.headBranch}}{{"\t"}}{{.displayTitle}}{{"\n"}}{{end}}'
 
         run_id=$(gh run list --limit 20 \
                 --json databaseId,displayTitle,status,conclusion,workflowName,headBranch \
