@@ -11,7 +11,7 @@
 # Font        : MesloLGS Nerd Font (LDZNF = Large, Dotted Zero, Nerd Font)
 # Speicherort : ~/Library/Fonts/ (macOS) oder ~/.local/share/fonts/ (Linux)
 # Verwendung  : Icons in Terminal (Powerline, Devicons, Font Awesome, Octicons)
-# Alternativen: brew search nerd-font
+# Alternativen : brew search nerd-font
 # ============================================================
 
 # Guard: Core muss geladen sein

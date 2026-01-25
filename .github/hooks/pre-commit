@@ -31,10 +31,12 @@ check_shell_syntax() {
     log "Prüfe Shell-Syntax..."
     local errors=0
 
-    # Alle .sh und .alias Dateien prüfen
+    # Alle .sh, .alias und .zsh Dateien prüfen
     for file in "$DOTFILES_DIR"/.github/scripts/**/*.sh(N) \
                 "$DOTFILES_DIR"/terminal/.config/alias/*.alias(N) \
-                "$DOTFILES_DIR"/setup/bootstrap.sh; do
+                "$DOTFILES_DIR"/terminal/.config/zsh/*.zsh(N) \
+                "$DOTFILES_DIR"/setup/*.sh(N) \
+                "$DOTFILES_DIR"/setup/modules/*.sh(N); do
         if [[ -f "$file" ]]; then
             if ! zsh -n "$file" 2>/dev/null; then
                 err "Syntax-Fehler in: ${file#$DOTFILES_DIR/}"
@@ -178,7 +180,7 @@ check_header_alignment() {
         "Aktivierung :"
         "Zielort     :"
         "Profil      :"
-        "Alternativen:"
+        "Alternativen :"
         "Lizenz      :"
     )
 
