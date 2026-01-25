@@ -49,11 +49,11 @@
 
 - cat → bat (mit Syntax-Highlighting):
 
-`cat, catn, catd`
+`cat, catn, catd, bat-theme`
 
 - ls → eza (mit Icons und Git-Status):
 
-`ls, ll, la, lt, lt3, lss, lsn`
+`ls, ll, la, lt, lt3, lss, lst`
 
 - find → fd (schneller, intuitive Syntax):
 
@@ -61,7 +61,7 @@
 
 - grep → rg (schneller, respektiert .gitignore):
 
-`rg, rgc, rgi`
+`rgc, rgi, rga, rgh, rgl, rgn, rgts, rgpy, rgmd, rgsh, rgrb, rggo, rg-live`
 
 - cd → zoxide (lernt häufige Verzeichnisse):
 

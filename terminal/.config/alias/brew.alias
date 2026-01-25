@@ -5,7 +5,7 @@
 # Pfad        : ~/.config/alias/brew.alias
 # Docs        : https://docs.brew.sh/Manpage
 # Nutzt       : fzf (Interactive), theme-style (Farben für brew-list)
-# Aliase      : brew-up, brew-list, brew-add, brew-rm
+# Aliase      : brew-up, brew-list, brew-add, brew-rm, maso, masu, mass, masi, masl
 # ============================================================
 # Hinweis     : Kein Guard für brew – ohne Homebrew ist dieses
 #           dotfiles-Repository ohnehin nicht nutzbar.

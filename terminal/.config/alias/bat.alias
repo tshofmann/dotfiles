@@ -7,7 +7,7 @@
 # Config      : ~/.config/bat/config
 # Nutzt       : fzf (Theme-Browser)
 # Ersetzt     : cat (mit Syntax-Highlighting)
-# Aliase      : cat, catn, catd
+# Aliase      : cat, catn, catd, bat-theme
 # ============================================================
 
 # Guard   : Nur wenn bat installiert ist
