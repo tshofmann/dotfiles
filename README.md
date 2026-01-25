@@ -3,9 +3,12 @@
 [![CI](https://github.com/tshofmann/dotfiles/actions/workflows/validate.yml/badge.svg)](https://github.com/tshofmann/dotfiles/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![macOS](https://img.shields.io/badge/macOS-26%2B-black?logo=apple)](https://www.apple.com/macos/)
+[![Linux](https://img.shields.io/badge/Linux-geplant-gray?logo=linux)](https://kernel.org/)
 [![Shell: zsh](https://img.shields.io/badge/Shell-zsh-green?logo=gnubash)](https://www.zsh.org/)
 
-**Dein Mac-Terminal mit modernen Tools, einheitlichem Theme und Dokumentation.**
+**Modulares Entwickler-Setup mit einheitlichem Theme, modernen CLI-Tools und automatischer Dokumentation.**
+
+> ⚠️ **Plattform-Status:** Aktuell nur auf **macOS** getestet. Die Codebasis ist für Cross-Platform (Fedora, Debian) vorbereitet, aber die Portierung ist noch nicht abgeschlossen.
 
 ## ✨ Was du bekommst
 
@@ -31,9 +34,17 @@ Danach **Terminal neu starten** (Cmd+Q). Fertig!
 
 ### Voraussetzungen
 
+#### macOS (getestet ✅)
+
 - **Apple Silicon Mac** (arm64)
 - **macOS 26+** (Tahoe) – getestet auf macOS 26 (Tahoe)
 - **Internetverbindung** & Admin-Rechte
+
+#### Linux (in Entwicklung 🚧)
+
+- **Fedora / Debian** – Portierung geplant
+- Homebrew-kompatible Pakete werden über Linuxbrew installiert
+- macOS-spezifische Module (Terminal.app, mas) werden automatisch übersprungen
 
 ## 📖 Dokumentation
 

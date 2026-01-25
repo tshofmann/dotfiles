@@ -1,11 +1,15 @@
 # 🚀 Installation
 
-Diese Anleitung führt dich durch die vollständige Installation der dotfiles auf einem frischen Apple Silicon Mac.
+Diese Anleitung führt dich durch die vollständige Installation der dotfiles.
 
 > Diese Dokumentation wird automatisch aus dem Code generiert.
 > Änderungen in `setup/modules/*.sh` und `setup/Brewfile` vornehmen.
+>
+> ⚠️ **Plattform-Status:** Aktuell nur auf **macOS** getestet. Die Codebasis ist für Cross-Platform (Fedora, Debian) vorbereitet, aber die Portierung ist noch nicht abgeschlossen.
 
 ## Voraussetzungen
+
+### macOS (getestet ✅)
 
 | Anforderung | Details |
 | ----------- | ------- |
@@ -14,16 +18,34 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles au
 | **Internetverbindung** | Für Homebrew-Installation und Download der Formulae/Casks |
 | **Admin-Rechte** | `sudo`-Passwort erforderlich (siehe unten) |
 
-> **Hinweis:** Architektur- und macOS-Versionsprüfung erfolgen automatisch beim Start von `bootstrap.sh`. Bei nicht unterstützten Systemen bricht das Skript mit einer Fehlermeldung ab.
+### Linux (in Entwicklung 🚧)
+
+| Anforderung | Details |
+| ----------- | ------- |
+| **Fedora / Debian** | Portierung geplant, noch nicht getestet |
+| **arm64 oder x86_64** | Beide Architekturen unterstützt |
+| **Internetverbindung** | Für Linuxbrew-Installation |
+| **Build-Tools** | `gcc`/`clang` – werden bei Bedarf nachinstalliert |
+
+> **Hinweis:** Auf Linux werden macOS-spezifische Module (Terminal.app, mas, Xcode-Theme) automatisch übersprungen. Die Plattform-Erkennung erfolgt in `setup/modules/_core.sh`.
+>
+> **Hinweis (macOS):** Architektur- und macOS-Versionsprüfung erfolgen automatisch beim Start von `bootstrap.sh`. Bei nicht unterstützten Systemen bricht das Skript mit einer Fehlermeldung ab.
 
 ### Wann wird `sudo` benötigt?
 
 Das Bootstrap-Skript fragt zu folgenden Zeitpunkten nach dem Admin-Passwort:
 
+**macOS:**
+
 1. **Xcode CLI Tools Installation** – `xcode-select --install` triggert einen System-Dialog, der Admin-Rechte erfordert
 2. **Homebrew Erstinstallation** – Das offizielle Installationsskript erstellt Verzeichnisse unter `/opt/homebrew` und benötigt dafür `sudo`
 
-> **Nach der Ersteinrichtung:** Sobald Homebrew installiert ist, laufen alle weiteren `brew`-Befehle ohne `sudo`. Das Bootstrap-Skript ist idempotent – bei erneuter Ausführung werden keine Admin-Rechte mehr benötigt, wenn die Tools bereits vorhanden sind.
+**Linux:**
+
+1. **Linuxbrew Erstinstallation** – Erstellt Verzeichnisse unter `/home/linuxbrew/.linuxbrew`
+2. **Build-Tools** – Falls `gcc`/`clang` fehlen, werden Paketmanager-Befehle vorgeschlagen
+
+> **Nach der Ersteinrichtung:** Sobald Homebrew/Linuxbrew installiert ist, laufen alle weiteren `brew`-Befehle ohne `sudo`. Das Bootstrap-Skript ist idempotent – bei erneuter Ausführung werden keine Admin-Rechte mehr benötigt, wenn die Tools bereits vorhanden sind.
 
 ---
 
@@ -33,7 +55,7 @@ Das Bootstrap-Skript fragt zu folgenden Zeitpunkten nach dem Admin-Passwort:
 curl -fsSL https://github.com/tshofmann/dotfiles/archive/refs/heads/main.tar.gz | tar -xz -C ~ && mv ~/dotfiles-main ~/dotfiles && ~/dotfiles/setup/bootstrap.sh
 ```
 
-> **💡 Warum curl statt git?** Auf einem frischen Mac ist Git erst nach Installation der Xcode CLI Tools verfügbar. Mit `curl` (in macOS enthalten) umgehen wir diese Abhängigkeit – die CLI Tools werden dann automatisch vom Bootstrap-Skript installiert.
+> **💡 Warum curl statt git?** Auf einem frischen System ist Git möglicherweise nicht verfügbar. Mit `curl` umgehen wir diese Abhängigkeit – die nötigen Tools werden dann automatisch vom Bootstrap-Skript installiert.
 
 ### Was das Skript macht
 
@@ -60,7 +82,7 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 
 > **Idempotenz:** Das Skript kann beliebig oft ausgeführt werden – bereits installierte Komponenten werden erkannt und übersprungen.
 >
-> **⏱️ Timeout-Konfiguration:** Der Terminal-Profil-Import wartet standardmäßig 20 Sekunden auf Registrierung im System. Bei langsamen Systemen oder VMs kann dies erhöht werden:
+> **⏱️ Timeout-Konfiguration (macOS):** Der Terminal-Profil-Import wartet standardmäßig 20 Sekunden auf Registrierung im System. Bei langsamen Systemen oder VMs kann dies erhöht werden:
 >
 > ```bash
 > PROFILE_IMPORT_TIMEOUT=60 ./setup/bootstrap.sh
@@ -84,7 +106,9 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 
 Nach Abschluss des Bootstrap-Skripts:
 
-**Terminal.app beenden und neu öffnen** (Cmd+Q, dann neu starten)
+**macOS:** Terminal.app beenden und neu öffnen (Cmd+Q, dann neu starten)
+
+**Linux:** Terminal neu starten oder Shell neu laden: `exec zsh`
 
 Das ist alles! Das Bootstrap-Skript hat bereits:
 
@@ -94,7 +118,7 @@ Das ist alles! Das Bootstrap-Skript hat bereits:
 - ✅ tldr-Pages heruntergeladen
 - ✅ Kitty-Theme konfiguriert (falls installiert)
 
-> **💡 Warum Terminal neu starten?** Terminal.app muss neu gestartet werden, damit das importierte Catppuccin-Mocha-Profil vollständig aktiv wird.
+> **💡 Warum Terminal neu starten?** Das Terminal muss neu gestartet werden, damit alle Konfigurationen (Profile, Umgebungsvariablen) vollständig aktiv werden.
 
 ---
 
@@ -112,6 +136,8 @@ ff                                  # System-Info anzeigen
 ---
 
 ## Installierte Pakete
+
+> **Hinweis:** Casks und Mac App Store Apps werden nur auf macOS installiert. Auf Linux werden nur Homebrew Formulae verwendet.
 
 ### Homebrew Formulae
 

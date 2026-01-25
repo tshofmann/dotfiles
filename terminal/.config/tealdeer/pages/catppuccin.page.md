@@ -1,6 +1,7 @@
 # catppuccin
 
 > Catppuccin Mocha Theme-Konfiguration für alle Tools.
+> Hinweis: Terminal.app und Xcode sind macOS-spezifisch.
 > Mehr Informationen: https://catppuccin.com/palette
 
 - Zeige alle Theme-Dateien in diesem Repository:
