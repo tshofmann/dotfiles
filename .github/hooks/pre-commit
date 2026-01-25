@@ -179,12 +179,14 @@ check_header_alignment() {
         "Zielort     :"
         "Profil      :"
         "Alternativen:"
+        "Lizenz      :"
     )
 
     # Alle Dateien mit Header-Blöcken prüfen
     local files=(
         "$DOTFILES_DIR"/terminal/.config/alias/*.alias(N)
         "$DOTFILES_DIR"/terminal/.config/fzf/*(N.)
+        "$DOTFILES_DIR"/terminal/.config/zsh/*.zsh(N)
         "$DOTFILES_DIR"/terminal/.config/*/config(N)
         "$DOTFILES_DIR"/terminal/.config/*/*.toml(N)
         "$DOTFILES_DIR"/terminal/.config/*/*.yml(N)
