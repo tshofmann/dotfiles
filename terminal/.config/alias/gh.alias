@@ -62,17 +62,23 @@ if command -v fzf >/dev/null 2>&1; then
     # Actions Runs(suche?) – Enter=Logs, Ctrl+R=Rerun, Ctrl+O=Browser
     gh-run() {
         local query="${1:-}"
-        local run
-        run=$(gh run list --limit 20 | \
+        local run_id
+        # JSON-Output mit Go-Template für stabile ID-Extraktion (Issue #199)
+        # Format: ID\tStatus\tWorkflow\tBranch\tTitle
+        local gh_template='{{range .}}{{printf "%.0f" .databaseId}}{{"\t"}}{{if eq .conclusion "success"}}{{autocolor "green" "✓"}}{{else if eq .conclusion "failure"}}{{autocolor "red" "✗"}}{{else if eq .status "in_progress"}}{{autocolor "yellow" "●"}}{{else}}{{autocolor "gray" "○"}}{{end}}{{"\t"}}{{.workflowName}}{{"\t"}}{{.headBranch}}{{"\t"}}{{.displayTitle}}{{"\n"}}{{end}}'
+
+        run_id=$(gh run list --limit 20 \
+                --json databaseId,displayTitle,status,conclusion,workflowName,headBranch \
+                --template "$gh_template" | \
             fzf --ansi --query="$query" \
                 --delimiter='\t' \
-                --preview 'gh run view {7}' \
+                --preview 'gh run view {1}' \
                 --header='Enter: Logs | Ctrl+R: Rerun | Ctrl+O: Browser' \
-                --bind 'ctrl-o:execute-silent(gh run view {7} --web)' \
-                --bind 'ctrl-r:execute(gh run rerun {7})' | \
-            awk -F'\t' '{print $7}')
+                --bind 'ctrl-o:execute-silent(gh run view {1} --web)' \
+                --bind 'ctrl-r:execute(gh run rerun {1})' | \
+            cut -f1)
 
-        [[ -n "$run" ]] && gh run view "$run" --log | bat --color=always
+        [[ -n "$run_id" ]] && gh run view "$run_id" --log | bat --color=always
     }
 
     # Repo Browser(suche?) – Enter=Klonen, Ctrl+O=Browser
