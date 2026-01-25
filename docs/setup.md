@@ -108,7 +108,7 @@ Nach Abschluss des Bootstrap-Skripts:
 
 **macOS:** Terminal.app beenden und neu öffnen (Cmd+Q, dann neu starten)
 
-**Linux:** Terminal neu starten oder Shell neu laden: \`exec zsh\`
+**Linux:** Terminal neu starten oder Shell neu laden: `exec zsh`
 
 Das ist alles! Das Bootstrap-Skript hat bereits:
 
