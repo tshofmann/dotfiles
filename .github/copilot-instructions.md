@@ -196,6 +196,7 @@ gh api graphql -f query='mutation { resolveReviewThread(input: {threadId: "PRRT_
 | Thema | Datei |
 | ------- | ------- |
 | Code-Konventionen | `CONTRIBUTING.md#code-konventionen` |
+| Header-Format | `CONTRIBUTING.md#header-block-format` |
 | Funktions-Syntax | `CONTRIBUTING.md#funktions-syntax` |
 | Kommentar-Format | `CONTRIBUTING.md#beschreibungskommentar-format-für-fzf-funktionen` |
 | **Labels** | `CONTRIBUTING.md#6-labels-setzen` |
