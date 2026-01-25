@@ -227,9 +227,9 @@ check_header_alignment() {
     if (( errors > 0 )); then
         err "$errors Header-Feld(er) mit falscher Einrückung"
         print ""
-        print "  ${C_DIM}Standard: Feldname auf 12 Zeichen padden, dann ' :'${C_RESET}"
-        print "    ${C_BOLD}# Zweck       :${C_RESET}  ${C_DIM}(5 + 7 Spaces + ' :')${C_RESET}"
-        print "    ${C_BOLD}# Alternativen :${C_RESET}  ${C_DIM}(12 + 0 Spaces + ' :')${C_RESET}"
+        print "  ${C_DIM}Standard: Feldname auf 12 Zeichen padden + ' :'${C_RESET}"
+        print "    ${C_BOLD}# Zweck       :${C_RESET}  ${C_DIM}(5 Zeichen + 7 Spaces = 12)${C_RESET}"
+        print "    ${C_BOLD}# Alternativen :${C_RESET}  ${C_DIM}(12 Zeichen + 0 Spaces = 12)${C_RESET}"
         return 1
     fi
 
