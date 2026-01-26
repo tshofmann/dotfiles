@@ -28,7 +28,7 @@
 - Manuell konfiguriert (basierend auf catppuccin.com/palette):
 
 `fastfetch: ~/.config/fastfetch/config.jsonc (kein offizielles Repo)`
-`jq: ~/.zshenv (kein offizielles Repo)`
+`jq: ~/.config/theme-style (kein offizielles Repo)`
 `tealdeer: ~/.config/tealdeer/config.toml (kein offizielles Repo)`
 `theme-style: ~/.config/theme-style (kein offizielles Repo)`
 
