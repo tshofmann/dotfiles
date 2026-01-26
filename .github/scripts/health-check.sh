@@ -67,6 +67,11 @@ check_symlink() {
   local display_name="${3:-$link}"
 
   if [[ -L "$link" ]]; then
+    # Prüfe ob Symlink-Ziel existiert (toter Symlink?)
+    if [[ ! -e "$link" ]]; then
+      fail "$display_name → toter Symlink (Target existiert nicht)"
+      return 1
+    fi
     local actual_target
     actual_target=$(readlink "$link")
     if [[ "$actual_target" == *"$expected_target"* ]]; then
@@ -374,9 +379,9 @@ fi
 section "Starship Konfiguration"
 
 # Prüft Symlink (nicht nur Datei!) – erkennt tote Symlinks
-# Muster matcht sowohl relative (Stow) als auch absolute Pfade
+# Muster ohne "dotfiles/" → funktioniert unabhängig vom Checkout-Verzeichnis
 check_symlink "$HOME/.config/starship/starship.toml" \
-  "dotfiles/terminal/.config/starship/starship.toml" \
+  "terminal/.config/starship/starship.toml" \
   "~/.config/starship/starship.toml"
 
 # --- ZSH-Sessions ---
