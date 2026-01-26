@@ -1,0 +1,1 @@
+- dotfiles: Config `~/.config/starship/starship.toml`

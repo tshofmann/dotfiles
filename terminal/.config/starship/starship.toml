@@ -2,7 +2,7 @@
 # starship.toml - Catppuccin Mocha Powerline Prompt
 # ============================================================
 # Zweck       : Starship Shell-Prompt Konfiguration
-# Pfad        : ~/.config/starship.toml
+# Pfad        : ~/.config/starship/starship.toml
 # Upstream    : github.com/catppuccin/starship (catppuccin-powerline Preset)
 # Docs        : https://starship.rs/
 # ============================================================
