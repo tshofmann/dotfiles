@@ -44,6 +44,13 @@
 # RICHTIG:
 (( count++ )) || true
 
+# WARUM? Post-Inkrement gibt den ALTEN Wert zurück:
+# count=0 → (( count++ )) evaluiert zu 0 → Exit-Code 1 → set -e bricht ab!
+# Der Trick: || true fängt Exit-Code 1 ab, count wird trotzdem erhöht.
+
+# Bei Vergleichen ist || true NICHT nötig:
+(( count >= max )) && break  # OK – Vergleich gibt true/false
+
 # fzf Preview mit ZSH-Syntax – explizit wrappen:
 --preview='zsh -c '\''[[ -f "$1" ]] && cat "$1"'\'' -- {}'
 

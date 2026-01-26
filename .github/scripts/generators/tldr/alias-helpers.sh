@@ -20,7 +20,7 @@ extract_alias_names() {
     while IFS= read -r line; do
         if [[ "$line" =~ "^alias ([a-zA-Z0-9_-]+)=" ]]; then
             aliases+=("${match[1]}")
-            (( count++ ))
+            (( count++ )) || true
             (( count >= max )) && break
         fi
     done < "$file"

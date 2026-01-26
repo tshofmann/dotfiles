@@ -44,7 +44,7 @@ check_shell_syntax() {
             if ! zsh -n "$file" 2>/dev/null; then
                 err "Syntax-Fehler in: ${file#$DOTFILES_DIR/}"
                 zsh -n "$file" 2>&1 | head -3
-                (( errors++ ))
+                (( errors++ )) || true
             fi
         fi
     done
@@ -94,7 +94,7 @@ check_executable_permissions() {
         if [[ ! -x "$file" ]]; then
             err "fzf/$name: Fehlende Execute-Berechtigung"
             err "  → chmod +x $file"
-            (( errors++ ))
+            (( errors++ )) || true
         fi
     done
 
@@ -104,7 +104,7 @@ check_executable_permissions() {
                 "$DOTFILES_DIR"/.github/scripts/health-check.sh; do
         if [[ -f "$file" && ! -x "$file" ]]; then
             err "$(basename $file): Fehlende Execute-Berechtigung"
-            (( errors++ ))
+            (( errors++ )) || true
         fi
     done
 
@@ -130,13 +130,13 @@ check_alias_format() {
         # Header-Block vorhanden?
         if ! head -3 "$file" | grep -q "^# ===="; then
             err "$name: Kein Header-Block"
-            (( errors++ ))
+            (( errors++ )) || true
         fi
 
         # Guard-Check vorhanden?
         if ! grep -q "command -v.*>/dev/null" "$file"; then
             err "$name: Kein Guard-Check"
-            (( errors++ ))
+            (( errors++ )) || true
         fi
     done
 
@@ -218,7 +218,7 @@ check_header_alignment() {
             if grep -q "^# ${fieldname}[[:space:]]*:" "$file" 2>/dev/null; then
                 if ! grep -q "^# ${field}" "$file" 2>/dev/null; then
                     err "$relpath: '# ${fieldname}' falsch eingerückt (Standard: '# ${field}')"
-                    (( errors++ ))
+                    (( errors++ )) || true
                 fi
             fi
         done
@@ -306,13 +306,13 @@ print ""
 
 failed=0
 
-check_shell_syntax || (( failed++ ))
-check_executable_permissions || (( failed++ ))
-check_docs || (( failed++ ))
-check_alias_format || (( failed++ ))
-check_header_alignment || (( failed++ ))
-check_markdown || (( failed++ ))
-check_health || (( failed++ ))
+check_shell_syntax || { (( failed++ )) || true; }
+check_executable_permissions || { (( failed++ )) || true; }
+check_docs || { (( failed++ )) || true; }
+check_alias_format || { (( failed++ )) || true; }
+check_header_alignment || { (( failed++ )) || true; }
+check_markdown || { (( failed++ )) || true; }
+check_health || { (( failed++ )) || true; }
 
 print ""
 print "${C_OVERLAY0}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
