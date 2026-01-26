@@ -97,7 +97,8 @@ _preview_file() {
     # ----------------------------------------------------------------
     # Text/Code-Vorschau (bat/cat)
     # ----------------------------------------------------------------
-    if [[ -n "$line" ]] && command -v bat >/dev/null 2>&1; then
+    # Validierung: $line muss positive Ganzzahl sein (mindestens 1)
+    if [[ -n "$line" && "$line" =~ ^[1-9][0-9]*$ ]] && command -v bat >/dev/null 2>&1; then
         bat --color=always --highlight-line "$line" -- "$file" 2>/dev/null || cat -- "$file"
     elif command -v bat >/dev/null 2>&1; then
         bat --style=numbers --color=always -- "$file" 2>/dev/null || cat -- "$file"
