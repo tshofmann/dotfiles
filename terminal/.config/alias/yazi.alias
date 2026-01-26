@@ -5,7 +5,7 @@
 # Pfad        : ~/.config/alias/yazi.alias
 # Docs        : https://yazi-rs.github.io/
 # Config      : ~/.config/yazi/
-# Nutzt       : fd, rg, fzf, zoxide, ffmpeg, 7z, jq, poppler, imagemagick, bat
+# Nutzt       : fd, rg, fzf, zoxide, ffmpeg, 7z, jq, poppler, magick, bat
 # Aliase      : y
 # ============================================================
 # Keybindings und Bookmarks: siehe ~/.config/yazi/keymap.toml

@@ -47,16 +47,16 @@ _preview_file() {
     # ----------------------------------------------------------------
     # JSON-Vorschau (jq)
     # ----------------------------------------------------------------
-    if [[ "$mime" == "application/json" || "$ext" =~ ^(json|jsonc)$ ]]; then
+    if [[ "$mime" == "application/json" || "$ext" == "json" ]]; then
         if command -v jq >/dev/null 2>&1; then
             echo "📋 JSON-Vorschau:"
             # Kompakt wenn > 100 Zeilen, sonst formatiert
             local lines
             lines=$(wc -l < "$file")
             if (( lines > 100 )); then
-                jq -C '.' -- "$file" 2>/dev/null | head -80
+                jq -C '.' "$file" 2>/dev/null | head -80
             else
-                jq -C '.' -- "$file" 2>/dev/null
+                jq -C '.' "$file" 2>/dev/null
             fi
             return 0
         fi

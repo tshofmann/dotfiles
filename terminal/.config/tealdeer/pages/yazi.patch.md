@@ -1,6 +1,6 @@
 - dotfiles: Config `~/.config/yazi/`
 
-- dotfiles: Nutzt `fd, rg, fzf, zoxide, ffmpeg, 7z, jq, poppler, imagemagick, bat`
+- dotfiles: Nutzt `fd, rg, fzf, zoxide, ffmpeg, 7z, jq, poppler, magick, bat`
 
 
 # dotfiles: Bookmarks (g → Ziel)
