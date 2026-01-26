@@ -247,16 +247,16 @@ generate_config_only_patch() {
     # Für Pages: vollständigen Header generieren
     if [[ "$for_page" == "true" ]]; then
         output+="# ${tool_name}\n\n"
-        [[ -n "${fields[Zweck]}" ]] && output+="> ${fields[Zweck]}.\n"
-        [[ -n "${fields[Docs]}" ]] && output+="> Mehr Informationen: <${fields[Docs]}>\n"
+        [[ -n "${fields[Zweck]:-}" ]] && output+="> ${fields[Zweck]}.\n"
+        [[ -n "${fields[Docs]:-}" ]] && output+="> Mehr Informationen: <${fields[Docs]}>\n"
         output+="\n"
     fi
 
     # Config-Pfad
-    [[ -n "${fields[Pfad]}" ]] && output+="- dotfiles: Config \`${fields[Pfad]}\`\n\n"
+    [[ -n "${fields[Pfad]:-}" ]] && output+="- dotfiles: Config \`${fields[Pfad]}\`\n\n"
 
-    # Theme (z.B. für Kitty)
-    if [[ -n "${fields[Theme]}" ]]; then
+    # Theme (z.B. für Kitty) - nur wenn Feld existiert
+    if [[ -n "${fields[Theme]:-}" ]]; then
         # Prüfe ob Theme-Datei existiert
         local theme_file="$config_dir/current-theme.conf"
         if [[ -f "$theme_file" ]]; then
@@ -265,7 +265,7 @@ generate_config_only_patch() {
     fi
 
     # Reload-Shortcut
-    [[ -n "${fields[Reload]}" ]] && output+="- dotfiles: Config neu laden ohne Neustart:\n\n\`${fields[Reload]}\`\n\n"
+    [[ -n "${fields[Reload]:-}" ]] && output+="- dotfiles: Config neu laden ohne Neustart:\n\n\`${fields[Reload]}\`\n\n"
 
     # Tool-spezifische Erweiterungen
     case "$tool_name" in

@@ -232,6 +232,12 @@ AFTER_COLORS
     cat << 'STARSHIP_SECTION'
 Die [Starship](https://starship.rs/) Prompt-Konfiguration ist versioniert und wird via Stow nach `~/.config/starship/starship.toml` verlinkt.
 
+> **Hinweis:** Starship sucht standardmäßig nach `~/.config/starship.toml` (ohne Unterordner). Um die "Ein Tool = Ein Ordner"-Konvention einzuhalten, setzen wir `STARSHIP_CONFIG` in `~/.zshenv`:
+>
+> ```zsh
+> export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship/starship.toml"
+> ```
+
 ### Konfiguration
 
 Die Datei `terminal/.config/starship/starship.toml` enthält das `catppuccin-powerline` Preset aus dem [catppuccin/starship](https://github.com/catppuccin/starship) Repository.
