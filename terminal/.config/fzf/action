@@ -19,8 +19,8 @@ case "${1:-}" in
     edit)
         # Datei im Editor öffnen (optional mit Zeile)
         shift
-        local file="$1"
-        local line="${2:-}"
+        file="$1"
+        line="${2:-}"
         if [[ -n "$line" ]]; then
             ${EDITOR:-vim} -- "$file" "+$line"
         else
