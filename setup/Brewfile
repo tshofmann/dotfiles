@@ -23,6 +23,7 @@ brew "ffmpeg"                               # Video/Audio-Codec | https://ffmpeg
 brew "fzf"                                  # Fuzzy Finder | https://github.com/junegunn/fzf
 brew "gh"                                   # GitHub CLI | https://cli.github.com/
 brew "imagemagick"                          # Bild-Manipulation | https://imagemagick.org/
+brew "jq"                                   # JSON-Prozessor | https://jqlang.org/
 brew "lazygit"                              # Git-TUI | https://github.com/jesseduffield/lazygit
 brew "markdownlint-cli2"                    # Markdown-Linter | https://github.com/DavidAnson/markdownlint-cli2
 brew "poppler"                              # PDF-Rendering | https://poppler.freedesktop.org/
