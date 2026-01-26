@@ -23,7 +23,7 @@
 #   fzf          | ~/.config/fzf/config               | github.com/catppuccin/fzf                     | upstream-bg+header
 #   kitty        | ~/.config/kitty/current-theme.conf | github.com/catppuccin/kitty                   | upstream+header
 #   lazygit      | ~/.config/lazygit/config.yml       | github.com/catppuccin/lazygit                 | upstream+mauve+header
-#   starship     | ~/.config/starship.toml            | github.com/catppuccin/starship                | upstream-palettes+header
+#   starship     | ~/.config/starship/starship.toml   | github.com/catppuccin/starship                | upstream-palettes+header
 #   tealdeer     | ~/.config/tealdeer/config.toml     | manual                                        | manual
 #   yazi         | ~/.config/yazi/theme.toml          | github.com/catppuccin/yazi                    | upstream+mauve+text+header
 #   zsh-syntax   | ~/.config/zsh/catppuccin_mocha-*   | github.com/catppuccin/zsh-syntax-highlighting | upstream+header

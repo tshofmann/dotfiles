@@ -29,6 +29,10 @@ export EZA_CONFIG_DIR="$XDG_CONFIG_HOME/eza"
 # statt XDG_CONFIG_HOME - daher explizit setzen
 export TEALDEER_CONFIG_DIR="$XDG_CONFIG_HOME/tealdeer"
 
+# starship nutzt ~/.config/starship.toml als Default - für Konsistenz
+# (ein Tool = ein Ordner) explizit auf starship/ Unterverzeichnis setzen
+export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship/starship.toml"
+
 # ------------------------------------------------------------
 # macOS Session-Wiederherstellung deaktivieren
 # ------------------------------------------------------------

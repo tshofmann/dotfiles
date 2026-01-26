@@ -13,7 +13,7 @@ Das gesamte Setup verwendet [Catppuccin Mocha](https://catppuccin.com/) als einh
 | Tool | Theme-Datei | Status |
 | ---- | ----------- | ------ |
 | **Terminal.app** | `setup/catppuccin-mocha.terminal` | Via Bootstrap importiert + als Standard gesetzt |
-| **Starship** | terminal/.config/starship.toml | Via Stow verlinkt |
+| **Starship** | terminal/.config/starship/starship.toml | Via Stow verlinkt |
 | **bat** | `terminal/.config/bat/themes/` | Via Stow verlinkt (+ Cache-Build) |
 | **fzf** | `terminal/.config/fzf/config` | Farben in Config-Datei (via Stow) |
 | **btop** | `terminal/.config/btop/themes/` | Via Stow verlinkt |
@@ -79,19 +79,19 @@ Vollständige Palette: [catppuccin.com/palette](https://catppuccin.com/palette)
 
 ## Starship-Prompt
 
-Die [Starship](https://starship.rs/) Prompt-Konfiguration ist versioniert und wird via Stow nach `~/.config/starship.toml` verlinkt.
+Die [Starship](https://starship.rs/) Prompt-Konfiguration ist versioniert und wird via Stow nach `~/.config/starship/starship.toml` verlinkt.
 
 ### Konfiguration
 
-Die Datei `terminal/.config/starship.toml` enthält das `catppuccin-powerline` Preset aus dem [catppuccin/starship](https://github.com/catppuccin/starship) Repository.
+Die Datei `terminal/.config/starship/starship.toml` enthält das `catppuccin-powerline` Preset aus dem [catppuccin/starship](https://github.com/catppuccin/starship) Repository.
 
 ### Anpassungen
 
-Du kannst die Starship-Konfiguration direkt in `terminal/.config/starship.toml` bearbeiten:
+Du kannst die Starship-Konfiguration direkt in `terminal/.config/starship/starship.toml` bearbeiten:
 
 ```zsh
 # Datei öffnen
-$EDITOR ~/dotfiles/terminal/.config/starship.toml
+$EDITOR ~/dotfiles/terminal/.config/starship/starship.toml
 ```
 
 ### Preset wechseln
@@ -103,11 +103,11 @@ Falls du ein anderes Preset verwenden möchtest:
 starship preset --list
 
 # Neues Preset generieren (überschreibt die Datei)
-starship preset <preset-name> -o ~/dotfiles/terminal/.config/starship.toml
+starship preset <preset-name> -o ~/dotfiles/terminal/.config/starship/starship.toml
 
 # Änderung committen
 cd ~/dotfiles
-git add terminal/.config/starship.toml
+git add terminal/.config/starship/starship.toml
 git commit -m "Starship: <preset-name> Preset"
 ```
 
