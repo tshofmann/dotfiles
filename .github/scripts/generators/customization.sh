@@ -126,7 +126,7 @@ collect_theme_configs() {
     # Bekannte Theme-Dateien
     local -A theme_files=(
         ["Terminal.app"]="$terminal_file|Via Bootstrap importiert + als Standard gesetzt"
-        ["Starship"]="terminal/.config/starship/starship.toml|Via Stow verlinkt"
+        ["Starship"]="$DOTFILES_DIR/terminal/.config/starship/starship.toml|Via Stow verlinkt"
         ["bat"]="$DOTFILES_DIR/terminal/.config/bat/themes/|Via Stow verlinkt (+ Cache-Build)"
         ["fzf"]="$DOTFILES_DIR/terminal/.config/fzf/config|Farben in Config-Datei (via Stow)"
         ["btop"]="$DOTFILES_DIR/terminal/.config/btop/themes/|Via Stow verlinkt"

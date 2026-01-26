@@ -13,7 +13,7 @@ Das gesamte Setup verwendet [Catppuccin Mocha](https://catppuccin.com/) als einh
 | Tool | Theme-Datei | Status |
 | ---- | ----------- | ------ |
 | **Terminal.app** | `setup/catppuccin-mocha.terminal` | Via Bootstrap importiert + als Standard gesetzt |
-| **Starship** | terminal/.config/starship/starship.toml | Via Stow verlinkt |
+| **Starship** | `terminal/.config/starship/starship.toml` | Via Stow verlinkt |
 | **bat** | `terminal/.config/bat/themes/` | Via Stow verlinkt (+ Cache-Build) |
 | **fzf** | `terminal/.config/fzf/config` | Farben in Config-Datei (via Stow) |
 | **btop** | `terminal/.config/btop/themes/` | Via Stow verlinkt |

@@ -373,11 +373,11 @@ fi
 # --- Starship ---
 section "Starship Konfiguration"
 
-if [[ -f "$HOME/.config/starship.toml" ]]; then
-  pass "~/.config/starship.toml vorhanden"
-else
-  warn "~/.config/starship.toml fehlt (stow -R terminal ausführen)"
-fi
+# Prüft Symlink (nicht nur Datei!) – erkennt tote Symlinks
+# Muster matcht sowohl relative (Stow) als auch absolute Pfade
+check_symlink "$HOME/.config/starship/starship.toml" \
+  "dotfiles/terminal/.config/starship/starship.toml" \
+  "~/.config/starship/starship.toml"
 
 # --- ZSH-Sessions ---
 section "ZSH-Sessions"
