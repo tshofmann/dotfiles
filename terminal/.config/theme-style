@@ -21,6 +21,7 @@
 #   eza          | ~/.config/eza/theme.yml            | github.com/catppuccin/eza                     | upstream+header
 #   fastfetch    | ~/.config/fastfetch/config.jsonc   | manual                                        | manual
 #   fzf          | ~/.config/fzf/config               | github.com/catppuccin/fzf                     | upstream-bg+header
+#   jq           | ~/.zshenv                          | manual                                        | manual
 #   kitty        | ~/.config/kitty/current-theme.conf | github.com/catppuccin/kitty                   | upstream+header
 #   lazygit      | ~/.config/lazygit/config.yml       | github.com/catppuccin/lazygit                 | upstream+mauve+header
 #   starship     | ~/.config/starship/starship.toml   | github.com/catppuccin/starship                | upstream-palettes+header

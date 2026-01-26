@@ -34,6 +34,13 @@ export TEALDEER_CONFIG_DIR="$XDG_CONFIG_HOME/tealdeer"
 export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship/starship.toml"
 
 # ------------------------------------------------------------
+# Tool-Theming (Catppuccin Mocha)
+# ------------------------------------------------------------
+# jq Farbschema: null:false:true:numbers:strings:arrays:objects:keys
+# Farben: Overlay0, Red, Green, Peach, Green, Lavender, Lavender, Blue
+export JQ_COLORS="2;37:0;31:0;32:0;33:0;32:1;35:1;35:0;34"
+
+# ------------------------------------------------------------
 # macOS Session-Wiederherstellung deaktivieren
 # ------------------------------------------------------------
 # Eine zentrale ~/.zsh_history statt History pro Terminal-Tab
