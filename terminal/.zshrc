@@ -29,6 +29,13 @@ setopt HIST_REDUCE_BLANKS    # Überflüssige Leerzeichen entfernen
 setopt HIST_SAVE_NO_DUPS     # Keine Duplikate in Datei speichern
 
 # ------------------------------------------------------------
+# Globbing-Optionen
+# ------------------------------------------------------------
+# Extended Glob aktiviert #, ##, ^, ~ als Pattern-Operatoren
+# Benötigt für (#q...) Glob-Qualifier-Syntax (z.B. bei compinit)
+setopt EXTENDED_GLOB
+
+# ------------------------------------------------------------
 # Completion-System initialisieren
 # ------------------------------------------------------------
 # Tab-Vervollständigung mit täglicher Cache-Erneuerung
