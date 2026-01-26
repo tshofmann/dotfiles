@@ -1,0 +1,19 @@
+# ============================================================
+# jq.alias - JSON-Prozessor Konfiguration
+# ============================================================
+# Zweck       : Theming für jq via JQ_COLORS
+# Pfad        : ~/.config/alias/jq.alias
+# Docs        : https://jqlang.org/
+# Config      : ~/.config/theme-style (JQ_COLORS)
+# Nutzt       : -
+# Ersetzt     : -
+# Aliase      : -
+# Hinweis     : jq hat keine Config-Datei, nur Umgebungsvariablen
+# ============================================================
+
+# Guard: Nur laden wenn jq installiert ist
+if ! command -v jq >/dev/null 2>&1; then return 0; fi
+
+# Theming wird via JQ_COLORS in theme-style gesetzt
+# Format: null:false:true:numbers:strings:arrays:objects:keys
+# Catppuccin: Overlay0, Red, Green, Peach, Green, Lavender, Lavender, Blue
