@@ -67,10 +67,23 @@ jobs:
           fi
           echo "✔ Execute-Berechtigungen OK"
 
+      - name: Homebrew Cache
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/Homebrew
+          key: ${{ runner.os }}-homebrew-${{ hashFiles('setup/Brewfile') }}
+          restore-keys: |
+            ${{ runner.os }}-homebrew-
+
+      - name: Homebrew-Pakete installieren
+        run: |
+          echo "Installiere benötigte Pakete..."
+          brew install tealdeer markdownlint-cli2
+          echo "✔ Pakete installiert"
+
       - name: tealdeer Cache initialisieren
         run: |
           echo "Initialisiere tealdeer Cache für tldr-Patch/Page-Erkennung..."
-          brew install tealdeer
           tldr --update
           echo "✔ tealdeer Cache bereit"
 
@@ -117,7 +130,6 @@ jobs:
       - name: Markdown prüfen
         run: |
           echo "Prüfe Markdown-Dateien..."
-          brew install markdownlint-cli2
           # Config aus terminal/.config/ (wird lokal via Stow verlinkt)
           markdownlint-cli2 --config terminal/.config/markdownlint-cli2/.markdownlint-cli2.jsonc '**/*.md' '#node_modules'
           echo "✔ Markdown OK"
