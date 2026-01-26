@@ -152,6 +152,7 @@ ff                                  # System-Info anzeigen
 | [`fzf`](https://github.com/junegunn/fzf) | Fuzzy Finder |
 | [`gh`](https://cli.github.com/) | GitHub CLI |
 | [`imagemagick`](https://imagemagick.org/) | Bild-Manipulation |
+| [`jq`](https://jqlang.org/) | JSON-Prozessor |
 | [`lazygit`](https://github.com/jesseduffield/lazygit) | Git-TUI |
 | [`markdownlint-cli2`](https://github.com/DavidAnson/markdownlint-cli2) | Markdown-Linter |
 | [`poppler`](https://poppler.freedesktop.org/) | PDF-Rendering |

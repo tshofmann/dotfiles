@@ -21,6 +21,7 @@
 #   eza          | ~/.config/eza/theme.yml            | github.com/catppuccin/eza                     | upstream+header
 #   fastfetch    | ~/.config/fastfetch/config.jsonc   | manual                                        | manual
 #   fzf          | ~/.config/fzf/config               | github.com/catppuccin/fzf                     | upstream-bg+header
+#   jq           | ~/.config/theme-style              | manual                                        | manual
 #   kitty        | ~/.config/kitty/current-theme.conf | github.com/catppuccin/kitty                   | upstream+header
 #   lazygit      | ~/.config/lazygit/config.yml       | github.com/catppuccin/lazygit                 | upstream+mauve+header
 #   starship     | ~/.config/starship/starship.toml   | github.com/catppuccin/starship                | upstream-palettes+header
@@ -88,5 +89,12 @@ typeset -gx C_BOLD=$'\033[1m'                      # Fett
 typeset -gx C_DIM=$'\033[2m'                       # Abgeschwächt
 typeset -gx C_ITALIC=$'\033[3m'                    # Kursiv
 typeset -gx C_UNDERLINE=$'\033[4m'                 # Unterstrichen
+
+# ------------------------------------------------------------
+# Tool-spezifische Farbvariablen
+# ------------------------------------------------------------
+# jq Farbschema: null:false:true:numbers:strings:arrays:objects:keys
+# Farben: Overlay0, Red, Green, Peach, Green, Lavender, Lavender, Blue
+typeset -gx JQ_COLORS="2;37:0;31:0;32:0;33:0;32:1;35:1;35:0;34"
 
 # EOF

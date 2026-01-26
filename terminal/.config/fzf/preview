@@ -5,8 +5,8 @@
 # Zweck       : Zeigt Vorschau für Dateien und Verzeichnisse
 # Pfad        : ~/.config/fzf/preview
 # Aufruf      : preview <file|dir> <path> [args...]
-# Nutzt       : bat (Code), eza (Dir), pdftotext (PDF), 7zz (Archive),
-#               identify (Bilder), ffprobe (Video/Audio)
+# Nutzt       : bat (Code), eza (Dir), pdftotext (PDF), jq (JSON),
+#               7zz (Archive), identify (Bilder), ffprobe (Video/Audio)
 # ============================================================
 # Hinweis     : Pfad wird als Argument übergeben, nicht interpoliert
 # ============================================================
@@ -43,6 +43,24 @@ _preview_file() {
             fi
             ;;
     esac
+
+    # ----------------------------------------------------------------
+    # JSON-Vorschau (jq)
+    # ----------------------------------------------------------------
+    if [[ "$mime" == "application/json" || "$ext" == "json" ]]; then
+        if command -v jq >/dev/null 2>&1; then
+            echo "📋 JSON-Vorschau:"
+            # Kompakt wenn > 100 Zeilen, sonst formatiert
+            local lines
+            lines=$(wc -l < "$file")
+            if (( lines > 100 )); then
+                jq -C '.' -- "$file" 2>/dev/null | head -80
+            else
+                jq -C '.' -- "$file" 2>/dev/null
+            fi
+            return 0
+        fi
+    fi
 
     # ----------------------------------------------------------------
     # PDF-Vorschau (poppler)

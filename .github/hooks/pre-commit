@@ -277,9 +277,14 @@ check_health() {
 
     local health_script="$DOTFILES_DIR/.github/scripts/health-check.sh"
 
+    if [[ ! -f "$health_script" ]]; then
+        err "health-check.sh nicht gefunden: $health_script"
+        return 1
+    fi
+
     if [[ ! -x "$health_script" ]]; then
-        warn "health-check.sh nicht ausführbar – übersprungen"
-        return 0
+        err "health-check.sh nicht ausführbar – chmod +x erforderlich"
+        return 1
     fi
 
     # Health-Check ausführen (Ausgabe unterdrücken, nur Exit-Code prüfen)
