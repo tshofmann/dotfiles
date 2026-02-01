@@ -90,7 +90,7 @@ Danach **Terminal neu starten**. Fertig!
 #### macOS (getestet ✅)
 
 - **Apple Silicon Mac** (arm64)
-- **macOS \${macos_min}+** (\${macos_min_name})
+- **macOS ${macos_min}+** (${macos_min_name})
 - **Internetverbindung** & Admin-Rechte
 
 #### Linux (in Entwicklung 🚧)
