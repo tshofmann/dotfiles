@@ -63,7 +63,7 @@ generate_readme_md() {
 [![Linux](https://img.shields.io/badge/Linux-geplant-gray?logo=linux)](https://kernel.org/)
 [![Shell: zsh](https://img.shields.io/badge/Shell-zsh-green?logo=gnubash)](https://www.zsh.org/)
 
-**Modulares Entwickler-Setup mit einheitlichem Theme, modernen CLI-Tools und automatischer Dokumentation.**
+**Dotfiles mit modernen CLI-Tools, einheitlichem Theme und integrierter Hilfe.**
 
 > ⚠️ **Plattform-Status:** Aktuell nur auf **macOS** getestet. Die Codebasis ist für Cross-Platform (Fedora, Debian) vorbereitet, aber die Portierung ist noch nicht abgeschlossen.
 
@@ -81,21 +81,22 @@ Alle installierten Pakete: [\`setup/Brewfile\`](setup/Brewfile)
 curl -fsSL https://github.com/tshofmann/dotfiles/archive/refs/heads/main.tar.gz | tar -xz -C ~ && mv ~/dotfiles-main ~/dotfiles && ~/dotfiles/setup/bootstrap.sh
 \`\`\`
 
-Danach **Terminal neu starten** (Cmd+Q). Fertig!
+Danach **Terminal neu starten**. Fertig!
+
+> 💡 **Tipp:** Gib \`dothelp\` ein – zeigt Keybindings, Aliase und Wartungsbefehle.
 
 ### Voraussetzungen
 
 #### macOS (getestet ✅)
 
 - **Apple Silicon Mac** (arm64)
-- **macOS ${macos_min}+** (${macos_min_name}) – getestet auf macOS ${macos_tested} (${macos_tested_name})
+- **macOS \${macos_min}+** (\${macos_min_name})
 - **Internetverbindung** & Admin-Rechte
 
 #### Linux (in Entwicklung 🚧)
 
 - **Fedora / Debian** – Portierung geplant
-- Homebrew-kompatible Pakete werden über Linuxbrew installiert
-- macOS-spezifische Module (Terminal.app, mas) werden automatisch übersprungen
+- macOS-spezifische Module werden automatisch übersprungen
 
 ## 📖 Dokumentation
 
