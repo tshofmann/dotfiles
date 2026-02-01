@@ -4,7 +4,7 @@
 # ============================================================
 # Zweck       : Verlinkt Konfigurationsdateien via Stow
 # Pfad        : setup/modules/stow.sh
-# Benötigt    : _core.sh, homebrew.sh (stow muss installiert sein)
+# Benötigt    : _core.sh, backup.sh, homebrew.sh (stow muss installiert sein)
 #
 # STEP        : Stow Symlinks | Verlinkt terminal/ und editor/ Configs | ⚠️ Kritisch
 # Packages    : terminal, editor
@@ -37,6 +37,17 @@ run_stow() {
     if ! stow_installed; then
         err "stow nicht installiert"
         return 1
+    fi
+
+    # Backup vor Stow erstellen (falls noch nicht vorhanden)
+    # backup.sh muss vorher geladen sein
+    if type backup_create_if_needed >/dev/null 2>&1; then
+        backup_create_if_needed || {
+            err "Backup fehlgeschlagen – Abbruch"
+            return 1
+        }
+    else
+        warn "backup.sh nicht geladen – überspringe Backup"
     fi
 
     log "Verlinke Konfigurationsdateien..."
@@ -80,9 +91,3 @@ setup_stow() {
     CURRENT_STEP="Stow Setup"
     run_stow
 }
-
-# Modul ausführen wenn direkt aufgerufen
-if [[ "${(%):-%N}" == "$0" ]]; then
-    source "${0:A:h}/_core.sh"
-    setup_stow
-fi
