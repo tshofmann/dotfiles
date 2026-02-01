@@ -183,7 +183,7 @@ main() {
     fi
 
     print -P ""
-    print -P "  ${C_GREEN}💡 Gib im Terminal '${C_BOLD}dothelp${C_RESET}${C_GREEN}' ein für Hilfe/Dokumentation${C_RESET}"
+    print -P "  ${C_GREEN}💡 Gib '${C_BOLD}dothelp${C_RESET}${C_GREEN}' ein – zeigt Keybindings, Aliase und Wartungsbefehle${C_RESET}"
     print -P ""
 }
 
