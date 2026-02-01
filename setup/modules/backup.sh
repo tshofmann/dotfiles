@@ -169,8 +169,9 @@ _backup_single_file() {
                 _backup_log "SKIP: $target (bereits dotfiles-Symlink)"
                 file_type="dotfiles_symlink"
             else
-                # Fremder Symlink - Ziel speichern
-                _backup_log "INFO: $target ist Symlink -> $symlink_target"
+                # Fremder Symlink - Ziel speichern und warnen
+                warn "$target ist Symlink auf fremdes Ziel: $symlink_target"
+                _backup_log "WARN: $target ist fremder Symlink -> $symlink_target"
                 # Kein Datei-Backup nötig, nur Symlink-Ziel merken
             fi
             ;;
@@ -178,6 +179,7 @@ _backup_single_file() {
         broken_symlink)
             existed="true"
             symlink_target=$(/usr/bin/readlink "$target" 2>/dev/null)
+            warn "$target ist defekter Symlink (Ziel existiert nicht)"
             _backup_log "WARN: $target ist defekter Symlink -> $symlink_target"
             ;;
 
