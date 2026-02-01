@@ -1,0 +1,368 @@
+#!/usr/bin/env zsh
+# ============================================================
+# backup.sh - Backup-System für sichere dotfiles-Installation
+# ============================================================
+# Zweck       : Sichert existierende Dateien vor Überschreibung
+# Pfad        : setup/modules/backup.sh
+# Benötigt    : _core.sh
+#
+# STEP        : Backup | Sichert existierende Konfigurationen | 🔒 Sicher
+#
+# Das Backup-System:
+# - Erstellt beim ERSTEN Mal ein Backup aller zu überschreibenden Dateien
+# - Speichert Metadaten in einem JSON-Manifest
+# - Ist idempotent: Erstes Backup wird nie überschrieben
+# - Ermöglicht vollständige Wiederherstellung via restore.sh
+# ============================================================
+
+# Guard: Core muss geladen sein
+[[ -z "${_BOOTSTRAP_CORE_LOADED:-}" ]] && {
+    echo "FEHLER: _core.sh muss vor backup.sh geladen werden" >&2
+    return 1
+}
+
+# ------------------------------------------------------------
+# Konfiguration
+# ------------------------------------------------------------
+readonly BACKUP_DIR="${DOTFILES_DIR}/.backup"
+readonly BACKUP_MANIFEST="${BACKUP_DIR}/manifest.json"
+readonly BACKUP_LOG="${BACKUP_DIR}/backup.log"
+readonly BACKUP_HOME="${BACKUP_DIR}/home"
+
+# Stow-Packages (müssen mit stow.sh übereinstimmen)
+readonly BACKUP_STOW_PACKAGES=(terminal editor)
+
+# ------------------------------------------------------------
+# Logging (in Datei und stdout)
+# ------------------------------------------------------------
+_backup_log() {
+    local msg="[$(date '+%Y-%m-%d %H:%M:%S')] $*"
+    echo "$msg" >> "$BACKUP_LOG"
+}
+
+# ------------------------------------------------------------
+# Hilfsfunktionen
+# ------------------------------------------------------------
+
+# Ermittelt alle Zieldateien die von Stow verlinkt würden
+# Gibt pro Zeile aus: <source>|<target>
+_get_stow_targets() {
+    local pkg source_file target_file
+
+    for pkg in "${BACKUP_STOW_PACKAGES[@]}"; do
+        local pkg_dir="${DOTFILES_DIR}/${pkg}"
+        [[ -d "$pkg_dir" ]] || continue
+
+        # Finde alle Dateien im Package (keine Verzeichnisse, keine .DS_Store)
+        find "$pkg_dir" -type f -not -name '.DS_Store' 2>/dev/null | while read -r source_file; do
+            # Entferne Package-Prefix um Ziel zu berechnen
+            # terminal/.zshrc -> .zshrc
+            # terminal/.config/foo/bar -> .config/foo/bar
+            local relative="${source_file#${pkg_dir}/}"
+            target_file="${HOME}/${relative}"
+            echo "${source_file}|${target_file}"
+        done
+    done
+}
+
+# Ermittelt den Typ einer Datei
+# Rückgabe: file|symlink|directory|broken_symlink|none
+_get_file_type() {
+    local path="$1"
+
+    if [[ ! -e "$path" && ! -L "$path" ]]; then
+        echo "none"
+    elif [[ -L "$path" ]]; then
+        if [[ -e "$path" ]]; then
+            echo "symlink"
+        else
+            echo "broken_symlink"
+        fi
+    elif [[ -d "$path" ]]; then
+        echo "directory"
+    elif [[ -f "$path" ]]; then
+        echo "file"
+    else
+        echo "unknown"
+    fi
+}
+
+# Prüft ob ein Symlink ins dotfiles-Repo zeigt
+_is_dotfiles_symlink() {
+    local path="$1"
+    [[ -L "$path" ]] || return 1
+
+    local target resolved_target
+    target=$(/usr/bin/readlink "$path" 2>/dev/null) || return 1
+
+    # Variante 1: Absoluter Pfad direkt ins dotfiles-Repo
+    [[ "$target" == "${DOTFILES_DIR}/"* ]] && return 0
+
+    # Variante 2: Relativer Pfad mit "dotfiles" im Namen
+    [[ "$target" == *"dotfiles/"* ]] && return 0
+
+    # Variante 3: Auflösen und prüfen (macOS: readlink ohne -f, daher Python)
+    resolved_target=$(python3 -c "import os; print(os.path.realpath('$path'))" 2>/dev/null)
+    [[ "$resolved_target" == "${DOTFILES_DIR}/"* ]] && return 0
+
+    return 1
+}
+
+# Holt Permissions einer Datei (macOS-kompatibel)
+_get_permissions() {
+    local path="$1"
+    stat -f "%OLp" "$path" 2>/dev/null || echo "644"
+}
+
+# System-Default-Pfad für bekannte Dateien
+_get_system_default() {
+    local target="$1"
+
+    case "$target" in
+        */.zshrc|*/.zprofile|*/.zshenv|*/.zlogin)
+            echo "/etc/zshrc"
+            ;;
+        *)
+            echo ""
+            ;;
+    esac
+}
+
+# JSON-String escapen
+_json_escape() {
+    local str="$1"
+    str="${str//\\/\\\\}"  # Backslashes
+    str="${str//\"/\\\"}"  # Quotes
+    str="${str//$'\n'/\\n}" # Newlines
+    echo "$str"
+}
+
+# ------------------------------------------------------------
+# Backup einer einzelnen Datei
+# ------------------------------------------------------------
+# Rückgabe via stdout: JSON-Objekt für Manifest
+_backup_single_file() {
+    local source="$1"
+    local target="$2"
+
+    local file_type existed symlink_target permissions backup_path system_default
+    file_type=$(_get_file_type "$target")
+    existed="false"
+    symlink_target=""
+    permissions=""
+    backup_path=""
+    system_default=$(_get_system_default "$target")
+
+    case "$file_type" in
+        none)
+            # Datei existiert nicht - nichts zu sichern
+            existed="false"
+            _backup_log "SKIP: $target (existiert nicht)"
+            ;;
+
+        symlink)
+            existed="true"
+            symlink_target=$(/usr/bin/readlink "$target" 2>/dev/null)
+
+            if _is_dotfiles_symlink "$target"; then
+                # Bereits ein dotfiles-Symlink - überspringen
+                _backup_log "SKIP: $target (bereits dotfiles-Symlink)"
+                file_type="dotfiles_symlink"
+            else
+                # Fremder Symlink - Ziel speichern
+                _backup_log "INFO: $target ist Symlink -> $symlink_target"
+                # Kein Datei-Backup nötig, nur Symlink-Ziel merken
+            fi
+            ;;
+
+        broken_symlink)
+            existed="true"
+            symlink_target=$(/usr/bin/readlink "$target" 2>/dev/null)
+            _backup_log "WARN: $target ist defekter Symlink -> $symlink_target"
+            ;;
+
+        file)
+            existed="true"
+            permissions=$(_get_permissions "$target")
+
+            # Backup-Pfad berechnen (spiegelt ~-Struktur)
+            local relative="${target#${HOME}/}"
+            backup_path="${BACKUP_HOME}/${relative}"
+
+            # Verzeichnis erstellen
+            mkdir -p "$(dirname "$backup_path")"
+
+            # Datei kopieren (mit Permissions)
+            if cp -p "$target" "$backup_path" 2>/dev/null; then
+                _backup_log "BACKUP: $target -> $backup_path"
+            else
+                _backup_log "ERROR: Konnte $target nicht sichern"
+                backup_path=""
+            fi
+            ;;
+
+        directory)
+            existed="true"
+            # Verzeichnis mit eigenen Dateien - rekursiv sichern
+            local relative="${target#${HOME}/}"
+            backup_path="${BACKUP_HOME}/${relative}"
+
+            if cp -Rp "$target" "$(dirname "$backup_path")/" 2>/dev/null; then
+                _backup_log "BACKUP: $target (Verzeichnis) -> $backup_path"
+            else
+                _backup_log "ERROR: Konnte Verzeichnis $target nicht sichern"
+                backup_path=""
+            fi
+            ;;
+    esac
+
+    # JSON-Objekt ausgeben
+    cat <<EOF
+    {
+      "source": "$(_json_escape "${source#${DOTFILES_DIR}/}")",
+      "target": "$(_json_escape "$target")",
+      "backup": $(if [[ -n "$backup_path" ]]; then echo "\"$(_json_escape "${backup_path#${DOTFILES_DIR}/}")\""; else echo "null"; fi),
+      "type": "$file_type",
+      "existed": $existed,
+      "symlinkTarget": $(if [[ -n "$symlink_target" ]]; then echo "\"$(_json_escape "$symlink_target")\""; else echo "null"; fi),
+      "permissions": $(if [[ -n "$permissions" ]]; then echo "\"$permissions\""; else echo "null"; fi),
+      "systemDefault": $(if [[ -n "$system_default" ]]; then echo "\"$system_default\""; else echo "null"; fi)
+    }
+EOF
+}
+
+# ------------------------------------------------------------
+# Manifest erstellen
+# ------------------------------------------------------------
+_create_manifest() {
+    local hostname username commit timestamp
+
+    hostname=$(hostname -s 2>/dev/null || echo "unknown")
+    username=$(whoami 2>/dev/null || echo "unknown")
+    commit=$(cd "$DOTFILES_DIR" && git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+    timestamp=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
+
+    # Manifest-Header
+    cat > "$BACKUP_MANIFEST" <<EOF
+{
+  "version": 1,
+  "created": "$timestamp",
+  "hostname": "$hostname",
+  "username": "$username",
+  "dotfiles_commit": "$commit",
+  "files": [
+EOF
+
+    # Alle Zieldateien durchgehen
+    local first=true
+    local source target entry
+
+    _get_stow_targets | while IFS='|' read -r source target; do
+        entry=$(_backup_single_file "$source" "$target")
+
+        if [[ "$first" == "true" ]]; then
+            first=false
+            printf "%s" "$entry" >> "$BACKUP_MANIFEST"
+        else
+            printf ",\n%s" "$entry" >> "$BACKUP_MANIFEST"
+        fi
+    done
+
+    # Manifest abschließen
+    cat >> "$BACKUP_MANIFEST" <<EOF
+
+  ]
+}
+EOF
+}
+
+# ------------------------------------------------------------
+# Hauptfunktion: Backup erstellen (falls noch nicht vorhanden)
+# ------------------------------------------------------------
+backup_create_if_needed() {
+    CURRENT_STEP="Backup erstellen"
+
+    # Prüfe ob Backup bereits existiert (Idempotenz!)
+    if [[ -f "$BACKUP_MANIFEST" ]]; then
+        local created
+        created=$(grep '"created"' "$BACKUP_MANIFEST" | head -1 | sed 's/.*": *"//' | sed 's/".*//')
+        skip "Backup existiert bereits (erstellt: $created)"
+        _backup_log "SKIP: Backup existiert bereits"
+        return 0
+    fi
+
+    log "Erstelle Backup vor Installation..."
+
+    # Backup-Verzeichnis erstellen
+    if ! ensure_dir_writable "$BACKUP_DIR" "Backup-Verzeichnis"; then
+        err "Kann Backup-Verzeichnis nicht erstellen"
+        return 1
+    fi
+
+    # Log initialisieren
+    echo "# Backup-Log für dotfiles" > "$BACKUP_LOG"
+    echo "# Erstellt: $(date)" >> "$BACKUP_LOG"
+    echo "" >> "$BACKUP_LOG"
+    _backup_log "START: Backup wird erstellt"
+
+    # Zähle zu sichernde Dateien
+    local total_files=0 existing_files=0
+    local source target file_type
+
+    _get_stow_targets | while IFS='|' read -r source target; do
+        (( total_files++ )) || true
+        file_type=$(_get_file_type "$target")
+        if [[ "$file_type" != "none" ]]; then
+            (( existing_files++ )) || true
+        fi
+    done
+
+    log "Analysiere $total_files Dateien..."
+
+    # Manifest erstellen (inkl. Backups)
+    _create_manifest
+
+    _backup_log "END: Backup abgeschlossen"
+
+    # Zusammenfassung
+    local backed_up
+    backed_up=$(find "$BACKUP_HOME" -type f 2>/dev/null | wc -l | tr -d ' ')
+    ok "Backup erstellt: $backed_up Dateien gesichert"
+    section_end "Manifest: ${BACKUP_MANIFEST#${DOTFILES_DIR}/}"
+
+    return 0
+}
+
+# ------------------------------------------------------------
+# Prüft ob ein Backup existiert
+# ------------------------------------------------------------
+backup_exists() {
+    [[ -f "$BACKUP_MANIFEST" ]]
+}
+
+# ------------------------------------------------------------
+# Gibt Backup-Info aus
+# ------------------------------------------------------------
+backup_info() {
+    if ! backup_exists; then
+        warn "Kein Backup vorhanden"
+        return 1
+    fi
+
+    local created files_count
+    created=$(grep '"created"' "$BACKUP_MANIFEST" | head -1 | sed 's/.*": *"//' | sed 's/".*//')
+    files_count=$(grep -c '"source"' "$BACKUP_MANIFEST" 2>/dev/null || echo "0")
+
+    log "Backup-Info:"
+    echo "  Erstellt:     $created"
+    echo "  Dateien:      $files_count"
+    echo "  Speicherort:  ${BACKUP_DIR#${DOTFILES_DIR}/}"
+}
+
+# ------------------------------------------------------------
+# Hauptfunktion für Modul-System
+# ------------------------------------------------------------
+setup_backup() {
+    CURRENT_STEP="Backup Setup"
+    backup_create_if_needed
+}
