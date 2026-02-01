@@ -78,7 +78,7 @@ get_manifest_value() {
     value=$(awk -v idx="$index" -v key="$key" '
         BEGIN { count = 0; in_files = 0; brace_depth = 0 }
         /"files"/ { in_files = 1; next }
-        in_files && /{/ { 
+        in_files && /{/ {
             brace_depth++
             if (brace_depth == 1) count++
         }
