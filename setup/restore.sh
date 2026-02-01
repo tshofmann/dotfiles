@@ -31,12 +31,12 @@ BACKUP_HOME="${BACKUP_DIR}/home"
 if [[ -f "${DOTFILES_DIR}/terminal/.config/theme-style" ]]; then
     source "${DOTFILES_DIR}/terminal/.config/theme-style"
 else
-    # Fallback-Farben
-    C_RED='\033[0;31m'
-    C_GREEN='\033[0;32m'
-    C_YELLOW='\033[0;33m'
-    C_BLUE='\033[0;34m'
-    C_RESET='\033[0m'
+    # Fallback-Farben (mit echten Escape-Bytes)
+    C_RED=$'\033[0;31m'
+    C_GREEN=$'\033[0;32m'
+    C_YELLOW=$'\033[0;33m'
+    C_BLUE=$'\033[0;34m'
+    C_RESET=$'\033[0m'
 fi
 
 # ------------------------------------------------------------
@@ -66,37 +66,6 @@ check_backup_exists() {
 # ------------------------------------------------------------
 # Manifest parsen (JSON ohne jq)
 # ------------------------------------------------------------
-# Extrahiert einen Wert aus dem Manifest für einen bestimmten Eintrag
-# Syntax: get_manifest_value <index> <key>
-get_manifest_value() {
-    local index=$1
-    local key=$2
-    local value
-
-    # Einfacher JSON-Parser mit sed/awk
-    # Funktioniert für unser spezifisches Format
-    value=$(awk -v idx="$index" -v key="$key" '
-        BEGIN { count = 0; in_files = 0; brace_depth = 0 }
-        /"files"/ { in_files = 1; next }
-        in_files && /{/ {
-            brace_depth++
-            if (brace_depth == 1) count++
-        }
-        in_files && /}/ { brace_depth-- }
-        in_files && brace_depth == 1 && count == idx {
-            if ($0 ~ "\"" key "\":") {
-                gsub(/.*"/ key "\": */, "")
-                gsub(/,? *$/, "")
-                gsub(/^"/, "")
-                gsub(/"$/, "")
-                print
-            }
-        }
-    ' "$BACKUP_MANIFEST")
-
-    echo "$value"
-}
-
 # Zählt die Einträge im Manifest
 get_manifest_count() {
     grep -c '"source":' "$BACKUP_MANIFEST" 2>/dev/null || echo "0"
@@ -117,8 +86,9 @@ is_dotfiles_symlink() {
     [[ "$target" == *"dotfiles/"* ]] && return 0
 
     # Auflösen für relative Symlinks
+    # Pfad als Argument übergeben um Code-Injection zu vermeiden
     local resolved
-    resolved=$(python3 -c "import os; print(os.path.realpath('$path'))" 2>/dev/null)
+    resolved=$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' -- "$path" 2>/dev/null)
     [[ "$resolved" == "${DOTFILES_DIR}/"* ]] && return 0
 
     return 1
@@ -302,11 +272,27 @@ main() {
                             }
                         fi
                     elif [[ "$current_type" != "none" ]]; then
-                        # Wiederherstellen wenn nötig
+                        # Wiederherstellen wenn:
+                        # 1. Ziel ist noch unser Symlink → entfernen und Original wiederherstellen
+                        # 2. Ziel existiert nicht mehr → User hat manuell gelöscht → Original wiederherstellen
+                        # 3. Ziel existiert aber ist kein dotfiles-Symlink → überspringen (User hat geändert)
                         if [[ -L "$current_target" ]] && is_dotfiles_symlink "$current_target"; then
-                            restore_single_file "$current_target" "$current_backup" "$current_type" "$current_symlink" "$current_permissions"
-                            (( restored++ )) || true
+                            # Fall 1: Unser Symlink existiert noch
+                            /bin/rm "$current_target" 2>/dev/null
+                            if restore_single_file "$current_target" "$current_backup" "$current_type" "$current_symlink" "$current_permissions"; then
+                                (( restored++ )) || true
+                            else
+                                (( skipped++ )) || true
+                            fi
+                        elif [[ ! -e "$current_target" ]] && [[ ! -L "$current_target" ]]; then
+                            # Fall 2: Ziel existiert nicht mehr (manuell gelöscht)
+                            if restore_single_file "$current_target" "$current_backup" "$current_type" "$current_symlink" "$current_permissions"; then
+                                (( restored++ )) || true
+                            else
+                                (( skipped++ )) || true
+                            fi
                         else
+                            # Fall 3: Existiert aber kein dotfiles-Symlink
                             (( skipped++ )) || true
                         fi
                     fi

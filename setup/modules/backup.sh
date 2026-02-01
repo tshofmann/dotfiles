@@ -102,7 +102,8 @@ _is_dotfiles_symlink() {
     [[ "$target" == *"dotfiles/"* ]] && return 0
 
     # Variante 3: Auflösen und prüfen (macOS: readlink ohne -f, daher Python)
-    resolved_target=$(python3 -c "import os; print(os.path.realpath('$path'))" 2>/dev/null)
+    # Pfad als Argument übergeben um Code-Injection zu vermeiden
+    resolved_target=$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' -- "$path" 2>/dev/null)
     [[ "$resolved_target" == "${DOTFILES_DIR}/"* ]] && return 0
 
     return 1
@@ -308,16 +309,17 @@ backup_create_if_needed() {
     _backup_log "START: Backup wird erstellt"
 
     # Zähle zu sichernde Dateien
+    # Process Substitution statt Pipe, damit Zähler nicht in Subshell verloren gehen
     local total_files=0 existing_files=0
     local source target file_type
 
-    _get_stow_targets | while IFS='|' read -r source target; do
+    while IFS='|' read -r source target; do
         (( total_files++ )) || true
         file_type=$(_get_file_type "$target")
         if [[ "$file_type" != "none" ]]; then
             (( existing_files++ )) || true
         fi
-    done
+    done < <(_get_stow_targets)
 
     log "Analysiere $total_files Dateien..."
 

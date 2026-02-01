@@ -40,14 +40,16 @@ run_stow() {
     fi
 
     # Backup vor Stow erstellen (falls noch nicht vorhanden)
-    # backup.sh muss vorher geladen sein
+    # backup.sh MUSS vorher geladen sein - ohne Backup kein --adopt!
     if type backup_create_if_needed >/dev/null 2>&1; then
         backup_create_if_needed || {
             err "Backup fehlgeschlagen – Abbruch"
             return 1
         }
     else
-        warn "backup.sh nicht geladen – überspringe Backup"
+        err "backup.sh nicht geladen – Backup ist Pflicht für stow --adopt"
+        err "Bitte sicherstellen dass backup.sh vor stow.sh geladen wird"
+        return 1
     fi
 
     log "Verlinke Konfigurationsdateien..."
