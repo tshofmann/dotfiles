@@ -175,13 +175,13 @@ typeset -gx RGB_SURFACE1="69;71;90"
 #   --color=prompt:#CBA6F7        # Mauve (Accent)
 #   --color=hl:#F38BA8            # Red (Treffer-Highlight)
 #   --color=hl+:#F38BA8           # Red (Treffer in Auswahl)
-#   --color=pointer:#CBA6F7       # Mauve (Zeiger)
+#   --color=pointer:#F5E0DC       # Rosewater (Zeiger)
 #
 # btop:
 #   selected_bg="#45475a"         # Selection
 #   selected_fg="#89b4fa"         # Blue (besser lesbar auf Selection)
 #   hi_fg="#89b4fa"               # Blue (Highlight)
-#   proc_misc="#cba6f7"           # Mauve (Accent)
+#   proc_misc="#f5e0dc"           # Rosewater (Prozess-Details)
 #
 # lazygit:
 #   activeBorderColor="#cba6f7"   # Mauve (Fokussiertes Panel)
