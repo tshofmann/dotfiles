@@ -109,4 +109,12 @@ typeset -gx RGB_TEAL="148;226;213"
 # Farben: Overlay0, Red, Green, Peach, Green, Lavender, Lavender, Blue
 typeset -gx JQ_COLORS="2;37:0;31:0;32:0;33:0;32:1;35:1;35:0;34"
 
+# LSCOLORS für macOS/BSD ls (kein True-Color, nur 16 ANSI-Farben)
+# Format: 11 Paare à 2 Buchstaben (fg+bg): a=schwarz..h=weiß, x=default
+# Catppuccin-Approximation: e≈Sapphire, f≈Mauve, c≈Green, d≈Yellow
+#
+# Mapping: di  ln  so  pi  ex  bd  cd  su  sg  tw  ow
+#          ex  fx  cx  dx  cx  eg  ed  ab  ag  ac  ad
+typeset -gx LSCOLORS="exfxcxdxcxegedabagacad"
+
 # EOF

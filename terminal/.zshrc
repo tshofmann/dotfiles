@@ -74,10 +74,9 @@ zstyle ':completion:*:approximate:*' max-errors 1
 # RGB-Werte für LS_COLORS ($RGB_SAPPHIRE, $RGB_MAUVE, etc.)
 [[ -f "$HOME/.config/theme-style" ]] && source "$HOME/.config/theme-style"
 
-# Dateifarben für Completion und Directory-Listings
-# LS_COLORS: Linux (GNU ls, grep), eza, zsh list-colors - True-Color (24-bit)
-# LSCOLORS: macOS/BSD ls - nur 16 ANSI-Farben (kein True-Color Support)
-# RGB-Werte aus theme-style ($RGB_SAPPHIRE, $RGB_MAUVE, etc.)
+# LS_COLORS für Completion und Directory-Listings (True-Color 24-bit)
+# Verwendet von: zsh list-colors, eza, ls (GNU/Linux), grep
+# RGB-Werte + LSCOLORS (macOS/BSD) kommen aus theme-style
 # Docs: https://man7.org/linux/man-pages/man5/dir_colors.5.html
 #
 # Catppuccin Mocha Mapping:
@@ -85,7 +84,6 @@ zstyle ':completion:*:approximate:*' max-errors 1
 #   bd=Sapphire/Sky  cd=Sapphire/Yellow  su=Crust/Red
 #   sg=Crust/Sky  tw=Crust/Green  ow=Crust/Yellow
 export LS_COLORS="di=38;2;${RGB_SAPPHIRE}:ln=38;2;${RGB_MAUVE}:so=38;2;${RGB_GREEN}:pi=38;2;${RGB_YELLOW}:ex=38;2;${RGB_GREEN}:bd=38;2;${RGB_SAPPHIRE};48;2;${RGB_SKY}:cd=38;2;${RGB_SAPPHIRE};48;2;${RGB_YELLOW}:su=38;2;${RGB_CRUST};48;2;${RGB_RED}:sg=38;2;${RGB_CRUST};48;2;${RGB_SKY}:tw=38;2;${RGB_CRUST};48;2;${RGB_GREEN}:ow=38;2;${RGB_CRUST};48;2;${RGB_YELLOW}"
-export LSCOLORS="exfxcxdxcxegedabagacad"
 
 # Completion-Farben: LS_COLORS für Dateitypen + Catppuccin Highlight für Auswahl
 # ma= Auswahl-Highlight: Bold + Crust Text auf Teal Hintergrund
