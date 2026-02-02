@@ -29,9 +29,6 @@ readonly BACKUP_MANIFEST="${BACKUP_DIR}/manifest.json"
 readonly BACKUP_LOG="${BACKUP_DIR}/backup.log"
 readonly BACKUP_HOME="${BACKUP_DIR}/home"
 
-# Stow-Packages (müssen mit stow.sh übereinstimmen)
-readonly BACKUP_STOW_PACKAGES=(terminal editor)
-
 # ------------------------------------------------------------
 # Logging (in Datei und stdout)
 # ------------------------------------------------------------
@@ -44,12 +41,37 @@ _backup_log() {
 # Hilfsfunktionen
 # ------------------------------------------------------------
 
+# Ermittelt Stow-Packages dynamisch aus Verzeichnisstruktur
+# Ein Package ist ein Verzeichnis mit mindestens einer Datei die mit . beginnt
+# oder ein .config Unterverzeichnis hat
+_get_stow_packages() {
+    local dir
+    for dir in "${DOTFILES_DIR}"/*/; do
+        [[ -d "$dir" ]] || continue
+        local name="${dir%/}"
+        name="${name##*/}"
+
+        # Überspringe bekannte Nicht-Packages
+        [[ "$name" == "setup" ]] && continue
+        [[ "$name" == "docs" ]] && continue
+        [[ "$name" == ".git" ]] && continue
+        [[ "$name" == ".backup" ]] && continue
+        [[ "$name" == ".github" ]] && continue
+
+        # Prüfe ob es Dotfiles oder .config enthält
+        if [[ -n "$(find "$dir" -maxdepth 1 -name '.*' -not -name '.DS_Store' -type f 2>/dev/null | head -1)" ]] ||
+           [[ -d "${dir}.config" ]]; then
+            echo "$name"
+        fi
+    done
+}
+
 # Ermittelt alle Zieldateien die von Stow verlinkt würden
 # Gibt pro Zeile aus: <source>|<target>
 _get_stow_targets() {
     local pkg source_file target_file
 
-    for pkg in "${BACKUP_STOW_PACKAGES[@]}"; do
+    while IFS= read -r pkg; do
         local pkg_dir="${DOTFILES_DIR}/${pkg}"
         [[ -d "$pkg_dir" ]] || continue
 
@@ -62,7 +84,7 @@ _get_stow_targets() {
             target_file="${HOME}/${relative}"
             echo "${source_file}|${target_file}"
         done
-    done
+    done < <(_get_stow_packages)
 }
 
 # Ermittelt den Typ einer Datei
@@ -210,6 +232,9 @@ _backup_single_file() {
             local relative="${target#${HOME}/}"
             backup_path="${BACKUP_HOME}/${relative}"
 
+            # Parent-Verzeichnis für Backup anlegen
+            mkdir -p "$(dirname "$backup_path")"
+
             if cp -Rp "$target" "$(dirname "$backup_path")/" 2>/dev/null; then
                 _backup_log "BACKUP: $target (Verzeichnis) -> $backup_path"
             else
@@ -330,7 +355,7 @@ backup_create_if_needed() {
 
     # Zusammenfassung
     local backed_up
-    backed_up=$(find "$BACKUP_HOME" -type f 2>/dev/null | wc -l | tr -d ' ')
+    backed_up=$(find "$BACKUP_HOME" -type f 2>/dev/null | wc -l | tr -d ' ' || echo "0")
     ok "Backup erstellt: $backed_up Dateien gesichert"
     section_end "Manifest: ${BACKUP_MANIFEST#${DOTFILES_DIR}/}"
 

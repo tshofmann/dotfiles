@@ -265,11 +265,16 @@ main() {
                 if [[ -n "$current_target" ]]; then
                     # Nur verarbeiten wenn nicht dotfiles_symlink (die wurden von uns erstellt)
                     if [[ "$current_type" == "dotfiles_symlink" ]]; then
-                        # Entferne unseren Symlink
+                        # Entferne nur unseren eigenen Symlink (der noch ins Dotfiles-Repo zeigt)
                         if [[ -L "$current_target" ]]; then
-                            /bin/rm "$current_target" 2>/dev/null && {
-                                (( removed++ )) || true
-                            }
+                            if is_dotfiles_symlink "$current_target"; then
+                                /bin/rm "$current_target" 2>/dev/null && {
+                                    (( removed++ )) || true
+                                }
+                            else
+                                # Fremder Symlink – nicht löschen
+                                (( skipped++ )) || true
+                            fi
                         fi
                     elif [[ "$current_type" != "none" ]]; then
                         # Wiederherstellen wenn:
