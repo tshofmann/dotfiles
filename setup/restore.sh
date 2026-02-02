@@ -100,6 +100,7 @@ is_dotfiles_symlink() {
 
 # ------------------------------------------------------------
 # Symlink entfernen und ggf. Backup wiederherstellen
+# Rückgabe: 0 = wiederhergestellt, 1 = übersprungen
 # ------------------------------------------------------------
 restore_single_file() {
     local target="$1"
@@ -114,10 +115,10 @@ restore_single_file() {
         log "Entfernt: $target"
     elif [[ -L "$target" ]]; then
         warn "Übersprungen (fremder Symlink): $target"
-        return 0
+        return 1
     elif [[ -e "$target" ]]; then
         warn "Übersprungen (keine Symlink): $target"
-        return 0
+        return 1
     fi
 
     # Backup wiederherstellen wenn vorhanden
@@ -140,15 +141,21 @@ restore_single_file() {
             fi
 
             ok "Wiederhergestellt: $target"
+            return 0
         else
             warn "Backup nicht gefunden: $backup_path"
+            return 1
         fi
     elif [[ "$type" == "symlink" && "$symlink_target" != "null" && -n "$symlink_target" ]]; then
         # Fremden Symlink wiederherstellen
         /bin/mkdir -p "$(dirname "$target")"
         /bin/ln -s "$symlink_target" "$target"
         ok "Symlink wiederhergestellt: $target -> $symlink_target"
+        return 0
     fi
+
+    # Kein Backup nötig/vorhanden
+    return 1
 }
 
 # ------------------------------------------------------------
