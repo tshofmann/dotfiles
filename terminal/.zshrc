@@ -77,6 +77,12 @@ zstyle ':completion:*:approximate:*' max-errors 1
 # Catppuccin Mocha ANSI-Farben und Text-Styles ($C_GREEN, $C_BOLD, etc.)
 [[ -f "$HOME/.config/theme-style" ]] && source "$HOME/.config/theme-style"
 
+# LS_COLORS mit Catppuccin Mocha True-Colors (24-bit: 38;2;R;G;B)
+# Verwendet von: zsh list-colors, eza, ls (GNU/Linux), grep, etc.
+# macOS BSD-ls nutzt LSCOLORS (anderes Format) - wird von eza ersetzt
+# Docs: https://man7.org/linux/man-pages/man5/dir_colors.5.html
+export LS_COLORS="di=38;2;116;199;236:ln=38;2;203;166;247:so=38;2;166;227;161:pi=38;2;249;226;175:ex=38;2;166;227;161:bd=38;2;116;199;236;48;2;137;220;235:cd=38;2;116;199;236;48;2;249;226;175:su=38;2;17;17;27;48;2;243;139;168:sg=38;2;17;17;27;48;2;137;220;235:tw=38;2;17;17;27;48;2;166;227;161:ow=38;2;17;17;27;48;2;249;226;175"
+
 # Lädt alle .alias-Dateien aus ~/.config/alias/
 for alias_file in "$HOME/.config/alias"/*.alias(N-.on); do
     source "$alias_file"
