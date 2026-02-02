@@ -79,15 +79,15 @@ zstyle ':completion:*:approximate:*' max-errors 1
 # RGB-Werte + LSCOLORS (macOS/BSD) kommen aus theme-style
 # Docs: https://man7.org/linux/man-pages/man5/dir_colors.5.html
 #
-# Catppuccin Mocha Mapping:
-#   di=Sapphire  ln=Mauve  so=Green  pi=Yellow  ex=Green
-#   bd=Sapphire/Sky  cd=Sapphire/Yellow  su=Crust/Red
+# Catppuccin Mocha Mapping (harmonisiert mit eza/fzf):
+#   di=Mauve  ln=Blue  so=Green  pi=Yellow  ex=Green
+#   bd=Mauve/Sky  cd=Mauve/Yellow  su=Crust/Red
 #   sg=Crust/Sky  tw=Crust/Green  ow=Crust/Yellow
-export LS_COLORS="di=38;2;${RGB_SAPPHIRE}:ln=38;2;${RGB_MAUVE}:so=38;2;${RGB_GREEN}:pi=38;2;${RGB_YELLOW}:ex=38;2;${RGB_GREEN}:bd=38;2;${RGB_SAPPHIRE};48;2;${RGB_SKY}:cd=38;2;${RGB_SAPPHIRE};48;2;${RGB_YELLOW}:su=38;2;${RGB_CRUST};48;2;${RGB_RED}:sg=38;2;${RGB_CRUST};48;2;${RGB_SKY}:tw=38;2;${RGB_CRUST};48;2;${RGB_GREEN}:ow=38;2;${RGB_CRUST};48;2;${RGB_YELLOW}"
+export LS_COLORS="di=38;2;${RGB_MAUVE}:ln=38;2;${RGB_BLUE}:so=38;2;${RGB_GREEN}:pi=38;2;${RGB_YELLOW}:ex=38;2;${RGB_GREEN}:bd=38;2;${RGB_MAUVE};48;2;${RGB_SKY}:cd=38;2;${RGB_MAUVE};48;2;${RGB_YELLOW}:su=38;2;${RGB_CRUST};48;2;${RGB_RED}:sg=38;2;${RGB_CRUST};48;2;${RGB_SKY}:tw=38;2;${RGB_CRUST};48;2;${RGB_GREEN}:ow=38;2;${RGB_CRUST};48;2;${RGB_YELLOW}"
 
 # Completion-Farben: LS_COLORS für Dateitypen + Catppuccin Highlight für Auswahl
-# ma= Auswahl-Highlight: Bold + Crust Text auf Teal Hintergrund
-zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS} "ma=1;38;2;${RGB_CRUST};48;2;${RGB_TEAL}"
+# ma= Auswahl-Highlight: Bold + Crust Text auf Surface1 Hintergrund (wie fzf/btop)
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS} "ma=1;38;2;${RGB_MAUVE};48;2;${RGB_SURFACE1}"
 
 # Lädt alle .alias-Dateien aus ~/.config/alias/
 for alias_file in "$HOME/.config/alias"/*.alias(N-.on); do

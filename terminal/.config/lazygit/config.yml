@@ -21,9 +21,9 @@ gui:
     optionsTextColor:
       - '#89b4fa' # Blue
     selectedLineBgColor:
-      - '#313244' # Surface0
+      - '#45475a' # Surface1 (harmonisiert mit fzf/btop)
     cherryPickedCommitBgColor:
-      - '#45475a' # Surface1
+      - '#585b70' # Surface2
     cherryPickedCommitFgColor:
       - '#cba6f7' # Mauve
     unstagedChangesColor:

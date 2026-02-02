@@ -102,8 +102,10 @@ typeset -gx RGB_GREEN="166;227;161"
 typeset -gx RGB_YELLOW="249;226;175"
 typeset -gx RGB_RED="243;139;168"
 typeset -gx RGB_SKY="137;220;235"
+typeset -gx RGB_BLUE="137;180;250"
 typeset -gx RGB_CRUST="17;17;27"
 typeset -gx RGB_TEAL="148;226;213"
+typeset -gx RGB_SURFACE1="69;71;90"
 
 # jq Farbschema: null:false:true:numbers:strings:arrays:objects:keys
 # Farben: Overlay0, Red, Green, Peach, Green, Lavender, Lavender, Blue
@@ -111,10 +113,11 @@ typeset -gx JQ_COLORS="2;37:0;31:0;32:0;33:0;32:1;35:1;35:0;34"
 
 # LSCOLORS für macOS/BSD ls (kein True-Color, nur 16 ANSI-Farben)
 # Format: 11 Paare à 2 Buchstaben (fg+bg): a=schwarz..h=weiß, x=default
-# Catppuccin-Approximation: e≈Sapphire, f≈Mauve, c≈Green, d≈Yellow
+# Catppuccin-Approximation (harmonisiert mit eza/fzf):
+#   f≈Mauve, e≈Blue, c≈Green, d≈Yellow
 #
 # Mapping: di  ln  so  pi  ex  bd  cd  su  sg  tw  ow
-#          ex  fx  cx  dx  cx  eg  ed  ab  ag  ac  ad
-typeset -gx LSCOLORS="exfxcxdxcxegedabagacad"
+#          fx  ex  cx  dx  cx  fg  fd  ab  ag  ac  ad
+typeset -gx LSCOLORS="fxexcxdxcxfgfdabagacad"
 
 # EOF
