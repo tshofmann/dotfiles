@@ -20,7 +20,7 @@
 `eza: ~/.config/eza/theme.yml (header)`
 `fzf: ~/.config/fzf/config (bg+header)`
 `kitty: ~/.config/kitty/current-theme.conf (header)`
-`lazygit: ~/.config/lazygit/config.yml (mauve+header)`
+`lazygit: ~/.config/lazygit/config.yml (mauve+selection+header)`
 `starship: ~/.config/starship/starship.toml (palettes+header)`
 `yazi: ~/.config/yazi/theme.toml (mauve+text+header)`
 `zsh-syntax: ~/.config/zsh/catppuccin_mocha-* (header)`
