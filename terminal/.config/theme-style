@@ -93,6 +93,18 @@ typeset -gx C_UNDERLINE=$'\033[4m'                 # Unterstrichen
 # ------------------------------------------------------------
 # Tool-spezifische Farbvariablen
 # ------------------------------------------------------------
+
+# RGB-Werte für Tools die keine ANSI-Escapes akzeptieren (z.B. LS_COLORS)
+# Format: "R;G;B" - direkt verwendbar in 38;2;R;G;B oder 48;2;R;G;B
+typeset -gx RGB_SAPPHIRE="116;199;236"
+typeset -gx RGB_MAUVE="203;166;247"
+typeset -gx RGB_GREEN="166;227;161"
+typeset -gx RGB_YELLOW="249;226;175"
+typeset -gx RGB_RED="243;139;168"
+typeset -gx RGB_SKY="137;220;235"
+typeset -gx RGB_CRUST="17;17;27"
+typeset -gx RGB_TEAL="148;226;213"
+
 # jq Farbschema: null:false:true:numbers:strings:arrays:objects:keys
 # Farben: Overlay0, Red, Green, Peach, Green, Lavender, Lavender, Blue
 typeset -gx JQ_COLORS="2;37:0;31:0;32:0;33:0;32:1;35:1;35:0;34"

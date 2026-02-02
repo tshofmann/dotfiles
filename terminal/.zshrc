@@ -57,14 +57,10 @@ fi
 # Completion-Styles
 #   menu select   = Pfeiltasten-Navigation statt nur Tab-Durchlauf
 #   list-colors   = Dateifarben aus LS_COLORS + Auswahl-Highlight (ma=)
+#                   → wird nach theme-style source gesetzt (braucht RGB-Variablen)
 #   matcher-list  = Sequentiell: exakt → case-insensitive → Teilwort → Substring
 #   completer     = _complete zuerst, _approximate als Fallback (1 Tippfehler)
 zstyle ':completion:*' menu select
-
-# Farben: LS_COLORS für Dateitypen + Catppuccin Mocha Highlight für Auswahl
-# ma= Auswahl: Bold + Crust Text (#11111b) auf Teal Hintergrund (#94e2d5)
-zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS} 'ma=1;38;2;17;17;27;48;2;148;226;213'
-
 zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 zstyle ':completion:*' completer _complete _approximate
 zstyle ':completion:*:approximate:*' max-errors 1
@@ -75,19 +71,25 @@ zstyle ':completion:*:approximate:*' max-errors 1
 # Farben und modulare Alias-Dateien aus ~/.config/alias/
 
 # Catppuccin Mocha ANSI-Farben und Text-Styles ($C_GREEN, $C_BOLD, etc.)
+# RGB-Werte für LS_COLORS ($RGB_SAPPHIRE, $RGB_MAUVE, etc.)
 [[ -f "$HOME/.config/theme-style" ]] && source "$HOME/.config/theme-style"
 
 # Dateifarben für Completion und Directory-Listings
 # LS_COLORS: Linux (GNU ls, grep), eza, zsh list-colors - True-Color (24-bit)
 # LSCOLORS: macOS/BSD ls - nur 16 ANSI-Farben (kein True-Color Support)
+# RGB-Werte aus theme-style ($RGB_SAPPHIRE, $RGB_MAUVE, etc.)
 # Docs: https://man7.org/linux/man-pages/man5/dir_colors.5.html
 #
 # Catppuccin Mocha Mapping:
 #   di=Sapphire  ln=Mauve  so=Green  pi=Yellow  ex=Green
 #   bd=Sapphire/Sky  cd=Sapphire/Yellow  su=Crust/Red
 #   sg=Crust/Sky  tw=Crust/Green  ow=Crust/Yellow
-export LS_COLORS="di=38;2;116;199;236:ln=38;2;203;166;247:so=38;2;166;227;161:pi=38;2;249;226;175:ex=38;2;166;227;161:bd=38;2;116;199;236;48;2;137;220;235:cd=38;2;116;199;236;48;2;249;226;175:su=38;2;17;17;27;48;2;243;139;168:sg=38;2;17;17;27;48;2;137;220;235:tw=38;2;17;17;27;48;2;166;227;161:ow=38;2;17;17;27;48;2;249;226;175"
+export LS_COLORS="di=38;2;${RGB_SAPPHIRE}:ln=38;2;${RGB_MAUVE}:so=38;2;${RGB_GREEN}:pi=38;2;${RGB_YELLOW}:ex=38;2;${RGB_GREEN}:bd=38;2;${RGB_SAPPHIRE};48;2;${RGB_SKY}:cd=38;2;${RGB_SAPPHIRE};48;2;${RGB_YELLOW}:su=38;2;${RGB_CRUST};48;2;${RGB_RED}:sg=38;2;${RGB_CRUST};48;2;${RGB_SKY}:tw=38;2;${RGB_CRUST};48;2;${RGB_GREEN}:ow=38;2;${RGB_CRUST};48;2;${RGB_YELLOW}"
 export LSCOLORS="exfxcxdxcxegedabagacad"
+
+# Completion-Farben: LS_COLORS für Dateitypen + Catppuccin Highlight für Auswahl
+# ma= Auswahl-Highlight: Bold + Crust Text auf Teal Hintergrund
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS} "ma=1;38;2;${RGB_CRUST};48;2;${RGB_TEAL}"
 
 # Lädt alle .alias-Dateien aus ~/.config/alias/
 for alias_file in "$HOME/.config/alias"/*.alias(N-.on); do
