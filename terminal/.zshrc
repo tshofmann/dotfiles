@@ -92,6 +92,18 @@ if [[ -n ${RGB_MAUVE-} && -n ${RGB_BLUE-} && -n ${RGB_GREEN-} && -n ${RGB_YELLOW
     # Completion-Farben: LS_COLORS für Dateitypen + Catppuccin Highlight für Auswahl
     # ma= Auswahl-Highlight: Bold + Mauve Text auf Surface1 Hintergrund (wie fzf/btop)
     zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS} "ma=1;38;2;${RGB_MAUVE};48;2;${RGB_SURFACE1}"
+
+    # Completion-Formatierung (Catppuccin Mocha)
+    # group-name = Aktiviert Gruppierung (zeigt Tool-spezifische Kategorien)
+    # descriptions = Gruppen-Header (z.B. "-- main commands --" bei git)
+    # messages = Info-Meldungen vom Completion-System
+    # warnings = "Keine Treffer"-Meldung bei fehlgeschlagener Completion
+    # corrections = Korrektur-Vorschläge bei Tippfehlern (via _approximate)
+    zstyle ':completion:*' group-name ''
+    zstyle ':completion:*:descriptions' format $'\033[1;38;2;'"${RGB_MAUVE}"$'m-- %d --\033[0m'
+    zstyle ':completion:*:messages' format $'\033[38;2;'"${RGB_BLUE}"$'m-- %d --\033[0m'
+    zstyle ':completion:*:warnings' format $'\033[38;2;'"${RGB_RED}"$'m-- keine Treffer --\033[0m'
+    zstyle ':completion:*:corrections' format $'\033[38;2;'"${RGB_YELLOW}"$'m-- %d (Fehler: %%e) --\033[0m'
 fi
 
 # Lädt alle .alias-Dateien aus ~/.config/alias/
