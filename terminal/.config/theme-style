@@ -108,12 +108,11 @@ typeset -gx RGB_CRUST="17;17;27"
 typeset -gx RGB_TEAL="148;226;213"
 typeset -gx RGB_SURFACE1="69;71;90"
 
-# ============================================================
-# SEMANTISCHE FARBZUWEISUNGEN
-# ============================================================
+# ------------------------------------------------------------
+# Semantische Farbzuweisungen
+# ------------------------------------------------------------
 # Konsistente UI-Elemente über alle Tools hinweg
 # Referenz für neue Tool-Konfigurationen
-# ============================================================
 
 # ------------------------------------------------------------
 # UI-Element → Farbe Mapping
@@ -139,7 +138,7 @@ typeset -gx RGB_SURFACE1="69;71;90"
 #   Info/Link           │ Blue     │ #89B4FA │ Symlinks, URLs, Referenzen
 #   Special/Executable  │ Teal     │ #94E2D5 │ Ausführbare Dateien
 #   Directory           │ Mauve    │ #CBA6F7 │ Verzeichnisse
-#   String/Path         │ Green    │ #A6E3A1 │ Strings in Syntax-Highlighting
+#   String              │ Yellow   │ #F9E2AF │ Strings in Code/Shell
 #   Variable/Parameter  │ Mauve    │ #CBA6F7 │ Variablen in Beispielen
 #   Comment/Muted       │ Overlay0 │ #6C7086 │ Kommentare, deaktivierte Items
 #
@@ -170,13 +169,12 @@ typeset -gx RGB_SURFACE1="69;71;90"
 # ------------------------------------------------------------
 #
 # fzf:
-#   --color=bg+:#313244           # Elevated (Preview-Hintergrund)
+#   --color=bg+:#313244           # Elevated (Aktuelle Zeile Hintergrund)
 #   --color=selected-bg:#45475A   # Selection
 #   --color=marker:#B4BEFE        # Lavender (Multi-Select)
 #   --color=prompt:#CBA6F7        # Mauve (Accent)
 #   --color=hl:#F38BA8            # Red (Treffer-Highlight)
 #   --color=hl+:#F38BA8           # Red (Treffer in Auswahl)
-#   --color=gutter:#313244        # Elevated (Rand)
 #   --color=pointer:#CBA6F7       # Mauve (Zeiger)
 #
 # btop:
@@ -203,15 +201,15 @@ typeset -gx RGB_SURFACE1="69;71;90"
 #   symlink=#89b4fa               # Blue (Info/Link)
 #
 # kitty:
-#   selection_background=#45475A  # Selection (mit Transparenz)
+#   selection_background=#F5E0DC  # Rosewater (Upstream: invertiert)
 #   cursor=#F5E0DC                # Rosewater (Cursor)
 #   active_tab_background=#CBA6F7 # Mauve (Accent)
 #
 # zsh-syntax-highlighting:
 #   command=#a6e3a1               # Green (Valid)
 #   unknown-token=#eba0ac         # Maroon (Error, abgemildert)
-#   path=#89b4fa                  # Blue (Info/Link)
-#   string=#a6e3a1                # Green (String)
+#   path=#cdd6f4                  # Text (Pfad, unterstrichen)
+#   string=#f9e2af                # Yellow (String)
 #
 # zsh-completion (LS_COLORS/ZLS_COLORS):
 #   ma=Mauve auf Surface1         # Selection (Menü-Auswahl)
@@ -224,9 +222,10 @@ typeset -gx RGB_SURFACE1="69;71;90"
 #   example_code=#A6E3A1          # Green (Ausführbar)
 #   example_variable=#CBA6F7      # Mauve (Variable)
 #
-# fastfetch:
-#   color.title=mauve             # Mauve (Accent)
-#   color.keys=lavender           # Lavender (Labels)
+# fastfetch (konzeptionelle Zuordnung, siehe config.jsonc):
+#   Logo-Farben                   # Catppuccin Palette (1-9)
+#   title → mauve                 # Mauve (Accent)
+#   keys → lavender               # Lavender (Labels)
 #
 # ============================================================
 
