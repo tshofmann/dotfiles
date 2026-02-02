@@ -50,9 +50,10 @@ fi
 
 # Completion-Styles
 #   menu select   = Pfeiltasten-Navigation statt nur Tab-Durchlauf
-#   matcher-list  = Erst exakt, dann case-insensitive (documents → Documents)
+#   matcher-list  = Sequentiell: exakt → case-insensitive → Teilwort → Substring
+#                   Beispiele: Git→git, gti→git, fzf→fzf-preview, zprf→.zprofile
 zstyle ':completion:*' menu select
-zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}'
+zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 
 # ------------------------------------------------------------
 # Aliase laden
