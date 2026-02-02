@@ -3,6 +3,7 @@
 # ============================================================
 # Zweck       : Dateityp-Farben für eza (ls-Ersatz)
 # Pfad        : ~/.config/eza/theme.yml
+# Quelle      : https://github.com/catppuccin/eza
 # Docs        : https://github.com/eza-community/eza/blob/main/man/eza_colors.5.md
 # ============================================================
 # Aliase      : ~/.config/alias/eza.alias (ls, ll, la, lt, lss, lst)
