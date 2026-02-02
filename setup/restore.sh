@@ -88,7 +88,7 @@ is_dotfiles_symlink() {
     # Auflösen für relative Symlinks
     # Pfad als Argument übergeben um Code-Injection zu vermeiden
     local resolved
-    resolved=$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' -- "$path" 2>/dev/null)
+    resolved=$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$path" 2>/dev/null)
     [[ "$resolved" == "${DOTFILES_DIR}/"* ]] && return 0
 
     return 1

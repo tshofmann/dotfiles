@@ -125,7 +125,7 @@ _is_dotfiles_symlink() {
 
     # Variante 3: Auflösen und prüfen (macOS: readlink ohne -f, daher Python)
     # Pfad als Argument übergeben um Code-Injection zu vermeiden
-    resolved_target=$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' -- "$path" 2>/dev/null)
+    resolved_target=$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$path" 2>/dev/null)
     [[ "$resolved_target" == "${DOTFILES_DIR}/"* ]] && return 0
 
     return 1
