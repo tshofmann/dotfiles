@@ -27,6 +27,7 @@ setopt HIST_IGNORE_SPACE     # Befehle mit führendem Space ignorieren
 setopt HIST_IGNORE_DUPS      # Aufeinanderfolgende Duplikate ignorieren
 setopt HIST_REDUCE_BLANKS    # Überflüssige Leerzeichen entfernen
 setopt HIST_SAVE_NO_DUPS     # Keine Duplikate in Datei speichern
+setopt HIST_FIND_NO_DUPS     # Bei History-Suche Duplikate überspringen
 
 # ------------------------------------------------------------
 # Globbing-Optionen
@@ -46,6 +47,12 @@ if [[ -n "${ZDOTDIR:-$HOME}/.zcompdump"(#qN.mh+24) ]]; then
 else
     compinit -i -C              # Cache nutzen wenn aktuell
 fi
+
+# Completion-Styles
+#   menu select   = Pfeiltasten-Navigation statt nur Tab-Durchlauf
+#   matcher-list  = Erst exakt, dann case-insensitive (documents → Documents)
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}'
 
 # ------------------------------------------------------------
 # Aliase laden
