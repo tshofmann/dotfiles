@@ -22,7 +22,7 @@
 `kitty: ~/.config/kitty/current-theme.conf (header)`
 `lazygit: ~/.config/lazygit/config.yml (mauve+selection+header)`
 `starship: ~/.config/starship/starship.toml (palettes+header)`
-`yazi: ~/.config/yazi/theme.toml (mauve+text+header)`
+`yazi: ~/.config/yazi/theme.toml (mauve+text+marker+header)`
 `zsh-syntax: ~/.config/zsh/catppuccin_mocha-* (header)`
 
 - Manuell konfiguriert (basierend auf catppuccin.com/palette):
