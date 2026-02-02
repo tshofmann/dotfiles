@@ -22,11 +22,11 @@
 #   fastfetch    | ~/.config/fastfetch/config.jsonc   | manual                                        | manual
 #   fzf          | ~/.config/fzf/config               | github.com/catppuccin/fzf                     | upstream-bg+header
 #   jq           | ~/.config/theme-style              | manual                                        | manual
-#   kitty        | ~/.config/kitty/current-theme.conf | github.com/catppuccin/kitty                   | upstream+header
+#   kitty        | ~/.config/kitty/current-theme.conf | github.com/catppuccin/kitty                   | upstream+border+header
 #   lazygit      | ~/.config/lazygit/config.yml       | github.com/catppuccin/lazygit                 | upstream+mauve+selection+header
 #   starship     | ~/.config/starship/starship.toml   | github.com/catppuccin/starship                | upstream-palettes+header
 #   tealdeer     | ~/.config/tealdeer/config.toml     | manual                                        | manual
-#   yazi         | ~/.config/yazi/theme.toml          | github.com/catppuccin/yazi                    | upstream+mauve+text+marker+header
+#   yazi         | ~/.config/yazi/theme.toml          | github.com/catppuccin/yazi                    | upstream+mauve+text+marker+info+help+which+header
 #   zsh-syntax   | ~/.config/zsh/catppuccin_mocha-*   | github.com/catppuccin/zsh-syntax-highlighting | upstream+header
 #   Terminal.app | ~/dotfiles/setup/                  | github.com/catppuccin/Terminal.app            | upstream
 #   Xcode        | ~/dotfiles/setup/                  | github.com/catppuccin/xcode                   | upstream+header
@@ -200,9 +200,15 @@ typeset -gx RGB_SURFACE1="69;71;90"
 #   symlink=#89b4fa               # Blue (Info/Link)
 #
 # kitty:
-#   selection_background=#F5E0DC  # Rosewater (Upstream: invertiert)
+#   selection_background=#F5E0DC  # Rosewater (Upstream: invertiert für Sichtbarkeit)
 #   cursor=#F5E0DC                # Rosewater (Cursor)
+#   active_border_color=#CBA6F7   # Mauve (Accent, geändert von Lavender)
 #   active_tab_background=#CBA6F7 # Mauve (Accent)
+#
+# yazi (weitere Anpassungen):
+#   [notify] title_info=#89b4fa   # Blue (Info, geändert von Teal)
+#   [help] on=#a6e3a1             # Green (gültiger Befehl, geändert von Teal)
+#   [which] cand=#89b4fa          # Blue (Referenz, geändert von Teal)
 #
 # zsh-syntax-highlighting:
 #   command=#a6e3a1               # Green (Valid)
