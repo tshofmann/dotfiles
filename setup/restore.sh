@@ -8,6 +8,10 @@
 # Aufruf      : ./setup/restore.sh [--yes]
 # Optionen    : --yes  Keine Bestätigung erforderlich
 #
+# DOCS-SECTION: Deinstallation
+# DOCS-TITLE  : Dotfiles entfernen / Wiederherstellung
+# DOCS-DESC   : So wird die dotfiles-Installation rückgängig gemacht
+#
 # Diese Datei macht die dotfiles-Installation rückgängig:
 # 1. Entfernt alle Symlinks die auf dotfiles zeigen
 # 2. Stellt gesicherte Originaldateien wieder her

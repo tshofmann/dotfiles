@@ -39,6 +39,58 @@ extract_bootstrap_steps() {
 }
 
 # ------------------------------------------------------------
+# Deinstallations-Abschnitt (aus restore.sh Metadaten)
+# ------------------------------------------------------------
+generate_uninstall_section() {
+    local restore_script="$DOTFILES_DIR/setup/restore.sh"
+    [[ -f "$restore_script" ]] || return 0
+
+    cat << 'UNINSTALL'
+
+---
+
+## Deinstallation / Wiederherstellung
+
+Falls du die dotfiles-Installation rückgängig machen möchtest:
+
+```zsh
+./setup/restore.sh
+```
+
+### Was passiert?
+
+| Aktion | Beschreibung |
+| ------ | ------------ |
+| Symlinks entfernen | Alle dotfiles-Symlinks aus `~` werden gelöscht |
+| Backup wiederstellen | Originale Konfigurationsdateien werden aus `.backup/` zurückkopiert |
+| Terminal-Profil | Wird auf "Basic" zurückgesetzt (macOS) |
+
+### Optionen
+
+| Option | Beschreibung |
+| ------ | ------------ |
+| `--yes`, `-y` | Keine Bestätigung erforderlich |
+| `--help`, `-h` | Hilfe anzeigen |
+
+### Backup-Speicherort
+
+Das Backup wird beim ersten Bootstrap automatisch erstellt:
+
+```text
+.backup/
+├── manifest.json    # Metadaten aller gesicherten Dateien
+├── backup.log       # Protokoll der Backup-Operationen
+└── home/            # Gesicherte Originaldateien (Struktur von ~)
+```
+
+> **Wichtig:** Das erste Backup wird NIE überschrieben (Idempotenz). Selbst bei mehrfacher Bootstrap-Ausführung bleibt das ursprüngliche Backup erhalten.
+>
+> **💡 Tipp:** Nach erfolgreicher Wiederherstellung kann das Backup manuell gelöscht werden: `rm -rf .backup/`
+
+UNINSTALL
+}
+
+# ------------------------------------------------------------
 # Haupt-Generator für setup.md
 # ------------------------------------------------------------
 generate_setup_md() {
@@ -203,6 +255,9 @@ REST
 
     # Pakete nach Kategorien aus Brewfile generieren
     generate_brewfile_section
+
+    # Deinstallations-Abschnitt generieren (aus restore.sh)
+    generate_uninstall_section
 }
 
 # Nur ausführen wenn direkt aufgerufen (nicht gesourct)
