@@ -31,12 +31,12 @@ BACKUP_HOME="${BACKUP_DIR}/home"
 if [[ -f "${DOTFILES_DIR}/terminal/.config/theme-style" ]]; then
     source "${DOTFILES_DIR}/terminal/.config/theme-style"
 else
-    # Fallback-Farben (mit echten Escape-Bytes)
-    C_RED=$'\033[0;31m'
-    C_GREEN=$'\033[0;32m'
-    C_YELLOW=$'\033[0;33m'
-    C_BLUE=$'\033[0;34m'
-    C_RESET=$'\033[0m'
+    # Fallback falls theme-style fehlt (konsistent mit _core.sh)
+    typeset -gx C_RESET=$'\033[0m'
+    typeset -gx C_RED=$'\033[31m'
+    typeset -gx C_GREEN=$'\033[32m'
+    typeset -gx C_YELLOW=$'\033[33m'
+    typeset -gx C_BLUE=$'\033[34m'
 fi
 
 # ------------------------------------------------------------
