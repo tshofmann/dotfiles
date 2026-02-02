@@ -23,7 +23,7 @@
 #   fzf          | ~/.config/fzf/config               | github.com/catppuccin/fzf                     | upstream-bg+header
 #   jq           | ~/.config/theme-style              | manual                                        | manual
 #   kitty        | ~/.config/kitty/current-theme.conf | github.com/catppuccin/kitty                   | upstream+header
-#   lazygit      | ~/.config/lazygit/config.yml       | github.com/catppuccin/lazygit                 | upstream+mauve+header
+#   lazygit      | ~/.config/lazygit/config.yml       | github.com/catppuccin/lazygit                 | upstream+mauve+selection+header
 #   starship     | ~/.config/starship/starship.toml   | github.com/catppuccin/starship                | upstream-palettes+header
 #   tealdeer     | ~/.config/tealdeer/config.toml     | manual                                        | manual
 #   yazi         | ~/.config/yazi/theme.toml          | github.com/catppuccin/yazi                    | upstream+mauve+text+header
@@ -93,8 +93,31 @@ typeset -gx C_UNDERLINE=$'\033[4m'                 # Unterstrichen
 # ------------------------------------------------------------
 # Tool-spezifische Farbvariablen
 # ------------------------------------------------------------
+
+# RGB-Werte für Tools die keine ANSI-Escapes akzeptieren (z.B. LS_COLORS)
+# Format: "R;G;B" - direkt verwendbar in 38;2;R;G;B oder 48;2;R;G;B
+typeset -gx RGB_SAPPHIRE="116;199;236"
+typeset -gx RGB_MAUVE="203;166;247"
+typeset -gx RGB_GREEN="166;227;161"
+typeset -gx RGB_YELLOW="249;226;175"
+typeset -gx RGB_RED="243;139;168"
+typeset -gx RGB_SKY="137;220;235"
+typeset -gx RGB_BLUE="137;180;250"
+typeset -gx RGB_CRUST="17;17;27"
+typeset -gx RGB_TEAL="148;226;213"
+typeset -gx RGB_SURFACE1="69;71;90"
+
 # jq Farbschema: null:false:true:numbers:strings:arrays:objects:keys
 # Farben: Overlay0, Red, Green, Peach, Green, Lavender, Lavender, Blue
 typeset -gx JQ_COLORS="2;37:0;31:0;32:0;33:0;32:1;35:1;35:0;34"
+
+# LSCOLORS für macOS/BSD ls (kein True-Color, nur 16 ANSI-Farben)
+# Format: 11 Paare à 2 Buchstaben (fg+bg): a=schwarz..h=weiß, x=default
+# Catppuccin-Approximation (harmonisiert mit eza/fzf):
+#   f≈Mauve, e≈Blue, c≈Green, d≈Yellow
+#
+# Mapping: di  ln  so  pi  ex  bd  cd  su  sg  tw  ow
+#          fx  ex  cx  dx  cx  fg  fd  ab  ag  ac  ad
+typeset -gx LSCOLORS="fxexcxdxcxfgfdabagacad"
 
 # EOF
