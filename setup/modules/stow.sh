@@ -6,8 +6,8 @@
 # Pfad        : setup/modules/stow.sh
 # Benötigt    : _core.sh, backup.sh, homebrew.sh (stow muss installiert sein)
 #
-# STEP        : Stow Symlinks | Verlinkt terminal/ und editor/ Configs | ⚠️ Kritisch
-# Packages    : terminal, editor
+# STEP        : Stow Symlinks | Verlinkt Dotfile-Packages dynamisch | ⚠️ Kritisch
+# Packages    : Automatisch erkannt via _get_stow_packages()
 # ============================================================
 
 # Guard: Core muss geladen sein
@@ -19,7 +19,8 @@
 # ------------------------------------------------------------
 # Konfiguration
 # ------------------------------------------------------------
-readonly STOW_PACKAGES=(terminal editor)
+# Packages werden dynamisch via _get_stow_packages() aus backup.sh ermittelt
+# Keine hardcoded Liste mehr nötig
 
 # ------------------------------------------------------------
 # Prüfen ob Stow installiert ist
@@ -60,10 +61,19 @@ run_stow() {
         return 1
     }
 
+    # Packages dynamisch ermitteln (aus backup.sh)
+    local packages
+    packages=($(_get_stow_packages))
+
+    if [[ ${#packages[@]} -eq 0 ]]; then
+        warn "Keine Stow-Packages gefunden"
+        return 0
+    fi
+
     # Stow mit --adopt ausführen (übernimmt existierende Dateien)
     # -R = Restow (erst unstow, dann stow)
-    if stow --adopt -R "${STOW_PACKAGES[@]}" 2>/dev/null; then
-        ok "Symlinks erstellt für: ${STOW_PACKAGES[*]}"
+    if stow --adopt -R "${packages[@]}" 2>/dev/null; then
+        ok "Symlinks erstellt für: ${packages[*]}"
     else
         warn "Stow hatte Probleme – prüfe manuell"
         return 0  # Kein fataler Fehler
