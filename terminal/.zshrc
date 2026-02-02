@@ -42,8 +42,8 @@ setopt EXTENDED_GLOB
 # Completion-System initialisieren
 # ------------------------------------------------------------
 # zsh/complist: Ermöglicht Pfeiltasten-Navigation im Completion-Menü
-# Muss VOR compinit geladen werden!
-zmodload zsh/complist
+# Muss VOR compinit geladen werden! (-i ignoriert Fehler wenn nicht vorhanden)
+zmodload -i zsh/complist
 
 # Tab-Vervollständigung mit täglicher Cache-Erneuerung
 # Cache wird täglich erneuert, sonst schneller Start mit -C
@@ -60,10 +60,11 @@ fi
 #                   → wird nach theme-style source gesetzt (braucht RGB-Variablen)
 #   matcher-list  = Sequentiell: exakt → case-insensitive → Teilwort → Substring
 #   completer     = _complete zuerst, _approximate als Fallback (1 Tippfehler)
+#   max-errors    = 1 numeric = exakt 1 Fehler erlaubt (nicht prozentual)
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 zstyle ':completion:*' completer _complete _approximate
-zstyle ':completion:*:approximate:*' max-errors 1
+zstyle ':completion:*:approximate:*' max-errors 1 numeric
 
 # ------------------------------------------------------------
 # Aliase laden
