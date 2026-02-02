@@ -14,7 +14,7 @@
 # Zentrale History-Datei mit Timestamps und Duplikat-Filterung
 
 HISTFILE="${HISTFILE:-$HOME/.zsh_history}"
-HISTSIZE=25000
+HISTSIZE=50000
 SAVEHIST=25000
 
 # Datei sicher erstellen (chmod 600 = nur Owner lesen/schreiben)
@@ -28,6 +28,8 @@ setopt HIST_IGNORE_DUPS      # Aufeinanderfolgende Duplikate ignorieren
 setopt HIST_REDUCE_BLANKS    # Überflüssige Leerzeichen entfernen
 setopt HIST_SAVE_NO_DUPS     # Keine Duplikate in Datei speichern
 setopt HIST_FIND_NO_DUPS     # Bei History-Suche Duplikate überspringen
+setopt HIST_EXPIRE_DUPS_FIRST # Duplikate zuerst löschen wenn History voll
+setopt HIST_VERIFY           # History-Expansion (!!) erst in Buffer laden
 
 # ------------------------------------------------------------
 # Globbing-Optionen
@@ -39,6 +41,10 @@ setopt EXTENDED_GLOB
 # ------------------------------------------------------------
 # Completion-System initialisieren
 # ------------------------------------------------------------
+# zsh/complist: Ermöglicht Pfeiltasten-Navigation im Completion-Menü
+# Muss VOR compinit geladen werden!
+zmodload zsh/complist
+
 # Tab-Vervollständigung mit täglicher Cache-Erneuerung
 # Cache wird täglich erneuert, sonst schneller Start mit -C
 autoload -Uz compinit
@@ -50,10 +56,18 @@ fi
 
 # Completion-Styles
 #   menu select   = Pfeiltasten-Navigation statt nur Tab-Durchlauf
+#   list-colors   = Dateifarben aus LS_COLORS + Auswahl-Highlight (ma=)
 #   matcher-list  = Sequentiell: exakt → case-insensitive → Teilwort → Substring
-#                   Beispiele: Git→git, gti→git, fzf→fzf-preview, zprf→.zprofile
+#   completer     = _complete zuerst, _approximate als Fallback (1 Tippfehler)
 zstyle ':completion:*' menu select
+
+# Farben: LS_COLORS für Dateitypen + Catppuccin Mocha Highlight für Auswahl
+# ma= Auswahl: Bold + Crust Text (#11111b) auf Teal Hintergrund (#94e2d5)
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS} 'ma=1;38;2;17;17;27;48;2;148;226;213'
+
 zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' completer _complete _approximate
+zstyle ':completion:*:approximate:*' max-errors 1
 
 # ------------------------------------------------------------
 # Aliase laden
