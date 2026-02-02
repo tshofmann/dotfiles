@@ -84,11 +84,15 @@ zstyle ':completion:*:approximate:*' max-errors 1 numeric
 #   di=Mauve  ln=Blue  so=Green  pi=Yellow  ex=Green
 #   bd=Mauve/Sky  cd=Mauve/Yellow  su=Crust/Red
 #   sg=Crust/Sky  tw=Crust/Green  ow=Crust/Yellow
-export LS_COLORS="di=38;2;${RGB_MAUVE}:ln=38;2;${RGB_BLUE}:so=38;2;${RGB_GREEN}:pi=38;2;${RGB_YELLOW}:ex=38;2;${RGB_GREEN}:bd=38;2;${RGB_MAUVE};48;2;${RGB_SKY}:cd=38;2;${RGB_MAUVE};48;2;${RGB_YELLOW}:su=38;2;${RGB_CRUST};48;2;${RGB_RED}:sg=38;2;${RGB_CRUST};48;2;${RGB_SKY}:tw=38;2;${RGB_CRUST};48;2;${RGB_GREEN}:ow=38;2;${RGB_CRUST};48;2;${RGB_YELLOW}"
+#
+# Guard: Nur setzen wenn RGB-Variablen aus theme-style vorhanden sind
+if [[ -n ${RGB_MAUVE-} && -n ${RGB_BLUE-} && -n ${RGB_GREEN-} && -n ${RGB_YELLOW-} ]]; then
+    export LS_COLORS="di=38;2;${RGB_MAUVE}:ln=38;2;${RGB_BLUE}:so=38;2;${RGB_GREEN}:pi=38;2;${RGB_YELLOW}:ex=38;2;${RGB_GREEN}:bd=38;2;${RGB_MAUVE};48;2;${RGB_SKY}:cd=38;2;${RGB_MAUVE};48;2;${RGB_YELLOW}:su=38;2;${RGB_CRUST};48;2;${RGB_RED}:sg=38;2;${RGB_CRUST};48;2;${RGB_SKY}:tw=38;2;${RGB_CRUST};48;2;${RGB_GREEN}:ow=38;2;${RGB_CRUST};48;2;${RGB_YELLOW}"
 
-# Completion-Farben: LS_COLORS für Dateitypen + Catppuccin Highlight für Auswahl
-# ma= Auswahl-Highlight: Bold + Crust Text auf Surface1 Hintergrund (wie fzf/btop)
-zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS} "ma=1;38;2;${RGB_MAUVE};48;2;${RGB_SURFACE1}"
+    # Completion-Farben: LS_COLORS für Dateitypen + Catppuccin Highlight für Auswahl
+    # ma= Auswahl-Highlight: Bold + Mauve Text auf Surface1 Hintergrund (wie fzf/btop)
+    zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS} "ma=1;38;2;${RGB_MAUVE};48;2;${RGB_SURFACE1}"
+fi
 
 # Lädt alle .alias-Dateien aus ~/.config/alias/
 for alias_file in "$HOME/.config/alias"/*.alias(N-.on); do
