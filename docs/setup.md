@@ -71,7 +71,8 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 | Build-Tools | Installiert Build-Essentials (Linux) | ❌ Exit |
 | Homebrew | Installiert/prüft Homebrew unter `/opt/homebrew` | ❌ Exit |
 | Brewfile | Installiert CLI-Tools via `brew bundle` | ❌ Exit |
-| Stow Symlinks | Verlinkt terminal/ und editor/ Configs | ⚠️ Kritisch |
+| Backup | Sichert existierende Konfigurationen | 🔒 Sicher |
+| Stow Symlinks | Verlinkt Dotfile-Packages dynamisch | ⚠️ Kritisch |
 | Git Hooks | Aktiviert Pre-Commit Validierung | ✓ Schnell |
 | Font-Verifikation | Prüft MesloLG Nerd Font Installation | ❌ Exit |
 | Terminal-Profil | Importiert `catppuccin-mocha.terminal` als Standard | ⚠️ Warnung |
@@ -247,3 +248,43 @@ Bei fehlenden oder falschen Icons prüfen:
 1. **Nerd Font im Terminal?** – Terminal-Profil muss einen Nerd Font verwenden (z.B. MesloLGSDZ oder JetBrainsMono)
 2. **Nerd Font installiert?** – `brew list --cask | grep font`
 3. **Terminal neu gestartet?** – Nach Font-Installation erforderlich
+
+---
+
+## Deinstallation / Wiederherstellung
+
+Falls du die dotfiles-Installation rückgängig machen möchtest:
+
+```zsh
+./setup/restore.sh
+```
+
+### Was passiert?
+
+| Aktion | Beschreibung |
+| ------ | ------------ |
+| Symlinks entfernen | Alle dotfiles-Symlinks aus `~` werden gelöscht |
+| Backup wiederstellen | Originale Konfigurationsdateien werden aus `.backup/` zurückkopiert |
+| Terminal-Profil | Wird auf "Basic" zurückgesetzt (macOS) |
+
+### Optionen
+
+| Option | Beschreibung |
+| ------ | ------------ |
+| `--yes`, `-y` | Keine Bestätigung erforderlich |
+| `--help`, `-h` | Hilfe anzeigen |
+
+### Backup-Speicherort
+
+Das Backup wird beim ersten Bootstrap automatisch erstellt:
+
+```text
+.backup/
+├── manifest.json    # Metadaten aller gesicherten Dateien
+├── backup.log       # Protokoll der Backup-Operationen
+└── home/            # Gesicherte Originaldateien (Struktur von ~)
+```
+
+> **Wichtig:** Das erste Backup wird NIE überschrieben (Idempotenz). Selbst bei mehrfacher Bootstrap-Ausführung bleibt das ursprüngliche Backup erhalten.
+>
+> **💡 Tipp:** Nach erfolgreicher Wiederherstellung kann das Backup manuell gelöscht werden: `rm -rf .backup/`

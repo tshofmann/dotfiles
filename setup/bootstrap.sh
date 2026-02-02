@@ -5,7 +5,7 @@
 # Zweck       : Lädt und führt Bootstrap-Module in definierter Reihenfolge aus
 # Aufruf      : ./bootstrap.sh
 # Docs        : https://github.com/tshofmann/dotfiles#readme
-# Module      : setup/modules/ (validation, homebrew, stow, git-hooks, font, terminal-profile, bat, tealdeer, xcode-theme, zsh-sessions)
+# Module      : setup/modules/ (validation, homebrew, backup, stow, git-hooks, font, terminal-profile, bat, tealdeer, xcode-theme, zsh-sessions)
 # Generiert   : README.md (macOS-Versionen), docs/setup.md (Bootstrap-Schritte)
 # ============================================================
 
@@ -119,6 +119,7 @@ load_module() {
 readonly -a MODULES=(
     validation              # Architektur, OS, Netzwerk, Rechte (plattformübergreifend)
     homebrew                # Homebrew/Linuxbrew + Brewfile
+    backup                  # Backup vor Stow (sichert existierende Dateien)
     stow                    # Symlinks für Configs (muss vor Tool-spezifischen Modulen laufen)
     git-hooks               # Pre-Commit Hooks aktivieren
     font                    # Font-Verifikation
