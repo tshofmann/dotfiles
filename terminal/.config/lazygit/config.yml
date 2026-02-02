@@ -3,6 +3,7 @@
 # ============================================================
 # Zweck       : lazygit Konfiguration mit Catppuccin Mocha Theme
 # Pfad        : ~/.config/lazygit/config.yml
+# Quelle      : https://github.com/catppuccin/lazygit
 # Docs        : https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md
 # Theme       : ~/.config/theme-style
 # ============================================================

@@ -93,9 +93,20 @@ Doku wird automatisch aus Code generiert (Single Source of Truth):
 
 **Einstiegspunkt:** `dothelp` zeigt alle verfügbaren tldr-Seiten mit dotfiles-Erweiterungen.
 
-### Farben
+### Farben & Theming
 
-Zentrale Definition: `terminal/.config/theme-style`
+**Zentrale Definition:** `terminal/.config/theme-style`
+
+**Bei neuen Tool-Konfigurationen:**
+
+1. **Prüfe Theme-Quellen-Tabelle** in `theme-style` (Zeile 13-42)
+2. **Nutze semantische Farben** aus der Dokumentation in `theme-style`:
+   - Selection Background → Surface1 `#45475A`
+   - Accent/Border → Mauve `#CBA6F7`
+   - Marker → Lavender `#B4BEFE`
+   - Success → Green, Error → Red, Warning → Yellow
+3. **Aktualisiere Status** in Theme-Quellen-Tabelle wenn Tool hinzugefügt wird
+4. **Bevorzuge Upstream-Themes** von [github.com/catppuccin](https://github.com/catppuccin)
 
 In Skripten nutzen:
 

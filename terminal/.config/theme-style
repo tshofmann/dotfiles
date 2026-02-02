@@ -30,7 +30,7 @@
 #   zsh-syntax   | ~/.config/zsh/catppuccin_mocha-*   | github.com/catppuccin/zsh-syntax-highlighting | upstream+header
 #   Terminal.app | ~/dotfiles/setup/                  | github.com/catppuccin/Terminal.app            | upstream
 #   Xcode        | ~/dotfiles/setup/                  | github.com/catppuccin/xcode                   | upstream+header
-#   theme-style  | ~/.config/theme-style              | manual                                        | manual
+#   theme-style  | ~/.config/theme-style              | manual                                        | manual+semantics
 #
 # Status-Legende:
 #   upstream      = Unverändert aus offiziellem Catppuccin-Repo
@@ -38,6 +38,7 @@
 #   upstream-X    = Aus Upstream mit Entfernung (X = was entfernt)
 #   builtin       = In Tool eingebaut (kein externes Theme nötig)
 #   manual        = Manuell basierend auf catppuccin.com/palette
+#   semantics     = Enthält semantische Farbzuweisungen für Tool-übergreifende Konsistenz
 # ------------------------------------------------------------
 
 # ------------------------------------------------------------
@@ -106,6 +107,127 @@ typeset -gx RGB_BLUE="137;180;250"
 typeset -gx RGB_CRUST="17;17;27"
 typeset -gx RGB_TEAL="148;226;213"
 typeset -gx RGB_SURFACE1="69;71;90"
+
+# ------------------------------------------------------------
+# Semantische Farbzuweisungen
+# ------------------------------------------------------------
+# Konsistente UI-Elemente über alle Tools hinweg
+# Referenz für neue Tool-Konfigurationen
+
+# ------------------------------------------------------------
+# UI-Element → Farbe Mapping
+# ------------------------------------------------------------
+#
+#   Element               │ Farbe     │ Hex     │ Verwendung
+#   ──────────────────────┼───────────┼─────────┼─────────────────────────────
+#   Selection Background  │ Surface1  │ #45475A │ Ausgewählte Zeile/Item
+#   Selection Foreground  │ Text      │ #CDD6F4 │ Text in Auswahl
+#   Active Border/Accent  │ Mauve     │ #CBA6F7 │ Fokussiertes Panel, Prompts
+#   Marker/Markierung     │ Lavender  │ #B4BEFE │ Multi-Select Marker
+#   Cursor/Caret          │ Rosewater │ #F5E0DC │ Cursor-Position
+#
+# ------------------------------------------------------------
+# Semantische Bedeutungen
+# ------------------------------------------------------------
+#
+#   Bedeutung           │ Farbe    │ Hex     │ Beispiele
+#   ────────────────────┼──────────┼─────────┼─────────────────────────────────
+#   Success/Valid       │ Green    │ #A6E3A1 │ Gültige Befehle, Git Added
+#   Error/Invalid       │ Red      │ #F38BA8 │ Fehler, Git Deleted
+#   Warning/Modified    │ Yellow   │ #F9E2AF │ Git Modified, Warnungen
+#   Info/Link           │ Blue     │ #89B4FA │ Symlinks, URLs, Referenzen
+#   Special/Executable  │ Teal     │ #94E2D5 │ Ausführbare Dateien
+#   Directory           │ Mauve    │ #CBA6F7 │ Verzeichnisse
+#   String              │ Yellow   │ #F9E2AF │ Strings in Code/Shell
+#   Variable/Parameter  │ Mauve    │ #CBA6F7 │ Variablen in Beispielen
+#   Comment/Muted       │ Overlay0 │ #6C7086 │ Kommentare, deaktivierte Items
+#
+# ------------------------------------------------------------
+# Text-Hierarchie
+# ------------------------------------------------------------
+#
+#   Ebene           │ Farbe    │ Hex     │ Verwendung
+#   ────────────────┼──────────┼─────────┼──────────────────────────────
+#   Primary Text    │ Text     │ #CDD6F4 │ Haupttext, wichtige Infos
+#   Secondary Text  │ Subtext1 │ #BAC2DE │ Labels, Beschreibungen
+#   Tertiary Text   │ Subtext0 │ #A6ADC8 │ Hinweise, Metadaten
+#   Muted Text      │ Overlay0 │ #6C7086 │ Deaktiviert, Kommentare
+#
+# ------------------------------------------------------------
+# Hintergrund-Hierarchie
+# ------------------------------------------------------------
+#
+#   Ebene                 │ Farbe    │ Hex     │ Verwendung
+#   ──────────────────────┼──────────┼─────────┼──────────────────────────────
+#   Base Background       │ Base     │ #1E1E2E │ Haupt-Hintergrund
+#   Elevated Background   │ Surface0 │ #313244 │ Panels, Popups
+#   Selection Background  │ Surface1 │ #45475A │ Ausgewählte Zeilen
+#   Hover Background      │ Surface2 │ #585B70 │ Hover-Effekte
+#
+# ------------------------------------------------------------
+# Tool-spezifische Zuweisungen
+# ------------------------------------------------------------
+#
+# fzf:
+#   --color=bg+:#313244           # Elevated (Aktuelle Zeile Hintergrund)
+#   --color=selected-bg:#45475A   # Selection
+#   --color=marker:#B4BEFE        # Lavender (Multi-Select)
+#   --color=prompt:#CBA6F7        # Mauve (Accent)
+#   --color=hl:#F38BA8            # Red (Treffer-Highlight)
+#   --color=hl+:#F38BA8           # Red (Treffer in Auswahl)
+#   --color=pointer:#F5E0DC       # Rosewater (Zeiger)
+#
+# btop:
+#   selected_bg="#45475a"         # Selection
+#   selected_fg="#89b4fa"         # Blue (besser lesbar auf Selection)
+#   hi_fg="#89b4fa"               # Blue (Highlight)
+#   proc_misc="#f5e0dc"           # Rosewater (Prozess-Details)
+#
+# lazygit:
+#   activeBorderColor="#cba6f7"   # Mauve (Fokussiertes Panel)
+#   selectedLineBgColor="#45475a" # Selection
+#   unstagedChangesColor="#f38ba8" # Red (Unstaged)
+#
+# yazi:
+#   marker_selected=#cba6f7       # Mauve (Auswahl-Indikator)
+#   marker_copied=#a6e3a1         # Green (Kopiert)
+#   marker_cut=#f38ba8            # Red (Ausgeschnitten)
+#   # HINWEIS: marker_marked verwendet Teal #94E2D5 (Upstream)
+#   # Issue #223 trackt Änderung zu Lavender für Konsistenz
+#
+# eza:
+#   directory=#cba6f7             # Mauve (wie fzf/yazi)
+#   executable=#a6e3a1            # Green (Success/Valid)
+#   symlink=#89b4fa               # Blue (Info/Link)
+#
+# kitty:
+#   selection_background=#F5E0DC  # Rosewater (Upstream: invertiert)
+#   cursor=#F5E0DC                # Rosewater (Cursor)
+#   active_tab_background=#CBA6F7 # Mauve (Accent)
+#
+# zsh-syntax-highlighting:
+#   command=#a6e3a1               # Green (Valid)
+#   unknown-token=#eba0ac         # Maroon (Error, abgemildert)
+#   path=#cdd6f4                  # Text (Pfad, unterstrichen)
+#   string=#f9e2af                # Yellow (String)
+#
+# zsh-completion (LS_COLORS/ZLS_COLORS):
+#   ma=Mauve auf Surface1         # Selection (Menü-Auswahl)
+#   di=Mauve                      # Directory
+#   ln=Blue                       # Symlink
+#   ex=Green                      # Executable
+#
+# tealdeer:
+#   command_name=#89B4FA          # Blue (Referenz)
+#   example_code=#A6E3A1          # Green (Ausführbar)
+#   example_variable=#CBA6F7      # Mauve (Variable)
+#
+# fastfetch (konzeptionelle Zuordnung, siehe config.jsonc):
+#   Logo-Farben                   # Catppuccin Palette (1-9)
+#   title → mauve                 # Mauve (Accent)
+#   keys → lavender               # Lavender (Labels)
+#
+# ============================================================
 
 # jq Farbschema: null:false:true:numbers:strings:arrays:objects:keys
 # Farben: Overlay0, Red, Green, Peach, Green, Lavender, Lavender, Blue

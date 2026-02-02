@@ -20,6 +20,12 @@
 - [ ] Neue Aliase/Funktionen haben Beschreibungskommentare
 - [ ] Bei neuen Tools: Guard-Check vorhanden
 
+### Bei Theme-/Config-Änderungen (`.config/*`)
+
+- [ ] Theme-Quellen-Tabelle in `theme-style` geprüft (Zeile 13-42)
+- [ ] Status aktualisiert falls Upstream-Abweichung (`upstream+X`)
+- [ ] Semantische Farben eingehalten (siehe CONTRIBUTING.md → Theming)
+
 ## Zusammenhängende Issues
 
 <!-- Schließt #123, Bezieht sich auf #456 -->

@@ -404,6 +404,46 @@ Diese Dateien werden vom Pre-Commit Hook nicht auf Header-Format geprüft.
 
 ---
 
+## Theming (Catppuccin Mocha)
+
+### Grundregeln
+
+1. **Alle Tools** nutzen Catppuccin Mocha als Theme
+2. **Zentrale Referenz:** `terminal/.config/theme-style`
+3. **Upstream bevorzugen:** Offizielle Themes von [github.com/catppuccin](https://github.com/catppuccin) verwenden
+
+### Bei neuen Tool-Konfigurationen
+
+1. **Prüfe** ob ein offizielles Catppuccin-Theme existiert
+2. **Dokumentiere** den Status in der Theme-Quellen-Tabelle (`theme-style` Zeile 13-42)
+3. **Nutze semantische Farben** konsistent:
+
+| Verwendung | Farbe | Hex |
+| ------ | ------- | ------- |
+| Selection Background | Surface1 | `#45475A` |
+| Active Border/Accent | Mauve | `#CBA6F7` |
+| Multi-Select Marker | Lavender | `#B4BEFE` |
+| Success/Valid | Green | `#A6E3A1` |
+| Error/Invalid | Red | `#F38BA8` |
+| Warning/Modified | Yellow | `#F9E2AF` |
+| Directory | Mauve | `#CBA6F7` |
+| Symlink/Info | Blue | `#89B4FA` |
+
+### Status-Dokumentation
+
+Die Theme-Quellen-Tabelle in `theme-style` dokumentiert den Zustand jeder Tool-Konfiguration:
+
+```text
+upstream        = Unverändert aus offiziellem Repo
+upstream+X      = Mit Anpassung (X = was geändert)
+upstream-X      = Mit Entfernung (X = was entfernt)
+manual          = Manuell basierend auf catppuccin.com/palette
+```
+
+**Bei Änderungen:** Status aktualisieren und Abweichungen begründen.
+
+---
+
 ## Code-Konventionen
 
 ### Shell-Scripts
