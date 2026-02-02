@@ -34,6 +34,13 @@ export TEALDEER_CONFIG_DIR="$XDG_CONFIG_HOME/tealdeer"
 export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship/starship.toml"
 
 # ------------------------------------------------------------
+# Standard-Editor
+# ------------------------------------------------------------
+# Wird verwendet von: git commit, git rebase -i, Ctrl+X Ctrl+E (ZLE)
+export EDITOR="code --wait"
+export VISUAL="$EDITOR"
+
+# ------------------------------------------------------------
 # macOS Session-Wiederherstellung deaktivieren
 # ------------------------------------------------------------
 # Eine zentrale ~/.zsh_history statt History pro Terminal-Tab
