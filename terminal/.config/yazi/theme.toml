@@ -93,21 +93,21 @@ hovered = { fg = "#f5c2e7", bold = true }
 
 [which]
 mask            = { bg = "#313244" }
-cand            = { fg = "#94e2d5" }
+cand            = { fg = "#89b4fa" }
 rest            = { fg = "#9399b2" }
 desc            = { fg = "#f5c2e7" }
 separator       = "  "
 separator_style = { fg = "#585b70" }
 
 [help]
-on      = { fg = "#94e2d5" }
+on      = { fg = "#a6e3a1" }
 run     = { fg = "#f5c2e7" }
 desc    = { fg = "#9399b2" }
 hovered = { bg = "#585b70", bold = true }
 footer  = { fg = "#cdd6f4", bg = "#45475a" }
 
 [notify]
-title_info  = { fg = "#94e2d5" }
+title_info  = { fg = "#89b4fa" }
 title_warn  = { fg = "#f9e2af" }
 title_error = { fg = "#f38ba8" }
 

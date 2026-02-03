@@ -524,12 +524,12 @@ if [[ -n "${HOMEBREW_BUNDLE_FILE:-}" ]] && [[ -f "$HOMEBREW_BUNDLE_FILE" ]]; the
     updated=$(echo "$check_output" | grep "needs to be updated" | grep -oE "(Formula|Cask) [^ ]+" | sed 's/Formula //' | sed 's/Cask //' | tr '\n' ' ')
 
     if [[ -n "$missing" ]]; then
-      warn "Brewfile-Pakete fehlen:${missing}"
+      warn "Brewfile-Pakete fehlen: ${missing}"
       warn "  → brew bundle --file=$HOMEBREW_BUNDLE_FILE"
     fi
     if [[ -n "$updated" ]]; then
       # Updates sind informativ, kein echtes Problem
-      pass "Brewfile-Updates verfügbar:${updated}"
+      pass "Brewfile-Updates verfügbar: ${updated}"
       print "     ${C_DIM}Optional: brew bundle --file=$HOMEBREW_BUNDLE_FILE${C_RESET}"
     fi
   else
