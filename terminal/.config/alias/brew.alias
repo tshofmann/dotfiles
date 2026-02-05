@@ -61,8 +61,8 @@ brew-list() {
 
     # Prüfe ob Homebrew funktional ist
     if ! brew list --formula --versions >/dev/null 2>&1; then
-        echo "${C_RED}Homebrew nicht funktional oder nicht installiert${C_RESET}"
-        echo "Installiere Homebrew mit: /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
+        echo "${C_RED}Homebrew nicht funktional (brew list fehlgeschlagen)${C_RESET}"
+        echo "${C_TEXT}Führe 'brew doctor' aus um das Problem zu diagnostizieren${C_RESET}"
         return 1
     fi
 

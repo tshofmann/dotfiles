@@ -89,10 +89,9 @@ is_dotfiles_symlink() {
     [[ "$target" == "${DOTFILES_DIR}/"* ]] && return 0
     [[ "$target" == *"dotfiles/"* ]] && return 0
 
-    # Auflösen für relative Symlinks
-    # Pfad als Argument übergeben um Code-Injection zu vermeiden
+    # Auflösen für relative Symlinks (ZSH :A modifier = realpath)
     local resolved
-    resolved=$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$path" 2>/dev/null)
+    resolved="${path:A}"
     [[ "$resolved" == "${DOTFILES_DIR}/"* ]] && return 0
 
     return 1
