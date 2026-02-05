@@ -13,7 +13,7 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles.
 
 | Anforderung | Details |
 | ----------- | ------- |
-| **Apple Silicon Mac** | M1, M2, … (arm64) – Intel-Macs werden nicht unterstützt |
+| **Apple Silicon oder Intel Mac** | arm64 (M1, M2, …) oder x86_64 |
 | **macOS 26+** | Tahoe oder neuer – getestet auf 26 (Tahoe) |
 | **Internetverbindung** | Für Homebrew-Installation und Download der Formulae/Casks |
 | **Admin-Rechte** | `sudo`-Passwort erforderlich (siehe unten) |
@@ -38,7 +38,7 @@ Das Bootstrap-Skript fragt zu folgenden Zeitpunkten nach dem Admin-Passwort:
 **macOS:**
 
 1. **Xcode CLI Tools Installation** – `xcode-select --install` triggert einen System-Dialog, der Admin-Rechte erfordert
-2. **Homebrew Erstinstallation** – Das offizielle Installationsskript erstellt Verzeichnisse unter `/opt/homebrew` und benötigt dafür `sudo`
+2. **Homebrew Erstinstallation** – Das offizielle Installationsskript erstellt Verzeichnisse unter `/opt/homebrew` (Apple Silicon) oder `/usr/local` (Intel) und benötigt dafür `sudo`
 
 **Linux:**
 
@@ -70,7 +70,7 @@ Das Bootstrap-Skript führt dann folgende Aktionen in dieser Reihenfolge aus:
 
 | Aktion | Beschreibung | Bei Fehler |
 | ------ | ------------ | ---------- |
-| Architektur-Check | Prüft ob arm64 (Apple Silicon) | ❌ Exit |
+| Architektur-Check | Prüft ob arm64 oder x86_64 | ❌ Exit |
 | macOS-Version-Check | Prüft ob macOS 26+ (Tahoe) installiert ist | ❌ Exit |
 | Netzwerk-Check | Prüft Internetverbindung | ❌ Exit |
 | Schreibrechte-Check | Prüft ob `$HOME` schreibbar ist | ❌ Exit |

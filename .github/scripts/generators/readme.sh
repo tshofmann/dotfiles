@@ -91,7 +91,7 @@ Danach **Terminal neu starten**. Fertig!
 
 #### macOS (getestet ✅)
 
-- **Apple Silicon Mac** (arm64)
+- **Apple Silicon oder Intel Mac** (arm64/x86_64)
 - **macOS ${macos_min}+** (${macos_min_name})
 - **Internetverbindung** & Admin-Rechte
 

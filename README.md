@@ -40,7 +40,7 @@ Danach **Terminal neu starten**. Fertig!
 
 #### macOS (getestet ✅)
 
-- **Apple Silicon Mac** (arm64)
+- **Apple Silicon oder Intel Mac** (arm64/x86_64)
 - **macOS 26+** (Tahoe)
 - **Internetverbindung** & Admin-Rechte
 

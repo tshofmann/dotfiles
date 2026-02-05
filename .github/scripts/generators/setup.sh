@@ -117,7 +117,7 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles.
 
 | Anforderung | Details |
 | ----------- | ------- |
-| **Apple Silicon Mac** | M1, M2, … (arm64) – Intel-Macs werden nicht unterstützt |
+| **Apple Silicon oder Intel Mac** | arm64 (M1, M2, …) oder x86_64 |
 HEADER
     # Dynamische macOS-Zeile mit min und tested
     echo "| **macOS ${macos_min}+** | ${macos_min_name} oder neuer – getestet auf ${macos_tested} (${macos_tested_name}) |"
@@ -145,7 +145,7 @@ Das Bootstrap-Skript fragt zu folgenden Zeitpunkten nach dem Admin-Passwort:
 **macOS:**
 
 1. **Xcode CLI Tools Installation** – `xcode-select --install` triggert einen System-Dialog, der Admin-Rechte erfordert
-2. **Homebrew Erstinstallation** – Das offizielle Installationsskript erstellt Verzeichnisse unter `/opt/homebrew` und benötigt dafür `sudo`
+2. **Homebrew Erstinstallation** – Das offizielle Installationsskript erstellt Verzeichnisse unter `/opt/homebrew` (Apple Silicon) oder `/usr/local` (Intel) und benötigt dafür `sudo`
 
 **Linux:**
 
@@ -189,7 +189,7 @@ PART2
 | Netzwerk-Check | Prüft Internetverbindung | ❌ Exit |
 | Schreibrechte-Check | Prüft ob `$HOME` schreibbar ist | ❌ Exit |
 | Xcode CLI Tools | Installiert/prüft Developer Tools | ❌ Exit |
-| Homebrew | Installiert/prüft Homebrew unter `/opt/homebrew` | ❌ Exit |
+| Homebrew | Installiert/prüft Homebrew | ❌ Exit |
 | Brewfile | Installiert CLI-Tools via `brew bundle` | ❌ Exit |
 | Font-Verifikation | Prüft MesloLG Nerd Font Installation | ❌ Exit |
 | Terminal-Profil | Importiert `catppuccin-mocha.terminal` als Standard | ⚠️ Warnung |
