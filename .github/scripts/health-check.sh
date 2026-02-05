@@ -517,11 +517,13 @@ if [[ -n "${HOMEBREW_BUNDLE_FILE:-}" ]] && [[ -f "$HOMEBREW_BUNDLE_FILE" ]]; the
 
   if (( check_exit == 0 )); then
     pass "Alle Brewfile-Abhängigkeiten erfüllt"
-  elif echo "$check_output" | grep -qE "needs to be installed or updated"; then
-    # Unterscheide zwischen fehlend und veraltet
+  elif echo "$check_output" | grep -qE "needs to be installed"; then
+    # Unterscheide: "installed or updated" = Update, nur "installed" = fehlend
     local missing updated
-    missing=$(echo "$check_output" | grep "needs to be installed" | grep -oE "(Formula|Cask) [^ ]+" | sed 's/Formula //' | sed 's/Cask //' | tr '\n' ' ')
-    updated=$(echo "$check_output" | grep "needs to be updated" | grep -oE "(Formula|Cask) [^ ]+" | sed 's/Formula //' | sed 's/Cask //' | tr '\n' ' ')
+    # Updates: Zeilen mit "or updated"
+    updated=$(echo "$check_output" | grep "or updated" | grep -oE "(Formula|Cask) [^ ]+" | sed 's/Formula //' | sed 's/Cask //' | tr '\n' ' ')
+    # Fehlend: Zeilen mit "installed" aber OHNE "or updated"
+    missing=$(echo "$check_output" | grep "needs to be installed" | grep -v "or updated" | grep -oE "(Formula|Cask) [^ ]+" | sed 's/Formula //' | sed 's/Cask //' | tr '\n' ' ')
 
     if [[ -n "$missing" ]]; then
       warn "Brewfile-Pakete fehlen: ${missing}"
