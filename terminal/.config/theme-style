@@ -27,7 +27,7 @@
 #   starship     | ~/.config/starship/starship.toml   | github.com/catppuccin/starship                | upstream-palettes+header
 #   tealdeer     | ~/.config/tealdeer/config.toml     | manual                                        | manual
 #   yazi         | ~/.config/yazi/theme.toml          | github.com/catppuccin/yazi                    | upstream+mauve+text+marker+info+help+which+header
-#   zsh-syntax   | ~/.config/zsh/catppuccin_mocha-*   | github.com/catppuccin/zsh-syntax-highlighting | upstream+header
+#   zsh-syntax   | ~/.config/zsh/catppuccin_mocha-*   | github.com/catppuccin/zsh-syntax-highlighting | upstream+comment+header
 #   Terminal.app | ~/dotfiles/setup/                  | github.com/catppuccin/Terminal.app            | upstream
 #   Xcode        | ~/dotfiles/setup/                  | github.com/catppuccin/xcode                   | upstream+header
 #   theme-style  | ~/.config/theme-style              | manual                                        | manual+semantics
@@ -211,6 +211,7 @@ typeset -gx RGB_SURFACE1="69;71;90"
 #   [which] cand=#89b4fa          # Blue (Referenz, geändert von Teal)
 #
 # zsh-syntax-highlighting:
+#   comment=#6c7086               # Overlay0 (Muted, geändert von Surface2)
 #   command=#a6e3a1               # Green (Valid)
 #   unknown-token=#eba0ac         # Maroon (Error, abgemildert)
 #   path=#cdd6f4                  # Text (Pfad, unterstrichen)

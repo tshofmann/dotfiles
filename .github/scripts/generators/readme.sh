@@ -84,6 +84,8 @@ curl -fsSL https://github.com/tshofmann/dotfiles/archive/refs/heads/main.tar.gz 
 Danach **Terminal neu starten**. Fertig!
 
 > 💡 **Tipp:** Gib \`dothelp\` ein – zeigt Keybindings, Aliase und Wartungsbefehle.
+>
+> ⚠️ **Probleme?** \`dothealth\` prüft die Installation. Backup liegt in \`~/dotfiles/.backup/\`.
 
 ### Voraussetzungen
 

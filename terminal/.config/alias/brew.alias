@@ -8,7 +8,7 @@
 # Aliase      : brew-up, brew-list, brew-add, brew-rm, maso, masu, mass, masi, masl
 # ============================================================
 # Hinweis     : Kein Guard für brew – ohne Homebrew ist dieses
-#           dotfiles-Repository ohnehin nicht nutzbar.
+#               dotfiles-Repository ohnehin nicht nutzbar.
 # ============================================================
 
 # ------------------------------------------------------------

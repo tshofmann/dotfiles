@@ -17,11 +17,14 @@ cd ~/dotfiles
 # 3. Git Hooks aktivieren
 git config core.hooksPath .github/hooks
 
-# 4. Konfiguration verlinken
+# 4. Konfiguration verlinken (bei Entwicklung ohne bootstrap.sh)
 stow --adopt -R terminal editor && git reset --hard HEAD
 ```
 
 Nach Schritt 3 wird bei jedem Commit automatisch geprüft, ob Dokumentation und Code synchron sind.
+
+> **Hinweis:** Bei erneuter Ausführung von `bootstrap.sh` werden uncommitted Changes
+> automatisch gestasht und nach Abschluss wiederhergestellt. Du verlierst keine Arbeit.
 
 ---
 
@@ -127,9 +130,9 @@ Wiederverwendbare Skripte für fzf-Previews und -Aktionen in `~/.config/fzf/`:
 
 | Skript | Zweck | Verwendet von |
 | ------ | ----- | ------------- |
-| `preview-file` | Datei-Vorschau mit bat (Fallback: cat) | `rg.alias`, `fd.alias` |
-| `preview-dir` | Verzeichnis-Vorschau mit eza (Fallback: ls) | `zoxide.alias`, `fd.alias` |
-| `safe-action` | Sichere Aktionen (copy, edit, git-diff) | Mehrere `.alias`-Dateien |
+| `preview file` | Datei-Vorschau mit bat (Fallback: cat) | `rg.alias`, `fd.alias` |
+| `preview dir` | Verzeichnis-Vorschau mit eza (Fallback: ls) | `zoxide.alias`, `fd.alias` |
+| `action` | Sichere Aktionen (copy, edit, git-diff) | Mehrere `.alias`-Dateien |
 | `help` | Helper für `help()` (list, preview, toggle) | `fzf.alias` |
 | `cmds` | Helper für `cmds()` (preview) | `fzf.alias` |
 | `procs` | Helper für `procs()` (list) | `fzf.alias` |
@@ -142,7 +145,7 @@ Wiederverwendbare Skripte für fzf-Previews und -Aktionen in `~/.config/fzf/`:
 
 ```zsh
 # RICHTIG: Helper-Skript aufrufen
---preview "$helper/preview-file {1}"
+--preview "$helper/preview file {1}"
 
 # FALSCH: Inline-Code (Shell-Injection-Risiko)
 --preview 'bat {}'
@@ -396,7 +399,7 @@ Einige Dateien folgen **nicht** dem Standard-Header-Format:
 | `btop/btop.conf` | Wird von btop generiert – `btop --write-config` überschreibt Änderungen |
 | `btop/themes/catppuccin_mocha.theme` | Third-Party Theme (Catppuccin) – bei Updates überschrieben |
 | `bat/themes/Catppuccin Mocha.tmTheme` | Third-Party Theme (Catppuccin) – bei Updates überschrieben |
-| `zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh` | Third-Party Theme (Catppuccin) – bei Updates überschrieben |
+| `zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh` | Third-Party Theme (Catppuccin) – lokal angepasst (comment → Overlay0), Header dokumentiert Abweichung |
 | `terminal/.config/tealdeer/pages/*.patch.md` | Erweitert offizielle tldr-Seiten – automatisch generiert |
 | `terminal/.config/tealdeer/pages/*.page.md` | Ersetzt fehlende tldr-Seiten – automatisch generiert |
 
