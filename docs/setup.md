@@ -74,7 +74,7 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 | Backup | Sichert existierende Konfigurationen | 🔒 Sicher |
 | Stow Symlinks | Verlinkt Dotfile-Packages dynamisch | ⚠️ Kritisch |
 | Git Hooks | Aktiviert Pre-Commit Validierung | ✓ Schnell |
-| Font-Verifikation | Prüft MesloLG Nerd Font Installation | ❌ Exit |
+| Font-Verifikation | Prüft Nerd Font Installation | ❌ Exit |
 | Terminal-Profil | Importiert `catppuccin-mocha.terminal` als Standard | ⚠️ Warnung |
 | bat Cache | Baut Theme-Cache für Syntax-Highlighting | ✓ Schnell |
 | tldr Cache | Lädt tldr-Pages herunter | ⚠️ Netzwerk |

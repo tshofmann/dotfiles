@@ -99,7 +99,7 @@ Doku wird automatisch aus Code generiert (Single Source of Truth):
 
 **Bei neuen Tool-Konfigurationen:**
 
-1. **Prüfe Theme-Quellen-Tabelle** in `theme-style` (Zeile 13-42)
+1. **Prüfe Theme-Quellen-Tabelle** in `theme-style` (Zeile 15-42)
 2. **Nutze semantische Farben** aus der Dokumentation in `theme-style`:
    - Selection Background → Surface1 `#45475A`
    - Accent/Border → Mauve `#CBA6F7`

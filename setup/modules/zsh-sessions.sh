@@ -38,7 +38,7 @@ setup_zsh_sessions() {
         ok "zsh_sessions deaktiviert via ~/.zshenv"
     else
         warn "~/.zshenv fehlt oder SHELL_SESSIONS_DISABLE nicht gesetzt"
-        warn "Nach 'stow -R terminal editor' wird dies automatisch verlinkt"
+        warn "Nach Bootstrap (stow) wird dies automatisch verlinkt"
     fi
 
     return 0

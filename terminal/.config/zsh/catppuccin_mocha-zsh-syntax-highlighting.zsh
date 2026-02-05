@@ -8,6 +8,8 @@
 # Lizenz      : MIT
 # ============================================================
 # Hinweis     : Muss VOR dem zsh-syntax-highlighting Plugin geladen werden
+# Abweichung  : comment nutzt Overlay0 (#6C7086) statt Upstream Surface2
+#               (#585B70) – konsistent mit theme-style Comment/Muted
 # ============================================================
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main cursor)
 typeset -gA ZSH_HIGHLIGHT_STYLES
@@ -19,7 +21,7 @@ typeset -gA ZSH_HIGHLIGHT_STYLES
 ### Markup
 ## Classes
 ## Comments
-ZSH_HIGHLIGHT_STYLES[comment]='fg=#585b70'
+ZSH_HIGHLIGHT_STYLES[comment]='fg=#6c7086'
 ## Constants
 ## Entitites
 ## Functions/methods

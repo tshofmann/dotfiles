@@ -8,7 +8,7 @@
 # Aliase      : git-add, git-commit, git-cm, git-acm, git-push, git-pull, git-co, git-status, git-diff, git-log, git-branch, git-stage, git-stash
 # ============================================================
 # Hinweis     : Interaktive Git-Funktionen (mit fzf) sind unten
-#           definiert: git-log, git-branch, git-stage, git-stash
+#               definiert: git-log, git-branch, git-stage, git-stash
 # ============================================================
 
 # Guard   : Nur wenn git installiert ist

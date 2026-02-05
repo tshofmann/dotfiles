@@ -8,7 +8,7 @@
 # Aliase      : gh-open, gh-status, gh-pr, gh-issue, gh-run, gh-repo, gh-gist
 # ============================================================
 # Hinweis     : Erfordert gh auth login für Authentifizierung.
-#           Alle Funktionen nutzen fzf für interaktive Auswahl.
+#               Alle Funktionen nutzen fzf für interaktive Auswahl.
 # ============================================================
 
 # Guard   : Nur wenn gh installiert ist
