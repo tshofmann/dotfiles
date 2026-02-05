@@ -71,6 +71,10 @@ zstyle ':completion:*:approximate:*' max-errors 1 numeric
 # ------------------------------------------------------------
 # Farben und modulare Alias-Dateien aus ~/.config/alias/
 
+# Plattform-Abstraktionen (clip, xopen, sedi)
+# Muss früh geladen werden, da Aliase diese Funktionen nutzen
+[[ -f "$HOME/.config/platform.zsh" ]] && source "$HOME/.config/platform.zsh"
+
 # Catppuccin Mocha ANSI-Farben und Text-Styles ($C_GREEN, $C_BOLD, etc.)
 # RGB-Werte für LS_COLORS ($RGB_SAPPHIRE, $RGB_MAUVE, etc.)
 [[ -f "$HOME/.config/theme-style" ]] && source "$HOME/.config/theme-style"

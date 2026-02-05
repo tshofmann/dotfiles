@@ -54,12 +54,14 @@ if command -v fzf >/dev/null 2>&1; then
     git-log() {
         local query="${1:-}"
         local sha
+        local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
+
         sha=$(git log --oneline --color=always --decorate | \
             fzf --ansi --no-sort --reverse --query="$query" \
                 --freeze-left=1 \
                 --preview 'git show --color=always {1} | bat --style=numbers --color=always -l diff 2>/dev/null || git show --color=always {1}' \
                 --header='Enter: Anzeigen | Ctrl+Y: SHA kopieren' \
-                --bind 'ctrl-y:execute-silent(echo -n {1} | pbcopy)+abort' | \
+                --bind "ctrl-y:execute-silent($helper/action copy {1})+abort" | \
             awk '{print $1}')
 
         if [[ -n "$sha" ]]; then

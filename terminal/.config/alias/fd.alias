@@ -78,6 +78,7 @@ if command -v fzf >/dev/null 2>&1; then
                 --header='Enter: Öffnen | Ctrl+Y: Pfad kopieren' \
                 --bind="ctrl-y:execute-silent($helper/action copy {})+abort")
 
-        [[ -n "$file" ]] && open "$file"
+        # xopen aus platform.zsh (Fallback: open für macOS)
+        [[ -n "$file" ]] && { (( $+functions[xopen] )) && xopen "$file" || open "$file"; }
     }
 fi

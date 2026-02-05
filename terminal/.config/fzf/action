@@ -5,16 +5,25 @@
 # Zweck       : Führt Aktionen Shell-Injection-sicher aus
 # Pfad        : ~/.config/fzf/action
 # Aufruf      : action <command> "argument" [...]
+# Nutzt       : platform.zsh (clip, xopen)
 # ============================================================
 # Commands: copy, edit, open, git-diff, git-restore, git-add,
 #           zoxide-remove
 # ============================================================
 
+# Plattform-Abstraktionen laden (clip, xopen)
+[[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/platform.zsh" ]] && \
+    source "${XDG_CONFIG_HOME:-$HOME/.config}/platform.zsh"
+
 case "${1:-}" in
     copy)
         # Pfad ins Clipboard kopieren
         shift
-        printf '%s' "$1" | pbcopy
+        if (( $+functions[clip] )); then
+            printf '%s' "$1" | clip
+        else
+            printf '%s' "$1" | pbcopy  # Fallback für macOS
+        fi
         ;;
     edit)
         # Datei im Editor öffnen (optional mit Zeile)
@@ -30,7 +39,11 @@ case "${1:-}" in
     open)
         # Datei mit Standard-App öffnen
         shift
-        open -- "$1"
+        if (( $+functions[xopen] )); then
+            xopen "$1"
+        else
+            open -- "$1"  # Fallback für macOS
+        fi
         ;;
     git-diff)
         # Git diff für Datei

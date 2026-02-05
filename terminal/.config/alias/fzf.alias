@@ -140,6 +140,7 @@ cmds() {
 # Variablen Browser – Enter=Export→Edit, Ctrl+Y=Kopieren
 vars() {
     local selection name value
+    local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
 
     # Farbkodiert KEY=VALUE-Zeilen nach Kategorie (Catppuccin Mocha)
     # Dotfiles/XDG=Mauve, PATH=Green, Tools=Blue, Rest=Text
@@ -179,7 +180,7 @@ vars() {
             else
                 echo "$v"
             fi' \
-        --bind='ctrl-y:execute-silent(n=$(echo {} | cut -d"│" -f1 | xargs | grep -E "^[a-zA-Z_][a-zA-Z0-9_]*$"); [[ -n "$n" ]] && printenv "$n" | pbcopy)+abort')
+        --bind="ctrl-y:execute-silent(n=\$(echo {} | cut -d'│' -f1 | xargs | grep -E '^[a-zA-Z_][a-zA-Z0-9_]*\$'); [[ -n \"\$n\" ]] && $helper/action copy \"\$(printenv \"\$n\")\")+abort")
 
     if [[ -n "$selection" ]]; then
         name=$(echo "$selection" | cut -d'│' -f1 | xargs)
