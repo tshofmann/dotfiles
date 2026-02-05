@@ -17,8 +17,12 @@
 #   Debian    - Desktop/Server (inkl. Raspberry Pi OS, DietPi)
 #   Arch      - Desktop/Server
 # ============================================================
+# Display-Systeme:
+#   macOS     - Immer Display (pbcopy/pbpaste, open)
+#   Wayland   - GNOME, KDE, Hyprland (wl-clipboard, xdg-open)
+# ============================================================
 # Headless-Systeme:
-#   Ohne Display ($DISPLAY/$WAYLAND_DISPLAY) werden clip/paste/xopen
+#   Ohne Wayland ($WAYLAND_DISPLAY) werden clip/paste/xopen
 #   als stille No-Ops definiert um Fehlermeldungen zu vermeiden.
 # ============================================================
 
@@ -63,10 +67,10 @@ fi
 
 if [[ -z "${_PLATFORM_HAS_DISPLAY+x}" ]]; then
     # Display-Erkennung (für Clipboard/Open-Funktionen)
-    # macOS hat immer Display, Linux nur wenn X11/Wayland läuft
+    # macOS hat immer Display, Linux nur mit Wayland
     if [[ "$_PLATFORM_OS" == "macos" ]]; then
         _PLATFORM_HAS_DISPLAY=1
-    elif [[ -n "${DISPLAY:-}" || -n "${WAYLAND_DISPLAY:-}" ]]; then
+    elif [[ -n "${WAYLAND_DISPLAY:-}" ]]; then
         _PLATFORM_HAS_DISPLAY=1
     else
         _PLATFORM_HAS_DISPLAY=0
@@ -81,10 +85,7 @@ fi
 #             paste → gibt Clipboard aus
 #
 # Headless: Stille No-Ops (kein Fehler, Daten werden verworfen)
-# Desktop Linux Priorität:
-#   1. Wayland: wl-copy / wl-paste
-#   2. X11: xsel --clipboard (stabiler)
-#   3. X11: xclip -selection clipboard
+# Desktop Linux: Wayland mit wl-clipboard (GNOME, KDE, Hyprland)
 
 case "$_PLATFORM_OS" in
     macos)
@@ -93,25 +94,19 @@ case "$_PLATFORM_OS" in
         ;;
     linux)
         if (( _PLATFORM_HAS_DISPLAY )); then
-            # Desktop: Clipboard-Tool ermitteln
-            if [[ -n "${WAYLAND_DISPLAY:-}" ]] && (( $+commands[wl-copy] )); then
+            # Wayland Desktop: wl-clipboard
+            if (( $+commands[wl-copy] )); then
                 clip()  { wl-copy; }
                 paste() { wl-paste; }
-            elif (( $+commands[xsel] )); then
-                clip()  { xsel --clipboard --input; }
-                paste() { xsel --clipboard --output; }
-            elif (( $+commands[xclip] )); then
-                clip()  { xclip -selection clipboard; }
-                paste() { xclip -selection clipboard -o; }
             else
-                # Desktop ohne Clipboard-Tool: Warnung
+                # Wayland ohne wl-clipboard: Warnung
                 clip() {
-                    echo "clip: Kein Clipboard-Tool gefunden" >&2
-                    echo "      Installiere: wl-clipboard (Wayland) oder xsel (X11)" >&2
+                    echo "clip: wl-clipboard nicht gefunden" >&2
+                    echo "      Installiere: wl-clipboard" >&2
                     return 1
                 }
                 paste() {
-                    echo "paste: Kein Clipboard-Tool gefunden" >&2
+                    echo "paste: wl-clipboard nicht gefunden" >&2
                     return 1
                 }
             fi
@@ -185,7 +180,7 @@ if [[ -n "${DEBUG:-}" ]]; then
     _platform_info() {
         echo "OS:      $_PLATFORM_OS"
         echo "Distro:  ${_PLATFORM_DISTRO:-n/a}"
-        echo "Display: $(( _PLATFORM_HAS_DISPLAY )) (${DISPLAY:-}${WAYLAND_DISPLAY:-})"
+        echo "Display: $(( _PLATFORM_HAS_DISPLAY )) (Wayland: ${WAYLAND_DISPLAY:-none})"
         echo "clip:    $(whence -w clip 2>/dev/null || echo 'undefined')"
         echo "xopen:   $(whence -w xopen 2>/dev/null || echo 'undefined')"
     }
