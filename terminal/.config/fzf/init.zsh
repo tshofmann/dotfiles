@@ -27,8 +27,9 @@ if command -v fd >/dev/null 2>&1; then
 fi
 
 # Ctrl+X 1: History-Suche mit Kopier-Funktion
+# Nutzt fzf/action für plattformübergreifendes Clipboard
 export FZF_CTRL_R_OPTS="
-    --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
+    --bind 'ctrl-y:execute-silent(${XDG_CONFIG_HOME:-$HOME/.config}/fzf/action copy {2..})+abort'
     --header 'Ctrl+Y: Kopieren'"
 
 # Ctrl+X 2: Dateisuche mit Syntax-Highlighting Vorschau
