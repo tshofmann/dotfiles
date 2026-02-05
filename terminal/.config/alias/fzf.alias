@@ -165,7 +165,8 @@ vars() {
 
     selection=$(printenv | grep -E '^[a-zA-Z_][a-zA-Z0-9_]*=' | sort | _fenv_colorize | fzf --ansi \
         --header='Enter: Export → Edit | Ctrl+Y: Wert kopieren' \
-        --preview='n=$(echo {} | cut -d"│" -f1 | xargs)
+        --preview='n=$(echo {} | cut -d"│" -f1 | xargs | grep -E "^[A-Z_][A-Z0-9_]*$")
+            [[ -z "$n" ]] && exit 0
             v=$(printenv "$n" 2>/dev/null)
             printf "%s%s%s\n\n" "$C_MAUVE" "$n" "$C_RESET"
             if [[ "$v" == *:* ]] && [[ "$n" == *PATH* || "$n" == *DIRS* ]]; then
@@ -173,7 +174,7 @@ vars() {
             else
                 echo "$v"
             fi' \
-        --bind='ctrl-y:execute-silent(n=$(echo {} | cut -d"│" -f1 | xargs); printenv "$n" | pbcopy)+abort')
+        --bind='ctrl-y:execute-silent(n=$(echo {} | cut -d"│" -f1 | xargs | grep -E "^[A-Z_][A-Z0-9_]*$"); [[ -n "$n" ]] && printenv "$n" | pbcopy)+abort')
 
     if [[ -n "$selection" ]]; then
         name=$(echo "$selection" | cut -d'│' -f1 | xargs)

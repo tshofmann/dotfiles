@@ -59,6 +59,13 @@ brew-list() {
         return 1
     fi
 
+    # Prüfe ob Homebrew funktional ist
+    if ! brew list --formula --versions >/dev/null 2>&1; then
+        echo "${C_RED}Homebrew nicht funktional oder nicht installiert${C_RESET}"
+        echo "Installiere Homebrew mit: /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
+        return 1
+    fi
+
     # Batch-Abfrage aller installierten Versionen (O(1) statt O(n))
     local -A formula_versions cask_versions mas_versions
     local -a formulae casks mas_apps
