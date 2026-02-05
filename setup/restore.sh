@@ -30,26 +30,14 @@ BACKUP_MANIFEST="${BACKUP_DIR}/manifest.json"
 BACKUP_HOME="${BACKUP_DIR}/home"
 
 # ------------------------------------------------------------
-# Farben laden
+# Farben laden (theme-style hat Vorrang, dann Logging-Fallback)
 # ------------------------------------------------------------
 if [[ -f "${DOTFILES_DIR}/terminal/.config/theme-style" ]]; then
     source "${DOTFILES_DIR}/terminal/.config/theme-style"
-else
-    # Fallback falls theme-style fehlt (konsistent mit _core.sh)
-    typeset -gx C_RESET=$'\033[0m'
-    typeset -gx C_RED=$'\033[31m'
-    typeset -gx C_GREEN=$'\033[32m'
-    typeset -gx C_YELLOW=$'\033[33m'
-    typeset -gx C_BLUE=$'\033[34m'
 fi
 
-# ------------------------------------------------------------
-# Logging
-# ------------------------------------------------------------
-log() { echo "${C_BLUE}→${C_RESET} $*"; }
-ok() { echo "${C_GREEN}✔${C_RESET} $*"; }
-err() { echo "${C_RED}✖${C_RESET} $*" >&2; }
-warn() { echo "${C_YELLOW}⚠${C_RESET} $*"; }
+# Logging-Funktionen laden (nutzt theme-style Farben oder Fallback)
+source "${SCRIPT_DIR}/lib/logging.sh"
 
 # ------------------------------------------------------------
 # Prüfungen

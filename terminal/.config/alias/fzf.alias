@@ -41,7 +41,7 @@ fi
 # Prozess Browser(signal=15) – Enter=Beenden, Tab=Mehrfach, Ctrl+S=Apps↔Alle
 procs() {
     local pid
-    local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
+    
 
     pid=$("$helper/procs" list apps | \
         fzf -m \
@@ -61,7 +61,7 @@ procs() {
 # Man/tldr Browser – Ctrl+S=Modus wechseln (Liste + Preview), Enter=öffnen
 help() {
     local output mode selection page section
-    local fzf_dir="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
+    
 
     # Ctrl+S wechselt sowohl Liste als auch Preview zwischen man und tldr
     output=$("$fzf_dir/help" list man | \
@@ -100,7 +100,7 @@ help() {
 # Fuzzy-Suche für Aliase und Funktionen aus allen .alias-Dateien
 # Befehl Browser(suche?) – Enter=Übernehmen, Ctrl+S=tldr↔Code
 cmds() {
-    local fzf_dir="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
+    
     local query="${1:-}"
     local selection name
 
@@ -140,7 +140,7 @@ cmds() {
 # Variablen Browser – Enter=Export→Edit, Ctrl+Y=Kopieren
 vars() {
     local selection name value
-    local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
+    
 
     # Farbkodiert KEY=VALUE-Zeilen nach Kategorie (Catppuccin Mocha)
     # Dotfiles/XDG=Mauve, PATH=Green, Tools=Blue, Rest=Text
@@ -180,7 +180,7 @@ vars() {
             else
                 echo "$v"
             fi' \
-        --bind="ctrl-y:execute-silent(n=\$(echo {} | cut -d'│' -f1 | xargs | grep -E '^[a-zA-Z_][a-zA-Z0-9_]*\$'); [[ -n \"\$n\" ]] && $helper/action copy \"\$(printenv \"\$n\")\")+abort")
+        --bind="ctrl-y:execute-silent(n=\$(echo {} | cut -d'│' -f1 | xargs | grep -E '^[a-zA-Z_][a-zA-Z0-9_]*\$'); [[ -n \"\$n\" ]] && $FZF_HELPER_DIR/action copy \"\$(printenv \"\$n\")\")+abort")
 
     if [[ -n "$selection" ]]; then
         name=$(echo "$selection" | cut -d'│' -f1 | xargs)

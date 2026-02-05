@@ -2,7 +2,7 @@
 # ============================================================
 # install.sh - POSIX-kompatibler Bootstrap-Einstiegspunkt
 # ============================================================
-# Zweck       : Stellt ssh/Abhängigkeiten bereit und startet Bootstrap
+# Zweck       : Stellt zsh/Abhängigkeiten bereit und startet Bootstrap
 # Aufruf      : ./install.sh oder curl ... | sh
 # Kompatibel  : POSIX sh, bash, dash, zsh
 # Plattformen : macOS, Fedora, Debian, Arch
@@ -15,29 +15,14 @@
 
 set -eu
 
-# ------------------------------------------------------------
-# Farben (Catppuccin Mocha ANSI-Approximation)
-# ------------------------------------------------------------
-# Echte Theme-Farben sind noch nicht verfügbar (theme-style wird
-# erst nach stow geladen). Diese Werte sind Catppuccin-nah.
-if [ -t 1 ]; then
-    RED='\033[38;5;210m'      # ~Red
-    GREEN='\033[38;5;157m'    # ~Green
-    YELLOW='\033[38;5;223m'   # ~Yellow
-    BLUE='\033[38;5;111m'     # ~Blue
-    MAUVE='\033[38;5;183m'    # ~Mauve
-    TEXT='\033[38;5;253m'     # ~Text
-    BOLD='\033[1m'
-    DIM='\033[2m'
-    RESET='\033[0m'
-else
-    RED='' GREEN='' YELLOW='' BLUE='' MAUVE='' TEXT='' BOLD='' DIM='' RESET=''
-fi
+# Script-Verzeichnis ermitteln (POSIX-kompatibel)
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-log()  { printf "${BLUE}→${RESET} %s\n" "$1"; }
-ok()   { printf "${GREEN}✔${RESET} %s\n" "$1"; }
-warn() { printf "${YELLOW}⚠${RESET} %s\n" "$1"; }
-err()  { printf "${RED}✖${RESET} %s\n" "$1" >&2; }
+# ------------------------------------------------------------
+# Logging laden (Farben + Funktionen)
+# ------------------------------------------------------------
+# Shared Library mit POSIX-kompatiblen Logging-Funktionen
+. "$SCRIPT_DIR/lib/logging.sh"
 
 # ------------------------------------------------------------
 # Plattform-Erkennung (POSIX-kompatibel)
@@ -134,8 +119,8 @@ set_default_shell() {
 # Hauptlogik
 # ------------------------------------------------------------
 main() {
-    printf "\n${BOLD}${MAUVE}Dotfiles Installation${RESET}\n"
-    printf "${DIM}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}\n\n"
+    printf "\n${C_BOLD}${C_MAUVE}Dotfiles Installation${C_RESET}\n"
+    printf "${C_DIM}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}\n\n"
 
     # Plattform erkennen
     platform=$(detect_platform)
@@ -163,9 +148,8 @@ main() {
         set_default_shell
     fi
 
-    # Script-Verzeichnis ermitteln (POSIX-kompatibel)
-    script_dir="$(cd "$(dirname "$0")" && pwd)"
-    bootstrap_script="$script_dir/bootstrap.sh"
+    # Bootstrap-Pfad (SCRIPT_DIR bereits am Datei-Anfang gesetzt)
+    bootstrap_script="$SCRIPT_DIR/bootstrap.sh"
 
     # Bootstrap existiert?
     if [ ! -f "$bootstrap_script" ]; then

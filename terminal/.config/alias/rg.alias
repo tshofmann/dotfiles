@@ -69,7 +69,7 @@ if command -v fzf >/dev/null 2>&1; then
     # Live-Grep(suche?) – Enter=Datei öffnen, Ctrl+Y=Pfad kopieren
     rg-live() {
         local rg_prefix="rg --column --line-number --no-heading --color=always --smart-case"
-        local helper="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
+        
 
         fzf --ansi --disabled --query "${*:-}" \
             --bind "start:reload:$rg_prefix {q} || true" \
@@ -79,7 +79,7 @@ if command -v fzf >/dev/null 2>&1; then
             --preview "$helper/preview file {1} {2}" \
             --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' \
             --header='Enter: Datei öffnen | Ctrl+Y: Pfad kopieren' \
-            --bind "ctrl-y:execute-silent($helper/action copy {1})+abort" \
-            --bind "enter:become($helper/action edit {1} {2})"
+            --bind "ctrl-y:execute-silent($FZF_HELPER_DIR/action copy {1})+abort" \
+            --bind "enter:become($FZF_HELPER_DIR/action edit {1} {2})"
     }
 fi
