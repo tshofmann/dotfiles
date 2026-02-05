@@ -49,17 +49,24 @@ Das Bootstrap-Skript fragt zu folgenden Zeitpunkten nach dem Admin-Passwort:
 
 ---
 
-## Schritt 1: Bootstrap-Skript ausführen
+## Schritt 1: Install-Skript ausführen
 
-```zsh
-curl -fsSL https://github.com/tshofmann/dotfiles/archive/refs/heads/main.tar.gz | tar -xz -C ~ && mv ~/dotfiles-main ~/dotfiles && ~/dotfiles/setup/bootstrap.sh
+```bash
+curl -fsSL https://github.com/tshofmann/dotfiles/archive/refs/heads/main.tar.gz | tar -xz -C ~ && mv ~/dotfiles-main ~/dotfiles && ~/dotfiles/setup/install.sh
 ```
 
-> **💡 Warum curl statt git?** Auf einem frischen System ist Git möglicherweise nicht verfügbar. Mit `curl` umgehen wir diese Abhängigkeit – die nötigen Tools werden dann automatisch vom Bootstrap-Skript installiert.
+> **💡 Warum install.sh?** Das Install-Skript ist POSIX-kompatibel und läuft mit /bin/sh, bash oder zsh. Es stellt sicher, dass zsh installiert ist (ggf. via apt/dnf/pacman) und startet dann das eigentliche Bootstrap.
 
 ### Was das Skript macht
 
-Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
+Das Install-Skript führt folgende Aktionen aus:
+
+1. **Plattform-Erkennung** – macOS, Fedora, Debian oder Arch
+2. **zsh-Installation** – Falls nicht vorhanden, via Paketmanager
+3. **Default-Shell** – Setzt zsh als Standard-Shell (nur Linux)
+4. **Bootstrap starten** – Führt bootstrap.sh mit zsh aus
+
+Das Bootstrap-Skript führt dann folgende Aktionen in dieser Reihenfolge aus:
 
 | Aktion | Beschreibung | Bei Fehler |
 | ------ | ------------ | ---------- |
@@ -86,7 +93,7 @@ Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
 > **⏱️ Timeout-Konfiguration (macOS):** Der Terminal-Profil-Import wartet standardmäßig 20 Sekunden auf Registrierung im System. Bei langsamen Systemen oder VMs kann dies erhöht werden:
 >
 > ```bash
-> PROFILE_IMPORT_TIMEOUT=60 ./setup/bootstrap.sh
+> PROFILE_IMPORT_TIMEOUT=60 ./setup/install.sh
 > ```
 >
 > **Empfohlene Timeout-Werte:**
