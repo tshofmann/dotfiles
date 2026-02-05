@@ -2,34 +2,36 @@
 # ============================================================
 # install.sh - POSIX-kompatibler Bootstrap-Einstiegspunkt
 # ============================================================
-# Zweck       : Stellt sicher, dass zsh verfügbar ist und startet Bootstrap
+# Zweck       : Stellt ssh/Abhängigkeiten bereit und startet Bootstrap
 # Aufruf      : ./install.sh oder curl ... | sh
 # Kompatibel  : POSIX sh, bash, dash, zsh
 # Plattformen : macOS, Fedora, Debian, Arch
 # ============================================================
 # Dieser Wrapper ist absichtlich POSIX-kompatibel, da zsh auf
 # frischen Linux-Systemen möglicherweise nicht installiert ist.
+#
+# zsh ist eine feste Abhängigkeit – keine interaktive Bestätigung.
 # ============================================================
 
 set -eu
 
 # ------------------------------------------------------------
-# Farben (POSIX-kompatibel, ohne print -P)
+# Farben (Catppuccin Mocha ANSI-Approximation)
 # ------------------------------------------------------------
+# Echte Theme-Farben sind noch nicht verfügbar (theme-style wird
+# erst nach stow geladen). Diese Werte sind Catppuccin-nah.
 if [ -t 1 ]; then
-    RED='\033[0;31m'
-    GREEN='\033[0;32m'
-    YELLOW='\033[0;33m'
-    BLUE='\033[0;34m'
+    RED='\033[38;5;210m'      # ~Red
+    GREEN='\033[38;5;157m'    # ~Green
+    YELLOW='\033[38;5;223m'   # ~Yellow
+    BLUE='\033[38;5;111m'     # ~Blue
+    MAUVE='\033[38;5;183m'    # ~Mauve
+    TEXT='\033[38;5;253m'     # ~Text
     BOLD='\033[1m'
+    DIM='\033[2m'
     RESET='\033[0m'
 else
-    RED=''
-    GREEN=''
-    YELLOW=''
-    BLUE=''
-    BOLD=''
-    RESET=''
+    RED='' GREEN='' YELLOW='' BLUE='' MAUVE='' TEXT='' BOLD='' DIM='' RESET=''
 fi
 
 log()  { printf "${BLUE}→${RESET} %s\n" "$1"; }
@@ -63,7 +65,7 @@ detect_platform() {
 }
 
 # ------------------------------------------------------------
-# zsh-Installation nach Plattform
+# zsh-Installation nach Plattform (nicht-interaktiv)
 # ------------------------------------------------------------
 install_zsh() {
     platform="$1"
@@ -71,9 +73,8 @@ install_zsh() {
     case "$platform" in
         macos)
             # macOS hat zsh seit Catalina (10.15) als Standard-Shell
-            # Sollte nie erreicht werden, aber als Fallback vorhanden
+            # Sollte nie erreicht werden
             err "zsh sollte auf macOS vorinstalliert sein."
-            err "Falls nicht: brew install zsh"
             exit 1
             ;;
         fedora)
@@ -82,7 +83,7 @@ install_zsh() {
             ;;
         debian)
             log "Installiere zsh via apt..."
-            sudo apt-get update
+            sudo apt-get update -qq
             sudo apt-get install -y zsh
             ;;
         arch)
@@ -98,9 +99,9 @@ install_zsh() {
 }
 
 # ------------------------------------------------------------
-# Default-Shell auf zsh ändern
+# Default-Shell auf zsh ändern (nicht-interaktiv)
 # ------------------------------------------------------------
-change_default_shell() {
+set_default_shell() {
     current_shell=$(basename "$SHELL")
     zsh_path=$(command -v zsh)
 
@@ -118,80 +119,51 @@ change_default_shell() {
         echo "$zsh_path" | sudo tee -a /etc/shells >/dev/null
     fi
 
-    # Bestätigung einholen
-    printf "\n"
-    printf "Default-Shell auf zsh ändern? [y/N] "
-    read -r response
-
-    case "$response" in
-        [yY]|[yY][eE][sS])
-            log "Ändere Default-Shell zu zsh..."
-            if chsh -s "$zsh_path"; then
-                ok "Default-Shell geändert zu: $zsh_path"
-                warn "Änderung wird nach erneutem Login aktiv"
-            else
-                warn "chsh fehlgeschlagen - Shell manuell ändern mit: chsh -s $zsh_path"
-            fi
-            ;;
-        *)
-            warn "Default-Shell nicht geändert"
-            warn "Manuell ändern mit: chsh -s $zsh_path"
-            ;;
-    esac
+    # Shell ändern
+    log "Ändere Default-Shell zu zsh..."
+    if chsh -s "$zsh_path"; then
+        ok "Default-Shell geändert zu: $zsh_path"
+        warn "Änderung wird nach erneutem Login aktiv"
+    else
+        warn "chsh fehlgeschlagen (evtl. LDAP/AD-Umgebung)"
+        warn "Manuell ändern mit: chsh -s $zsh_path"
+    fi
 }
 
 # ------------------------------------------------------------
 # Hauptlogik
 # ------------------------------------------------------------
 main() {
-    printf "\n${BOLD}Dotfiles Installation${RESET}\n"
-    printf "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+    printf "\n${BOLD}${MAUVE}Dotfiles Installation${RESET}\n"
+    printf "${DIM}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}\n\n"
 
     # Plattform erkennen
     platform=$(detect_platform)
-    log "Plattform erkannt: $platform"
+    log "Plattform: $platform"
 
-    # zsh-Verfügbarkeit prüfen
-    zsh_was_installed=false
+    # zsh ist eine feste Abhängigkeit
     if command -v zsh >/dev/null 2>&1; then
         zsh_version=$(zsh --version | head -1)
-        ok "zsh gefunden: $zsh_version"
+        ok "zsh: $zsh_version"
     else
-        warn "zsh nicht gefunden"
+        log "zsh nicht gefunden – installiere..."
+        install_zsh "$platform"
 
-        # Interaktive Bestätigung für sudo-Operationen
-        printf "\n"
-        printf "zsh muss installiert werden (benötigt sudo auf Linux).\n"
-        printf "Fortfahren? [y/N] "
-        read -r response
-
-        case "$response" in
-            [yY]|[yY][eE][sS])
-                install_zsh "$platform"
-
-                # Verifizieren
-                if command -v zsh >/dev/null 2>&1; then
-                    ok "zsh erfolgreich installiert"
-                    zsh_was_installed=true
-                else
-                    err "zsh-Installation fehlgeschlagen"
-                    exit 1
-                fi
-                ;;
-            *)
-                err "Installation abgebrochen"
-                exit 1
-                ;;
-        esac
+        # Verifizieren
+        if command -v zsh >/dev/null 2>&1; then
+            ok "zsh erfolgreich installiert"
+        else
+            err "zsh-Installation fehlgeschlagen"
+            exit 1
+        fi
     fi
 
-    # Default-Shell prüfen/ändern (nur auf Linux, macOS hat bereits zsh)
+    # Default-Shell auf zsh setzen (nur auf Linux)
     if [ "$platform" != "macos" ]; then
-        change_default_shell
+        set_default_shell
     fi
 
     # Script-Verzeichnis ermitteln (POSIX-kompatibel)
-    # Funktioniert auch bei Symlinks und ./install.sh Aufruf
     script_dir="$(cd "$(dirname "$0")" && pwd)"
     bootstrap_script="$script_dir/bootstrap.sh"
 
@@ -203,7 +175,7 @@ main() {
 
     # Bootstrap mit zsh ausführen
     printf "\n"
-    log "Starte Bootstrap mit zsh..."
+    log "Starte Bootstrap..."
     printf "\n"
 
     exec zsh "$bootstrap_script"
