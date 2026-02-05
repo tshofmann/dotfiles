@@ -3,7 +3,7 @@
 > Dotfiles mit Catppuccin-Theme und modernen CLI-Tools.
 > Mehr Informationen: <https://github.com/tshofmann/dotfiles>
 
-- dotfiles: Nutzt `tldr (tealdeer)`
+- dotfiles: Nutzt `tldr (für dothelp), stow (für dotstow)`
 
 - Diese Hilfe (Schnellreferenz):
 

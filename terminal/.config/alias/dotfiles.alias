@@ -4,20 +4,22 @@
 # Zweck       : Zentrale Einstiegspunkte für dotfiles-Hilfe
 # Pfad        : ~/.config/alias/dotfiles.alias
 # Docs        : https://github.com/tshofmann/dotfiles
-# Nutzt       : tldr (tealdeer)
+# Nutzt       : tldr (für dothelp), stow (für dotstow)
 # Aliase      : dothelp, dh, dothealth, dotdocs, dotstow
 # ============================================================
+# Hinweis     : Kein globaler Guard – nur dothelp/dh benötigen tldr
+# ============================================================
 
-# Guard   : tldr (tealdeer) muss installiert sein für dothelp
-if ! command -v tldr >/dev/null 2>&1; then
-    return 0
+# ------------------------------------------------------------
+# tldr-abhängige Aliase (nur wenn tealdeer installiert)
+# ------------------------------------------------------------
+if command -v tldr >/dev/null 2>&1; then
+    # Schnellreferenz anzeigen (zeigt tldr dotfiles)
+    alias dothelp='tldr dotfiles'
+
+    # Kurzform für dothelp
+    alias dh='dothelp'
 fi
-
-# Schnellreferenz anzeigen (zeigt tldr dotfiles)
-alias dothelp='tldr dotfiles'
-
-# Kurzform für dothelp
-alias dh='dothelp'
 
 # ------------------------------------------------------------
 # Dotfiles Wartung
