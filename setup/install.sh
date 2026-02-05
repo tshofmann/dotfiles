@@ -71,15 +71,10 @@ install_zsh() {
     case "$platform" in
         macos)
             # macOS hat zsh seit Catalina (10.15) als Standard-Shell
-            # Falls doch nicht vorhanden: via Homebrew
-            if command -v brew >/dev/null 2>&1; then
-                log "Installiere zsh via Homebrew..."
-                brew install zsh
-            else
-                err "Homebrew nicht gefunden. Bitte zuerst installieren:"
-                err "  /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
-                exit 1
-            fi
+            # Sollte nie erreicht werden, aber als Fallback vorhanden
+            err "zsh sollte auf macOS vorinstalliert sein."
+            err "Falls nicht: brew install zsh"
+            exit 1
             ;;
         fedora)
             log "Installiere zsh via dnf..."
@@ -103,6 +98,49 @@ install_zsh() {
 }
 
 # ------------------------------------------------------------
+# Default-Shell auf zsh ändern
+# ------------------------------------------------------------
+change_default_shell() {
+    current_shell=$(basename "$SHELL")
+    zsh_path=$(command -v zsh)
+
+    # Bereits zsh?
+    if [ "$current_shell" = "zsh" ]; then
+        ok "Default-Shell ist bereits zsh"
+        return 0
+    fi
+
+    log "Aktuelle Default-Shell: $current_shell"
+
+    # zsh zu /etc/shells hinzufügen falls nicht vorhanden
+    if ! grep -qx "$zsh_path" /etc/shells 2>/dev/null; then
+        log "Füge $zsh_path zu /etc/shells hinzu..."
+        echo "$zsh_path" | sudo tee -a /etc/shells >/dev/null
+    fi
+
+    # Bestätigung einholen
+    printf "\n"
+    printf "Default-Shell auf zsh ändern? [y/N] "
+    read -r response
+
+    case "$response" in
+        [yY]|[yY][eE][sS])
+            log "Ändere Default-Shell zu zsh..."
+            if chsh -s "$zsh_path"; then
+                ok "Default-Shell geändert zu: $zsh_path"
+                warn "Änderung wird nach erneutem Login aktiv"
+            else
+                warn "chsh fehlgeschlagen - Shell manuell ändern mit: chsh -s $zsh_path"
+            fi
+            ;;
+        *)
+            warn "Default-Shell nicht geändert"
+            warn "Manuell ändern mit: chsh -s $zsh_path"
+            ;;
+    esac
+}
+
+# ------------------------------------------------------------
 # Hauptlogik
 # ------------------------------------------------------------
 main() {
@@ -114,6 +152,7 @@ main() {
     log "Plattform erkannt: $platform"
 
     # zsh-Verfügbarkeit prüfen
+    zsh_was_installed=false
     if command -v zsh >/dev/null 2>&1; then
         zsh_version=$(zsh --version | head -1)
         ok "zsh gefunden: $zsh_version"
@@ -133,6 +172,7 @@ main() {
                 # Verifizieren
                 if command -v zsh >/dev/null 2>&1; then
                     ok "zsh erfolgreich installiert"
+                    zsh_was_installed=true
                 else
                     err "zsh-Installation fehlgeschlagen"
                     exit 1
@@ -143,6 +183,11 @@ main() {
                 exit 1
                 ;;
         esac
+    fi
+
+    # Default-Shell prüfen/ändern (nur auf Linux, macOS hat bereits zsh)
+    if [ "$platform" != "macos" ]; then
+        change_default_shell
     fi
 
     # Script-Verzeichnis ermitteln (POSIX-kompatibel)

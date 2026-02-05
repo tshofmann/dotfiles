@@ -166,7 +166,6 @@ ff                                  # System-Info anzeigen
 | [`tealdeer`](https://tealdeer-rs.github.io/tealdeer/) | tldr-Client |
 | [`yazi`](https://yazi-rs.github.io/) | File Manager |
 | [`zoxide`](https://github.com/ajeetdsouza/zoxide) | Smartes cd mit Frecency |
-| [`zsh`](https://www.zsh.org/) | Shell (Linuxbrew, macOS hat Standard-zsh) |
 | [`zsh-autosuggestions`](https://github.com/zsh-users/zsh-autosuggestions) | History-Vorschläge |
 | [`zsh-syntax-highlighting`](https://github.com/zsh-users/zsh-syntax-highlighting) | Syntax-Highlighting |
 | [`mas`](https://github.com/mas-cli/mas) | Mac App Store CLI |
