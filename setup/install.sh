@@ -167,8 +167,8 @@ set_default_shell() {
 # Hauptlogik
 # ------------------------------------------------------------
 main() {
-    printf "\n%s%s%s\n" "${C_BOLD}${C_MAUVE}" "Dotfiles Installation" "$C_RESET"
-    printf "%s%s%s\n\n" "$C_DIM" "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" "$C_RESET"
+    printf "\n${C_BOLD}${C_MAUVE}%s${C_RESET}\n" "Dotfiles Installation"
+    printf "${C_DIM}%s${C_RESET}\n\n" "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
     # Nicht als root ausführen (sudo wird nur gezielt eingesetzt)
     if [ "$(id -u)" = "0" ]; then
