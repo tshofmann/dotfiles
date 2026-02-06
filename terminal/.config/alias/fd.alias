@@ -58,10 +58,9 @@ if command -v fzf >/dev/null 2>&1; then
     # Verzeichnis wechseln(pfad=.) – Enter=Wechseln, Ctrl+Y=Pfad kopieren
     jump() {
         local dir
-        
 
         dir=$(fd --type d --hidden --follow --exclude .git . "${1:-.}" | \
-            fzf --preview "$helper/preview dir {}" \
+            fzf --preview "$FZF_HELPER_DIR/preview dir {}" \
                 --header='Enter: Wechseln | Ctrl+Y: Pfad kopieren' \
                 --bind="ctrl-y:execute-silent($FZF_HELPER_DIR/action copy {})+abort")
 
@@ -71,14 +70,19 @@ if command -v fzf >/dev/null 2>&1; then
     # Datei öffnen(pfad=.) – Enter=Öffnen, Ctrl+Y=Pfad kopieren
     pick() {
         local file
-        
 
         file=$(fd --type f --hidden --follow --exclude .git . "${1:-.}" | \
-            fzf --preview "$helper/preview file {}" \
+            fzf --preview "$FZF_HELPER_DIR/preview file {}" \
                 --header='Enter: Öffnen | Ctrl+Y: Pfad kopieren' \
                 --bind="ctrl-y:execute-silent($FZF_HELPER_DIR/action copy {})+abort")
 
         # xopen aus platform.zsh (Fallback: open für macOS)
-        [[ -n "$file" ]] && { (( $+functions[xopen] )) && xopen "$file" || open "$file"; }
+        if [[ -n "$file" ]]; then
+            if (( $+functions[xopen] )); then
+                xopen "$file"
+            else
+                open "$file"
+            fi
+        fi
     }
 fi

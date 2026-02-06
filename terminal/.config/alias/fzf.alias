@@ -41,14 +41,13 @@ fi
 # Prozess Browser(signal=15) – Enter=Beenden, Tab=Mehrfach, Ctrl+S=Apps↔Alle
 procs() {
     local pid
-    
 
-    pid=$("$helper/procs" list apps | \
+    pid=$("$FZF_HELPER_DIR/procs" list apps | \
         fzf -m \
             --freeze-left=1 \
             --prompt='Apps> ' \
             --header='Enter: Beenden | Tab: Mehrfach | Ctrl+S: Apps/Alle' \
-            --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Apps> ' ]] && echo 'reload($helper/procs list all)+change-prompt(Alle> )' || echo 'reload($helper/procs list apps)+change-prompt(Apps> )'" | \
+            --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Apps> ' ]] && echo 'reload($FZF_HELPER_DIR/procs list all)+change-prompt(Alle> )' || echo 'reload($FZF_HELPER_DIR/procs list apps)+change-prompt(Apps> )'" | \
         awk '{print $1}')
 
     [[ -n "$pid" ]] && echo "$pid" | xargs kill -${1:-15}
@@ -61,14 +60,13 @@ procs() {
 # Man/tldr Browser – Ctrl+S=Modus wechseln (Liste + Preview), Enter=öffnen
 help() {
     local output mode selection page section
-    
 
     # Ctrl+S wechselt sowohl Liste als auch Preview zwischen man und tldr
-    output=$("$fzf_dir/help" list man | \
+    output=$("$FZF_HELPER_DIR/help" list man | \
         fzf --prompt='man> ' \
-            --preview="$fzf_dir/help preview man {}" \
+            --preview="$FZF_HELPER_DIR/help preview man {}" \
             --header='Enter: öffnen | Ctrl+S: man ↔ tldr' \
-            --bind="ctrl-s:transform:$fzf_dir/help toggle" \
+            --bind="ctrl-s:transform:$FZF_HELPER_DIR/help toggle" \
             --bind="enter:transform:[[ \$FZF_PROMPT == 'tldr> ' ]] && echo 'print(tldr)+accept' || echo 'print(man)+accept'")
 
     [[ -z "$output" ]] && return 0
@@ -100,12 +98,11 @@ help() {
 # Fuzzy-Suche für Aliase und Funktionen aus allen .alias-Dateien
 # Befehl Browser(suche?) – Enter=Übernehmen, Ctrl+S=tldr↔Code
 cmds() {
-    
     local query="${1:-}"
     local selection name
 
     # Formatierte Ausgabe für fzf (Farben aus theme-style)
-    selection=$("$fzf_dir/cmds" list | awk -F'|' \
+    selection=$("$FZF_HELPER_DIR/cmds" list | awk -F'|' \
         -v mauve="$C_MAUVE" -v green="$C_GREEN" -v blue="$C_BLUE" \
         -v text="$C_TEXT" -v reset="$C_RESET" '
         NF >= 3 {
@@ -123,7 +120,7 @@ cmds() {
     ' | fzf --ansi --query="$query" \
         --prompt='tldr> ' \
         --header='Enter: Befehl übernehmen | Ctrl+S: tldr ↔ Code' \
-        --preview "[[ \$FZF_PROMPT == 'code> ' ]] && zsh '$fzf_dir/cmds' preview code {} || zsh '$fzf_dir/cmds' preview tldr {}" \
+        --preview "[[ \$FZF_PROMPT == 'code> ' ]] && zsh '$FZF_HELPER_DIR/cmds' preview code {} || zsh '$FZF_HELPER_DIR/cmds' preview tldr {}" \
         --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'tldr> ' ]] && echo 'change-prompt(code> )+refresh-preview' || echo 'change-prompt(tldr> )+refresh-preview'")
 
     # Bei Enter: Befehl ins Edit-Buffer (kann editiert/ausgeführt werden)
@@ -140,7 +137,6 @@ cmds() {
 # Variablen Browser – Enter=Export→Edit, Ctrl+Y=Kopieren
 vars() {
     local selection name value
-    
 
     # Farbkodiert KEY=VALUE-Zeilen nach Kategorie (Catppuccin Mocha)
     # Dotfiles/XDG=Mauve, PATH=Green, Tools=Blue, Rest=Text

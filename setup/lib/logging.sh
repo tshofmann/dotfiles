@@ -26,6 +26,9 @@ else
     C_RED='' C_GREEN='' C_YELLOW='' C_BLUE='' C_MAUVE='' C_RESET='' C_BOLD='' C_DIM=''
 fi
 
+# Farben exportieren (für Aufrufer wie install.sh Banner)
+export C_RED C_GREEN C_YELLOW C_BLUE C_MAUVE C_RESET C_BOLD C_DIM
+
 # ------------------------------------------------------------
 # Logging-Funktionen
 # ------------------------------------------------------------

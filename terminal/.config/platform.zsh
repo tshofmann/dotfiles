@@ -12,7 +12,7 @@
 #   sedi      - In-place sed (BSD/GNU kompatibel)
 # ============================================================
 # Plattformen:
-#   macOS     - Apple Silicon (arm64)
+#   macOS     - Apple Silicon (arm64) + Intel (x86_64)
 #   Fedora    - Desktop/Server
 #   Debian    - Desktop/Server (inkl. Raspberry Pi OS, DietPi)
 #   Arch      - Desktop/Server
@@ -117,8 +117,15 @@ case "$_PLATFORM_OS" in
         fi
         ;;
     *)
-        clip()  { cat >/dev/null; }
-        paste() { :; }
+        clip() {
+            echo "clip: Plattform nicht unterstützt ($_PLATFORM_OS)" >&2
+            cat >/dev/null
+            return 1
+        }
+        paste() {
+            echo "paste: Plattform nicht unterstützt ($_PLATFORM_OS)" >&2
+            return 1
+        }
         ;;
 esac
 
@@ -150,7 +157,10 @@ case "$_PLATFORM_OS" in
         fi
         ;;
     *)
-        xopen() { :; }
+        xopen() {
+            echo "xopen: Plattform nicht unterstützt ($_PLATFORM_OS)" >&2
+            return 1
+        }
         ;;
 esac
 
