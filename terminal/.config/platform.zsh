@@ -120,8 +120,8 @@ case "$_PLATFORM_OS" in
         ;;
     linux)
         if (( _PLATFORM_HAS_DISPLAY )); then
-            # Wayland Desktop: wl-clipboard
-            if (( $+commands[wl-copy] )); then
+            # Wayland Desktop: wl-clipboard (beide Befehle prüfen)
+            if (( $+commands[wl-copy] )) && (( $+commands[wl-paste] )); then
                 clip()      { wl-copy; }
                 clippaste() { wl-paste; }
             else

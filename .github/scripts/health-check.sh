@@ -405,6 +405,17 @@ if [[ "$_PLATFORM_OS" == "macos" ]]; then
     fail "sedi() hat Datei nicht korrekt bearbeitet"
   fi
   rm -f "$test_file"
+elif [[ "$_PLATFORM_OS" == "linux" ]]; then
+  # sedi: In-place sed Test (kein Display nötig)
+  local test_file=$(mktemp)
+  echo "foo" > "$test_file"
+  sedi 's/foo/bar/' "$test_file"
+  if [[ "$(cat "$test_file")" == "bar" ]]; then
+    pass "sedi() funktioniert korrekt"
+  else
+    fail "sedi() hat Datei nicht korrekt bearbeitet"
+  fi
+  rm -f "$test_file"
 fi
 
 # --- Terminal-Profil ---
