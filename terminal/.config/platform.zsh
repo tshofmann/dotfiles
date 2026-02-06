@@ -103,6 +103,7 @@ case "$_PLATFORM_OS" in
                 clip() {
                     echo "clip: wl-clipboard nicht gefunden" >&2
                     echo "      Installiere: wl-clipboard" >&2
+                    cat >/dev/null
                     return 1
                 }
                 paste() {
@@ -145,7 +146,7 @@ case "$_PLATFORM_OS" in
         if (( _PLATFORM_HAS_DISPLAY )) && (( $+commands[xdg-open] )); then
             xopen() {
                 [[ -n "${DEBUG:-}" ]] && echo "xopen: xdg-open $*" >&2
-                xdg-open "$@" 2>/dev/null & disown
+                xdg-open "$@" 2>/dev/null &!
             }
         elif (( _PLATFORM_HAS_DISPLAY )); then
             # Desktop ohne xdg-open
