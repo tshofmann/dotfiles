@@ -36,7 +36,7 @@ typeset -g _PLATFORM_LOADED=1
 # Exportierte Variablen ermöglichen schnelles Re-Laden in Subshells
 # (z.B. fzf execute-silent) ohne erneute uname/Datei-Checks.
 
-if [[ -z "${_PLATFORM_OS:-}" ]]; then
+if [[ -z "${_PLATFORM_OS+x}" ]]; then
     # Erstmalige Erkennung
     case "$(uname -s)" in
         Darwin) _PLATFORM_OS="macos" ;;
