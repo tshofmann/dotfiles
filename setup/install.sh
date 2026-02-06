@@ -36,14 +36,22 @@ detect_platform() {
         Linux)
             # /etc/os-release ist freedesktop-Standard (Fedora, Debian, Arch, Ubuntu, ...)
             # ID_LIKE behandelt Derivate (z.B. Ubuntu → debian)
+            # Empfohlenes Pattern: einmal sourcen (systemd os-release Dokumentation)
+            _osrelease=""
+            if [ -f /etc/os-release ]; then
+                _osrelease="/etc/os-release"
+            elif [ -f /usr/lib/os-release ]; then
+                _osrelease="/usr/lib/os-release"
+            fi
+
             _distro_id=""
             _distro_id_like=""
-            if [ -f /etc/os-release ]; then
-                _distro_id=$(. /etc/os-release && echo "$ID")
-                _distro_id_like=$(. /etc/os-release && echo "${ID_LIKE:-}")
-            elif [ -f /usr/lib/os-release ]; then
-                _distro_id=$(. /usr/lib/os-release && echo "$ID")
-                _distro_id_like=$(. /usr/lib/os-release && echo "${ID_LIKE:-}")
+            if [ -n "$_osrelease" ]; then
+                # Einmal sourcen, beide Werte per Separator ausgeben
+                # ID/ID_LIKE enthalten per freedesktop-Spec nur [a-z0-9._- ]
+                _distro_info=$(. "$_osrelease" && printf '%s:%s' "$ID" "${ID_LIKE:-}")
+                _distro_id="${_distro_info%%:*}"
+                _distro_id_like="${_distro_info#*:}"
             fi
 
             case "$_distro_id" in

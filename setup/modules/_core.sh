@@ -16,14 +16,13 @@ readonly _BOOTSTRAP_CORE_LOADED=1
 # ------------------------------------------------------------
 # Sourced platform.zsh als Single Source of Truth, leitet
 # Bootstrap-Variablen (PLATFORM_OS, PLATFORM_ARCH) davon ab.
-{
-    local _platform_file="${0:A:h:h:h}/terminal/.config/platform.zsh"
-    if [[ -f "$_platform_file" ]]; then
-        source "$_platform_file"
-    else
-        echo "WARNUNG: platform.zsh nicht gefunden: $_platform_file" >&2
-    fi
-}
+_platform_file="${0:A:h:h:h}/terminal/.config/platform.zsh"
+if [[ -f "$_platform_file" ]]; then
+    source "$_platform_file"
+else
+    echo "WARNUNG: platform.zsh nicht gefunden: $_platform_file" >&2
+fi
+unset _platform_file
 
 # Bootstrap-Variablen aus platform.zsh ableiten
 # PLATFORM_OS = distro-spezifisch (damit is_fedora() etc. funktionieren)
