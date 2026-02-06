@@ -54,7 +54,6 @@ if command -v fzf >/dev/null 2>&1; then
     git-log() {
         local query="${1:-}"
         local sha
-        
 
         sha=$(git log --oneline --color=always --decorate | \
             fzf --ansi --no-sort --reverse --query="$query" \
@@ -92,7 +91,6 @@ if command -v fzf >/dev/null 2>&1; then
     git-stage() {
         local query="${1:-}"
         local files
-        
 
         files=$(git -c color.status=always status --short | \
             fzf --ansi --multi --query="$query" \
