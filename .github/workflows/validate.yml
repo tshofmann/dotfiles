@@ -26,7 +26,7 @@ jobs:
         run: |
           echo "Prüfe ZSH-Syntax (inkl. Alias-Dateien)..."
           errors=0
-          for file in .github/scripts/**/*.sh terminal/.config/alias/*.alias terminal/.config/**/*.zsh setup/bootstrap.sh setup/restore.sh; do
+          for file in .github/scripts/**/*.sh terminal/.config/alias/*.alias terminal/.config/**/*.zsh setup/bootstrap.sh setup/restore.sh setup/modules/*.sh; do
             if [[ -f "$file" ]]; then
               if ! zsh -n "$file" 2>/dev/null; then
                 echo "✖ Syntax-Fehler: $file"
