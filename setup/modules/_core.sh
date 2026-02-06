@@ -45,7 +45,9 @@ esac
 is_macos() { [[ "$PLATFORM_OS" == "macos" ]]; }
 
 # Helper: Prüft ob wir auf Linux sind (beliebige Distro)
-is_linux() { [[ "$PLATFORM_OS" == "linux" || "$PLATFORM_OS" == "fedora" || "$PLATFORM_OS" == "debian" || "$PLATFORM_OS" == "arch" ]]; }
+# _PLATFORM_OS ist immer "linux" (generisch), während PLATFORM_OS
+# den Distro-Namen enthält – so muss is_linux() keine Distros auflisten.
+is_linux() { [[ "${_PLATFORM_OS:-}" == "linux" ]]; }
 
 # Helper: Prüft ob spezifische Distro
 is_fedora() { [[ "$PLATFORM_OS" == "fedora" ]]; }
