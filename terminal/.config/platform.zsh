@@ -22,8 +22,8 @@
 #   Wayland   - GNOME, KDE, Hyprland (wl-clipboard, xdg-open)
 # ============================================================
 # Headless-Systeme:
-#   Ohne Wayland ($WAYLAND_DISPLAY) werden clip/paste/xopen
-#   als stille No-Ops definiert um Fehlermeldungen zu vermeiden.
+#   Ohne Display ($XDG_SESSION_TYPE != wayland, kein $WAYLAND_DISPLAY)
+#   werden clip/paste/xopen als stille No-Ops definiert.
 # ============================================================
 
 # Verhindere mehrfaches Laden (Shell-Variable für aktuelle Shell)
@@ -34,28 +34,44 @@ typeset -g _PLATFORM_LOADED=1
 # Plattform-Erkennung (einmalig beim Laden, exportiert für Subshells)
 # ------------------------------------------------------------
 # Exportierte Variablen ermöglichen schnelles Re-Laden in Subshells
-# (z.B. fzf execute-silent) ohne erneute uname/Datei-Checks.
+# (z.B. fzf execute-silent) ohne erneute $OSTYPE-Checks.
 
 if [[ -z "${_PLATFORM_OS+x}" ]]; then
-    # Erstmalige Erkennung
-    case "$(uname -s)" in
-        Darwin) _PLATFORM_OS="macos" ;;
-        Linux)  _PLATFORM_OS="linux" ;;
-        *)      _PLATFORM_OS="unknown" ;;
+    # Erstmalige Erkennung via ZSH-Builtin $OSTYPE (kein Subshell nötig)
+    case "$OSTYPE" in
+        darwin*) _PLATFORM_OS="macos" ;;
+        linux*)  _PLATFORM_OS="linux" ;;
+        *)       _PLATFORM_OS="unknown" ;;
     esac
     export _PLATFORM_OS
 fi
 
 if [[ -z "${_PLATFORM_DISTRO+x}" ]]; then
-    # Linux-Distribution (für zukünftige distro-spezifische Logik)
+    # Linux-Distribution via /etc/os-release (freedesktop-Standard)
+    # ID_LIKE behandelt Derivate (z.B. Ubuntu → debian, Manjaro → arch)
     if [[ "$_PLATFORM_OS" == "linux" ]]; then
-        if [[ -f /etc/fedora-release ]]; then
-            _PLATFORM_DISTRO="fedora"
-        elif [[ -f /etc/debian_version ]]; then
-            # Debian, Ubuntu, Raspberry Pi OS, DietPi, etc.
-            _PLATFORM_DISTRO="debian"
-        elif [[ -f /etc/arch-release ]]; then
-            _PLATFORM_DISTRO="arch"
+        local _osrelease=""
+        [[ -f /etc/os-release ]] && _osrelease="/etc/os-release"
+        [[ -z "$_osrelease" && -f /usr/lib/os-release ]] && _osrelease="/usr/lib/os-release"
+
+        if [[ -n "$_osrelease" ]]; then
+            local _distro_id _distro_id_like
+            _distro_id=$(. "$_osrelease" && echo "$ID")
+            _distro_id_like=$(. "$_osrelease" && echo "${ID_LIKE:-}")
+            case "$_distro_id" in
+                fedora)         _PLATFORM_DISTRO="fedora" ;;
+                debian|ubuntu)  _PLATFORM_DISTRO="debian" ;;
+                arch|manjaro)   _PLATFORM_DISTRO="arch" ;;
+                *)
+                    # Fallback: ID_LIKE für unbekannte Derivate prüfen
+                    case "$_distro_id_like" in
+                        *debian*) _PLATFORM_DISTRO="debian" ;;
+                        *fedora*) _PLATFORM_DISTRO="fedora" ;;
+                        *arch*)   _PLATFORM_DISTRO="arch" ;;
+                        *)        _PLATFORM_DISTRO="unknown" ;;
+                    esac
+                    ;;
+            esac
         else
             _PLATFORM_DISTRO="unknown"
         fi
@@ -66,11 +82,14 @@ if [[ -z "${_PLATFORM_DISTRO+x}" ]]; then
 fi
 
 if [[ -z "${_PLATFORM_HAS_DISPLAY+x}" ]]; then
-    # Display-Erkennung (für Clipboard/Open-Funktionen)
-    # macOS hat immer Display, Linux nur mit Wayland
+    # Display-Erkennung: macOS immer, Linux via XDG_SESSION_TYPE + WAYLAND_DISPLAY
+    # XDG_SESSION_TYPE wird von systemd-logind gesetzt (wayland, x11, tty)
     if [[ "$_PLATFORM_OS" == "macos" ]]; then
         _PLATFORM_HAS_DISPLAY=1
+    elif [[ "${XDG_SESSION_TYPE:-}" == "wayland" ]]; then
+        _PLATFORM_HAS_DISPLAY=1
     elif [[ -n "${WAYLAND_DISPLAY:-}" ]]; then
+        # Fallback falls XDG_SESSION_TYPE nicht gesetzt (z.B. manueller Compositor-Start)
         _PLATFORM_HAS_DISPLAY=1
     else
         _PLATFORM_HAS_DISPLAY=0
@@ -201,7 +220,7 @@ if [[ -n "${DEBUG:-}" ]]; then
     _platform_info() {
         echo "OS:      $_PLATFORM_OS"
         echo "Distro:  ${_PLATFORM_DISTRO:-n/a}"
-        echo "Display: $(( _PLATFORM_HAS_DISPLAY )) (Wayland: ${WAYLAND_DISPLAY:-none})"
+        echo "Display: $(( _PLATFORM_HAS_DISPLAY )) (Session: ${XDG_SESSION_TYPE:-unset}, Wayland: ${WAYLAND_DISPLAY:-none})"
         echo "clip:    $(whence -w clip 2>/dev/null || echo 'undefined')"
         echo "paste:   $(whence -w paste 2>/dev/null || echo 'undefined')"
         echo "xopen:   $(whence -w xopen 2>/dev/null || echo 'undefined')"

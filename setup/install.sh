@@ -33,20 +33,48 @@ detect_platform() {
             echo "macos"
             ;;
         Linux)
-            if [ -f /etc/fedora-release ]; then
-                echo "fedora"
-            elif [ -f /etc/debian_version ]; then
-                echo "debian"
-            elif [ -f /etc/arch-release ]; then
-                echo "arch"
-            else
-                echo "linux-unknown"
+            # /etc/os-release ist freedesktop-Standard (Fedora, Debian, Arch, Ubuntu, ...)
+            # ID_LIKE behandelt Derivate (z.B. Ubuntu → debian)
+            _distro_id=""
+            _distro_id_like=""
+            if [ -f /etc/os-release ]; then
+                _distro_id=$(. /etc/os-release && echo "$ID")
+                _distro_id_like=$(. /etc/os-release && echo "${ID_LIKE:-}")
+            elif [ -f /usr/lib/os-release ]; then
+                _distro_id=$(. /usr/lib/os-release && echo "$ID")
+                _distro_id_like=$(. /usr/lib/os-release && echo "${ID_LIKE:-}")
             fi
+
+            case "$_distro_id" in
+                fedora)         echo "fedora" ;;
+                debian|ubuntu)  echo "debian" ;;
+                arch|manjaro)   echo "arch" ;;
+                *)
+                    # Fallback: ID_LIKE für unbekannte Derivate
+                    case "$_distro_id_like" in
+                        *debian*) echo "debian" ;;
+                        *fedora*) echo "fedora" ;;
+                        *arch*)   echo "arch" ;;
+                        *)        echo "linux-unknown" ;;
+                    esac
+                    ;;
+            esac
             ;;
         *)
             echo "unknown"
             ;;
     esac
+}
+
+# ------------------------------------------------------------
+# sudo-Verfügbarkeit prüfen (nur Linux)
+# ------------------------------------------------------------
+check_sudo() {
+    if ! command -v sudo >/dev/null 2>&1; then
+        err "sudo nicht gefunden – wird für Paketinstallation benötigt"
+        err "Als root: apt install sudo / dnf install sudo / pacman -S sudo"
+        exit 1
+    fi
 }
 
 # ------------------------------------------------------------
@@ -87,6 +115,9 @@ install_zsh() {
 # Default-Shell auf zsh ändern (nicht-interaktiv)
 # ------------------------------------------------------------
 set_default_shell() {
+    # sudo wird für /etc/shells und chsh benötigt
+    check_sudo
+
     zsh_path=$(command -v zsh)
 
     # Aktuelle Default-Shell ermitteln
@@ -140,6 +171,7 @@ main() {
         ok "zsh: $zsh_version"
     else
         log "zsh nicht gefunden – installiere..."
+        check_sudo
         install_zsh "$platform"
 
         # Verifizieren

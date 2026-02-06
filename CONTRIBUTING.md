@@ -83,11 +83,11 @@ readonly -a MODULES=(
 | Prefix | Plattform | Erkennung |
 | ------ | --------- | --------- |
 | (ohne) | Alle | Immer ausführen |
-| `macos:` | macOS | `uname -s == Darwin` |
-| `linux:` | Linux (alle Distros) | `uname -s == Linux` |
-| `fedora:` | Fedora | `/etc/fedora-release` |
-| `debian:` | Debian/Ubuntu | `/etc/debian_version` |
-| `arch:` | Arch Linux | `/etc/arch-release` |
+| `macos:` | macOS | `$OSTYPE == darwin*` |
+| `linux:` | Linux (alle Distros) | `$OSTYPE == linux*` |
+| `fedora:` | Fedora | `/etc/os-release ID=fedora` |
+| `debian:` | Debian/Ubuntu/Derivate | `/etc/os-release ID=debian\|ubuntu` oder `ID_LIKE=*debian*` |
+| `arch:` | Arch/Manjaro/Derivate | `/etc/os-release ID=arch\|manjaro` oder `ID_LIKE=*arch*` |
 
 > **Status:** macOS ist primär, Linux-Support ist vorbereitet aber nicht getestet.
 > Beiträge für Linux-Module sind willkommen!
