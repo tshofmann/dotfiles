@@ -30,7 +30,7 @@ case "${1:-}" in
         # Input: "NAME          │ value..." (ANSI-Farben enthalten)
         shift
         local name
-        name=$(echo "$1" | sed 's/\x1b\[[0-9;]*m//g' | cut -d'│' -f1 | xargs)
+        name=$(printf '%s' "$1" | sed 's/\x1b\[[0-9;]*m//g' | cut -d'│' -f1 | xargs)
         [[ -z "$name" ]] && exit 0
         # Nur gültige Variablennamen zulassen
         [[ "$name" =~ ^[a-zA-Z_][a-zA-Z0-9_]*$ ]] || exit 0

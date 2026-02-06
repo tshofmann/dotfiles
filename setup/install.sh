@@ -3,7 +3,7 @@
 # install.sh - POSIX-kompatibler Bootstrap-Einstiegspunkt
 # ============================================================
 # Zweck       : Stellt zsh/Abhängigkeiten bereit und startet Bootstrap
-# Aufruf      : ./install.sh oder curl ... | sh
+# Aufruf      : Aus geklontem/entpacktem Repo: ./install.sh
 # Kompatibel  : POSIX sh, bash, dash, zsh
 # Plattformen : macOS, Fedora, Debian, Arch
 # ============================================================

@@ -140,7 +140,7 @@ esac
 
 case "$_PLATFORM_OS" in
     macos)
-        xopen() { open "$@"; }
+        xopen() { open -- "$@"; }
         ;;
     linux)
         if (( _PLATFORM_HAS_DISPLAY )) && (( $+commands[xdg-open] )); then
@@ -176,14 +176,21 @@ esac
 # BSD (macOS): sed -i '' erfordert leeren Suffix
 # GNU (Linux): sed -i akzeptiert keinen separaten Suffix
 #
-# Funktioniert auf allen Plattformen (keine Display-Abhängigkeit)
+# Unterstützt macOS (BSD sed) und Linux (GNU sed).
+# Auf unbekannten Plattformen: Fehlermeldung.
 
 case "$_PLATFORM_OS" in
     macos)
         sedi() { sed -i '' "$@"; }
         ;;
-    linux|*)
+    linux)
         sedi() { sed -i "$@"; }
+        ;;
+    *)
+        sedi() {
+            echo "sedi: Plattform nicht unterstützt ($_PLATFORM_OS)" >&2
+            return 1
+        }
         ;;
 esac
 

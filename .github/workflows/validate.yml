@@ -23,6 +23,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: ZSH-Syntax prüfen
+        shell: zsh {0}
         run: |
           echo "Prüfe ZSH-Syntax (inkl. Alias-Dateien)..."
           errors=0
