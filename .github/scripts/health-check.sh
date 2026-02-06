@@ -369,7 +369,7 @@ else
   fail "platform.zsh nicht gefunden: $platform_file"
 fi
 
-# platform.zsh wird früh in .zshrc geladen und definiert clip/paste/xopen/sedi
+# platform.zsh wird früh in .zshrc geladen und definiert clip/clippaste/xopen/sedi
 if [[ -n "${_PLATFORM_OS:-}" ]]; then
   pass "Plattform erkannt: $_PLATFORM_OS"
 else
@@ -377,7 +377,7 @@ else
 fi
 
 # Prüfe ob alle 4 Funktionen definiert sind
-for func in clip paste xopen sedi; do
+for func in clip clippaste xopen sedi; do
   if (( $+functions[$func] )); then
     pass "$func() definiert"
   else
@@ -387,12 +387,12 @@ done
 
 # Funktionale Tests (plattformspezifisch)
 if [[ "$_PLATFORM_OS" == "macos" ]]; then
-  # clip/paste: Roundtrip-Test
+  # clip/clippaste: Roundtrip-Test
   local test_str="health-check-$$"
-  if echo "$test_str" | clip && [[ "$(paste)" == "$test_str" ]]; then
-    pass "clip/paste Roundtrip erfolgreich"
+  if echo "$test_str" | clip && [[ "$(clippaste)" == "$test_str" ]]; then
+    pass "clip/clippaste Roundtrip erfolgreich"
   else
-    warn "clip/paste Roundtrip fehlgeschlagen"
+    warn "clip/clippaste Roundtrip fehlgeschlagen"
   fi
 
   # sedi: In-place sed Test

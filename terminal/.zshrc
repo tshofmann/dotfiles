@@ -71,7 +71,7 @@ zstyle ':completion:*:approximate:*' max-errors 1 numeric
 # ------------------------------------------------------------
 # Farben und modulare Alias-Dateien aus ~/.config/alias/
 
-# Plattform-Abstraktionen (clip, xopen, sedi)
+# Plattform-Abstraktionen (clip, clippaste, xopen, sedi)
 # Muss früh geladen werden, da Aliase diese Funktionen nutzen
 [[ -f "$HOME/.config/platform.zsh" ]] && source "$HOME/.config/platform.zsh"
 

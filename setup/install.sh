@@ -161,6 +161,13 @@ main() {
     printf "\n${C_BOLD}${C_MAUVE}Dotfiles Installation${C_RESET}\n"
     printf "${C_DIM}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}\n\n"
 
+    # Nicht als root ausführen (sudo wird nur gezielt eingesetzt)
+    if [ "$(id -u)" = "0" ]; then
+        err "install.sh darf nicht als root ausgeführt werden."
+        err "Starte ohne sudo – bei Bedarf wird gezielt nach dem Passwort gefragt."
+        exit 1
+    fi
+
     # Plattform erkennen
     platform=$(detect_platform)
     log "Plattform: $platform"

@@ -12,18 +12,17 @@
 # ============================================================
 
 # Plattform-Abstraktionen laden (clip, xopen)
-[[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/platform.zsh" ]] && \
-    source "${XDG_CONFIG_HOME:-$HOME/.config}/platform.zsh"
+# Wird als separater Prozess von fzf aufgerufen – muss platform.zsh selbst laden
+source "${XDG_CONFIG_HOME:-$HOME/.config}/platform.zsh" 2>/dev/null || {
+    echo "action: platform.zsh nicht gefunden" >&2
+    exit 1
+}
 
 case "${1:-}" in
     copy)
         # Pfad ins Clipboard kopieren
         shift
-        if (( $+functions[clip] )); then
-            printf '%s' "$1" | clip
-        else
-            printf '%s' "$1" | pbcopy  # Fallback für macOS
-        fi
+        printf '%s' "$1" | clip
         ;;
     copy-env)
         # Umgebungsvariable aus farbkodierter fzf-Zeile ins Clipboard kopieren
@@ -36,11 +35,7 @@ case "${1:-}" in
         [[ "$name" =~ ^[a-zA-Z_][a-zA-Z0-9_]*$ ]] || exit 0
         local value
         value=$(printenv "$name" 2>/dev/null) || exit 0
-        if (( $+functions[clip] )); then
-            printf '%s' "$value" | clip
-        else
-            printf '%s' "$value" | pbcopy
-        fi
+        printf '%s' "$value" | clip
         ;;
     edit)
         # Datei im Editor öffnen (optional mit Zeile)
@@ -56,11 +51,7 @@ case "${1:-}" in
     open)
         # Datei mit Standard-App öffnen
         shift
-        if (( $+functions[xopen] )); then
-            xopen "$1"
-        else
-            open -- "$1"  # Fallback für macOS
-        fi
+        xopen "$1"
         ;;
     git-diff)
         # Git diff für Datei

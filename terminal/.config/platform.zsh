@@ -7,7 +7,7 @@
 # ============================================================
 # Funktionen:
 #   clip      - Clipboard schreiben (stdin → Zwischenablage)
-#   paste     - Clipboard lesen (Zwischenablage → stdout)
+#   clippaste - Clipboard lesen (Zwischenablage → stdout)
 #   xopen     - Datei/URL mit Standard-App öffnen
 #   sedi      - In-place sed (BSD/GNU kompatibel)
 # ============================================================
@@ -23,7 +23,7 @@
 # ============================================================
 # Headless-Systeme:
 #   Ohne Display ($XDG_SESSION_TYPE != wayland, kein $WAYLAND_DISPLAY)
-#   werden clip/paste/xopen als stille No-Ops definiert.
+#   werden clip/clippaste/xopen als stille No-Ops definiert.
 # ============================================================
 
 # Verhindere mehrfaches Laden (Shell-Variable für aktuelle Shell)
@@ -50,31 +50,35 @@ if [[ -z "${_PLATFORM_DISTRO+x}" ]]; then
     # Linux-Distribution via /etc/os-release (freedesktop-Standard)
     # ID_LIKE behandelt Derivate (z.B. Ubuntu → debian, Manjaro → arch)
     if [[ "$_PLATFORM_OS" == "linux" ]]; then
-        local _osrelease=""
-        [[ -f /etc/os-release ]] && _osrelease="/etc/os-release"
-        [[ -z "$_osrelease" && -f /usr/lib/os-release ]] && _osrelease="/usr/lib/os-release"
+        _detect_distro() {
+            local _osrelease=""
+            [[ -f /etc/os-release ]] && _osrelease="/etc/os-release"
+            [[ -z "$_osrelease" && -f /usr/lib/os-release ]] && _osrelease="/usr/lib/os-release"
 
-        if [[ -n "$_osrelease" ]]; then
-            local _distro_id _distro_id_like
-            _distro_id=$(. "$_osrelease" && echo "$ID")
-            _distro_id_like=$(. "$_osrelease" && echo "${ID_LIKE:-}")
-            case "$_distro_id" in
-                fedora)         _PLATFORM_DISTRO="fedora" ;;
-                debian|ubuntu)  _PLATFORM_DISTRO="debian" ;;
-                arch|manjaro)   _PLATFORM_DISTRO="arch" ;;
-                *)
-                    # Fallback: ID_LIKE für unbekannte Derivate prüfen
-                    case "$_distro_id_like" in
-                        *debian*) _PLATFORM_DISTRO="debian" ;;
-                        *fedora*) _PLATFORM_DISTRO="fedora" ;;
-                        *arch*)   _PLATFORM_DISTRO="arch" ;;
-                        *)        _PLATFORM_DISTRO="unknown" ;;
-                    esac
-                    ;;
-            esac
-        else
-            _PLATFORM_DISTRO="unknown"
-        fi
+            if [[ -n "$_osrelease" ]]; then
+                local _distro_id _distro_id_like
+                _distro_id=$(. "$_osrelease" && echo "$ID")
+                _distro_id_like=$(. "$_osrelease" && echo "${ID_LIKE:-}")
+                case "$_distro_id" in
+                    fedora)         _PLATFORM_DISTRO="fedora" ;;
+                    debian|ubuntu)  _PLATFORM_DISTRO="debian" ;;
+                    arch|manjaro)   _PLATFORM_DISTRO="arch" ;;
+                    *)
+                        # Fallback: ID_LIKE für unbekannte Derivate prüfen
+                        case "$_distro_id_like" in
+                            *debian*) _PLATFORM_DISTRO="debian" ;;
+                            *fedora*) _PLATFORM_DISTRO="fedora" ;;
+                            *arch*)   _PLATFORM_DISTRO="arch" ;;
+                            *)        _PLATFORM_DISTRO="unknown" ;;
+                        esac
+                        ;;
+                esac
+            else
+                _PLATFORM_DISTRO="unknown"
+            fi
+        }
+        _detect_distro
+        unfunction _detect_distro
     else
         _PLATFORM_DISTRO=""
     fi
@@ -98,25 +102,25 @@ if [[ -z "${_PLATFORM_HAS_DISPLAY+x}" ]]; then
 fi
 
 # ------------------------------------------------------------
-# Clipboard: clip (schreiben) und paste (lesen)
+# Clipboard: clip (schreiben) und clippaste (lesen)
 # ------------------------------------------------------------
 # Verwendung: echo "text" | clip
-#             paste → gibt Clipboard aus
+#             clippaste → gibt Clipboard aus
 #
 # Headless: Stille No-Ops (kein Fehler, Daten werden verworfen)
 # Desktop Linux: Wayland mit wl-clipboard (GNOME, KDE, Hyprland)
 
 case "$_PLATFORM_OS" in
     macos)
-        clip()  { pbcopy; }
-        paste() { pbpaste; }
+        clip()      { pbcopy; }
+        clippaste() { pbpaste; }
         ;;
     linux)
         if (( _PLATFORM_HAS_DISPLAY )); then
             # Wayland Desktop: wl-clipboard
             if (( $+commands[wl-copy] )); then
-                clip()  { wl-copy; }
-                paste() { wl-paste; }
+                clip()      { wl-copy; }
+                clippaste() { wl-paste; }
             else
                 # Wayland ohne wl-clipboard: Warnung
                 clip() {
@@ -125,15 +129,15 @@ case "$_PLATFORM_OS" in
                     cat >/dev/null
                     return 1
                 }
-                paste() {
-                    echo "paste: wl-clipboard nicht gefunden" >&2
+                clippaste() {
+                    echo "clippaste: wl-clipboard nicht gefunden" >&2
                     return 1
                 }
             fi
         else
             # Headless: Stille No-Ops (Server, Raspberry Pi ohne Desktop)
-            clip()  { cat >/dev/null; }
-            paste() { :; }
+            clip()      { cat >/dev/null; }
+            clippaste() { :; }
         fi
         ;;
     *)
@@ -142,8 +146,8 @@ case "$_PLATFORM_OS" in
             cat >/dev/null
             return 1
         }
-        paste() {
-            echo "paste: Plattform nicht unterstützt ($_PLATFORM_OS)" >&2
+        clippaste() {
+            echo "clippaste: Plattform nicht unterstützt ($_PLATFORM_OS)" >&2
             return 1
         }
         ;;
@@ -221,8 +225,8 @@ if [[ -n "${DEBUG:-}" ]]; then
         echo "OS:      $_PLATFORM_OS"
         echo "Distro:  ${_PLATFORM_DISTRO:-n/a}"
         echo "Display: $(( _PLATFORM_HAS_DISPLAY )) (Session: ${XDG_SESSION_TYPE:-unset}, Wayland: ${WAYLAND_DISPLAY:-none})"
-        echo "clip:    $(whence -w clip 2>/dev/null || echo 'undefined')"
-        echo "paste:   $(whence -w paste 2>/dev/null || echo 'undefined')"
+        echo "clip:      $(whence -w clip 2>/dev/null || echo 'undefined')"
+        echo "clippaste: $(whence -w clippaste 2>/dev/null || echo 'undefined')"
         echo "xopen:   $(whence -w xopen 2>/dev/null || echo 'undefined')"
         echo "sedi:    $(whence -w sedi 2>/dev/null || echo 'undefined')"
     }
