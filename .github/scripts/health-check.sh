@@ -356,6 +356,57 @@ else
   warn "Keine Font-Casks in Brewfile gefunden"
 fi
 
+# --- Plattform-Abstraktionen ---
+section "Plattform-Abstraktionen (platform.zsh)"
+
+# platform.zsh wird früh in .zshrc geladen – hier manuell laden für isolierten Test
+local platform_file="$DOTFILES_DIR/terminal/.config/platform.zsh"
+if [[ -f "$platform_file" ]]; then
+  # Guard-Variable zurücksetzen damit es geladen wird
+  unset _PLATFORM_LOADED
+  source "$platform_file"
+else
+  fail "platform.zsh nicht gefunden: $platform_file"
+fi
+
+# platform.zsh wird früh in .zshrc geladen und definiert clip/paste/xopen/sedi
+if [[ -n "${_PLATFORM_OS:-}" ]]; then
+  pass "Plattform erkannt: $_PLATFORM_OS"
+else
+  fail "_PLATFORM_OS nicht gesetzt (platform.zsh nicht geladen?)"
+fi
+
+# Prüfe ob alle 4 Funktionen definiert sind
+for func in clip paste xopen sedi; do
+  if (( $+functions[$func] )); then
+    pass "$func() definiert"
+  else
+    fail "$func() nicht definiert"
+  fi
+done
+
+# Funktionale Tests (plattformspezifisch)
+if [[ "$_PLATFORM_OS" == "macos" ]]; then
+  # clip/paste: Roundtrip-Test
+  local test_str="health-check-$$"
+  if echo "$test_str" | clip && [[ "$(paste)" == "$test_str" ]]; then
+    pass "clip/paste Roundtrip erfolgreich"
+  else
+    warn "clip/paste Roundtrip fehlgeschlagen"
+  fi
+
+  # sedi: In-place sed Test
+  local test_file=$(mktemp)
+  echo "foo" > "$test_file"
+  sedi 's/foo/bar/' "$test_file"
+  if [[ "$(cat "$test_file")" == "bar" ]]; then
+    pass "sedi() funktioniert korrekt"
+  else
+    fail "sedi() hat Datei nicht korrekt bearbeitet"
+  fi
+  rm -f "$test_file"
+fi
+
 # --- Terminal-Profil ---
 section "Terminal.app Profil"
 

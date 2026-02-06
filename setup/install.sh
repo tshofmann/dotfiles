@@ -87,8 +87,16 @@ install_zsh() {
 # Default-Shell auf zsh ändern (nicht-interaktiv)
 # ------------------------------------------------------------
 set_default_shell() {
-    current_shell=$(basename "$SHELL")
     zsh_path=$(command -v zsh)
+
+    # Aktuelle Default-Shell ermitteln
+    # $SHELL kann veraltet sein (z.B. nach chsh ohne Neulogin),
+    # daher auf Linux getent als zuverlässigere Quelle nutzen
+    if command -v getent >/dev/null 2>&1; then
+        current_shell=$(basename "$(getent passwd "$(whoami)" | cut -d: -f7)")
+    else
+        current_shell=$(basename "$SHELL")
+    fi
 
     # Bereits zsh?
     if [ "$current_shell" = "zsh" ]; then

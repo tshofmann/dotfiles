@@ -143,7 +143,10 @@ case "$_PLATFORM_OS" in
         ;;
     linux)
         if (( _PLATFORM_HAS_DISPLAY )) && (( $+commands[xdg-open] )); then
-            xopen() { xdg-open "$@" 2>/dev/null & disown; }
+            xopen() {
+                [[ -n "${DEBUG:-}" ]] && echo "xopen: xdg-open $*" >&2
+                xdg-open "$@" 2>/dev/null & disown
+            }
         elif (( _PLATFORM_HAS_DISPLAY )); then
             # Desktop ohne xdg-open
             xopen() {
@@ -192,6 +195,8 @@ if [[ -n "${DEBUG:-}" ]]; then
         echo "Distro:  ${_PLATFORM_DISTRO:-n/a}"
         echo "Display: $(( _PLATFORM_HAS_DISPLAY )) (Wayland: ${WAYLAND_DISPLAY:-none})"
         echo "clip:    $(whence -w clip 2>/dev/null || echo 'undefined')"
+        echo "paste:   $(whence -w paste 2>/dev/null || echo 'undefined')"
         echo "xopen:   $(whence -w xopen 2>/dev/null || echo 'undefined')"
+        echo "sedi:    $(whence -w sedi 2>/dev/null || echo 'undefined')"
     }
 fi
