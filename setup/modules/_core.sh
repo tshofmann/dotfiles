@@ -33,8 +33,10 @@ else
     readonly PLATFORM_OS="${_PLATFORM_OS:-unknown}"
 fi
 
-# Architektur via ZSH-Builtin $MACHTYPE (kein Subshell nötig)
-case "$MACHTYPE" in
+# Architektur via uname -m (Hardware-Architektur, nicht ZSH-Compile-Target)
+# $MACHTYPE gibt die Compile-Time-Architektur des ZSH-Binaries zurück,
+# die bei Rosetta-Nutzung von der echten Hardware abweichen kann.
+case "$(uname -m)" in
     arm64|aarch64) readonly PLATFORM_ARCH="arm64" ;;
     x86_64|amd64)  readonly PLATFORM_ARCH="x86_64" ;;
     *)             readonly PLATFORM_ARCH="unknown" ;;

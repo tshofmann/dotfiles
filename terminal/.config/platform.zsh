@@ -49,6 +49,7 @@ fi
 if [[ -z "${_PLATFORM_DISTRO+x}" ]]; then
     # Linux-Distribution via /etc/os-release (freedesktop-Standard)
     # ID_LIKE behandelt Derivate (z.B. Ubuntu → debian, Manjaro → arch)
+    # HINWEIS: Parallele POSIX-Variante in setup/install.sh detect_platform()
     if [[ "$_PLATFORM_OS" == "linux" ]]; then
         _detect_distro() {
             local _osrelease=""
@@ -56,9 +57,11 @@ if [[ -z "${_PLATFORM_DISTRO+x}" ]]; then
             [[ -z "$_osrelease" && -f /usr/lib/os-release ]] && _osrelease="/usr/lib/os-release"
 
             if [[ -n "$_osrelease" ]]; then
-                local _distro_id _distro_id_like
-                _distro_id=$(. "$_osrelease" && echo "$ID")
-                _distro_id_like=$(. "$_osrelease" && echo "${ID_LIKE:-}")
+                local _distro_id _distro_id_like _distro_info
+                # Einmal sourcen, beide Werte in einer Subshell lesen
+                _distro_info=$(. "$_osrelease" 2>/dev/null && printf '%s\n%s' "$ID" "${ID_LIKE:-}")
+                _distro_id="${_distro_info%%$'\n'*}"
+                _distro_id_like="${_distro_info#*$'\n'}"
                 case "$_distro_id" in
                     fedora)         _PLATFORM_DISTRO="fedora" ;;
                     debian|ubuntu)  _PLATFORM_DISTRO="debian" ;;
