@@ -26,7 +26,7 @@ jobs:
         run: |
           echo "Prüfe ZSH-Syntax (inkl. Alias-Dateien)..."
           errors=0
-          for file in .github/scripts/**/*.sh terminal/.config/alias/*.alias setup/bootstrap.sh; do
+          for file in .github/scripts/**/*.sh terminal/.config/alias/*.alias setup/bootstrap.sh setup/restore.sh; do
             if [[ -f "$file" ]]; then
               if ! zsh -n "$file" 2>/dev/null; then
                 echo "✖ Syntax-Fehler: $file"
@@ -40,6 +40,25 @@ jobs:
             exit 1
           fi
           echo "✔ Shell-Syntax OK"
+
+      - name: POSIX-Syntax prüfen
+        run: |
+          echo "Prüfe POSIX-Shell-Syntax..."
+          errors=0
+          for file in setup/install.sh setup/lib/logging.sh; do
+            if [[ -f "$file" ]]; then
+              if ! sh -n "$file" 2>/dev/null; then
+                echo "✖ Syntax-Fehler: $file"
+                sh -n "$file" 2>&1 | head -3
+                errors=$((errors + 1))
+              fi
+            fi
+          done
+          if [[ $errors -gt 0 ]]; then
+            echo "✖ $errors POSIX-Datei(en) mit Syntax-Fehlern"
+            exit 1
+          fi
+          echo "✔ POSIX-Syntax OK"
 
       - name: Execute-Berechtigungen prüfen
         run: |
@@ -55,7 +74,7 @@ jobs:
             fi
           done
           # Haupt-Skripte
-          for file in setup/bootstrap.sh .github/scripts/generate-docs.sh .github/scripts/health-check.sh; do
+          for file in setup/bootstrap.sh setup/install.sh .github/scripts/generate-docs.sh .github/scripts/health-check.sh; do
             if [[ -f "$file" && ! -x "$file" ]]; then
               echo "✖ $file: Fehlende Execute-Berechtigung"
               errors=$((errors + 1))

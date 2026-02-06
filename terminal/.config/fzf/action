@@ -7,7 +7,7 @@
 # Aufruf      : action <command> "argument" [...]
 # Nutzt       : platform.zsh (clip, xopen)
 # ============================================================
-# Commands: copy, edit, open, git-diff, git-restore, git-add,
+# Commands: copy, copy-env, edit, open, git-diff, git-restore, git-add,
 #           zoxide-remove
 # ============================================================
 
@@ -23,6 +23,23 @@ case "${1:-}" in
             printf '%s' "$1" | clip
         else
             printf '%s' "$1" | pbcopy  # Fallback für macOS
+        fi
+        ;;
+    copy-env)
+        # Umgebungsvariable aus farbkodierter fzf-Zeile ins Clipboard kopieren
+        # Input: "NAME          │ value..." (ANSI-Farben enthalten)
+        shift
+        local name
+        name=$(echo "$1" | sed 's/\x1b\[[0-9;]*m//g' | cut -d'│' -f1 | xargs)
+        [[ -z "$name" ]] && exit 0
+        # Nur gültige Variablennamen zulassen
+        [[ "$name" =~ ^[a-zA-Z_][a-zA-Z0-9_]*$ ]] || exit 0
+        local value
+        value=$(printenv "$name" 2>/dev/null) || exit 0
+        if (( $+functions[clip] )); then
+            printf '%s' "$value" | clip
+        else
+            printf '%s' "$value" | pbcopy
         fi
         ;;
     edit)
@@ -75,6 +92,7 @@ Usage: action <command> [args...]
 
 Commands:
   copy <path>            Pfad ins Clipboard kopieren
+  copy-env <fzf-line>    Umgebungsvariable aus vars()-Zeile kopieren
   edit <file> [line]     Datei im Editor öffnen
   open <file>            Datei mit Standard-App öffnen
   git-diff <file>        Git diff für Datei anzeigen

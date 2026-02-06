@@ -156,7 +156,7 @@ case "$_PLATFORM_OS" in
             }
         else
             # Headless: Stiller No-Op
-            xopen() { :; }
+            xopen() { : "$@"; }
         fi
         ;;
     *)

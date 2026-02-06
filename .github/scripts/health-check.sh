@@ -362,8 +362,8 @@ section "Plattform-Abstraktionen (platform.zsh)"
 # platform.zsh wird früh in .zshrc geladen – hier manuell laden für isolierten Test
 local platform_file="$DOTFILES_DIR/terminal/.config/platform.zsh"
 if [[ -f "$platform_file" ]]; then
-  # Guard-Variable zurücksetzen damit es geladen wird
-  unset _PLATFORM_LOADED
+  # Guard- und Detection-Variablen zurücksetzen, damit die Erkennung isoliert neu läuft
+  unset _PLATFORM_LOADED _PLATFORM_OS _PLATFORM_DISTRO _PLATFORM_HAS_DISPLAY
   source "$platform_file"
 else
   fail "platform.zsh nicht gefunden: $platform_file"
