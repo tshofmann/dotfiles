@@ -135,7 +135,7 @@ set_default_shell() {
     if command -v getent >/dev/null 2>&1; then
         current_shell=$(basename "$(getent passwd "$(whoami)" | cut -d: -f7)")
     else
-        current_shell=$(basename "$SHELL")
+        current_shell=$(basename "${SHELL:-/bin/sh}")
     fi
 
     # Bereits zsh?
