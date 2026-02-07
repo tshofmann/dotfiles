@@ -76,7 +76,7 @@ readonly -a MODULES=(
     homebrew                # Alle Plattformen (Linuxbrew auf Linux)
     macos:terminal-profile  # Nur macOS
     macos:xcode-theme       # Nur macOS
-    linux:some-module       # Nur Linux (noch nicht implementiert)
+    linux:packages          # Nur Linux (z.B. distro-spezifische Pakete)
 )
 ```
 
@@ -89,8 +89,27 @@ readonly -a MODULES=(
 | `debian:` | Debian/Ubuntu/Derivate | `/etc/os-release ID=debian\|ubuntu` oder `ID_LIKE=*debian*` |
 | `arch:` | Arch/Manjaro/Derivate | `/etc/os-release ID=arch\|manjaro` oder `ID_LIKE=*arch*` |
 
-> **Status:** macOS ist primär, Linux-Support ist vorbereitet aber nicht getestet.
-> Beiträge für Linux-Module sind willkommen!
+> **Status:** macOS ist primär. Plattform-Abstraktionen (`platform.zsh`) und Linux-Bootstrap (`install.sh`) sind implementiert, aber noch nicht auf Linux getestet. Beiträge und Test-Reports sind willkommen!
+
+### Cross-Platform Abstraktionen
+
+`terminal/.config/platform.zsh` stellt plattformübergreifende Shell-Funktionen bereit:
+
+| Funktion | macOS | Linux (Wayland) | Headless |
+| -------- | ----- | --------------- | -------- |
+| `clip` | `pbcopy` | `wl-copy` | No-Op |
+| `clippaste` | `pbpaste` | `wl-paste` | No-Op |
+| `xopen` | `open` | `xdg-open` | No-Op |
+| `sedi` | `sed -i ''` | `sed -i` | `sed -i` |
+
+**Wichtig für Contributor:**
+
+- **Immer** `clip`/`clippaste` statt `pbcopy`/`pbpaste` verwenden
+- **Immer** `xopen` statt `open` verwenden
+- **Immer** `sedi` statt `sed -i` verwenden
+- `platform.zsh` wird früh in `.zshrc` geladen und steht in allen Alias-Dateien zur Verfügung
+- Linux-Clipboard: Nur Wayland (kein X11) – bewusste Design-Entscheidung
+- Headless-Systeme: Clipboard/Open-Funktionen sind stille No-Ops
 
 ### Guard-System
 
@@ -132,7 +151,7 @@ Wiederverwendbare Skripte für fzf-Previews und -Aktionen in `~/.config/fzf/`:
 | ------ | ----- | ------------- |
 | `preview file` | Datei-Vorschau mit bat (Fallback: cat) | `rg.alias`, `fd.alias` |
 | `preview dir` | Verzeichnis-Vorschau mit eza (Fallback: ls) | `zoxide.alias`, `fd.alias` |
-| `action` | Sichere Aktionen (copy, edit, git-diff) | Mehrere `.alias`-Dateien |
+| `action` | Sichere Aktionen (copy, copy-env, edit, git-diff) – nutzt `clip` für Cross-Platform | Mehrere `.alias`-Dateien |
 | `help` | Helper für `help()` (list, preview, toggle) | `fzf.alias` |
 | `cmds` | Helper für `cmds()` (preview) | `fzf.alias` |
 | `procs` | Helper für `procs()` (list) | `fzf.alias` |

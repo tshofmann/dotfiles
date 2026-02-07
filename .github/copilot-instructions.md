@@ -67,7 +67,7 @@
 
 | Aspekt | Wert |
 | -------- | ------ |
-| **Plattform** | macOS Apple Silicon (primär), Linux vorbereitet |
+| **Plattform** | macOS (primär), Linux vorbereitet (Fedora, Debian, Arch) |
 | **Shell** | ZSH (POSIX sh nur für `setup/install.sh` + `setup/lib/logging.sh`) |
 | **Theme** | Catppuccin Mocha |
 | **Symlinks** | GNU Stow mit `--no-folding` |

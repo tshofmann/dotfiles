@@ -5,7 +5,7 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles.
 > Diese Dokumentation wird automatisch aus dem Code generiert.
 > Änderungen in `setup/modules/*.sh` und `setup/Brewfile` vornehmen.
 >
-> ⚠️ **Plattform-Status:** Aktuell nur auf **macOS** getestet. Die Codebasis ist für Cross-Platform (Fedora, Debian) vorbereitet, aber die Portierung ist noch nicht abgeschlossen.
+> ⚠️ **Plattform-Status:** Aktuell nur auf **macOS** getestet. Plattform-Abstraktionen und Linux-Bootstrap (Fedora, Debian, Arch) sind implementiert, aber noch nicht auf Linux getestet.
 
 ## Voraussetzungen
 
@@ -18,11 +18,11 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles.
 | **Internetverbindung** | Für Homebrew-Installation und Download der Formulae/Casks |
 | **Admin-Rechte** | `sudo`-Passwort erforderlich (siehe unten) |
 
-### Linux (in Entwicklung 🚧)
+### Linux (vorbereitet 🔧)
 
 | Anforderung | Details |
 | ----------- | ------- |
-| **Fedora / Debian** | Portierung geplant, noch nicht getestet |
+| **Fedora / Debian / Arch** | Bootstrap + Plattform-Abstraktionen implementiert, noch nicht auf Linux getestet |
 | **arm64 oder x86_64** | Beide Architekturen unterstützt |
 | **Internetverbindung** | Für Linuxbrew-Installation |
 | **Build-Tools** | `gcc`/`clang` – werden bei Bedarf nachinstalliert |
