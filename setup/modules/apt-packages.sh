@@ -50,13 +50,13 @@ fi
 # SYNC-CHECK: Bei neuer Formula im Brewfile hier Eintrag ergänzen.
 #             Fehlende Einträge werden beim Bootstrap als Warnung angezeigt.
 typeset -A BREW_TO_ALT=(
-    # apt-Pakete (Debian Bookworm armhf verfügbar)
+    # apt-Pakete (Debian Trixie armhf)
     [bat]=apt:bat
     [btop]=apt:btop
     [fd]=apt:fd-find
     [ffmpeg]=apt:ffmpeg
     [fzf]=apt:fzf
-    [gh]=apt:gh
+    [gh]=apt:gh               # Erst ab Debian Trixie in offiziellen Repos
     [imagemagick]=apt:imagemagick
     [jq]=apt:jq
     [poppler]=apt:poppler-utils
@@ -75,7 +75,7 @@ typeset -A BREW_TO_ALT=(
     [fastfetch]=gh:fastfetch-cli/fastfetch
     [lazygit]=gh:jesseduffield/lazygit
 
-    # Cargo (kein apt für Bookworm armhf)
+    # Cargo (kein apt für armhf)
     [eza]=cargo:eza
     [resvg]=cargo:resvg
     [starship]=cargo:starship
@@ -290,7 +290,7 @@ _install_cargo_tools() {
     warn "Cargo-Kompilierung auf 32-bit ARM ist langsam (je Tool 5-30 Min)"
     for crate in "${missing_crates[@]}"; do
         log "Installiere $crate via cargo..."
-        if cargo install "$crate" 2>&1; then
+        if cargo install "$crate"; then
             ok "$crate installiert via cargo"
         else
             warn "$crate: cargo install fehlgeschlagen"

@@ -19,7 +19,7 @@
 # ============================================================
 # Display-Systeme:
 #   macOS     - Immer Display (pbcopy/pbpaste, open)
-#   Wayland   - GNOME, KDE, Hyprland (wl-clipboard, xdg-open)
+#   Wayland   - GNOME, KDE, Hyprland, labwc (wl-clipboard, xdg-open)
 # ============================================================
 # Headless-Systeme:
 #   Ohne Display ($XDG_SESSION_TYPE != wayland, kein $WAYLAND_DISPLAY)
