@@ -81,7 +81,6 @@ Das Bootstrap-Skript führt dann folgende Aktionen in dieser Reihenfolge aus:
 | Homebrew | Installiert/prüft Homebrew unter `/opt/homebrew` | ❌ Exit |
 | Brewfile | Installiert CLI-Tools via `brew bundle` | ❌ Exit |
 | APT-Pakete | Installiert verfügbare CLI-Tools via apt | ⚠️ Warnung |
-| GitHub-Releases | Installiert .deb/Binaries via gh | ⚠️ Warnung |
 | Cargo-Tools | Installiert fehlende Tools via cargo | ⚠️ Warnung |
 | NPM-Tools | Installiert npm-Pakete (falls Node vorhanden) | ⚠️ Warnung |
 | Binary-Symlinks | Erstellt Symlinks für abweichende Binary-Namen | ⚠️ Warnung |

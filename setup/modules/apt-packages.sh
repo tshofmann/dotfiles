@@ -2,13 +2,12 @@
 # ============================================================
 # apt-packages.sh - Brewfile-gesteuerte Paketinstallation (32-bit ARM)
 # ============================================================
-# Zweck       : Installiert CLI-Tools via apt/cargo/gh auf Systemen ohne Homebrew
+# Zweck       : Installiert CLI-Tools via apt/cargo auf Systemen ohne Homebrew
 # Pfad        : setup/modules/apt-packages.sh
 # Benötigt    : _core.sh, validation.sh
 # Plattform   : Linux (Debian/Raspbian, armv6/armv7)
 #
 # STEP        : APT-Pakete | Installiert verfügbare CLI-Tools via apt | ⚠️ Warnung
-# STEP        : GitHub-Releases | Installiert .deb/Binaries via gh | ⚠️ Warnung
 # STEP        : Cargo-Tools | Installiert fehlende Tools via cargo | ⚠️ Warnung
 # STEP        : NPM-Tools | Installiert npm-Pakete (falls Node vorhanden) | ⚠️ Warnung
 # STEP        : Binary-Symlinks | Erstellt Symlinks für abweichende Binary-Namen | ⚠️ Warnung
@@ -25,7 +24,6 @@
 # Installationsmethoden (BREW_TO_ALT Werte):
 #   apt:NAME         → sudo apt-get install NAME
 #   cargo:CRATE      → cargo install CRATE
-#   gh:OWNER/REPO    → GitHub Release herunterladen (.deb oder Binary)
 #   npm:PACKAGE      → npm install -g PACKAGE
 #   skip             → macOS-exklusiv oder ZSH-Plugin (separat behandelt)
 #
@@ -53,16 +51,20 @@ typeset -A BREW_TO_ALT=(
     # apt-Pakete (Debian Trixie armhf)
     [bat]=apt:bat
     [btop]=apt:btop
+    [eza]=apt:eza
+    [fastfetch]=apt:fastfetch
     [fd]=apt:fd-find
     [ffmpeg]=apt:ffmpeg
     [fzf]=apt:fzf
     [gh]=apt:gh               # Erst ab Debian Trixie in offiziellen Repos
     [imagemagick]=apt:imagemagick
     [jq]=apt:jq
+    [lazygit]=apt:lazygit
     [poppler]=apt:poppler-utils
     [ripgrep]=apt:ripgrep
     [sevenzip]=apt:7zip
     [shellcheck]=apt:shellcheck
+    [starship]=apt:starship
     [stow]=apt:stow
     [tealdeer]=apt:tealdeer
     [zoxide]=apt:zoxide
@@ -71,14 +73,8 @@ typeset -A BREW_TO_ALT=(
     [zsh-autosuggestions]=apt:zsh-autosuggestions
     [zsh-syntax-highlighting]=apt:zsh-syntax-highlighting
 
-    # GitHub Releases (.deb für armv6l/armv7l verfügbar)
-    [fastfetch]=gh:fastfetch-cli/fastfetch
-    [lazygit]=gh:jesseduffield/lazygit
-
     # Cargo (kein apt für armhf)
-    [eza]=cargo:eza
     [resvg]=cargo:resvg
-    [starship]=cargo:starship
     [yazi]=cargo:yazi-fm
 
     # npm
@@ -158,86 +154,6 @@ _install_apt_packages() {
         warn "Einige APT-Pakete konnten nicht installiert werden"
         warn "Manuell prüfen: sudo apt-get install ${apt_packages[*]}"
     fi
-
-    return 0
-}
-
-# ------------------------------------------------------------
-# GitHub Release Installation
-# ------------------------------------------------------------
-# Nutzt gh CLI (via apt installiert) zum Herunterladen.
-# fastfetch: .deb-Pakete für armv6l/armv7l
-# lazygit: .tar.gz mit Go-Binary für armv6
-_install_gh_releases() {
-    CURRENT_STEP="GitHub-Releases"
-
-    # gh muss installiert sein (kommt via apt)
-    if ! command -v gh >/dev/null 2>&1; then
-        warn "gh CLI nicht verfügbar – GitHub-Releases werden übersprungen"
-        warn "Installiere gh zuerst: sudo apt-get install gh"
-        return 0
-    fi
-
-    local arch
-    arch="$(uname -m)"  # armv6l oder armv7l
-
-    for formula in "${(@k)BREW_TO_ALT}"; do
-        local method="${BREW_TO_ALT[$formula]}"
-        [[ "$method" == gh:* ]] || continue
-        local repo="${method#gh:}"
-        local binary="${BREW_TO_BINARY[$formula]:-$formula}"
-
-        # Bereits installiert?
-        command -v "$binary" >/dev/null 2>&1 && continue
-
-        log "Installiere $formula von GitHub ($repo)..."
-
-        local tmpdir
-        tmpdir=$(mktemp -d)
-
-        case "$formula" in
-            fastfetch)
-                # fastfetch bietet .deb-Pakete: fastfetch-linux-armv6l.deb / armv7l.deb
-                local deb_pattern="fastfetch-linux-${arch}.deb"
-                if gh release download --repo "$repo" --pattern "$deb_pattern" --dir "$tmpdir" 2>/dev/null; then
-                    if sudo dpkg -i "$tmpdir"/"$deb_pattern"; then
-                        ok "fastfetch installiert via GitHub Release (.deb)"
-                    else
-                        warn "fastfetch: dpkg -i fehlgeschlagen"
-                        sudo apt-get install -f -y 2>/dev/null  # Abhängigkeiten reparieren
-                    fi
-                else
-                    warn "fastfetch: GitHub Release nicht heruntergeladen"
-                    warn "  Manuell: https://github.com/$repo/releases"
-                fi
-                ;;
-            lazygit)
-                # lazygit bietet tar.gz: lazygit_*_linux_armv6.tar.gz
-                # armv6-Binary ist kompatibel mit armv7 (GOARM=6 default)
-                local tar_pattern="lazygit_*_linux_armv6.tar.gz"
-                if gh release download --repo "$repo" --pattern "$tar_pattern" --dir "$tmpdir" 2>/dev/null; then
-                    local bin_dir="$HOME/.local/bin"
-                    mkdir -p "$bin_dir"
-                    tar -xf "$tmpdir"/lazygit_*_linux_armv6.tar.gz -C "$tmpdir"
-                    if [[ -f "$tmpdir/lazygit" ]]; then
-                        install -m 755 "$tmpdir/lazygit" "$bin_dir/lazygit"
-                        ok "lazygit installiert via GitHub Release (~/.local/bin)"
-                    else
-                        warn "lazygit: Binary nicht im Archiv gefunden"
-                    fi
-                else
-                    warn "lazygit: GitHub Release nicht heruntergeladen"
-                    warn "  Manuell: https://github.com/$repo/releases"
-                fi
-                ;;
-            *)
-                warn "$formula: GitHub-Release-Installation nicht implementiert"
-                warn "  Manuell: https://github.com/$repo/releases"
-                ;;
-        esac
-
-        rm -rf "$tmpdir"
-    done
 
     return 0
 }
@@ -431,7 +347,6 @@ setup_apt_packages() {
 
     _install_apt_packages
     _create_binary_symlinks
-    _install_gh_releases
     _install_cargo_tools
     _install_npm_tools
 

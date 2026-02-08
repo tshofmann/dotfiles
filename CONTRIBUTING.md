@@ -163,8 +163,8 @@ Wiederverwendbare Skripte für fzf-Previews und -Aktionen in `~/.config/fzf/`:
 - Testbar und wartbar
 
 ```zsh
-# RICHTIG: Helper-Skript aufrufen
---preview "$helper/preview file {1}"
+# RICHTIG: Exportierte Variable $FZF_HELPER_DIR verwenden (gesetzt in fzf/init.zsh)
+--preview "$FZF_HELPER_DIR/preview file {1}"
 
 # FALSCH: Inline-Code (Shell-Injection-Risiko)
 --preview 'bat {}'
