@@ -25,7 +25,7 @@
 #   apt:NAME         → sudo apt-get install NAME
 #   cargo:CRATE      → cargo install CRATE
 #   npm:PACKAGE      → npm install -g PACKAGE
-#   skip             → macOS-exklusiv oder ZSH-Plugin (separat behandelt)
+#   skip             → macOS-exklusiv, ZSH-Plugin oder manuell
 #
 # Binary-Namen-Konflikte (Debian vs. Homebrew):
 #   apt: fd-find → "fdfind", bat → "batcat", 7zip → "7z"

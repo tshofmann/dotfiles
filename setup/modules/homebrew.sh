@@ -6,7 +6,7 @@
 # Pfad        : setup/modules/homebrew.sh
 # Benötigt    : _core.sh, validation.sh (für BREW_PREFIX)
 #
-# STEP        : Homebrew | Installiert/prüft Homebrew unter `/opt/homebrew` | ❌ Exit
+# STEP        : Homebrew | Installiert/prüft Homebrew (arm64/x86_64/Linuxbrew) | ❌ Exit
 # STEP        : Brewfile | Installiert CLI-Tools via `brew bundle` | ❌ Exit
 # ============================================================
 

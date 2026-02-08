@@ -76,7 +76,7 @@ readonly -a MODULES=(
     homebrew                # Alle Plattformen (Linuxbrew auf Linux)
     macos:terminal-profile  # Nur macOS
     macos:xcode-theme       # Nur macOS
-    linux:packages          # Nur Linux (z.B. distro-spezifische Pakete)
+    linux:apt-packages      # Nur Linux (APT + Cargo Fallback für 32-bit ARM)
 )
 ```
 

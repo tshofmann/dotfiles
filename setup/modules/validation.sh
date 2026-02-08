@@ -94,7 +94,7 @@ validate_platform() {
         # 32-bit ARM: Plattform-Abstraktionen funktionieren, aber kein Homebrew
         if [[ "$PLATFORM_ARCH" == armv* ]]; then
             warn "32-bit ARM erkannt – Homebrew/Linuxbrew unterstützt nur arm64/x86_64"
-            warn "Plattform-Abstraktionen funktionieren, vollständiger Bootstrap nicht möglich"
+            warn "Homebrew wird übersprungen – Tools via apt/cargo (siehe apt-packages.sh)"
         fi
     else
         err "Nicht unterstützte Plattform: $PLATFORM_OS"

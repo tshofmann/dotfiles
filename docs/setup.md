@@ -78,7 +78,7 @@ Das Bootstrap-Skript führt dann folgende Aktionen in dieser Reihenfolge aus:
 | Schreibrechte-Check | Prüft ob `$HOME` schreibbar ist | ❌ Exit |
 | Xcode CLI Tools | Installiert/prüft Developer Tools | ❌ Exit |
 | Build-Tools | Installiert Build-Essentials (Linux) | ❌ Exit |
-| Homebrew | Installiert/prüft Homebrew unter `/opt/homebrew` | ❌ Exit |
+| Homebrew | Installiert/prüft Homebrew (arm64/x86_64/Linuxbrew) | ❌ Exit |
 | Brewfile | Installiert CLI-Tools via `brew bundle` | ❌ Exit |
 | APT-Pakete | Installiert verfügbare CLI-Tools via apt | ⚠️ Warnung |
 | Cargo-Tools | Installiert fehlende Tools via cargo | ⚠️ Warnung |
