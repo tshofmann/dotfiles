@@ -55,6 +55,7 @@ if [[ -z "${_PLATFORM_DISTRO+x}" ]]; then
     # ID_LIKE behandelt Derivate (z.B. Ubuntu → debian, Manjaro → arch)
     # SYNC-CHECK: Parallele POSIX-Variante in setup/install.sh detect_platform()
     # Bei Änderung der ID-Cases hier auch install.sh anpassen.
+    # Sync wird via CI validiert (validate.yml → Plattform-Sync prüfen)
     # IDs: fedora | debian|ubuntu|raspbian | arch|manjaro
     if [[ "$_PLATFORM_OS" == "linux" ]]; then
         _detect_distro() {

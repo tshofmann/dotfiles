@@ -88,6 +88,56 @@ jobs:
           fi
           echo "✔ Execute-Berechtigungen OK"
 
+      - name: Plattform-Sync prüfen
+        run: |
+          echo "Prüfe Synchronisation platform.zsh ↔ install.sh..."
+          errors=0
+
+          # Distro-ID Case-Patterns extrahieren und vergleichen
+          # Erfasst primäre IDs (z.B. fedora, debian|ubuntu|raspbian)
+          # und ID_LIKE Fallbacks (z.B. *debian*, *fedora*)
+          extract_patterns() {
+            grep -E '^\s+[*a-z][a-z0-9|*]*\)\s+(echo\s+"(fedora|debian|arch)"|_PLATFORM_DISTRO="(fedora|debian|arch)")' "$1" | \
+              sed 's/^[[:space:]]*//' | \
+              sed 's/)[[:space:]]*.*//' | \
+              sort
+          }
+
+          p_patterns=$(extract_patterns terminal/.config/platform.zsh)
+          i_patterns=$(extract_patterns setup/install.sh)
+
+          if [[ "$p_patterns" != "$i_patterns" ]]; then
+            echo "✖ Distro-ID-Patterns nicht synchron!"
+            echo ""
+            echo "  platform.zsh:"
+            echo "$p_patterns" | sed 's/^/    /'
+            echo ""
+            echo "  install.sh:"
+            echo "$i_patterns" | sed 's/^/    /'
+            echo ""
+            echo "  Beide Dateien müssen identische case-Patterns haben."
+            errors=$((errors + 1))
+          fi
+
+          # IDs-Zusammenfassung muss identisch sein
+          p_comment=$(grep '# IDs:' terminal/.config/platform.zsh | head -1 | sed 's/^[[:space:]]*//')
+          i_comment=$(grep '# IDs:' setup/install.sh | head -1 | sed 's/^[[:space:]]*//')
+
+          if [[ "$p_comment" != "$i_comment" ]]; then
+            echo "✖ IDs-Zusammenfassung nicht synchron:"
+            echo "  platform.zsh: $p_comment"
+            echo "  install.sh:   $i_comment"
+            errors=$((errors + 1))
+          fi
+
+          if [[ $errors -gt 0 ]]; then
+            echo ""
+            echo "✖ $errors Sync-Fehler"
+            echo "  Siehe SYNC-CHECK Kommentare in beiden Dateien."
+            exit 1
+          fi
+          echo "✔ Plattform-Sync OK"
+
       - name: Homebrew Cache
         uses: actions/cache@v5
         with:

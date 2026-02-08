@@ -38,6 +38,7 @@ detect_platform() {
             # ID_LIKE behandelt Derivate (z.B. Ubuntu → debian)
             # SYNC-CHECK: Parallele ZSH-Variante in terminal/.config/platform.zsh _detect_distro()
             # Bei Änderung der ID-Cases hier auch platform.zsh anpassen.
+            # Sync wird via CI validiert (validate.yml → Plattform-Sync prüfen)
             # IDs: fedora | debian|ubuntu|raspbian | arch|manjaro
             # Empfohlenes Pattern: einmal sourcen (systemd os-release Dokumentation)
             _osrelease=""
