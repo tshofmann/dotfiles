@@ -287,10 +287,40 @@ _install_cargo_tools() {
         ok "Rust-Toolchain vorhanden: $(rustc --version 2>/dev/null | head -1)"
     fi
 
+    # Speicher-basierte Cargo-Limits für schwache Hardware
+    # RPi Zero/1: 512 MB RAM → OOM bei paralleler Kompilierung
+    # RPi 2/3 (32-bit OS): 1 GB RAM → knapp bei großen Crates
+    local total_mem_mb=0
+    if [[ -r /proc/meminfo ]]; then
+        local mem_kb
+        mem_kb=$(awk '/^MemTotal:/ { print $2 }' /proc/meminfo)
+        total_mem_mb=$(( mem_kb / 1024 ))
+    fi
+
+    local cargo_jobs=""
+    local cargo_rustflags=""
+    if (( total_mem_mb > 0 && total_mem_mb <= 1024 )); then
+        # Sequenzielle Kompilierung: ein Job, eine Codegen-Unit
+        cargo_jobs=1
+        cargo_rustflags="-C codegen-units=1"
+        warn "RAM: ${total_mem_mb} MB → setze CARGO_BUILD_JOBS=1, codegen-units=1"
+
+        # Swap-Prüfung: ohne Swap schlägt starship/yazi auf ≤512 MB fehl
+        local swap_kb
+        swap_kb=$(awk '/^SwapTotal:/ { print $2 }' /proc/meminfo)
+        if (( swap_kb < 524288 )); then
+            warn "Swap: $(( swap_kb / 1024 )) MB – empfohlen: mindestens 512 MB"
+            warn "  sudo fallocate -l 512M /swapfile && sudo chmod 600 /swapfile"
+            warn "  sudo mkswap /swapfile && sudo swapon /swapfile"
+        fi
+    fi
+
     warn "Cargo-Kompilierung auf 32-bit ARM ist langsam (je Tool 5-30 Min)"
     for crate in "${missing_crates[@]}"; do
         log "Installiere $crate via cargo..."
-        if cargo install "$crate"; then
+        if CARGO_BUILD_JOBS="${cargo_jobs:-}" \
+           RUSTFLAGS="${cargo_rustflags:+$cargo_rustflags }${RUSTFLAGS:-}" \
+           cargo install "$crate"; then
             ok "$crate installiert via cargo"
         else
             warn "$crate: cargo install fehlgeschlagen"
