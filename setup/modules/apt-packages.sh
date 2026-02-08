@@ -234,7 +234,7 @@ _install_cargo_tools() {
     warn "Cargo-Kompilierung auf 32-bit ARM ist langsam (je Tool 5-30 Min)"
     for crate in "${missing_crates[@]}"; do
         log "Installiere $crate via cargo..."
-        if CARGO_BUILD_JOBS="${cargo_jobs:-}" \
+        if ${cargo_jobs:+CARGO_BUILD_JOBS=$cargo_jobs} \
            RUSTFLAGS="${cargo_rustflags:+$cargo_rustflags }${RUSTFLAGS:-}" \
            cargo install "$crate"; then
             ok "$crate installiert via cargo"
@@ -274,6 +274,10 @@ _install_npm_tools() {
         done
         return 0
     fi
+
+    # npm-Prefix auf ~/.local setzen, damit globale Pakete ohne sudo
+    # in ~/.local/bin landen (bereits im PATH)
+    npm config set prefix "$HOME/.local" 2>/dev/null
 
     for pkg in "${missing_npms[@]}"; do
         log "Installiere $pkg via npm..."
