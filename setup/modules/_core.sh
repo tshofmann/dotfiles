@@ -38,6 +38,8 @@ fi
 case "$(uname -m)" in
     arm64|aarch64) readonly PLATFORM_ARCH="arm64" ;;
     x86_64|amd64)  readonly PLATFORM_ARCH="x86_64" ;;
+    armv7*)        readonly PLATFORM_ARCH="armv7" ;;
+    armv6*)        readonly PLATFORM_ARCH="armv6" ;;
     *)             readonly PLATFORM_ARCH="unknown" ;;
 esac
 

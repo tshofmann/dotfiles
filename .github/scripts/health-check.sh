@@ -14,16 +14,23 @@
 #           - Alle Dateien in terminal/ → Symlinks in ~/
 #           - Alle brew-Formulae in Brewfile → installierte Tools
 #           - Alle zsh-* in Brewfile → ZSH-Plugins
-#           - Alle font-* in Brewfile → Fonts
+#           - Alle font-* in Brewfile → Fonts (nur macOS)
 #
 #           IST (was tatsächlich existiert):
 #           - Symlinks im Home-Verzeichnis
 #           - Installierte Binaries (command -v)
 #           - Plugin-Verzeichnisse in $(brew --prefix)/share/
-#           - Font-Dateien in ~/Library/Fonts/
+#             oder /usr/share/ (apt-basierte Systeme)
+#           - Font-Dateien in ~/Library/Fonts/ (nur macOS)
 #
 #           → Neue Dateien werden AUTOMATISCH erkannt!
 #           → Keine manuellen Updates bei neuen Configs nötig!
+#
+# Plattform   : macOS und Linux (inkl. 32-bit ARM Raspberry Pi)
+#               macOS-spezifische Sektionen (Font, Terminal.app,
+#               ZSH-Sessions) werden auf Linux uebersprungen.
+#               Auf armv* ohne Homebrew werden Tools direkt via
+#               command -v geprueft (apt/cargo/gh-Release Installation).
 #
 # Aufruf      : ./scripts/health-check.sh
 # Docs        : https://github.com/tshofmann/dotfiles#readme
@@ -44,6 +51,16 @@ readonly SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-style"
 readonly TERMINAL_DIR="$DOTFILES_DIR/terminal"
 readonly EDITOR_DIR="$DOTFILES_DIR/editor"
 readonly BREWFILE="$DOTFILES_DIR/setup/Brewfile"
+
+# Plattform-Erkennung (für bedingte Sektionen)
+# platform.zsh wird später erneut geladen für isolierten Test,
+# hier nur für Guard-Logik der Sektionen
+local _hc_os="macos"
+if [[ "$(uname -s)" == "Linux" ]]; then
+  _hc_os="linux"
+fi
+local _hc_arch
+_hc_arch="$(uname -m)"
 
 # Zähler für Ergebnisse
 typeset -i passed=0
@@ -298,6 +315,16 @@ if command -v brew >/dev/null 2>&1; then
   else
     warn "Brewfile nicht gefunden: $BREWFILE"
   fi
+elif [[ "$_hc_os" == "linux" && "$_hc_arch" == armv* ]]; then
+  # 32-bit ARM: Kein Homebrew verfügbar, Tools wurden via apt/cargo/gh installiert
+  # Prüfe trotzdem alle erwarteten Binaries aus dem Brewfile
+  warn "Homebrew nicht verfügbar (32-bit ARM) – prüfe Binaries direkt"
+  if [[ -f "$BREWFILE" ]]; then
+    local -a tools=($(get_tools_from_brewfile "$BREWFILE"))
+    for tool in "${tools[@]}"; do
+      check_tool "$tool" "$tool"
+    done
+  fi
 else
   fail "Homebrew nicht installiert"
 fi
@@ -310,17 +337,27 @@ typeset -a zsh_plugins=($(grep -E '^brew "zsh-' "$BREWFILE" 2>/dev/null | sed 's
 
 if (( ${#zsh_plugins[@]} > 0 )); then
   for plugin in "${zsh_plugins[@]}"; do
-    if [[ -d "$(brew --prefix)/share/$plugin" ]]; then
-      pass "$plugin"
+    # Prüfe Homebrew-Pfad, dann apt-Pfad (/usr/share/)
+    if command -v brew >/dev/null 2>&1 && [[ -d "$(brew --prefix)/share/$plugin" ]]; then
+      pass "$plugin (Homebrew)"
+    elif [[ -d "/usr/share/$plugin" ]]; then
+      pass "$plugin (/usr/share)"
     else
-      warn "$plugin nicht installiert (brew install $plugin)"
+      if command -v brew >/dev/null 2>&1; then
+        warn "$plugin nicht installiert (brew install $plugin)"
+      else
+        warn "$plugin nicht installiert (sudo apt-get install $plugin)"
+      fi
     fi
   done
 else
   warn "Keine ZSH-Plugins in Brewfile gefunden"
 fi
 
-# --- Font (DYNAMISCH aus Brewfile) ---
+# --- Font (DYNAMISCH aus Brewfile, nur macOS) ---
+# Auf Linux/SSH werden Fonts vom Client-Terminal gerendert,
+# der Pi sendet nur Unicode-Codepoints über SSH.
+if [[ "$_hc_os" == "macos" ]]; then
 section "Nerd Font"
 
 # DYNAMISCH: Extrahiere Font-Casks aus Brewfile
@@ -355,6 +392,10 @@ if (( ${#font_casks[@]} > 0 )); then
 else
   warn "Keine Font-Casks in Brewfile gefunden"
 fi
+else
+  # Linux: Font-Check übersprungen (SSH = Font kommt vom Client)
+  print "\n  ${C_DIM}ℹ Nerd Font: Wird vom SSH-Client gerendert (kein lokaler Check nötig)${C_RESET}"
+fi  # macOS Font-Guard
 
 # --- Plattform-Abstraktionen ---
 section "Plattform-Abstraktionen (platform.zsh)"
@@ -385,40 +426,29 @@ for func in clip clippaste xopen sedi; do
   fi
 done
 
-# Funktionale Tests (plattformspezifisch)
+# sedi: In-place sed Test (plattformunabhängig – sedi abstrahiert BSD/GNU)
+local test_file=$(mktemp)
+echo "foo" > "$test_file"
+sedi 's/foo/bar/' "$test_file"
+if [[ "$(cat "$test_file")" == "bar" ]]; then
+  pass "sedi() funktioniert korrekt"
+else
+  fail "sedi() hat Datei nicht korrekt bearbeitet"
+fi
+rm -f "$test_file"
+
+# clip/clippaste: Roundtrip-Test (nur wenn Display vorhanden)
 if [[ "$_PLATFORM_OS" == "macos" ]]; then
-  # clip/clippaste: Roundtrip-Test
   local test_str="health-check-$$"
   if echo "$test_str" | clip && [[ "$(clippaste)" == "$test_str" ]]; then
     pass "clip/clippaste Roundtrip erfolgreich"
   else
     warn "clip/clippaste Roundtrip fehlgeschlagen"
   fi
-
-  # sedi: In-place sed Test
-  local test_file=$(mktemp)
-  echo "foo" > "$test_file"
-  sedi 's/foo/bar/' "$test_file"
-  if [[ "$(cat "$test_file")" == "bar" ]]; then
-    pass "sedi() funktioniert korrekt"
-  else
-    fail "sedi() hat Datei nicht korrekt bearbeitet"
-  fi
-  rm -f "$test_file"
-elif [[ "$_PLATFORM_OS" == "linux" ]]; then
-  # sedi: In-place sed Test (kein Display nötig)
-  local test_file=$(mktemp)
-  echo "foo" > "$test_file"
-  sedi 's/foo/bar/' "$test_file"
-  if [[ "$(cat "$test_file")" == "bar" ]]; then
-    pass "sedi() funktioniert korrekt"
-  else
-    fail "sedi() hat Datei nicht korrekt bearbeitet"
-  fi
-  rm -f "$test_file"
 fi
 
-# --- Terminal-Profil ---
+# --- Terminal-Profil (nur macOS) ---
+if [[ "$_hc_os" == "macos" ]]; then
 section "Terminal.app Profil"
 
 profile_name="catppuccin-mocha"
@@ -436,6 +466,7 @@ if [[ "$startup_profile" == "$profile_name" ]]; then
 else
   warn "Startup-Profil ist '$startup_profile' (erwartet: $profile_name)"
 fi
+fi  # macOS Terminal.app Guard
 
 # --- Starship ---
 section "Starship Konfiguration"
@@ -446,7 +477,8 @@ check_symlink "$HOME/.config/starship/starship.toml" \
   "terminal/.config/starship/starship.toml" \
   "~/.config/starship/starship.toml"
 
-# --- ZSH-Sessions ---
+# --- ZSH-Sessions (nur macOS) ---
+if [[ "$_hc_os" == "macos" ]]; then
 section "ZSH-Sessions"
 
 if [[ -f "$HOME/.zshenv" ]] && grep -q "SHELL_SESSIONS_DISABLE=1" "$HOME/.zshenv" 2>/dev/null; then
@@ -455,6 +487,7 @@ else
   warn "SHELL_SESSIONS_DISABLE=1 nicht in ~/.zshenv (macOS Session-History aktiv)"
   warn "  → stow -R terminal editor ausführen oder ~/.zshenv manuell erstellen"
 fi
+fi  # macOS ZSH-Sessions Guard
 
 # --- Catppuccin Theme-Registry ---
 section "Catppuccin Theme-Registry"
@@ -569,7 +602,8 @@ check_theme_registry() {
 
 check_theme_registry
 
-# --- Brewfile Status ---
+# --- Brewfile Status (nur mit Homebrew) ---
+if command -v brew >/dev/null 2>&1; then
 section "Brewfile Status"
 
 if [[ -n "${HOMEBREW_BUNDLE_FILE:-}" ]] && [[ -f "$HOMEBREW_BUNDLE_FILE" ]]; then
@@ -604,6 +638,7 @@ if [[ -n "${HOMEBREW_BUNDLE_FILE:-}" ]] && [[ -f "$HOMEBREW_BUNDLE_FILE" ]]; the
 else
   warn "HOMEBREW_BUNDLE_FILE nicht gesetzt (neu einloggen nach stow)"
 fi
+fi  # Homebrew Brewfile-Status Guard
 
 # ------------------------------------------------------------
 # Zusammenfassung

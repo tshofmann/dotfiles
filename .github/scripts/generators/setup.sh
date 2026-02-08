@@ -129,11 +129,13 @@ HEADER
 | Anforderung | Details |
 | ----------- | ------- |
 | **Fedora / Debian / Arch** | Bootstrap + Plattform-Abstraktionen implementiert, noch nicht auf Linux getestet |
-| **arm64 oder x86_64** | Beide Architekturen unterstützt |
+| **arm64, x86_64 oder armv6/armv7** | Alle Architekturen unterstützt (32-bit ARM via apt/cargo) |
 | **Internetverbindung** | Für Linuxbrew-Installation |
 | **Build-Tools** | `gcc`/`clang` – werden bei Bedarf nachinstalliert |
 
 > **Hinweis:** Auf Linux werden macOS-spezifische Module (Terminal.app, mas, Xcode-Theme) automatisch übersprungen. Die Plattform-Erkennung erfolgt in `setup/modules/_core.sh`.
+>
+> **Hinweis (32-bit ARM / Raspberry Pi):** Homebrew unterstützt kein armv6/armv7. Auf diesen Systemen werden Tools automatisch via apt, Cargo, GitHub Releases und npm installiert (`setup/modules/apt-packages.sh`). Das Brewfile bleibt die Single Source of Truth – das Mapping erfolgt dynamisch.
 >
 > **Hinweis (macOS):** Architektur- und macOS-Versionsprüfung erfolgen automatisch beim Start von `bootstrap.sh`. Bei nicht unterstützten Systemen bricht das Skript mit einer Fehlermeldung ab.
 

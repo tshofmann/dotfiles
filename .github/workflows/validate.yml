@@ -43,6 +43,7 @@ jobs:
           echo "✔ Shell-Syntax OK"
 
       - name: POSIX-Syntax prüfen
+        shell: bash
         run: |
           echo "Prüfe POSIX-Shell-Syntax..."
           errors=0

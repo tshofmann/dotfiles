@@ -37,7 +37,15 @@ if [[ -f "${DOTFILES_DIR}/terminal/.config/theme-style" ]]; then
 fi
 
 # Logging-Funktionen laden (nutzt theme-style Farben oder Fallback)
-source "${SCRIPT_DIR}/lib/logging.sh"
+if [[ -f "${SCRIPT_DIR}/lib/logging.sh" ]]; then
+    source "${SCRIPT_DIR}/lib/logging.sh"
+else
+    # Minimaler Fallback (sollte nie auftreten)
+    log()  { echo "→ $*"; }
+    ok()   { echo "✔ $*"; }
+    err()  { echo "✖ $*" >&2; }
+    warn() { echo "⚠ $*"; }
+fi
 
 # ------------------------------------------------------------
 # Prüfungen

@@ -25,6 +25,10 @@
 #   Ohne Display ($XDG_SESSION_TYPE != wayland, kein $WAYLAND_DISPLAY)
 #   werden clip/clippaste/xopen als stille No-Ops definiert.
 # ============================================================
+# HINWEIS: Variablen werden beim ersten Laden gecacht und nicht
+#          aktualisiert. Nach Wechsel des Display-Systems
+#          (tty → Wayland): exec zsh
+# ============================================================
 
 # Verhindere mehrfaches Laden (Shell-Variable für aktuelle Shell)
 [[ -n "${_PLATFORM_LOADED:-}" ]] && return 0
@@ -49,7 +53,9 @@ fi
 if [[ -z "${_PLATFORM_DISTRO+x}" ]]; then
     # Linux-Distribution via /etc/os-release (freedesktop-Standard)
     # ID_LIKE behandelt Derivate (z.B. Ubuntu → debian, Manjaro → arch)
-    # HINWEIS: Parallele POSIX-Variante in setup/install.sh detect_platform()
+    # SYNC-CHECK: Parallele POSIX-Variante in setup/install.sh detect_platform()
+    # Bei Änderung der ID-Cases hier auch install.sh anpassen.
+    # IDs: fedora | debian|ubuntu|raspbian | arch|manjaro
     if [[ "$_PLATFORM_OS" == "linux" ]]; then
         _detect_distro() {
             local _osrelease=""
@@ -63,9 +69,9 @@ if [[ -z "${_PLATFORM_DISTRO+x}" ]]; then
                 _distro_id="${_distro_info%%$'\n'*}"
                 _distro_id_like="${_distro_info#*$'\n'}"
                 case "$_distro_id" in
-                    fedora)         _PLATFORM_DISTRO="fedora" ;;
-                    debian|ubuntu)  _PLATFORM_DISTRO="debian" ;;
-                    arch|manjaro)   _PLATFORM_DISTRO="arch" ;;
+                    fedora)                  _PLATFORM_DISTRO="fedora" ;;
+                    debian|ubuntu|raspbian)  _PLATFORM_DISTRO="debian" ;;
+                    arch|manjaro)            _PLATFORM_DISTRO="arch" ;;
                     *)
                         # Fallback: ID_LIKE für unbekannte Derivate prüfen
                         case "$_distro_id_like" in

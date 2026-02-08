@@ -118,7 +118,8 @@ load_module() {
 #   - Ohne Prefix = auf allen Plattformen laden
 readonly -a MODULES=(
     validation              # Architektur, OS, Netzwerk, Rechte (plattformübergreifend)
-    homebrew                # Homebrew/Linuxbrew + Brewfile
+    homebrew                # Homebrew/Linuxbrew + Brewfile (überspringt armv*)
+    linux:apt-packages      # APT + Cargo Fallback für 32-bit ARM (Guard intern)
     backup                  # Backup vor Stow (sichert existierende Dateien)
     stow                    # Symlinks für Configs (muss vor Tool-spezifischen Modulen laufen)
     git-hooks               # Pre-Commit Hooks aktivieren

@@ -36,6 +36,9 @@ detect_platform() {
         Linux)
             # /etc/os-release ist freedesktop-Standard (Fedora, Debian, Arch, Ubuntu, ...)
             # ID_LIKE behandelt Derivate (z.B. Ubuntu → debian)
+            # SYNC-CHECK: Parallele ZSH-Variante in terminal/.config/platform.zsh _detect_distro()
+            # Bei Änderung der ID-Cases hier auch platform.zsh anpassen.
+            # IDs: fedora | debian|ubuntu|raspbian | arch|manjaro
             # Empfohlenes Pattern: einmal sourcen (systemd os-release Dokumentation)
             _osrelease=""
             if [ -f /etc/os-release ]; then
@@ -55,9 +58,9 @@ detect_platform() {
             fi
 
             case "$_distro_id" in
-                fedora)         echo "fedora" ;;
-                debian|ubuntu)  echo "debian" ;;
-                arch|manjaro)   echo "arch" ;;
+                fedora)                  echo "fedora" ;;
+                debian|ubuntu|raspbian)  echo "debian" ;;
+                arch|manjaro)            echo "arch" ;;
                 *)
                     # Fallback: ID_LIKE für unbekannte Derivate
                     case "$_distro_id_like" in
