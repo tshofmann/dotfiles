@@ -243,6 +243,9 @@ _install_cargo_tools() {
 
     # Env-Variablen vor der Schleife setzen, nicht inline
     # ${:+NAME=val} wird nach Expansion nicht als Prefix-Assignment erkannt
+    # Vorherige Werte sichern, damit sie nach dem Build wiederhergestellt werden
+    local _prev_cargo_jobs="${CARGO_BUILD_JOBS:-}"
+    local _prev_rustflags="${RUSTFLAGS:-}"
     [[ -n "$cargo_jobs" ]] && export CARGO_BUILD_JOBS="$cargo_jobs"
     [[ -n "$cargo_rustflags" ]] && export RUSTFLAGS="${cargo_rustflags} ${RUSTFLAGS:-}"
 
@@ -255,9 +258,19 @@ _install_cargo_tools() {
         fi
     done
 
-    # Aufräumen (nicht dauerhaft exportieren)
-    unset CARGO_BUILD_JOBS
-    [[ -n "$cargo_rustflags" ]] && unset RUSTFLAGS
+    # Aufräumen: vorherige Werte wiederherstellen oder entfernen
+    if [[ -n "$_prev_cargo_jobs" ]]; then
+        export CARGO_BUILD_JOBS="$_prev_cargo_jobs"
+    else
+        unset CARGO_BUILD_JOBS
+    fi
+    if [[ -n "$cargo_rustflags" ]]; then
+        if [[ -n "$_prev_rustflags" ]]; then
+            export RUSTFLAGS="$_prev_rustflags"
+        else
+            unset RUSTFLAGS
+        fi
+    fi
 
     return 0
 }
