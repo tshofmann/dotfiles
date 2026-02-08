@@ -12,49 +12,44 @@
 readonly _BOOTSTRAP_CORE_LOADED=1
 
 # ------------------------------------------------------------
-# Plattform-Detection
+# Plattform-Detection (via platform.zsh)
 # ------------------------------------------------------------
-# Erkennt Betriebssystem und Architektur für plattformspezifische Module
-detect_platform() {
-    local os arch
+# Sourced platform.zsh als Single Source of Truth, leitet
+# Bootstrap-Variablen (PLATFORM_OS, PLATFORM_ARCH) davon ab.
+_platform_file="${0:A:h:h:h}/terminal/.config/platform.zsh"
+if [[ -f "$_platform_file" ]]; then
+    source "$_platform_file"
+else
+    echo "WARNUNG: platform.zsh nicht gefunden: $_platform_file" >&2
+fi
+unset _platform_file
 
-    case "$(uname -s)" in
-        Darwin) os="macos" ;;
-        Linux)
-            # Linux-Distribution erkennen
-            if [[ -f /etc/fedora-release ]]; then
-                os="fedora"
-            elif [[ -f /etc/debian_version ]]; then
-                os="debian"
-            elif [[ -f /etc/arch-release ]]; then
-                os="arch"
-            else
-                os="linux"
-            fi
-            ;;
-        *) os="unknown" ;;
-    esac
+# Bootstrap-Variablen aus platform.zsh ableiten
+# PLATFORM_OS = distro-spezifisch (damit is_fedora() etc. funktionieren)
+if [[ "${_PLATFORM_OS:-}" == "linux" && -n "${_PLATFORM_DISTRO:-}" && "$_PLATFORM_DISTRO" != "unknown" ]]; then
+    readonly PLATFORM_OS="$_PLATFORM_DISTRO"
+else
+    readonly PLATFORM_OS="${_PLATFORM_OS:-unknown}"
+fi
 
-    case "$(uname -m)" in
-        arm64|aarch64) arch="arm64" ;;
-        x86_64|amd64)  arch="x86_64" ;;
-        *)             arch="unknown" ;;
-    esac
-
-    echo "${os}|${arch}"
-}
-
-# Plattform-Variablen (readonly nach Initialisierung)
-_platform_info=$(detect_platform)
-readonly PLATFORM_OS="${_platform_info%%|*}"
-readonly PLATFORM_ARCH="${_platform_info##*|}"
-unset _platform_info
+# Architektur via uname -m (Hardware-Architektur, nicht ZSH-Compile-Target)
+# $MACHTYPE gibt die Compile-Time-Architektur des ZSH-Binaries zurück,
+# die bei Rosetta-Nutzung von der echten Hardware abweichen kann.
+case "$(uname -m)" in
+    arm64|aarch64) readonly PLATFORM_ARCH="arm64" ;;
+    x86_64|amd64)  readonly PLATFORM_ARCH="x86_64" ;;
+    armv7*)        readonly PLATFORM_ARCH="armv7" ;;
+    armv6*)        readonly PLATFORM_ARCH="armv6" ;;
+    *)             readonly PLATFORM_ARCH="unknown" ;;
+esac
 
 # Helper: Prüft ob wir auf macOS sind
 is_macos() { [[ "$PLATFORM_OS" == "macos" ]]; }
 
 # Helper: Prüft ob wir auf Linux sind (beliebige Distro)
-is_linux() { [[ "$PLATFORM_OS" == "linux" || "$PLATFORM_OS" == "fedora" || "$PLATFORM_OS" == "debian" || "$PLATFORM_OS" == "arch" ]]; }
+# _PLATFORM_OS ist immer "linux" (generisch), während PLATFORM_OS
+# den Distro-Namen enthält – so muss is_linux() keine Distros auflisten.
+is_linux() { [[ "${_PLATFORM_OS:-}" == "linux" ]]; }
 
 # Helper: Prüft ob spezifische Distro
 is_fedora() { [[ "$PLATFORM_OS" == "fedora" ]]; }

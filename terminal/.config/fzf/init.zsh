@@ -9,6 +9,9 @@
 #           Ctrl+X 1 = History, Ctrl+X 2 = Datei, Ctrl+X 3 = Verzeichnis
 # ============================================================
 
+# Helper-Verzeichnis exportieren (wird von Alias-Funktionen genutzt)
+export FZF_HELPER_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/fzf"
+
 # Shell-Integration aktivieren
 source <(fzf --zsh)
 
@@ -27,8 +30,9 @@ if command -v fd >/dev/null 2>&1; then
 fi
 
 # Ctrl+X 1: History-Suche mit Kopier-Funktion
+# Nutzt fzf/action für plattformübergreifendes Clipboard
 export FZF_CTRL_R_OPTS="
-    --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
+    --bind 'ctrl-y:execute-silent(${FZF_HELPER_DIR}/action copy {2..})+abort'
     --header 'Ctrl+Y: Kopieren'"
 
 # Ctrl+X 2: Dateisuche mit Syntax-Highlighting Vorschau

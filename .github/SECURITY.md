@@ -21,7 +21,7 @@ Falls du eine Sicherheitslücke in diesem Repository entdeckst:
 
 Bevor du dieses Repository auf deinem System installierst:
 
-1. **Code reviewen** – Lies die Skripte durch, insbesondere `setup/bootstrap.sh`
+1. **Code reviewen** – Lies die Skripte durch, insbesondere `setup/install.sh` und `setup/bootstrap.sh`
 2. **Keine Secrets committen** – Die `.gitignore` schließt sensible Dateien aus
 3. **Fork verwenden** – Für eigene Anpassungen einen Fork erstellen
 

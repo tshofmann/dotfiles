@@ -32,7 +32,7 @@
 | **Niemals statische Zahlen** | "X Tools installiert" veraltet sofort |
 | **Niemals Annahmen** | Erst recherchieren, dann handeln |
 | **Niemals `/Users/<name>`** | Öffentlich sichtbar → `~` oder `$HOME` |
-| **Niemals POSIX-Shell** | Dieses Projekt ist rein ZSH |
+| **ZSH ist die Ziel-Shell** | POSIX sh nur in `setup/install.sh` und `setup/lib/logging.sh` (weil zsh auf frischen Linux-Systemen fehlen kann) |
 
 ---
 
@@ -67,8 +67,8 @@
 
 | Aspekt | Wert |
 | -------- | ------ |
-| **Plattform** | macOS Apple Silicon (primär), Linux vorbereitet |
-| **Shell** | ZSH (kein POSIX) |
+| **Plattform** | macOS (primär), Linux vorbereitet (Fedora, Debian, Arch) |
+| **Shell** | ZSH (POSIX sh nur für `setup/install.sh` + `setup/lib/logging.sh`) |
 | **Theme** | Catppuccin Mocha |
 | **Symlinks** | GNU Stow mit `--no-folding` |
 | **Configs** | `~/.config/` (XDG-konform) |

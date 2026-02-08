@@ -71,6 +71,10 @@ zstyle ':completion:*:approximate:*' max-errors 1 numeric
 # ------------------------------------------------------------
 # Farben und modulare Alias-Dateien aus ~/.config/alias/
 
+# Plattform-Abstraktionen (clip, clippaste, xopen, sedi)
+# Muss früh geladen werden, da Aliase diese Funktionen nutzen
+[[ -f "$HOME/.config/platform.zsh" ]] && source "$HOME/.config/platform.zsh"
+
 # Catppuccin Mocha ANSI-Farben und Text-Styles ($C_GREEN, $C_BOLD, etc.)
 # RGB-Werte für LS_COLORS ($RGB_SAPPHIRE, $RGB_MAUVE, etc.)
 [[ -f "$HOME/.config/theme-style" ]] && source "$HOME/.config/theme-style"
@@ -162,8 +166,13 @@ fi
 #   →        Vorschlag komplett übernehmen
 #   Alt+→    Wort für Wort übernehmen
 #   Escape   Vorschlag ignorieren
-[[ -f "${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \
-    source "${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+# Pfade: Homebrew (macOS/Linuxbrew) oder apt (Debian/Raspbian)
+for _zsh_as in \
+    "${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh" \
+    "/usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh"; do
+    [[ -f "$_zsh_as" ]] && { source "$_zsh_as"; break; }
+done
+unset _zsh_as
 
 # Catppuccin Mocha Theme für zsh-syntax-highlighting
 # WICHTIG: Muss VOR dem Plugin geladen werden!
@@ -175,5 +184,10 @@ fi
 #   Rot            Ungültiger Befehl
 #   Unterstrichen  Existierende Datei/Verzeichnis
 # WICHTIG: Muss als letztes Plugin geladen werden
-[[ -f "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
-    source "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+# Pfade: Homebrew (macOS/Linuxbrew) oder apt (Debian/Raspbian)
+for _zsh_sh in \
+    "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" \
+    "/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"; do
+    [[ -f "$_zsh_sh" ]] && { source "$_zsh_sh"; break; }
+done
+unset _zsh_sh
