@@ -55,11 +55,11 @@ readonly BREWFILE="$DOTFILES_DIR/setup/Brewfile"
 # Plattform-Erkennung (für bedingte Sektionen)
 # platform.zsh wird später erneut geladen für isolierten Test,
 # hier nur für Guard-Logik der Sektionen
-local _hc_os="macos"
+typeset _hc_os="macos"
 if [[ "$(uname -s)" == "Linux" ]]; then
   _hc_os="linux"
 fi
-local _hc_arch
+typeset _hc_arch
 _hc_arch="$(uname -m)"
 
 # Zähler für Ergebnisse

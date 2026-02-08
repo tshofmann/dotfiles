@@ -132,15 +132,17 @@ _install_apt_packages() {
     CURRENT_STEP="APT-Pakete"
     local -a apt_packages=()
 
-    # Aus Mapping alle apt:-Einträge sammeln
-    for formula in "${(@k)BREW_TO_ALT}"; do
-        local method="${BREW_TO_ALT[$formula]}"
+    # Brewfile parsen → nur dort deklarierte Formulae installieren
+    # BREW_TO_ALT enthält auch Einträge die nicht im Brewfile stehen könnten
+    while IFS= read -r formula; do
+        [[ -z "$formula" ]] && continue
+        local method="${BREW_TO_ALT[$formula]:-}"
         [[ "$method" == apt:* ]] || continue
         local pkg="${method#apt:}"
         if ! dpkg -s "$pkg" &>/dev/null; then
             apt_packages+=("$pkg")
         fi
-    done
+    done < <(_parse_brewfile)
 
     if (( ${#apt_packages[@]} == 0 )); then
         ok "Alle APT-Pakete bereits installiert"
@@ -169,10 +171,11 @@ _install_apt_packages() {
 _install_cargo_tools() {
     CURRENT_STEP="Cargo-Tools"
 
-    # Sammle fehlende Cargo-Tools aus Mapping
+    # Brewfile parsen → nur dort deklarierte Formulae via Cargo installieren
     local -a missing_crates=()
-    for formula in "${(@k)BREW_TO_ALT}"; do
-        local method="${BREW_TO_ALT[$formula]}"
+    while IFS= read -r formula; do
+        [[ -z "$formula" ]] && continue
+        local method="${BREW_TO_ALT[$formula]:-}"
         [[ "$method" == cargo:* ]] || continue
         local crate="${method#cargo:}"
         local binary="${BREW_TO_BINARY[$formula]:-$formula}"
@@ -183,7 +186,7 @@ _install_cargo_tools() {
             [[ -n "${CARGO_EXTRA_CRATES[$crate]:-}" ]] && \
                 missing_crates+=("${CARGO_EXTRA_CRATES[$crate]}")
         fi
-    done
+    done < <(_parse_brewfile)
 
     if (( ${#missing_crates[@]} == 0 )); then
         ok "Alle Cargo-Tools bereits installiert"
@@ -257,15 +260,17 @@ _install_cargo_tools() {
 _install_npm_tools() {
     CURRENT_STEP="NPM-Tools"
 
+    # Brewfile parsen → nur dort deklarierte Formulae via npm installieren
     local -a missing_npms=()
-    for formula in "${(@k)BREW_TO_ALT}"; do
-        local method="${BREW_TO_ALT[$formula]}"
+    while IFS= read -r formula; do
+        [[ -z "$formula" ]] && continue
+        local method="${BREW_TO_ALT[$formula]:-}"
         [[ "$method" == npm:* ]] || continue
         local pkg="${method#npm:}"
 
         command -v "$pkg" >/dev/null 2>&1 && continue
         missing_npms+=("$pkg")
-    done
+    done < <(_parse_brewfile)
 
     if (( ${#missing_npms[@]} == 0 )); then
         return 0
