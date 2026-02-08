@@ -240,16 +240,24 @@ _install_cargo_tools() {
     fi
 
     warn "Cargo-Kompilierung auf 32-bit ARM ist langsam (je Tool 5-30 Min)"
+
+    # Env-Variablen vor der Schleife setzen, nicht inline
+    # ${:+NAME=val} wird nach Expansion nicht als Prefix-Assignment erkannt
+    [[ -n "$cargo_jobs" ]] && export CARGO_BUILD_JOBS="$cargo_jobs"
+    [[ -n "$cargo_rustflags" ]] && export RUSTFLAGS="${cargo_rustflags} ${RUSTFLAGS:-}"
+
     for crate in "${missing_crates[@]}"; do
         log "Installiere $crate via cargo..."
-        if ${cargo_jobs:+CARGO_BUILD_JOBS=$cargo_jobs} \
-           RUSTFLAGS="${cargo_rustflags:+$cargo_rustflags }${RUSTFLAGS:-}" \
-           cargo install --locked "$crate"; then
+        if cargo install --locked "$crate"; then
             ok "$crate installiert via cargo"
         else
             warn "$crate: cargo install fehlgeschlagen"
         fi
     done
+
+    # Aufräumen (nicht dauerhaft exportieren)
+    unset CARGO_BUILD_JOBS
+    [[ -n "$cargo_rustflags" ]] && unset RUSTFLAGS
 
     return 0
 }

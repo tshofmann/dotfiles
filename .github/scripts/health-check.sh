@@ -48,6 +48,15 @@ readonly SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-style"
 # Farben (Catppuccin Mocha) – zentral definiert
 [[ -f "$SHELL_COLORS" ]] && source "$SHELL_COLORS"
 
+# Fallback falls theme-style fehlt (z.B. vor stow, in CI)
+# Verhindert Crash durch set -u bei ungesetzten C_*-Variablen
+if [[ -z "${C_RESET:-}" ]]; then
+    C_RESET=$'\033[0m' C_BOLD=$'\033[1m' C_DIM=$'\033[2m'
+    C_GREEN=$'\033[32m' C_RED=$'\033[31m' C_YELLOW=$'\033[33m'
+    C_BLUE=$'\033[34m' C_MAUVE=$'\033[35m'
+    C_TEXT=$'\033[37m' C_OVERLAY0=$'\033[90m'
+fi
+
 readonly TERMINAL_DIR="$DOTFILES_DIR/terminal"
 readonly EDITOR_DIR="$DOTFILES_DIR/editor"
 readonly BREWFILE="$DOTFILES_DIR/setup/Brewfile"
@@ -136,9 +145,11 @@ get_tools_from_brewfile() {
   )
 
   # Formulae die kein eigenständiges Binary haben (werden separat geprüft)
+  # mas ist macOS-exklusiv (Mac App Store CLI)
   typeset -a skip_formulae=(
     zsh-syntax-highlighting
     zsh-autosuggestions
+    mas
   )
 
   # Extrahiere brew-Formulae (keine casks, keine mas)
