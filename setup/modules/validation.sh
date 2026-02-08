@@ -59,7 +59,12 @@ validate_platform() {
         if [[ "$PLATFORM_ARCH" == "arm64" ]]; then
             ok "macOS auf Apple Silicon (arm64) erkannt"
         elif [[ "$PLATFORM_ARCH" == "x86_64" ]]; then
+            # Quelle: https://docs.brew.sh/Support-Tiers#future-macos-support
+            # macOS 26 Tahoe = letzte Intel-Version (WWDC25 Platforms State of the Union)
+            # Homebrew Intel: Tier 1 bis ~Sep 2026, Tier 3 bis ~Sep 2027, dann unsupported
             ok "macOS auf Intel (x86_64) erkannt"
+            warn "macOS 26 ist die letzte Intel-Version – Migration auf Apple Silicon empfohlen"
+            warn "Homebrew Intel: Tier 3 ab ~Sep 2026, unsupported ab ~Sep 2027"
         else
             err "Nicht unterstützte Architektur: $PLATFORM_ARCH"
             err "Unterstützt: arm64 (Apple Silicon), x86_64 (Intel)"

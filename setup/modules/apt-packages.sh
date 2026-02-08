@@ -27,8 +27,10 @@
 #   npm:PACKAGE      → npm install -g PACKAGE
 #   skip             → macOS-exklusiv oder ZSH-Plugin (separat behandelt)
 #
-# Binary-Namen-Konflikte:
-#   apt: fd-find → Binary heißt "fdfind" → Symlink in ~/.local/bin
+# Binary-Namen-Konflikte (Debian vs. Homebrew):
+#   apt: fd-find → "fdfind", bat → "batcat", 7zip → "7z"
+#   Homebrew erwartet: fd, bat, 7zz
+#   → Symlinks in ~/.local/bin korrigieren die Namen
 # ============================================================
 
 # Guard: Core muss geladen sein
@@ -90,10 +92,13 @@ typeset -A CARGO_EXTRA_CRATES=(
     [yazi-fm]=yazi-cli
 )
 
-# Binary-Name-Korrekturen: apt-Paketname → erwarteter Binary-Name
-# Wenn der apt-Binary-Name vom erwarteten Namen abweicht
+# Binary-Name-Korrekturen: Debian-Binary → Homebrew-Konvention
+# Debian benennt einige Binaries anders als Homebrew.
+# Symlinks in ~/.local/bin stellen die erwarteten Namen her.
 typeset -A BINARY_SYMLINKS=(
-    [fd-find]=fd
+    [fdfind]=fd      # apt: fd-find → Binary "fdfind"
+    [batcat]=bat     # apt: bat → Binary "batcat"
+    [7z]=7zz         # apt: 7zip → Binary "7z"
 )
 
 # Mapping: Brew-Formula → Binary-Name (falls abweichend)
@@ -236,7 +241,7 @@ _install_cargo_tools() {
         log "Installiere $crate via cargo..."
         if ${cargo_jobs:+CARGO_BUILD_JOBS=$cargo_jobs} \
            RUSTFLAGS="${cargo_rustflags:+$cargo_rustflags }${RUSTFLAGS:-}" \
-           cargo install "$crate"; then
+           cargo install --locked "$crate"; then
             ok "$crate installiert via cargo"
         else
             warn "$crate: cargo install fehlgeschlagen"
@@ -300,12 +305,10 @@ _create_binary_symlinks() {
     local bin_dir="$HOME/.local/bin"
     mkdir -p "$bin_dir"
 
-    for apt_pkg expected_name in "${(@kv)BINARY_SYMLINKS}"; do
-        # apt-Binary-Name: für fd-find ist es "fdfind"
-        local apt_binary="${apt_pkg//-/}"  # fd-find → fdfind
-        if command -v "$apt_binary" >/dev/null 2>&1 && ! command -v "$expected_name" >/dev/null 2>&1; then
-            ln -sf "$(command -v "$apt_binary")" "$bin_dir/$expected_name"
-            ok "Symlink: $expected_name → $apt_binary"
+    for debian_binary expected_name in "${(@kv)BINARY_SYMLINKS}"; do
+        if command -v "$debian_binary" >/dev/null 2>&1 && ! command -v "$expected_name" >/dev/null 2>&1; then
+            ln -sf "$(command -v "$debian_binary")" "$bin_dir/$expected_name"
+            ok "Symlink: $expected_name → $debian_binary"
         fi
     done
 
