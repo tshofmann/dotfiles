@@ -2,7 +2,7 @@
 # validate.yml - GitHub Actions Workflow
 # ============================================================
 # Zweck   : Validiert Shell-Syntax, Dokumentation und Alias-Format
-# Trigger : Push auf main/feature/**, PRs nach main, manuell
+# Trigger : Push auf main, PRs nach main, manuell
 # ============================================================
 
 name: Dokumentation validieren
@@ -23,10 +23,11 @@ jobs:
         uses: actions/checkout@v6
 
       - name: ZSH-Syntax prüfen
+        shell: zsh {0}
         run: |
           echo "Prüfe ZSH-Syntax (inkl. Alias-Dateien)..."
           errors=0
-          for file in .github/scripts/**/*.sh terminal/.config/alias/*.alias setup/bootstrap.sh; do
+          for file in .github/scripts/**/*.sh terminal/.config/alias/*.alias terminal/.config/**/*.zsh setup/bootstrap.sh setup/restore.sh setup/modules/*.sh; do
             if [[ -f "$file" ]]; then
               if ! zsh -n "$file" 2>/dev/null; then
                 echo "✖ Syntax-Fehler: $file"
@@ -40,6 +41,26 @@ jobs:
             exit 1
           fi
           echo "✔ Shell-Syntax OK"
+
+      - name: POSIX-Syntax prüfen
+        shell: bash
+        run: |
+          echo "Prüfe POSIX-Shell-Syntax..."
+          errors=0
+          for file in setup/install.sh setup/lib/logging.sh; do
+            if [[ -f "$file" ]]; then
+              if ! sh -n "$file" 2>/dev/null; then
+                echo "✖ Syntax-Fehler: $file"
+                sh -n "$file" 2>&1 | head -3
+                errors=$((errors + 1))
+              fi
+            fi
+          done
+          if [[ $errors -gt 0 ]]; then
+            echo "✖ $errors POSIX-Datei(en) mit Syntax-Fehlern"
+            exit 1
+          fi
+          echo "✔ POSIX-Syntax OK"
 
       - name: Execute-Berechtigungen prüfen
         run: |
@@ -55,7 +76,7 @@ jobs:
             fi
           done
           # Haupt-Skripte
-          for file in setup/bootstrap.sh .github/scripts/generate-docs.sh .github/scripts/health-check.sh; do
+          for file in setup/bootstrap.sh setup/install.sh .github/scripts/generate-docs.sh .github/scripts/health-check.sh; do
             if [[ -f "$file" && ! -x "$file" ]]; then
               echo "✖ $file: Fehlende Execute-Berechtigung"
               errors=$((errors + 1))
@@ -66,6 +87,56 @@ jobs:
             exit 1
           fi
           echo "✔ Execute-Berechtigungen OK"
+
+      - name: Plattform-Sync prüfen
+        run: |
+          echo "Prüfe Synchronisation platform.zsh ↔ install.sh..."
+          errors=0
+
+          # Distro-ID Case-Patterns extrahieren und vergleichen
+          # Erfasst primäre IDs (z.B. fedora, debian|ubuntu|raspbian)
+          # und ID_LIKE Fallbacks (z.B. *debian*, *fedora*)
+          extract_patterns() {
+            grep -E '^[[:space:]]+[*a-z][a-z0-9|*]*\)[[:space:]]+(echo[[:space:]]+"(fedora|debian|arch)"|_PLATFORM_DISTRO="(fedora|debian|arch)")' "$1" | \
+              sed 's/^[[:space:]]*//' | \
+              sed 's/)[[:space:]]*.*//' | \
+              sort
+          }
+
+          p_patterns=$(extract_patterns terminal/.config/platform.zsh)
+          i_patterns=$(extract_patterns setup/install.sh)
+
+          if [[ "$p_patterns" != "$i_patterns" ]]; then
+            echo "✖ Distro-ID-Patterns nicht synchron!"
+            echo ""
+            echo "  platform.zsh:"
+            echo "$p_patterns" | sed 's/^/    /'
+            echo ""
+            echo "  install.sh:"
+            echo "$i_patterns" | sed 's/^/    /'
+            echo ""
+            echo "  Beide Dateien müssen identische case-Patterns haben."
+            errors=$((errors + 1))
+          fi
+
+          # IDs-Zusammenfassung muss identisch sein
+          p_comment=$(grep '# IDs:' terminal/.config/platform.zsh | head -1 | sed 's/^[[:space:]]*//')
+          i_comment=$(grep '# IDs:' setup/install.sh | head -1 | sed 's/^[[:space:]]*//')
+
+          if [[ "$p_comment" != "$i_comment" ]]; then
+            echo "✖ IDs-Zusammenfassung nicht synchron:"
+            echo "  platform.zsh: $p_comment"
+            echo "  install.sh:   $i_comment"
+            errors=$((errors + 1))
+          fi
+
+          if [[ $errors -gt 0 ]]; then
+            echo ""
+            echo "✖ $errors Sync-Fehler"
+            echo "  Siehe SYNC-CHECK Kommentare in beiden Dateien."
+            exit 1
+          fi
+          echo "✔ Plattform-Sync OK"
 
       - name: Homebrew Cache
         uses: actions/cache@v5

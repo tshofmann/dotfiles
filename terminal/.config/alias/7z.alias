@@ -41,10 +41,11 @@ alias unrar='7zz x'
     fi
 
     local archive
+
     archive=$(fd -e zip -e 7z -e rar -e tar -e gz -e xz -e bz2 -e tgz -e tbz2 . "${1:-.}" 2>/dev/null | \
         fzf --preview='zsh -c '\''7zz l -- "$1" 2>/dev/null | head -50'\'' -- {}' \
             --header='Enter=Entpacken │ Ctrl+Y=Pfad kopieren' \
-            --bind='ctrl-y:execute-silent(zsh -c '\''echo -n "$1" | pbcopy'\'' -- {})+abort')
+            --bind="ctrl-y:execute-silent($FZF_HELPER_DIR/action copy {})+abort")
 
     [[ -n "$archive" ]] && 7zz x -- "$archive"
 }

@@ -6,7 +6,7 @@
 # Pfad        : setup/modules/homebrew.sh
 # Benötigt    : _core.sh, validation.sh (für BREW_PREFIX)
 #
-# STEP        : Homebrew | Installiert/prüft Homebrew unter `/opt/homebrew` | ❌ Exit
+# STEP        : Homebrew | Installiert/prüft Homebrew (arm64/x86_64/Linuxbrew) | ❌ Exit
 # STEP        : Brewfile | Installiert CLI-Tools via `brew bundle` | ❌ Exit
 # ============================================================
 
@@ -86,6 +86,15 @@ install_brewfile() {
 # ------------------------------------------------------------
 setup_homebrew() {
     section "Homebrew"
+
+    # 32-bit ARM: Homebrew/Linuxbrew unterstützt nur arm64/x86_64
+    # Tools werden stattdessen über apt-packages.sh installiert
+    if [[ "$PLATFORM_ARCH" == armv* ]]; then
+        warn "Homebrew übersprungen – $PLATFORM_ARCH nicht unterstützt"
+        warn "Tools werden via apt/cargo installiert (apt-packages Modul)"
+        return 0
+    fi
+
     install_homebrew || return 1
     install_brewfile || return 1
 

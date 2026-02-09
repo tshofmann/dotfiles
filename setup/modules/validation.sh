@@ -7,7 +7,7 @@
 # Benötigt    : _core.sh
 # Plattform   : Universell (macOS + Linux)
 #
-# STEP        : Architektur-Check | Prüft ob arm64 (Apple Silicon) | ❌ Exit
+# STEP        : Architektur-Check | Prüft ob arm64 oder x86_64 | ❌ Exit
 # STEP        : macOS-Version-Check | Prüft ob macOS ${MACOS_MIN_VERSION} installiert ist | ❌ Exit
 # STEP        : Netzwerk-Check | Prüft Internetverbindung | ❌ Exit
 # STEP        : Schreibrechte-Check | Prüft ob `$HOME` schreibbar ist | ❌ Exit
@@ -28,14 +28,19 @@
 # einer Funktion (load_module) gesourced werden!
 if is_macos; then
     # macOS-Versionen (Single Source of Truth für Generatoren)
-    # Homebrew Tier 1 Support: macOS 14+, siehe https://docs.brew.sh/Support-Tiers
+    # Homebrew Tier 1: macOS 14+ (https://docs.brew.sh/Support-Tiers)
+    # Dotfiles-Minimum liegt höher, da wir aktuelle APIs/Features nutzen
     MACOS_MIN_VERSION=26     # Unterstützt ab (ändert sich selten)
     MACOS_TESTED_VERSION=26  # Zuletzt getestet auf (ändert sich bei Upgrade)
     export MACOS_MIN_VERSION MACOS_TESTED_VERSION
     readonly MACOS_MIN_VERSION MACOS_TESTED_VERSION
 
-    # Homebrew-Prefix für Apple Silicon
-    BREW_PREFIX="/opt/homebrew"
+    # Homebrew-Prefix (architekturabhängig)
+    if [[ "$PLATFORM_ARCH" == "arm64" ]]; then
+        BREW_PREFIX="/opt/homebrew"      # Apple Silicon
+    else
+        BREW_PREFIX="/usr/local"         # Intel
+    fi
 elif is_linux; then
     # Linuxbrew-Prefix
     BREW_PREFIX="/home/linuxbrew/.linuxbrew"
@@ -50,13 +55,20 @@ validate_platform() {
     CURRENT_STEP="Plattform-Check"
 
     if is_macos; then
-        # Nur Apple Silicon (arm64) wird auf macOS unterstützt
-        if [[ "$PLATFORM_ARCH" != "arm64" ]]; then
-            err "Dieses Setup ist nur für Apple Silicon (arm64) vorgesehen"
-            err "Erkannte Architektur: $PLATFORM_ARCH"
+        # Unterstützte Architekturen: Apple Silicon (arm64) und Intel (x86_64)
+        if [[ "$PLATFORM_ARCH" == "arm64" ]]; then
+            ok "macOS auf Apple Silicon (arm64) erkannt"
+        elif [[ "$PLATFORM_ARCH" == "x86_64" ]]; then
+            # macOS 26 Tahoe = letzte Intel-Version (WWDC25 Platforms State of the Union)
+            # Homebrew Intel-Support ist zeitlich begrenzt – Details siehe Support-Tiers-Doku
+            ok "macOS auf Intel (x86_64) erkannt"
+            warn "macOS 26 ist die letzte Intel-Version – Migration auf Apple Silicon empfohlen"
+            warn "Homebrew Intel-Support läuft perspektivisch aus – Details: https://docs.brew.sh/Support-Tiers"
+        else
+            err "Nicht unterstützte Architektur: $PLATFORM_ARCH"
+            err "Unterstützt: arm64 (Apple Silicon), x86_64 (Intel)"
             return 1
         fi
-        ok "macOS auf Apple Silicon (arm64) erkannt"
 
         # macOS-Version prüfen
         local macos_version macos_major
@@ -77,7 +89,12 @@ validate_platform() {
 
     elif is_linux; then
         ok "Linux erkannt: $PLATFORM_OS ($PLATFORM_ARCH)"
-        # Linux-spezifische Checks hier hinzufügen
+
+        # 32-bit ARM: Plattform-Abstraktionen funktionieren, aber kein Homebrew
+        if [[ "$PLATFORM_ARCH" == armv* ]]; then
+            warn "32-bit ARM erkannt – Homebrew/Linuxbrew unterstützt nur arm64/x86_64"
+            warn "Homebrew wird übersprungen – Tools via apt/cargo (siehe apt-packages.sh)"
+        fi
     else
         err "Nicht unterstützte Plattform: $PLATFORM_OS"
         return 1

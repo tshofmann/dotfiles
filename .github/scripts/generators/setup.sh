@@ -86,7 +86,6 @@ Das Backup wird beim ersten Bootstrap automatisch erstellt:
 > **Wichtig:** Das erste Backup wird NIE überschrieben (Idempotenz). Selbst bei mehrfacher Bootstrap-Ausführung bleibt das ursprüngliche Backup erhalten.
 >
 > **💡 Tipp:** Nach erfolgreicher Wiederherstellung kann das Backup manuell gelöscht werden: `rm -rf .backup/`
-
 UNINSTALL
 }
 
@@ -109,7 +108,7 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles.
 > Diese Dokumentation wird automatisch aus dem Code generiert.
 > Änderungen in `setup/modules/*.sh` und `setup/Brewfile` vornehmen.
 >
-> ⚠️ **Plattform-Status:** Aktuell nur auf **macOS** getestet. Die Codebasis ist für Cross-Platform (Fedora, Debian) vorbereitet, aber die Portierung ist noch nicht abgeschlossen.
+> ⚠️ **Plattform-Status:** Auf **macOS** produktiv getestet. Linux-Bootstrap (Fedora, Debian, Arch) in Docker/Headless validiert – Desktop (Wayland) und echte Hardware noch ausstehend.
 
 ## Voraussetzungen
 
@@ -117,7 +116,7 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles.
 
 | Anforderung | Details |
 | ----------- | ------- |
-| **Apple Silicon Mac** | M1, M2, … (arm64) – Intel-Macs werden nicht unterstützt |
+| **Apple Silicon oder Intel Mac** | arm64 (M1, M2, …) oder x86_64 |
 HEADER
     # Dynamische macOS-Zeile mit min und tested
     echo "| **macOS ${macos_min}+** | ${macos_min_name} oder neuer – getestet auf ${macos_tested} (${macos_tested_name}) |"
@@ -125,16 +124,18 @@ HEADER
 | **Internetverbindung** | Für Homebrew-Installation und Download der Formulae/Casks |
 | **Admin-Rechte** | `sudo`-Passwort erforderlich (siehe unten) |
 
-### Linux (in Entwicklung 🚧)
+### Linux (vorbereitet 🔧)
 
 | Anforderung | Details |
 | ----------- | ------- |
-| **Fedora / Debian** | Portierung geplant, noch nicht getestet |
-| **arm64 oder x86_64** | Beide Architekturen unterstützt |
+| **Fedora / Debian / Arch** | Bootstrap + Plattform-Abstraktionen in Docker/Headless validiert (Desktop/Hardware ausstehend) |
+| **arm64, x86_64 oder armv6/armv7** | Alle Architekturen unterstützt (32-bit ARM via apt/cargo) |
 | **Internetverbindung** | Für Linuxbrew-Installation |
 | **Build-Tools** | `gcc`/`clang` – werden bei Bedarf nachinstalliert |
 
 > **Hinweis:** Auf Linux werden macOS-spezifische Module (Terminal.app, mas, Xcode-Theme) automatisch übersprungen. Die Plattform-Erkennung erfolgt in `setup/modules/_core.sh`.
+>
+> **Hinweis (32-bit ARM / Raspberry Pi):** Homebrew unterstützt kein armv6/armv7. Auf diesen Systemen werden Tools automatisch via apt, Cargo und npm installiert (`setup/modules/apt-packages.sh`). Das Brewfile bleibt die Single Source of Truth – das Mapping erfolgt dynamisch.
 >
 > **Hinweis (macOS):** Architektur- und macOS-Versionsprüfung erfolgen automatisch beim Start von `bootstrap.sh`. Bei nicht unterstützten Systemen bricht das Skript mit einer Fehlermeldung ab.
 
@@ -145,7 +146,7 @@ Das Bootstrap-Skript fragt zu folgenden Zeitpunkten nach dem Admin-Passwort:
 **macOS:**
 
 1. **Xcode CLI Tools Installation** – `xcode-select --install` triggert einen System-Dialog, der Admin-Rechte erfordert
-2. **Homebrew Erstinstallation** – Das offizielle Installationsskript erstellt Verzeichnisse unter `/opt/homebrew` und benötigt dafür `sudo`
+2. **Homebrew Erstinstallation** – Das offizielle Installationsskript erstellt Verzeichnisse unter `/opt/homebrew` (Apple Silicon) oder `/usr/local` (Intel) und benötigt dafür `sudo`
 
 **Linux:**
 
@@ -156,17 +157,24 @@ Das Bootstrap-Skript fragt zu folgenden Zeitpunkten nach dem Admin-Passwort:
 
 ---
 
-## Schritt 1: Bootstrap-Skript ausführen
+## Schritt 1: Install-Skript ausführen
 
-```zsh
-curl -fsSL https://github.com/tshofmann/dotfiles/archive/refs/heads/main.tar.gz | tar -xz -C ~ && mv ~/dotfiles-main ~/dotfiles && ~/dotfiles/setup/bootstrap.sh
+```bash
+curl -fsSL https://github.com/tshofmann/dotfiles/archive/refs/heads/main.tar.gz | tar -xz -C ~ && mv ~/dotfiles-main ~/dotfiles && ~/dotfiles/setup/install.sh
 ```
 
-> **💡 Warum curl statt git?** Auf einem frischen System ist Git möglicherweise nicht verfügbar. Mit `curl` umgehen wir diese Abhängigkeit – die nötigen Tools werden dann automatisch vom Bootstrap-Skript installiert.
+> **💡 Warum install.sh?** Das Install-Skript ist POSIX-kompatibel und läuft mit /bin/sh, bash oder zsh. Es stellt sicher, dass zsh installiert ist (ggf. via apt/dnf/pacman) und startet dann das eigentliche Bootstrap.
 
 ### Was das Skript macht
 
-Das Bootstrap-Skript führt folgende Aktionen in dieser Reihenfolge aus:
+Das Install-Skript führt folgende Aktionen aus:
+
+1. **Plattform-Erkennung** – macOS, Fedora, Debian oder Arch
+2. **zsh-Installation** – Falls nicht vorhanden, via Paketmanager
+3. **Default-Shell** – Setzt zsh als Standard-Shell (nur Linux)
+4. **Bootstrap starten** – Führt bootstrap.sh mit zsh aus
+
+Das Bootstrap-Skript führt dann folgende Aktionen in dieser Reihenfolge aus:
 
 | Aktion | Beschreibung | Bei Fehler |
 | ------ | ------------ | ---------- |
@@ -182,7 +190,7 @@ PART2
 | Netzwerk-Check | Prüft Internetverbindung | ❌ Exit |
 | Schreibrechte-Check | Prüft ob `$HOME` schreibbar ist | ❌ Exit |
 | Xcode CLI Tools | Installiert/prüft Developer Tools | ❌ Exit |
-| Homebrew | Installiert/prüft Homebrew unter `/opt/homebrew` | ❌ Exit |
+| Homebrew | Installiert/prüft Homebrew | ❌ Exit |
 | Brewfile | Installiert CLI-Tools via `brew bundle` | ❌ Exit |
 | Font-Verifikation | Prüft MesloLG Nerd Font Installation | ❌ Exit |
 | Terminal-Profil | Importiert `catppuccin-mocha.terminal` als Standard | ⚠️ Warnung |
@@ -197,7 +205,7 @@ LEGACY_STEPS
 > **⏱️ Timeout-Konfiguration (macOS):** Der Terminal-Profil-Import wartet standardmäßig 20 Sekunden auf Registrierung im System. Bei langsamen Systemen oder VMs kann dies erhöht werden:
 >
 > ```bash
-> PROFILE_IMPORT_TIMEOUT=60 ./setup/bootstrap.sh
+> PROFILE_IMPORT_TIMEOUT=60 ./setup/install.sh
 > ```
 >
 > **Empfohlene Timeout-Werte:**
