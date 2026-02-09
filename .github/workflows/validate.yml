@@ -97,7 +97,7 @@ jobs:
           # Erfasst primäre IDs (z.B. fedora, debian|ubuntu|raspbian)
           # und ID_LIKE Fallbacks (z.B. *debian*, *fedora*)
           extract_patterns() {
-            grep -E '^\s+[*a-z][a-z0-9|*]*\)\s+(echo\s+"(fedora|debian|arch)"|_PLATFORM_DISTRO="(fedora|debian|arch)")' "$1" | \
+            grep -E '^[[:space:]]+[*a-z][a-z0-9|*]*\)[[:space:]]+(echo[[:space:]]+"(fedora|debian|arch)"|_PLATFORM_DISTRO="(fedora|debian|arch)")' "$1" | \
               sed 's/^[[:space:]]*//' | \
               sed 's/)[[:space:]]*.*//' | \
               sort

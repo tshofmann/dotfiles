@@ -8,7 +8,7 @@
 
 **Dotfiles mit modernen CLI-Tools, einheitlichem Theme und integrierter Hilfe.**
 
-> ⚠️ **Plattform-Status:** Aktuell nur auf **macOS** getestet. Plattform-Abstraktionen und Linux-Bootstrap (Fedora, Debian, Arch) sind implementiert, aber noch nicht auf Linux getestet.
+> ⚠️ **Plattform-Status:** Auf **macOS** produktiv getestet. Linux-Bootstrap (Fedora, Debian, Arch) in Docker/Headless validiert – Desktop (Wayland) und echte Hardware noch ausstehend.
 
 ## ✨ Was du bekommst
 
@@ -46,7 +46,7 @@ Danach **Terminal neu starten**. Fertig!
 
 #### Linux (vorbereitet 🔧)
 
-- **Fedora / Debian / Arch** – Bootstrap + Plattform-Abstraktionen implementiert (ungetestet)
+- **Fedora / Debian / Arch** – Bootstrap + Plattform-Abstraktionen in Docker/Headless validiert (Desktop/Hardware ausstehend)
 - macOS-spezifische Module werden automatisch übersprungen
 
 ## 📖 Dokumentation

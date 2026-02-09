@@ -5,7 +5,7 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles.
 > Diese Dokumentation wird automatisch aus dem Code generiert.
 > Änderungen in `setup/modules/*.sh` und `setup/Brewfile` vornehmen.
 >
-> ⚠️ **Plattform-Status:** Aktuell nur auf **macOS** getestet. Plattform-Abstraktionen und Linux-Bootstrap (Fedora, Debian, Arch) sind implementiert, aber noch nicht auf Linux getestet.
+> ⚠️ **Plattform-Status:** Auf **macOS** produktiv getestet. Linux-Bootstrap (Fedora, Debian, Arch) in Docker/Headless validiert – Desktop (Wayland) und echte Hardware noch ausstehend.
 
 ## Voraussetzungen
 
@@ -22,7 +22,7 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles.
 
 | Anforderung | Details |
 | ----------- | ------- |
-| **Fedora / Debian / Arch** | Bootstrap + Plattform-Abstraktionen implementiert, noch nicht auf Linux getestet |
+| **Fedora / Debian / Arch** | Bootstrap + Plattform-Abstraktionen in Docker/Headless validiert (Desktop/Hardware ausstehend) |
 | **arm64, x86_64 oder armv6/armv7** | Alle Architekturen unterstützt (32-bit ARM via apt/cargo) |
 | **Internetverbindung** | Für Linuxbrew-Installation |
 | **Build-Tools** | `gcc`/`clang` – werden bei Bedarf nachinstalliert |

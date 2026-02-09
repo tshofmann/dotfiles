@@ -89,7 +89,7 @@ readonly -a MODULES=(
 | `debian:` | Debian/Ubuntu/Derivate | `/etc/os-release ID=debian\|ubuntu` oder `ID_LIKE=*debian*` |
 | `arch:` | Arch/Manjaro/Derivate | `/etc/os-release ID=arch\|manjaro` oder `ID_LIKE=*arch*` |
 
-> **Status:** macOS ist primär. Plattform-Abstraktionen (`platform.zsh`) und Linux-Bootstrap (`install.sh`) sind implementiert, aber noch nicht auf Linux getestet. Beiträge und Test-Reports sind willkommen!
+> **Status:** macOS ist primär. Linux-Bootstrap und Plattform-Abstraktionen in Docker/Headless validiert (Fedora, Debian, Arch). Desktop (Wayland) und echte Hardware noch ausstehend. Beiträge und Test-Reports sind willkommen!
 
 ### Cross-Platform Abstraktionen
 
