@@ -495,18 +495,19 @@ generate_zsh_page() {
     if [[ -f "$zshrc" ]]; then
         # Autosuggestions: Keybindings aus Kommentaren extrahieren
         if grep -q 'zsh-autosuggestions' "$zshrc"; then
-            # Keybinding-Kommentare sammeln (Format: #   →   Beschreibung)
+            # Keybinding-Kommentare sammeln (Format: #   Key   Beschreibung)
             local -a as_keys=()
             local in_as_block=false
             while IFS= read -r line; do
                 [[ "$line" == *"Autosuggestions"* ]] && in_as_block=true
                 if $in_as_block; then
-                    if [[ "$line" == "#   →"* ]]; then
-                        as_keys+=("→ übernehmen")
-                    elif [[ "$line" == "#   Alt+→"* ]]; then
-                        as_keys+=("Alt+→ Wort für Wort")
-                    elif [[ "$line" == "#   Escape"* || "$line" == "#   Esc"* ]]; then
-                        as_keys+=("Esc ignorieren")
+                    if [[ "$line" == "#   →"* || "$line" == "#   Alt+→"* || "$line" == "#   Escape"* || "$line" == "#   Esc"* ]]; then
+                        local content="${line#\#   }"
+                        # Key = alles vor doppeltem Space, Desc = alles danach
+                        local key="${content%%  *}"
+                        local desc="${content#*  }"
+                        while [[ "$desc" == " "* ]]; do desc="${desc# }"; done
+                        as_keys+=("${key} ${desc}")
                     fi
                     # Block endet bei nächster Nicht-Kommentar-Zeile nach Keys
                     if (( ${#as_keys[@]} > 0 )) && [[ "$line" != "#"* && -n "$line" ]]; then

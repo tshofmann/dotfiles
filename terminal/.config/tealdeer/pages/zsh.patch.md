@@ -42,7 +42,7 @@
 
 - dotfiles: zsh-autosuggestions – Vorschläge aus History:
 
-`→ übernehmen, Alt+→ Wort für Wort, Esc ignorieren`
+`→ Vorschlag komplett übernehmen, Alt+→ Wort für Wort übernehmen, Escape Vorschlag ignorieren`
 
 - dotfiles: zsh-syntax-highlighting – Farbige Befehlsvalidierung:
 
