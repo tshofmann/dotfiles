@@ -399,9 +399,10 @@ generate_zsh_page() {
 
         # Explizite XDG-Overrides sammeln (EZA_CONFIG_DIR, TEALDEER_CONFIG_DIR, etc.)
         local -a xdg_overrides=()
+        local varname
         while IFS= read -r line; do
             if [[ "$line" =~ ^export\ ([A-Z_]+_(CONFIG_DIR|CONFIG))= ]]; then
-                local varname="${match[1]}"
+                varname="${match[1]}"
                 if [[ "$varname" != "XDG_CONFIG_HOME" ]]; then
                     xdg_overrides+=("\`\$${varname}\`")
                 fi
@@ -521,13 +522,9 @@ generate_zsh_page() {
             while IFS= read -r line; do
                 [[ "$line" == *"Autosuggestions"* ]] && in_as_block=true
                 if $in_as_block; then
-                    if [[ "$line" == "#   →"* || "$line" == "#   Alt+→"* || "$line" == "#   Escape"* || "$line" == "#   Esc"* ]]; then
-                        local content="${line#\#   }"
-                        # Key = alles vor doppeltem Space, Desc = alles danach
-                        local key="${content%%  *}"
-                        local desc="${content#*  }"
-                        while [[ "$desc" == " "* ]]; do desc="${desc# }"; done
-                        as_keys+=("${key} ${desc}")
+                    # Keybinding-Zeile: #<3 Leerzeichen><Key><2+ Leerzeichen><Beschreibung>
+                    if [[ "$line" =~ ^#\ \ \ ([^ ]+)\ \ +(.+)$ ]]; then
+                        as_keys+=("${match[1]} ${match[2]}")
                     fi
                     # Block endet bei nächster Nicht-Kommentar-Zeile nach Keys
                     if (( ${#as_keys[@]} > 0 )) && [[ "$line" != "#"* && -n "$line" ]]; then
@@ -548,14 +545,14 @@ generate_zsh_page() {
         # Syntax-Highlighting: Farb-Beschreibungen aus Kommentaren
         if grep -q 'zsh-syntax-highlighting' "$zshrc"; then
             local -a sh_colors=()
-            local in_sh_block=false
+            local in_sh_block=false color_name color_desc
             while IFS= read -r line; do
                 # Block startet bei "Syntax-Highlighting: Farben zeigen"
                 [[ "$line" == *"Syntax-Highlighting:"*"Farben"* ]] && in_sh_block=true
                 if $in_sh_block; then
                     if [[ "$line" =~ ^#\ \ \ ([A-Za-zÜÖÄüöä]+)\ +(.+)$ ]]; then
-                        local color_name="${match[1]}"
-                        local color_desc="${match[2]}"
+                        color_name="${match[1]}"
+                        color_desc="${match[2]}"
                         sh_colors+=("${color_name}=${color_desc}")
                     fi
                     # Block endet bei WICHTIG-Kommentar oder Nicht-Kommentar
