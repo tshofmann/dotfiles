@@ -66,7 +66,7 @@ parse_brewfile_entry() {
 # Extrahiert den ersten installierten Nerd Font aus dem Brewfile
 # Rückgabe: Cask-Name (z.B. font-meslo-lg-nerd-font)
 extract_installed_nerd_font() {
-    local brewfile="$DOTFILES_DIR/setup/Brewfile"
+    local brewfile="${BREWFILE:-$DOTFILES_DIR/setup/Brewfile}"
     [[ -f "$brewfile" ]] || return 1
 
     # Findet: cask "font-xyz-nerd-font" (erster Treffer)
