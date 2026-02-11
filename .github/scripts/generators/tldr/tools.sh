@@ -392,9 +392,11 @@ generate_zsh_page() {
         # Explizite XDG-Overrides sammeln (EZA_CONFIG_DIR, TEALDEER_CONFIG_DIR, etc.)
         local -a xdg_overrides=()
         while IFS= read -r line; do
-            if [[ "$line" =~ ^export\ ([A-Z_]+_(CONFIG_DIR|CONFIG))= && "${BASH_REMATCH[1]:-${match[1]}}" != "XDG_CONFIG_HOME" ]]; then
-                local varname="${BASH_REMATCH[1]:-${match[1]}}"
-                xdg_overrides+=("\`\$${varname}\`")
+            if [[ "$line" =~ ^export\ ([A-Z_]+_(CONFIG_DIR|CONFIG))= ]]; then
+                local varname="${match[1]}"
+                if [[ "$varname" != "XDG_CONFIG_HOME" ]]; then
+                    xdg_overrides+=("\`\$${varname}\`")
+                fi
             fi
         done < "$zshenv"
         if (( ${#xdg_overrides[@]} > 0 )); then
@@ -457,7 +459,10 @@ generate_zsh_page() {
             local zoxide_desc=""
             zoxide_desc=$(grep -A1 'command -v zoxide' "$zshrc" | grep '^    # ' | head -1 | sed 's/^    # //')
             if [[ -n "$zoxide_desc" ]]; then
-                output+="- dotfiles: zoxide – ${zoxide_desc}\n\n"
+                # Winkelklammern escapen, damit z <query> in Markdown sichtbar bleibt
+                local zoxide_desc_escaped="${zoxide_desc//</&lt;}"
+                zoxide_desc_escaped="${zoxide_desc_escaped//>/&gt;}"
+                output+="- dotfiles: zoxide – ${zoxide_desc_escaped}\n\n"
             else
                 output+="- dotfiles: zoxide – Schnelle Verzeichniswechsel\n\n"
             fi
@@ -525,8 +530,8 @@ generate_zsh_page() {
                 [[ "$line" == *"Syntax-Highlighting:"*"Farben"* ]] && in_sh_block=true
                 if $in_sh_block; then
                     if [[ "$line" =~ ^#\ \ \ ([A-Za-zÜÖÄüöä]+)\ +(.+)$ ]]; then
-                        local color_name="${BASH_REMATCH[1]:-${match[1]}}"
-                        local color_desc="${BASH_REMATCH[2]:-${match[2]}}"
+                        local color_name="${match[1]}"
+                        local color_desc="${match[2]}"
                         sh_colors+=("${color_name}=${color_desc}")
                     fi
                     # Block endet bei WICHTIG-Kommentar oder Nicht-Kommentar

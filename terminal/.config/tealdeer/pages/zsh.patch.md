@@ -30,7 +30,7 @@
 
 - dotfiles: fzf – `~/.config/fzf/init.zsh` und `config`
 
-- dotfiles: zoxide – z <query> = schnell wechseln, zi = interaktiv mit fzf
+- dotfiles: zoxide – z &lt;query&gt; = schnell wechseln, zi = interaktiv mit fzf
 
 - dotfiles: bat – Man-Pages mit Syntax-Highlighting (`$MANPAGER`)
 
