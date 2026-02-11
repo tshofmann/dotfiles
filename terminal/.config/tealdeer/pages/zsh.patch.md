@@ -1,8 +1,8 @@
 # dotfiles: Konfigurationsdateien
 
-- dotfiles: `~/.zshenv` – Umgebungsvariablen (XDG-Pfade)
+- dotfiles: `~/.zshenv` – Umgebungsvariablen die VOR allen anderen Configs geladen werden
 
-- dotfiles: `~/.zshrc` – Hauptkonfiguration für interaktive Shells
+- dotfiles: `~/.zshrc` – Hauptkonfiguration für interaktive ZSH Shells
 
 - dotfiles: Lade-Reihenfolge: `.zshenv → .zprofile → .zshrc → .zlogin`
 
@@ -28,7 +28,7 @@
 
 # dotfiles: Tool-Integrationen
 
-- dotfiles: fzf – `~/.config/fzf/init.zsh` und `config`
+- dotfiles: fzf – `~/.config/fzf/init.zsh` und `~/.config/fzf/config`
 
 - dotfiles: zoxide – z &lt;query&gt; = schnell wechseln, zi = interaktiv mit fzf
 
@@ -40,11 +40,11 @@
 
 # dotfiles: ZSH-Plugins
 
-- dotfiles: zsh-autosuggestions – Vorschläge aus History:
+- dotfiles: zsh-autosuggestions – Zeigt Vorschläge aus History:
 
 `→ Vorschlag komplett übernehmen, Alt+→ Wort für Wort übernehmen, Escape Vorschlag ignorieren`
 
-- dotfiles: zsh-syntax-highlighting – Farbige Befehlsvalidierung:
+- dotfiles: zsh-syntax-highlighting – Farben zeigen Befehlsgültigkeit:
 
 `Grün=Gültiger Befehl, Rot=Ungültiger Befehl, Unterstrichen=Existierende Datei/Verzeichnis`
 

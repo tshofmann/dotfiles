@@ -375,11 +375,19 @@ generate_zsh_page() {
     local zshenv="$DOTFILES_DIR/terminal/.zshenv"
     local output=""
 
-    # Header mit Links zu Startup-Files Dokumentation
+    # --- Header: Zweck-Beschreibungen aus Header-Feldern parsen ---
+    local zshenv_zweck zshrc_zweck load_order
+    zshenv_zweck=$(parse_header_field "$zshenv" "Zweck")
+    zshrc_zweck=$(parse_header_field "$zshrc" "Zweck")
+    # Lade-Reihenfolge aus Header (Klammern-Marker [..] entfernen)
+    load_order=$(parse_header_field "$zshrc" "Laden")
+    load_order="${load_order//\[/}"
+    load_order="${load_order//\]/}"
+
     output+="# dotfiles: Konfigurationsdateien\n\n"
-    output+="- dotfiles: \`~/.zshenv\` – Umgebungsvariablen (XDG-Pfade)\n\n"
-    output+="- dotfiles: \`~/.zshrc\` – Hauptkonfiguration für interaktive Shells\n\n"
-    output+="- dotfiles: Lade-Reihenfolge: \`.zshenv → .zprofile → .zshrc → .zlogin\`\n\n"
+    output+="- dotfiles: \`~/.zshenv\` – ${zshenv_zweck:-Umgebungsvariablen}\n\n"
+    output+="- dotfiles: \`~/.zshrc\` – ${zshrc_zweck:-Hauptkonfiguration}\n\n"
+    output+="- dotfiles: Lade-Reihenfolge: \`${load_order:-.zshenv → .zprofile → .zshrc → .zlogin}\`\n\n"
 
     # --- XDG Base Directory aus .zshenv parsen ---
     output+="# dotfiles: XDG Base Directory\n\n"
@@ -435,9 +443,11 @@ generate_zsh_page() {
     # --- Alias-System aus .zshrc erkennen ---
     output+="# dotfiles: Alias-System\n\n"
     if [[ -f "$zshrc" ]]; then
-        # Alias-Lade-Schleife erkennen
-        if grep -q '\.alias' "$zshrc"; then
-            output+="- dotfiles: Alle \`.alias\`-Dateien aus \`~/.config/alias/\` werden geladen\n\n"
+        # Alias-Lade-Pfad dynamisch aus der for-Schleife extrahieren
+        local alias_path
+        alias_path=$(grep -m1 'alias_file.*\.alias' "$zshrc" | sed 's/.*"\(.*\)"\/\*.*/\1/' | sed 's|\$HOME|~|')
+        if [[ -n "$alias_path" ]]; then
+            output+="- dotfiles: Alle \`.alias\`-Dateien aus \`${alias_path}/\` werden geladen\n\n"
         fi
         # Theme-style source erkennen
         if grep -q 'theme-style' "$zshrc"; then
@@ -449,9 +459,17 @@ generate_zsh_page() {
     # Erkennt: command -v <tool> Blöcke mit zugehörigen Inline-Kommentaren
     output+="# dotfiles: Tool-Integrationen\n\n"
     if [[ -f "$zshrc" ]]; then
-        # fzf: eigene init.zsh
+        # fzf: init-Pfad und config dynamisch aus .zshrc parsen
         if grep -q 'command -v fzf' "$zshrc"; then
-            output+="- dotfiles: fzf – \`~/.config/fzf/init.zsh\` und \`config\`\n\n"
+            local fzf_init
+            fzf_init=$(grep -m1 'fzf/init' "$zshrc" | sed 's/.*"\(.*\)".*/\1/' | sed 's|\$HOME|~|')
+            local fzf_config
+            fzf_config=$(grep -m1 'FZF_DEFAULT_OPTS_FILE=' "$zshrc" | sed 's/.*"\(.*\)".*/\1/' | sed 's|\$HOME|~|')
+            if [[ -n "$fzf_init" && -n "$fzf_config" ]]; then
+                output+="- dotfiles: fzf – \`${fzf_init}\` und \`${fzf_config}\`\n\n"
+            elif [[ -n "$fzf_init" ]]; then
+                output+="- dotfiles: fzf – \`${fzf_init}\`\n\n"
+            fi
         fi
 
         # zoxide: z/zi Beschreibung aus Kommentar parsen
@@ -468,9 +486,11 @@ generate_zsh_page() {
             fi
         fi
 
-        # bat: MANPAGER erkennen
+        # bat: Beschreibung aus Kommentar über dem Block parsen
         if grep -q 'command -v bat' "$zshrc" && grep -q 'MANPAGER' "$zshrc"; then
-            output+="- dotfiles: bat – Man-Pages mit Syntax-Highlighting (\`\$MANPAGER\`)\n\n"
+            local bat_desc
+            bat_desc=$(grep -B1 'command -v bat' "$zshrc" | grep '^# ' | head -1 | sed 's/^# //')
+            output+="- dotfiles: bat – ${bat_desc:-Man-Pages mit Syntax-Highlighting} (\`\$MANPAGER\`)\n\n"
         fi
 
         # starship: Inline-Kommentar parsen
@@ -516,7 +536,10 @@ generate_zsh_page() {
                 fi
             done < "$zshrc"
 
-            output+="- dotfiles: zsh-autosuggestions – Vorschläge aus History:\n\n"
+            # Plugin-Beschreibung aus Kommentar parsen (Format: # Autosuggestions: Beschreibung)
+            local as_desc
+            as_desc=$(grep -m1 '# Autosuggestions:' "$zshrc" | sed 's/.*# Autosuggestions: //')
+            output+="- dotfiles: zsh-autosuggestions – ${as_desc:-Vorschläge aus History}:\n\n"
             if (( ${#as_keys[@]} > 0 )); then
                 output+="\`${(j:, :)as_keys}\`\n\n"
             fi
@@ -540,7 +563,10 @@ generate_zsh_page() {
                 fi
             done < "$zshrc"
 
-            output+="- dotfiles: zsh-syntax-highlighting – Farbige Befehlsvalidierung:\n\n"
+            # Plugin-Beschreibung aus Kommentar parsen (Format: # Syntax-Highlighting: Beschreibung)
+            local sh_desc
+            sh_desc=$(grep -m1 '# Syntax-Highlighting:' "$zshrc" | sed 's/.*# Syntax-Highlighting: //')
+            output+="- dotfiles: zsh-syntax-highlighting – ${sh_desc:-Farbige Befehlsvalidierung}:\n\n"
             if (( ${#sh_colors[@]} > 0 )); then
                 output+="\`${(j:, :)sh_colors}\`\n\n"
             fi
@@ -550,9 +576,11 @@ generate_zsh_page() {
     # --- Completion-System aus .zshrc erkennen ---
     output+="# dotfiles: Completion-System\n\n"
     if [[ -f "$zshrc" ]]; then
-        # compinit-Logik erkennen (tägliche Cache-Erneuerung)
+        # compinit-Beschreibung aus Kommentar über compinit parsen
         if grep -q 'compinit' "$zshrc"; then
-            output+="- dotfiles: Tab-Vervollständigung mit täglicher Cache-Erneuerung\n\n"
+            local comp_desc
+            comp_desc=$(grep -B2 'autoload.*compinit' "$zshrc" | grep '^# [A-Z]' | head -1 | sed 's/^# //')
+            output+="- dotfiles: ${comp_desc:-Tab-Vervollständigung mit täglicher Cache-Erneuerung}\n\n"
             output+="- dotfiles: \`compinit\` läuft nur einmal täglich vollständig\n\n"
         fi
     fi
