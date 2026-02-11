@@ -34,6 +34,8 @@ SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-style"
 # ------------------------------------------------------------
 # Projekt-Metadaten (Single Source of Truth)
 # ------------------------------------------------------------
+# Repository-Identifikation (für Badge-URLs, Install-Befehle, tldr-Links)
+readonly PROJECT_REPO="tshofmann/dotfiles"
 # Kurzbeschreibung für README, tldr, GitHub Repo Description
 readonly PROJECT_TAGLINE="Dotfiles mit Catppuccin-Theme und modernen CLI-Tools."
 # Erweiterte Beschreibung für README

@@ -63,6 +63,37 @@ parse_brewfile_entry() {
     echo "${name}|${description}|${typ}|${url}"
 }
 
+# Extrahiert den ersten installierten Nerd Font aus dem Brewfile
+# Rückgabe: Cask-Name (z.B. font-meslo-lg-nerd-font)
+extract_installed_nerd_font() {
+    local brewfile="${BREWFILE:-$DOTFILES_DIR/setup/Brewfile}"
+    [[ -f "$brewfile" ]] || return 1
+
+    # Findet: cask "font-xyz-nerd-font" (erster Treffer)
+    grep -o 'cask "font-[^"]*-nerd-font"' "$brewfile" | head -1 | sed 's/cask "\(.*\)"/\1/'
+}
+
+# Generiert Font-Anzeigename aus Cask-Name
+# Eingabe:  font-meslo-lg-nerd-font (Brew Cask-Name)
+# Ausgabe:  MesloLG Nerd Font Mono (Anzeigename in Font-Auswahl)
+# Bekannte Fonts sind explizit gemappt, Fallback kapitalisiert und entfernt Bindestriche
+font_display_name() {
+    local cask="$1"
+    [[ -z "$cask" ]] && { echo "Nerd Font"; return; }
+
+    # Entferne "font-" Prefix und "-nerd-font" Suffix
+    local base="${cask#font-}"
+    base="${base%-nerd-font}"
+
+    # Mapping bekannter Fonts (markenspezifische Schreibweisen)
+    case "$base" in
+        meslo-lg)       echo "MesloLG Nerd Font Mono" ;;
+        jetbrains-mono) echo "JetBrainsMono Nerd Font Mono" ;;
+        fira-code)      echo "FiraCode Nerd Font Mono" ;;
+        *)              echo "${${(C)base}//-/} Nerd Font Mono" ;;  # Fallback: Capitalize + Bindestriche entfernen
+    esac
+}
+
 # ------------------------------------------------------------
 # Brewfile-Sektion generieren (respektiert Kategorien)
 # ------------------------------------------------------------
@@ -195,8 +226,18 @@ Dies ermöglicht:
 
 Bei fehlenden oder falschen Icons prüfen:
 
-1. **Nerd Font im Terminal?** – Terminal-Profil muss einen Nerd Font verwenden (z.B. MesloLGSDZ oder JetBrainsMono)
-2. **Nerd Font installiert?** – `brew list --cask | grep font`
-3. **Terminal neu gestartet?** – Nach Font-Installation erforderlich
 TECH
+
+    # Font-Name dynamisch aus Brewfile
+    local trouble_font
+    trouble_font=$(font_display_name "$(extract_installed_nerd_font)")
+    [[ -z "$trouble_font" ]] && trouble_font="Nerd Font"
+    # Entferne " Mono" Suffix für Kurzdarstellung
+    trouble_font="${trouble_font% Mono}"
+
+    cat << TROUBLESHOOT
+1. **Nerd Font im Terminal?** – Terminal-Profil muss einen Nerd Font verwenden (z.B. ${trouble_font})
+2. **Nerd Font installiert?** – \`brew list --cask | grep font\`
+3. **Terminal neu gestartet?** – Nach Font-Installation erforderlich
+TROUBLESHOOT
 }
