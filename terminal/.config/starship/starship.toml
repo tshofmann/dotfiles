@@ -28,6 +28,7 @@ $kotlin\
 $haskell\
 $python\
 [](fg:green bg:sapphire)\
+$docker_context\
 $conda\
 [](fg:sapphire bg:lavender)\
 $time\
@@ -168,8 +169,8 @@ vimcmd_visual_symbol = '[❮](bold fg:yellow)'
 
 [cmd_duration]
 show_milliseconds = true
-format = " in $duration "
-style = "bg:lavender"
+format = " in [$duration]($style) "
+style = "fg:lavender"
 disabled = false
 show_notifications = true
 min_time_to_notify = 45000
