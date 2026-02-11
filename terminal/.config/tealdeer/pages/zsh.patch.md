@@ -10,7 +10,7 @@
 
 - dotfiles: `$XDG_CONFIG_HOME` → `~/.config` für alle Tool-Configs
 
-- dotfiles: `$EZA_CONFIG_DIR` und `$TEALDEER_CONFIG_DIR` explizit gesetzt (macOS)
+- dotfiles: `$EZA_CONFIG_DIR` und `$TEALDEER_CONFIG_DIR` und `$STARSHIP_CONFIG` explizit gesetzt (macOS)
 
 # dotfiles: History-Konfiguration
 
@@ -30,7 +30,7 @@
 
 - dotfiles: fzf – `~/.config/fzf/init.zsh` und `config`
 
-- dotfiles: zoxide – `z` für schnelle Verzeichniswechsel, `zi` interaktiv
+- dotfiles: zoxide – z <query> = schnell wechseln, zi = interaktiv mit fzf
 
 - dotfiles: bat – Man-Pages mit Syntax-Highlighting (`$MANPAGER`)
 
@@ -46,7 +46,7 @@
 
 - dotfiles: zsh-syntax-highlighting – Farbige Befehlsvalidierung:
 
-`Grün=gültig, Rot=ungültig, Unterstrichen=existiert`
+`Grün=Gültiger Befehl, Rot=Ungültiger Befehl, Unterstrichen=Existierende Datei/Verzeichnis`
 
 # dotfiles: Completion-System
 
