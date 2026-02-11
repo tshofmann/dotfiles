@@ -19,10 +19,10 @@ SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-style"
 [[ -f "$SHELL_COLORS" ]] && source "$SHELL_COLORS"
 
 # Logging (konsistent mit anderen Skripten)
-log()  { echo -e "${C_BLUE}→${C_RESET} $1"; }
-ok()   { echo -e "${C_GREEN}✔${C_RESET} $1"; }
-warn() { echo -e "${C_YELLOW}⚠${C_RESET} $1"; }
-err()  { echo -e "${C_RED}✖${C_RESET} $1" >&2; }
+log()  { echo -e "${C_BLUE:-}→${C_RESET:-} $1"; }
+ok()   { echo -e "${C_GREEN:-}✔${C_RESET:-} $1"; }
+warn() { echo -e "${C_YELLOW:-}⚠${C_RESET:-} $1"; }
+err()  { echo -e "${C_RED:-}✖${C_RESET:-} $1" >&2; }
 
 # ------------------------------------------------------------
 # 1. Shell-Syntax prüfen
@@ -31,14 +31,28 @@ check_shell_syntax() {
     log "Prüfe Shell-Syntax..."
     local errors=0
 
-    # Alle Shell-Dateien prüfen: .sh, .alias, .zsh, .zshrc, .zshenv, .zprofile, .zlogin
+    # POSIX-Dateien zuerst mit sh -n prüfen (install.sh + logging.sh)
+    for file in "$DOTFILES_DIR"/setup/install.sh \
+                "$DOTFILES_DIR"/setup/lib/logging.sh; do
+        if [[ -f "$file" ]]; then
+            if ! sh -n "$file" 2>/dev/null; then
+                err "POSIX-Syntax-Fehler in: ${file#$DOTFILES_DIR/}"
+                sh -n "$file" 2>&1 | head -3
+                (( errors++ )) || true
+            fi
+        fi
+    done
+
+    # ZSH-Dateien prüfen: .sh, .alias, .zsh, .zshrc, .zshenv, .zprofile, .zlogin
+    # POSIX-Dateien (install.sh, logging.sh) werden übersprungen
     for file in "$DOTFILES_DIR"/.github/scripts/**/*.sh(N) \
                 "$DOTFILES_DIR"/terminal/.config/alias/*.alias(N) \
-                "$DOTFILES_DIR"/terminal/.config/zsh/*.zsh(N) \
+                "$DOTFILES_DIR"/terminal/.config/**/*.zsh(N) \
                 "$DOTFILES_DIR"/terminal/.zsh*(N) \
                 "$DOTFILES_DIR"/terminal/.zprofile(N) \
                 "$DOTFILES_DIR"/terminal/.zlogin(N) \
-                "$DOTFILES_DIR"/setup/*.sh(N) \
+                "$DOTFILES_DIR"/setup/bootstrap.sh(N) \
+                "$DOTFILES_DIR"/setup/restore.sh(N) \
                 "$DOTFILES_DIR"/setup/modules/*.sh(N); do
         if [[ -f "$file" ]]; then
             if ! zsh -n "$file" 2>/dev/null; then
@@ -79,166 +93,35 @@ check_docs() {
 }
 
 # ------------------------------------------------------------
-# 3. Execute-Berechtigungen prüfen
+# 3. Execute-Berechtigungen prüfen (delegiert an gemeinsames Skript)
 # ------------------------------------------------------------
 check_executable_permissions() {
-    log "Prüfe Execute-Berechtigungen..."
-    local errors=0
-
-    # fzf-Helper müssen ausführbar sein (außer config und *.zsh)
-    for file in "$DOTFILES_DIR"/terminal/.config/fzf/*(N-.); do
-        local name=$(basename "$file")
-        # Überspringe config und .zsh Dateien (werden gesourced)
-        [[ "$name" == "config" || "$name" == *.zsh ]] && continue
-
-        if [[ ! -x "$file" ]]; then
-            err "fzf/$name: Fehlende Execute-Berechtigung"
-            err "  → chmod +x $file"
-            (( errors++ )) || true
-        fi
-    done
-
-    # Haupt-Skripte müssen ausführbar sein
-    for file in "$DOTFILES_DIR"/setup/bootstrap.sh \
-                "$DOTFILES_DIR"/.github/scripts/generate-docs.sh \
-                "$DOTFILES_DIR"/.github/scripts/health-check.sh; do
-        if [[ -f "$file" && ! -x "$file" ]]; then
-            err "$(basename $file): Fehlende Execute-Berechtigung"
-            (( errors++ )) || true
-        fi
-    done
-
-    if (( errors > 0 )); then
-        err "$errors Datei(en) ohne Execute-Berechtigung"
-        return 1
-    fi
-
-    ok "Execute-Berechtigungen OK"
-    return 0
+    "$DOTFILES_DIR/.github/scripts/check-executable-permissions.sh"
 }
 
 # ------------------------------------------------------------
-# 4. Alias-Datei-Format prüfen (Guards, Header)
+# 4. Alias-Datei-Format prüfen (delegiert an gemeinsames Skript)
 # ------------------------------------------------------------
 check_alias_format() {
-    log "Prüfe Alias-Datei-Format..."
-    local errors=0
-
-    for file in "$DOTFILES_DIR"/terminal/.config/alias/*.alias(N); do
-        local name=$(basename "$file")
-
-        # Header-Block vorhanden?
-        if ! head -3 "$file" | grep -q "^# ===="; then
-            err "$name: Kein Header-Block"
-            (( errors++ )) || true
-        fi
-
-        # Guard-Check vorhanden?
-        if ! grep -q "command -v.*>/dev/null" "$file"; then
-            err "$name: Kein Guard-Check"
-            (( errors++ )) || true
-        fi
-    done
-
-    if (( errors > 0 )); then
-        err "$errors Alias-Datei(en) mit Format-Fehlern"
-        return 1
-    fi
-
-    ok "Alias-Format OK"
-    return 0
+    "$DOTFILES_DIR/.github/scripts/check-alias-format.sh"
 }
 
 # ------------------------------------------------------------
-# 5. Header-Einrückungen prüfen (Feldname auf 12 Zeichen gepaddet)
+# 5. Header-Einrückungen prüfen (delegiert an gemeinsames Skript)
 # ------------------------------------------------------------
 check_header_alignment() {
-    log "Prüfe Header-Einrückungen..."
-    local errors=0
-
-    # Standard-Felder: Feldname wird mit Leerzeichen auf 12 Zeichen gepaddet,
-    # dann folgt " :". Bei 12-Zeichen-Feldnamen (z.B. Alternativen) nur " :" anhängen.
-    local -a fields=(
-        "Zweck       :"
-        "Pfad        :"
-        "Docs        :"
-        "Config      :"
-        "Nutzt       :"
-        "Ersetzt     :"
-        "Aliase      :"
-        "Aufruf      :"
-        "Hinweis     :"
-        "Verwendung  :"
-        "Theme       :"
-        "Laden       :"
-        "Geladen     :"
-        "STEP        :"
-        "Benötigt    :"
-        "Plattform   :"
-        "Font        :"
-        "Speicherort :"
-        "Packages    :"
-        "Hooks       :"
-        "Cache       :"
-        "Aktivierung :"
-        "Zielort     :"
-        "Profil      :"
-        "Alternativen :"
-        "Lizenz      :"
-        "Generiert   :"
-    )
-
-    # Alle Dateien mit Header-Blöcken prüfen
-    local files=(
-        "$DOTFILES_DIR"/terminal/.config/alias/*.alias(N)
-        "$DOTFILES_DIR"/terminal/.config/fzf/*(N.)
-        "$DOTFILES_DIR"/terminal/.config/zsh/*.zsh(N)
-        "$DOTFILES_DIR"/terminal/.config/*/config(N)
-        "$DOTFILES_DIR"/terminal/.config/*/*.toml(N)
-        "$DOTFILES_DIR"/terminal/.config/*/*.yml(N)
-        "$DOTFILES_DIR"/terminal/.config/theme-style(N)
-        "$DOTFILES_DIR"/terminal/.config/fd/ignore(N)
-        "$DOTFILES_DIR"/terminal/.config/shellcheckrc(N)
-        "$DOTFILES_DIR"/terminal/.zsh*(N)
-        "$DOTFILES_DIR"/terminal/.zprofile(N)
-        "$DOTFILES_DIR"/terminal/.zlogin(N)
-        "$DOTFILES_DIR"/setup/*.sh(N)
-        "$DOTFILES_DIR"/setup/modules/*.sh(N)
-        "$DOTFILES_DIR"/setup/Brewfile(N)
-        "$DOTFILES_DIR"/.github/scripts/**/*.sh(N)
-    )
-
-    for file in "${files[@]}"; do
-        [[ ! -f "$file" ]] && continue
-        local relpath="${file#$DOTFILES_DIR/}"
-
-        for field in "${fields[@]}"; do
-            local fieldname="${field%% *}"
-            # Prüfe ob Feld existiert aber falsch eingerückt ist
-            if grep -q "^# ${fieldname}[[:space:]]*:" "$file" 2>/dev/null; then
-                if ! grep -q "^# ${field}" "$file" 2>/dev/null; then
-                    err "$relpath: '# ${fieldname}' falsch eingerückt (Standard: '# ${field}')"
-                    (( errors++ )) || true
-                fi
-            fi
-        done
-    done
-
-    if (( errors > 0 )); then
-        err "$errors Header-Feld(er) mit falscher Einrückung"
-        print ""
-        print "  ${C_DIM}Standard: Feldname auf 12 Zeichen padden + ' :'${C_RESET}"
-        print "    ${C_BOLD}# Zweck       :${C_RESET}  ${C_DIM}(5 Zeichen + 7 Spaces = 12)${C_RESET}"
-        print "    ${C_BOLD}# Alternativen :${C_RESET}  ${C_DIM}(12 Zeichen + 0 Spaces = 12)${C_RESET}"
-        return 1
-    fi
-
-    ok "Header-Einrückungen OK"
-    return 0
+    "$DOTFILES_DIR/.github/scripts/check-header-alignment.sh"
 }
 
 # ------------------------------------------------------------
-# 6. Markdown-Lint prüfen
+# 6. Plattform-Sync prüfen (delegiert an gemeinsames Skript)
+# ------------------------------------------------------------
+check_platform_sync() {
+    "$DOTFILES_DIR/.github/scripts/check-platform-sync.sh"
+}
+
+# ------------------------------------------------------------
+# 7. Markdown-Lint prüfen
 # ------------------------------------------------------------
 check_markdown() {
     log "Prüfe Markdown-Dateien..."
@@ -316,6 +199,7 @@ check_executable_permissions || { (( failed++ )) || true; }
 check_docs || { (( failed++ )) || true; }
 check_alias_format || { (( failed++ )) || true; }
 check_header_alignment || { (( failed++ )) || true; }
+check_platform_sync || { (( failed++ )) || true; }
 check_markdown || { (( failed++ )) || true; }
 check_health || { (( failed++ )) || true; }
 
