@@ -14,6 +14,9 @@
 # Installations-Skript – führt System-Änderungen durch
 setup/bootstrap.sh @tshofmann
 
+# POSIX-Einstiegspunkt – installiert zsh, ruft chsh und bootstrap auf
+setup/install.sh @tshofmann
+
 # CI/CD-Pipelines – können beliebigen Code ausführen
 .github/workflows/ @tshofmann
 
