@@ -36,7 +36,7 @@ check_executable_permissions() {
         if [[ ! -x "$file" ]]; then
             local relpath="${file#${DOTFILES_DIR}/}"
             err "fzf/$name: Fehlende Execute-Berechtigung"
-            err "  \u2192 chmod +x $relpath"
+            err "  → chmod +x $relpath"
             errors=$((errors + 1))
         fi
     done
