@@ -22,6 +22,29 @@
 readonly HOOKS_PATH=".github/hooks"
 
 # ------------------------------------------------------------
+# Plist Diff-Treiber konfigurieren
+# ------------------------------------------------------------
+# Wird von .gitattributes referenziert: *.xccolortheme diff=plist
+# plutil konvertiert binäre/kompakte Plists in lesbares XML
+# ------------------------------------------------------------
+configure_plist_diff_driver() {
+    local current_textconv
+    current_textconv=$(git config --get diff.plist.textconv 2>/dev/null || echo "")
+
+    if [[ "$current_textconv" == "plutil -convert xml1 -o -" ]]; then
+        ok "Plist Diff-Treiber bereits konfiguriert"
+        return 0
+    fi
+
+    if command -v plutil >/dev/null 2>&1; then
+        git config diff.plist.textconv "plutil -convert xml1 -o -"
+        ok "Plist Diff-Treiber konfiguriert (plutil)"
+    else
+        warn "plutil nicht gefunden – Plist Diff-Treiber übersprungen"
+    fi
+}
+
+# ------------------------------------------------------------
 # Git Hooks aktivieren
 # ------------------------------------------------------------
 configure_git_hooks() {
@@ -46,18 +69,20 @@ configure_git_hooks() {
 
     if [[ "$current_hooks" == "$HOOKS_PATH" ]]; then
         ok "Git Hooks bereits aktiviert"
-        return 0
-    fi
-
-    log "Aktiviere Git Pre-Commit Hooks..."
-
-    cd "$DOTFILES_DIR" || return 1
-
-    if git config core.hooksPath "$HOOKS_PATH"; then
-        ok "Git Hooks aktiviert: $HOOKS_PATH"
     else
-        warn "Konnte Git Hooks nicht aktivieren"
+        log "Aktiviere Git Pre-Commit Hooks..."
+
+        cd "$DOTFILES_DIR" || return 1
+
+        if git config core.hooksPath "$HOOKS_PATH"; then
+            ok "Git Hooks aktiviert: $HOOKS_PATH"
+        else
+            warn "Konnte Git Hooks nicht aktivieren"
+        fi
     fi
+
+    # Plist Diff-Treiber für .xccolortheme (siehe .gitattributes)
+    configure_plist_diff_driver
 
     return 0
 }

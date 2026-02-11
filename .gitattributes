@@ -8,3 +8,10 @@
 
 # Textdateien automatisch erkennen und Zeilenenden normalisieren (LF)
 * text=auto
+
+# Terminal.app Profile enthalten Base64-kodierte NSArchiver-Daten
+# Diffs/Merges sind nicht sinnvoll – als binary behandeln
+*.terminal binary
+
+# Xcode Color Theme (XML, aber komplex)
+*.xccolortheme diff=plist
