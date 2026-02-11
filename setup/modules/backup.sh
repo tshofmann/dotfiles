@@ -90,19 +90,19 @@ _get_stow_targets() {
 # Ermittelt den Typ einer Datei
 # Rückgabe: file|symlink|directory|broken_symlink|none
 _get_file_type() {
-    local path="$1"
+    local filepath="$1"
 
-    if [[ ! -e "$path" && ! -L "$path" ]]; then
+    if [[ ! -e "$filepath" && ! -L "$filepath" ]]; then
         echo "none"
-    elif [[ -L "$path" ]]; then
-        if [[ -e "$path" ]]; then
+    elif [[ -L "$filepath" ]]; then
+        if [[ -e "$filepath" ]]; then
             echo "symlink"
         else
             echo "broken_symlink"
         fi
-    elif [[ -d "$path" ]]; then
+    elif [[ -d "$filepath" ]]; then
         echo "directory"
-    elif [[ -f "$path" ]]; then
+    elif [[ -f "$filepath" ]]; then
         echo "file"
     else
         echo "unknown"
@@ -111,11 +111,11 @@ _get_file_type() {
 
 # Prüft ob ein Symlink ins dotfiles-Repo zeigt
 _is_dotfiles_symlink() {
-    local path="$1"
-    [[ -L "$path" ]] || return 1
+    local filepath="$1"
+    [[ -L "$filepath" ]] || return 1
 
     local target resolved_target
-    target=$(/usr/bin/readlink "$path" 2>/dev/null) || return 1
+    target=$(/usr/bin/readlink "$filepath" 2>/dev/null) || return 1
 
     # Variante 1: Absoluter Pfad direkt ins dotfiles-Repo
     [[ "$target" == "${DOTFILES_DIR}/"* ]] && return 0
@@ -125,16 +125,22 @@ _is_dotfiles_symlink() {
 
     # Variante 3: Auflösen und prüfen (ZSH :A modifier = realpath)
     # :A = absolute path with symlinks resolved
-    resolved_target="${path:A}"
+    resolved_target="${filepath:A}"
     [[ "$resolved_target" == "${DOTFILES_DIR}/"* ]] && return 0
 
     return 1
 }
 
-# Holt Permissions einer Datei (macOS-kompatibel)
+# Holt Permissions einer Datei (macOS + Linux kompatibel)
+# HINWEIS: Variable heißt "filepath" statt "path", weil ZSH $path
+# als Spezialvariable (tied to $PATH) reserviert hat.
 _get_permissions() {
-    local path="$1"
-    stat -f "%OLp" "$path" 2>/dev/null || echo "644"
+    local filepath="$1"
+    if is_macos; then
+        stat -f "%OLp" "$filepath" 2>/dev/null || echo "644"
+    else
+        stat -c "%a" "$filepath" 2>/dev/null || echo "644"
+    fi
 }
 
 # System-Default-Pfad für bekannte Dateien
