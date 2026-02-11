@@ -198,6 +198,10 @@ jobs:
           fi
           echo "✔ Alias-Format OK"
 
+      - name: Header-Einrückungen prüfen
+        shell: zsh {0}
+        run: ./.github/scripts/check-header-alignment.sh
+
       - name: Markdown prüfen
         run: |
           echo "Prüfe Markdown-Dateien..."
