@@ -54,9 +54,9 @@ _preview_file() {
             local lines
             lines=$(wc -l < "$file")
             if (( lines > 100 )); then
-                jq -C '.' -- "$file" 2>/dev/null | head -80
+                jq -C '.' "$file" 2>/dev/null | head -80
             else
-                jq -C '.' -- "$file" 2>/dev/null
+                jq -C '.' "$file" 2>/dev/null
             fi
             return 0
         fi

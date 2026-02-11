@@ -29,7 +29,7 @@ Bevor du dieses Repository auf deinem System installierst:
 
 - Keine Passwörter oder API-Keys in den Dotfiles speichern
 - Sensible Befehle mit führendem Space eingeben (werden nicht in History gespeichert)
-- Regelmäßig `brew update && brew upgrade` ausführen
+- Regelmäßig `brew-up` ausführen (aktualisiert, bereinigt und zeigt verwaiste Pakete)
 
 ## Bekannte Sicherheitsaspekte
 
