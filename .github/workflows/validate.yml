@@ -76,7 +76,7 @@ jobs:
             fi
           done
           # Haupt-Skripte
-          for file in setup/bootstrap.sh setup/install.sh .github/scripts/generate-docs.sh .github/scripts/health-check.sh; do
+          for file in setup/bootstrap.sh setup/install.sh .github/scripts/generate-docs.sh .github/scripts/health-check.sh .github/scripts/check-header-alignment.sh; do
             if [[ -f "$file" && ! -x "$file" ]]; then
               echo "✖ $file: Fehlende Execute-Berechtigung"
               errors=$((errors + 1))

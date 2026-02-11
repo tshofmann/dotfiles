@@ -101,7 +101,8 @@ check_executable_permissions() {
     # Haupt-Skripte müssen ausführbar sein
     for file in "$DOTFILES_DIR"/setup/bootstrap.sh \
                 "$DOTFILES_DIR"/.github/scripts/generate-docs.sh \
-                "$DOTFILES_DIR"/.github/scripts/health-check.sh; do
+                "$DOTFILES_DIR"/.github/scripts/health-check.sh \
+                "$DOTFILES_DIR"/.github/scripts/check-header-alignment.sh; do
         if [[ -f "$file" && ! -x "$file" ]]; then
             err "$(basename $file): Fehlende Execute-Berechtigung"
             (( errors++ )) || true
