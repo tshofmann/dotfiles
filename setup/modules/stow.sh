@@ -147,10 +147,19 @@ run_stow() {
 
     # Stow mit --adopt ausführen (übernimmt existierende Dateien)
     # -R = Restow (erst unstow, dann stow)
-    if stow --adopt -R "${packages[@]}" 2>/dev/null; then
+    local stow_output stow_rc
+    stow_output=$(stow --adopt -R "${packages[@]}" 2>&1)
+    stow_rc=$?
+
+    if (( stow_rc == 0 )); then
         ok "Symlinks erstellt für: ${packages[*]}"
     else
-        warn "Stow hatte Probleme – prüfe manuell"
+        warn "Stow hatte Probleme (Exit-Code: $stow_rc):"
+        # Jede Zeile einzeln loggen für konsistente Formatierung
+        local line
+        while IFS= read -r line; do
+            [[ -n "$line" ]] && warn "  $line"
+        done <<< "$stow_output"
         # Stash trotzdem wiederherstellen bei Fehler
         _restore_stashed_changes
         return 0
