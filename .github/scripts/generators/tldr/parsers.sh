@@ -12,10 +12,17 @@
 # Helper: Prüfe ob offizielle tldr-Seite existiert
 # ------------------------------------------------------------
 # Prüft im tealdeer-Cache ob eine offizielle Seite vorhanden ist
-# Cache-Pfad: ~/Library/Caches/tealdeer/tldr-pages/pages.{lang}/{platform}/
+# Cache-Pfad: macOS  → ~/Library/Caches/tealdeer/tldr-pages/
+#             Linux  → ${XDG_CACHE_HOME:-~/.cache}/tealdeer/tldr-pages/
 has_official_tldr_page() {
     local tool_name="$1"
-    local cache_base="${HOME}/Library/Caches/tealdeer/tldr-pages"
+    local cache_base
+
+    # Plattform-spezifischer Cache-Pfad (tealdeer nutzt OS-Konventionen)
+    case "$OSTYPE" in
+        darwin*) cache_base="${HOME}/Library/Caches/tealdeer/tldr-pages" ;;
+        *)       cache_base="${XDG_CACHE_HOME:-$HOME/.cache}/tealdeer/tldr-pages" ;;
+    esac
 
     # Prüfe in allen Sprachen und Plattformen
     for lang_dir in "$cache_base"/pages.*(N); do

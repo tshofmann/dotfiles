@@ -75,11 +75,11 @@ get_manifest_count() {
 # Prüft ob ein Pfad ein Symlink ins dotfiles-Repo ist
 # ------------------------------------------------------------
 is_dotfiles_symlink() {
-    local path="$1"
-    [[ -L "$path" ]] || return 1
+    local filepath="$1"
+    [[ -L "$filepath" ]] || return 1
 
     local target
-    target=$(/usr/bin/readlink "$path" 2>/dev/null) || return 1
+    target=$(/usr/bin/readlink "$filepath" 2>/dev/null) || return 1
 
     # Prüfe verschiedene Varianten
     [[ "$target" == "${DOTFILES_DIR}/"* ]] && return 0
@@ -87,7 +87,7 @@ is_dotfiles_symlink() {
 
     # Auflösen für relative Symlinks (ZSH :A modifier = realpath)
     local resolved
-    resolved="${path:A}"
+    resolved="${filepath:A}"
     [[ "$resolved" == "${DOTFILES_DIR}/"* ]] && return 0
 
     return 1
