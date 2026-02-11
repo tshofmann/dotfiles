@@ -41,19 +41,20 @@ check_executable_permissions() {
         fi
     done
 
-    # Haupt-Skripte müssen ausführbar sein
-    for file in \
-        "$DOTFILES_DIR"/setup/bootstrap.sh \
-        "$DOTFILES_DIR"/setup/install.sh \
-        "$DOTFILES_DIR"/.github/scripts/generate-docs.sh \
-        "$DOTFILES_DIR"/.github/scripts/health-check.sh \
-        "$DOTFILES_DIR"/.github/scripts/check-header-alignment.sh \
-        "$DOTFILES_DIR"/.github/scripts/check-platform-sync.sh \
-        "$DOTFILES_DIR"/.github/scripts/check-alias-format.sh \
-        "$DOTFILES_DIR"/.github/scripts/check-executable-permissions.sh; do
+    # Alle Skripte in .github/scripts/ müssen ausführbar sein (dynamisch)
+    for file in "$DOTFILES_DIR"/.github/scripts/*.sh(N); do
         if [[ -f "$file" && ! -x "$file" ]]; then
-            err "$(basename "$file"): Fehlende Execute-Berechtigung"
-            errors=$((errors + 1))
+            err "${file:t}: Fehlende Execute-Berechtigung"
+            (( errors++ )) || true
+        fi
+    done
+
+    # Setup-Skripte müssen ausführbar sein
+    for file in "$DOTFILES_DIR"/setup/bootstrap.sh \
+                "$DOTFILES_DIR"/setup/install.sh; do
+        if [[ -f "$file" && ! -x "$file" ]]; then
+            err "${file:t}: Fehlende Execute-Berechtigung"
+            (( errors++ )) || true
         fi
     done
 
