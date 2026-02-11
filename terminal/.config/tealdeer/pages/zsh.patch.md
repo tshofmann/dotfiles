@@ -1,8 +1,8 @@
 # dotfiles: Konfigurationsdateien
 
-- dotfiles: `~/.zshenv` – Umgebungsvariablen (XDG-Pfade)
+- dotfiles: `~/.zshenv` – Umgebungsvariablen die VOR allen anderen Configs geladen werden
 
-- dotfiles: `~/.zshrc` – Hauptkonfiguration für interaktive Shells
+- dotfiles: `~/.zshrc` – Hauptkonfiguration für interaktive ZSH Shells
 
 - dotfiles: Lade-Reihenfolge: `.zshenv → .zprofile → .zshrc → .zlogin`
 
@@ -10,7 +10,7 @@
 
 - dotfiles: `$XDG_CONFIG_HOME` → `~/.config` für alle Tool-Configs
 
-- dotfiles: `$EZA_CONFIG_DIR` und `$TEALDEER_CONFIG_DIR` explizit gesetzt (macOS)
+- dotfiles: `$EZA_CONFIG_DIR` und `$TEALDEER_CONFIG_DIR` und `$STARSHIP_CONFIG` explizit gesetzt (macOS)
 
 # dotfiles: History-Konfiguration
 
@@ -28,9 +28,9 @@
 
 # dotfiles: Tool-Integrationen
 
-- dotfiles: fzf – `~/.config/fzf/init.zsh` und `config`
+- dotfiles: fzf – `~/.config/fzf/init.zsh` und `~/.config/fzf/config`
 
-- dotfiles: zoxide – `z` für schnelle Verzeichniswechsel, `zi` interaktiv
+- dotfiles: zoxide – z &lt;query&gt; = schnell wechseln, zi = interaktiv mit fzf
 
 - dotfiles: bat – Man-Pages mit Syntax-Highlighting (`$MANPAGER`)
 
@@ -40,13 +40,13 @@
 
 # dotfiles: ZSH-Plugins
 
-- dotfiles: zsh-autosuggestions – Vorschläge aus History:
+- dotfiles: zsh-autosuggestions – Zeigt Vorschläge aus History:
 
-`→ übernehmen, Alt+→ Wort für Wort, Esc ignorieren`
+`→ Vorschlag komplett übernehmen, Alt+→ Wort für Wort übernehmen, Escape Vorschlag ignorieren`
 
-- dotfiles: zsh-syntax-highlighting – Farbige Befehlsvalidierung:
+- dotfiles: zsh-syntax-highlighting – Farben zeigen Befehlsgültigkeit:
 
-`Grün=gültig, Rot=ungültig, Unterstrichen=existiert`
+`Grün=Gültiger Befehl, Rot=Ungültiger Befehl, Unterstrichen=Existierende Datei/Verzeichnis`
 
 # dotfiles: Completion-System
 

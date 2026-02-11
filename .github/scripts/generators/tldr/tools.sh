@@ -369,52 +369,218 @@ generate_catppuccin_tldr() {
 # Generator: zsh.patch.md aus .zshrc und .zshenv
 # ------------------------------------------------------------
 # Dokumentiert dotfiles-spezifische ZSH-Konfiguration
+# Parst .zshenv und .zshrc dynamisch (SSOT)
 generate_zsh_page() {
     local zshrc="$DOTFILES_DIR/terminal/.zshrc"
     local zshenv="$DOTFILES_DIR/terminal/.zshenv"
     local output=""
 
-    # Header mit Links zu Startup-Files Dokumentation
+    # --- Header: Zweck-Beschreibungen aus Header-Feldern parsen ---
+    local zshenv_zweck zshrc_zweck load_order
+    zshenv_zweck=$(parse_header_field "$zshenv" "Zweck")
+    zshrc_zweck=$(parse_header_field "$zshrc" "Zweck")
+    # Lade-Reihenfolge aus Header (Klammern-Marker [..] entfernen)
+    load_order=$(parse_header_field "$zshrc" "Laden")
+    load_order="${load_order//\[/}"
+    load_order="${load_order//\]/}"
+
     output+="# dotfiles: Konfigurationsdateien\n\n"
-    output+="- dotfiles: \`~/.zshenv\` – Umgebungsvariablen (XDG-Pfade)\n\n"
-    output+="- dotfiles: \`~/.zshrc\` – Hauptkonfiguration für interaktive Shells\n\n"
-    output+="- dotfiles: Lade-Reihenfolge: \`.zshenv → .zprofile → .zshrc → .zlogin\`\n\n"
+    output+="- dotfiles: \`~/.zshenv\` – ${zshenv_zweck:-Umgebungsvariablen}\n\n"
+    output+="- dotfiles: \`~/.zshrc\` – ${zshrc_zweck:-Hauptkonfiguration}\n\n"
+    output+="- dotfiles: Lade-Reihenfolge: \`${load_order:-.zshenv → .zprofile → .zshrc → .zlogin}\`\n\n"
 
-    # XDG aus .zshenv
+    # --- XDG Base Directory aus .zshenv parsen ---
     output+="# dotfiles: XDG Base Directory\n\n"
-    output+="- dotfiles: \`\$XDG_CONFIG_HOME\` → \`~/.config\` für alle Tool-Configs\n\n"
-    output+="- dotfiles: \`\$EZA_CONFIG_DIR\` und \`\$TEALDEER_CONFIG_DIR\` explizit gesetzt (macOS)\n\n"
+    if [[ -f "$zshenv" ]]; then
+        # XDG_CONFIG_HOME extrahieren
+        local xdg_value
+        xdg_value=$(grep -m1 '^export XDG_CONFIG_HOME=' "$zshenv" | sed 's/.*="\(.*\)"/\1/' | sed 's|\$HOME|~|')
+        [[ -n "$xdg_value" ]] && output+="- dotfiles: \`\$XDG_CONFIG_HOME\` → \`${xdg_value}\` für alle Tool-Configs\n\n"
 
-    # History-Konfiguration aus .zshrc
+        # Explizite XDG-Overrides sammeln (EZA_CONFIG_DIR, TEALDEER_CONFIG_DIR, etc.)
+        local -a xdg_overrides=()
+        local varname
+        while IFS= read -r line; do
+            if [[ "$line" =~ ^export\ ([A-Z_]+_(CONFIG_DIR|CONFIG))= ]]; then
+                varname="${match[1]}"
+                if [[ "$varname" != "XDG_CONFIG_HOME" ]]; then
+                    xdg_overrides+=("\`\$${varname}\`")
+                fi
+            fi
+        done < "$zshenv"
+        if (( ${#xdg_overrides[@]} > 0 )); then
+            output+="- dotfiles: ${(j: und :)xdg_overrides} explizit gesetzt (macOS)\n\n"
+        fi
+    fi
+
+    # --- History-Konfiguration aus .zshrc parsen ---
     output+="# dotfiles: History-Konfiguration\n\n"
-    output+="- dotfiles: Zentrale History in \`~/.zsh_history\` (25.000 Einträge)\n\n"
-    output+="- dotfiles: \`SHELL_SESSIONS_DISABLE=1\` – keine separate History pro Tab\n\n"
-    output+="- dotfiles: Führende Leerzeichen verbergen Befehle aus History (\`HIST_IGNORE_SPACE\`)\n\n"
+    if [[ -f "$zshrc" ]]; then
+        # SAVEHIST dynamisch extrahieren und formatieren (25000 → 25.000)
+        local savehist
+        savehist=$(grep -m1 '^SAVEHIST=' "$zshrc" | cut -d= -f2)
+        if [[ -n "$savehist" ]]; then
+            # Tausender-Punkt: Zahl in "Prefix.letzten3" aufteilen
+            local formatted
+            if (( savehist >= 1000 )); then
+                formatted="${savehist[1,-4]}.${savehist[-3,-1]}"
+            else
+                formatted="$savehist"
+            fi
+            output+="- dotfiles: Zentrale History in \`~/.zsh_history\` (${formatted} Einträge)\n\n"
+        fi
 
-    # Alias-System
+        # SHELL_SESSIONS_DISABLE aus .zshenv prüfen
+        if [[ -f "$zshenv" ]] && grep -q '^SHELL_SESSIONS_DISABLE=1' "$zshenv"; then
+            output+="- dotfiles: \`SHELL_SESSIONS_DISABLE=1\` – keine separate History pro Tab\n\n"
+        fi
+
+        # HIST_IGNORE_SPACE aus setopt-Zeilen erkennen
+        if grep -q '^setopt HIST_IGNORE_SPACE' "$zshrc"; then
+            output+="- dotfiles: Führende Leerzeichen verbergen Befehle aus History (\`HIST_IGNORE_SPACE\`)\n\n"
+        fi
+    fi
+
+    # --- Alias-System aus .zshrc erkennen ---
     output+="# dotfiles: Alias-System\n\n"
-    output+="- dotfiles: Alle \`.alias\`-Dateien aus \`~/.config/alias/\` werden geladen\n\n"
-    output+="- dotfiles: Farben aus \`~/.config/theme-style\` (\`\$C_GREEN\`, \`\$C_RED\`, etc.)\n\n"
+    if [[ -f "$zshrc" ]]; then
+        # Alias-Lade-Pfad dynamisch aus der for-Schleife extrahieren
+        local alias_path
+        alias_path=$(grep -m1 'alias_file.*\.alias' "$zshrc" | sed 's/.*"\(.*\)"\/\*.*/\1/' | sed 's|\$HOME|~|')
+        if [[ -n "$alias_path" ]]; then
+            output+="- dotfiles: Alle \`.alias\`-Dateien aus \`${alias_path}/\` werden geladen\n\n"
+        fi
+        # Theme-style source erkennen
+        if grep -q 'theme-style' "$zshrc"; then
+            output+="- dotfiles: Farben aus \`~/.config/theme-style\` (\`\$C_GREEN\`, \`\$C_RED\`, etc.)\n\n"
+        fi
+    fi
 
-    # Tool-Integrationen
+    # --- Tool-Integrationen dynamisch aus .zshrc parsen ---
+    # Erkennt: command -v <tool> Blöcke mit zugehörigen Inline-Kommentaren
     output+="# dotfiles: Tool-Integrationen\n\n"
-    output+="- dotfiles: fzf – \`~/.config/fzf/init.zsh\` und \`config\`\n\n"
-    output+="- dotfiles: zoxide – \`z\` für schnelle Verzeichniswechsel, \`zi\` interaktiv\n\n"
-    output+="- dotfiles: bat – Man-Pages mit Syntax-Highlighting (\`\$MANPAGER\`)\n\n"
-    output+="- dotfiles: starship – Shell-Prompt (tldr starship)\n\n"
-    output+="- dotfiles: gh – GitHub CLI Completions\n\n"
+    if [[ -f "$zshrc" ]]; then
+        # fzf: init-Pfad und config dynamisch aus .zshrc parsen
+        if grep -q 'command -v fzf' "$zshrc"; then
+            local fzf_init
+            fzf_init=$(grep -m1 'fzf/init' "$zshrc" | sed 's/.*"\(.*\)".*/\1/' | sed 's|\$HOME|~|')
+            local fzf_config
+            fzf_config=$(grep -m1 'FZF_DEFAULT_OPTS_FILE=' "$zshrc" | sed 's/.*"\(.*\)".*/\1/' | sed 's|\$HOME|~|')
+            if [[ -n "$fzf_init" && -n "$fzf_config" ]]; then
+                output+="- dotfiles: fzf – \`${fzf_init}\` und \`${fzf_config}\`\n\n"
+            elif [[ -n "$fzf_init" ]]; then
+                output+="- dotfiles: fzf – \`${fzf_init}\`\n\n"
+            fi
+        fi
 
-    # Plugins
+        # zoxide: z/zi Beschreibung aus Kommentar parsen
+        if grep -q 'command -v zoxide' "$zshrc"; then
+            local zoxide_desc=""
+            zoxide_desc=$(grep -A1 'command -v zoxide' "$zshrc" | grep '^    # ' | head -1 | sed 's/^    # //')
+            if [[ -n "$zoxide_desc" ]]; then
+                # Winkelklammern escapen, damit z <query> in Markdown sichtbar bleibt
+                local zoxide_desc_escaped="${zoxide_desc//</&lt;}"
+                zoxide_desc_escaped="${zoxide_desc_escaped//>/&gt;}"
+                output+="- dotfiles: zoxide – ${zoxide_desc_escaped}\n\n"
+            else
+                output+="- dotfiles: zoxide – Schnelle Verzeichniswechsel\n\n"
+            fi
+        fi
+
+        # bat: Beschreibung aus Kommentar über dem Block parsen
+        if grep -q 'command -v bat' "$zshrc" && grep -q 'MANPAGER' "$zshrc"; then
+            local bat_desc
+            bat_desc=$(grep -B1 'command -v bat' "$zshrc" | grep '^# ' | head -1 | sed 's/^# //')
+            output+="- dotfiles: bat – ${bat_desc:-Man-Pages mit Syntax-Highlighting} (\`\$MANPAGER\`)\n\n"
+        fi
+
+        # starship: Inline-Kommentar parsen
+        if grep -q 'command -v starship' "$zshrc"; then
+            local starship_desc=""
+            starship_desc=$(grep 'starship init' "$zshrc" | grep '#' | sed 's/.*# //')
+            [[ -n "$starship_desc" ]] && output+="- dotfiles: starship – ${starship_desc} (tldr starship)\n\n" \
+                                      || output+="- dotfiles: starship – Shell-Prompt (tldr starship)\n\n"
+        fi
+
+        # gh: Completions erkennen
+        if grep -q 'command -v gh' "$zshrc"; then
+            local gh_desc=""
+            gh_desc=$(grep 'gh completion' "$zshrc" | grep '#' | sed 's/.*# //')
+            [[ -n "$gh_desc" ]] && output+="- dotfiles: gh – ${gh_desc}\n\n" \
+                                || output+="- dotfiles: gh – GitHub CLI Completions\n\n"
+        fi
+    fi
+
+    # --- ZSH-Plugins aus .zshrc parsen ---
     output+="# dotfiles: ZSH-Plugins\n\n"
-    output+="- dotfiles: zsh-autosuggestions – Vorschläge aus History:\n\n"
-    output+="\`→ übernehmen, Alt+→ Wort für Wort, Esc ignorieren\`\n\n"
-    output+="- dotfiles: zsh-syntax-highlighting – Farbige Befehlsvalidierung:\n\n"
-    output+="\`Grün=gültig, Rot=ungültig, Unterstrichen=existiert\`\n\n"
+    if [[ -f "$zshrc" ]]; then
+        # Autosuggestions: Keybindings aus Kommentaren extrahieren
+        if grep -q 'zsh-autosuggestions' "$zshrc"; then
+            # Keybinding-Kommentare sammeln (Format: #   Key   Beschreibung)
+            local -a as_keys=()
+            local in_as_block=false
+            while IFS= read -r line; do
+                [[ "$line" == *"Autosuggestions"* ]] && in_as_block=true
+                if $in_as_block; then
+                    # Keybinding-Zeile: #<3 Leerzeichen><Key><2+ Leerzeichen><Beschreibung>
+                    if [[ "$line" =~ ^#\ \ \ ([^ ]+)\ \ +(.+)$ ]]; then
+                        as_keys+=("${match[1]} ${match[2]}")
+                    fi
+                    # Block endet bei nächster Nicht-Kommentar-Zeile nach Keys
+                    if (( ${#as_keys[@]} > 0 )) && [[ "$line" != "#"* && -n "$line" ]]; then
+                        break
+                    fi
+                fi
+            done < "$zshrc"
 
-    # Completion
+            # Plugin-Beschreibung aus Kommentar parsen (Format: # Autosuggestions: Beschreibung)
+            local as_desc
+            as_desc=$(grep -m1 '# Autosuggestions:' "$zshrc" | sed 's/.*# Autosuggestions: //')
+            output+="- dotfiles: zsh-autosuggestions – ${as_desc:-Vorschläge aus History}:\n\n"
+            if (( ${#as_keys[@]} > 0 )); then
+                output+="\`${(j:, :)as_keys}\`\n\n"
+            fi
+        fi
+
+        # Syntax-Highlighting: Farb-Beschreibungen aus Kommentaren
+        if grep -q 'zsh-syntax-highlighting' "$zshrc"; then
+            local -a sh_colors=()
+            local in_sh_block=false color_name color_desc
+            while IFS= read -r line; do
+                # Block startet bei "Syntax-Highlighting: Farben zeigen"
+                [[ "$line" == *"Syntax-Highlighting:"*"Farben"* ]] && in_sh_block=true
+                if $in_sh_block; then
+                    if [[ "$line" =~ ^#\ \ \ ([A-Za-zÜÖÄüöä]+)\ +(.+)$ ]]; then
+                        color_name="${match[1]}"
+                        color_desc="${match[2]}"
+                        sh_colors+=("${color_name}=${color_desc}")
+                    fi
+                    # Block endet bei WICHTIG-Kommentar oder Nicht-Kommentar
+                    [[ "$line" == "# WICHTIG"* ]] && break
+                fi
+            done < "$zshrc"
+
+            # Plugin-Beschreibung aus Kommentar parsen (Format: # Syntax-Highlighting: Beschreibung)
+            local sh_desc
+            sh_desc=$(grep -m1 '# Syntax-Highlighting:' "$zshrc" | sed 's/.*# Syntax-Highlighting: //')
+            output+="- dotfiles: zsh-syntax-highlighting – ${sh_desc:-Farbige Befehlsvalidierung}:\n\n"
+            if (( ${#sh_colors[@]} > 0 )); then
+                output+="\`${(j:, :)sh_colors}\`\n\n"
+            fi
+        fi
+    fi
+
+    # --- Completion-System aus .zshrc erkennen ---
     output+="# dotfiles: Completion-System\n\n"
-    output+="- dotfiles: Tab-Vervollständigung mit täglicher Cache-Erneuerung\n\n"
-    output+="- dotfiles: \`compinit\` läuft nur einmal täglich vollständig\n\n"
+    if [[ -f "$zshrc" ]]; then
+        # compinit-Beschreibung aus Kommentar über compinit parsen
+        if grep -q 'compinit' "$zshrc"; then
+            local comp_desc
+            comp_desc=$(grep -B2 'autoload.*compinit' "$zshrc" | grep '^# [A-Z]' | head -1 | sed 's/^# //')
+            output+="- dotfiles: ${comp_desc:-Tab-Vervollständigung mit täglicher Cache-Erneuerung}\n\n"
+            output+="- dotfiles: \`compinit\` läuft nur einmal täglich vollständig\n\n"
+        fi
+    fi
 
     echo -e "$output"
 }
