@@ -97,10 +97,10 @@ if command -v fzf >/dev/null 2>&1; then
 
     # Repo Browser(suche?) – Enter=Klonen, Ctrl+O=Browser
     gh-repo() {
-        local repo
         local query="${1:-}"
-        repo=$(gh repo list --limit 30 ${query:+--source} | \
-            fzf --ansi \
+        local repo
+        repo=$(gh repo list --limit 30 | \
+            fzf --ansi --query="$query" \
                 --preview 'gh repo view {1}' \
                 --header='Enter: Klonen | Ctrl+O: Browser' \
                 --bind 'ctrl-o:execute-silent(gh repo view {1} --web)' | \
