@@ -69,45 +69,8 @@ extract_fzf_keybindings() {
 
 # Extrahiert den Terminal-Profilnamen aus der .terminal-Datei im setup/
 # Gibt Dateinamen ohne Endung zurück (z.B. "catppuccin-mocha")
-extract_terminal_profile_name() {
-    local terminal_file
-    terminal_file=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.terminal" | sort | head -1)
-    [[ -f "$terminal_file" ]] || return 1
-
-    # Dateiname ohne Pfad und ohne .terminal-Endung
-    echo "${${terminal_file:t}%.terminal}"
-}
-
-# Extrahiert den installierten Nerd Font aus Brewfile
-# Hinweis     : Bei mehreren Nerd Fonts wird nur der erste als Beispiel verwendet
-extract_installed_nerd_font() {
-    local brewfile="$DOTFILES_DIR/setup/Brewfile"
-    [[ -f "$brewfile" ]] || return 1
-
-    # Findet: cask "font-xyz-nerd-font" (erster Treffer)
-    grep -o 'cask "font-[^"]*-nerd-font"' "$brewfile" | head -1 | sed 's/cask "\(.*\)"/\1/'
-}
-
-# Generiert Font-Anzeigename aus Cask-Name
-# Eingabe:  font-meslo-lg-nerd-font (Brew Cask-Name)
-# Ausgabe:  MesloLG Nerd Font Mono (Anzeigename in Font-Auswahl)
-# Bekannte Fonts sind explizit gemappt, Fallback kapitalisiert und entfernt Bindestriche
-font_display_name() {
-    local cask="$1"
-    [[ -z "$cask" ]] && { echo "Nerd Font"; return; }
-
-    # Entferne "font-" Prefix und "-nerd-font" Suffix
-    local base="${cask#font-}"
-    base="${base%-nerd-font}"
-
-    # Mapping bekannter Fonts (markenspezifische Schreibweisen)
-    case "$base" in
-        meslo-lg)       echo "MesloLG Nerd Font Mono" ;;
-        jetbrains-mono) echo "JetBrainsMono Nerd Font Mono" ;;
-        fira-code)      echo "FiraCode Nerd Font Mono" ;;
-        *)              echo "${${(C)base}//-/} Nerd Font Mono" ;;  # Fallback: Capitalize + Bindestriche entfernen
-    esac
-}
+# extract_terminal_profile_name() → common/bootstrap.sh
+# extract_installed_nerd_font() und font_display_name() → common/brewfile.sh
 
 # ------------------------------------------------------------
 # Theme-Konfigurationen sammeln
@@ -229,7 +192,13 @@ Vollständige Palette: [catppuccin.com/palette](https://catppuccin.com/palette)
 
 AFTER_COLORS
 
-    cat << 'STARSHIP_SECTION'
+    # Starship-Preset dynamisch aus starship.toml Header
+    local starship_config="$DOTFILES_DIR/terminal/.config/starship/starship.toml"
+    local starship_preset
+    starship_preset=$(parse_header_field "$starship_config" "Upstream" | sed 's/.*(\(.*\) Preset).*/\1/')
+    [[ -z "$starship_preset" ]] && starship_preset="catppuccin-powerline"
+
+    cat << 'STARSHIP_INTRO'
 Die [Starship](https://starship.rs/) Prompt-Konfiguration ist versioniert und wird via Stow nach `~/.config/starship/starship.toml` verlinkt.
 
 > **Hinweis:** Starship sucht standardmäßig nach `~/.config/starship.toml` (ohne Unterordner). Um die "Ein Tool = Ein Ordner"-Konvention einzuhalten, setzen wir `STARSHIP_CONFIG` in `~/.zshenv`:
@@ -240,7 +209,13 @@ Die [Starship](https://starship.rs/) Prompt-Konfiguration ist versioniert und wi
 
 ### Konfiguration
 
-Die Datei `terminal/.config/starship/starship.toml` enthält das `catppuccin-powerline` Preset aus dem [catppuccin/starship](https://github.com/catppuccin/starship) Repository.
+STARSHIP_INTRO
+
+    cat << STARSHIP_PRESET
+Die Datei \`terminal/.config/starship/starship.toml\` enthält das \`${starship_preset}\` Preset aus dem [catppuccin/starship](https://github.com/catppuccin/starship) Repository.
+STARSHIP_PRESET
+
+    cat << 'STARSHIP_SECTION'
 
 ### Anpassungen
 
@@ -292,7 +267,7 @@ FONT_INTRO
 
 ### Voraussetzung
 
-Bei Starship-Konfigurationen mit Powerline-Symbolen (wie dem \`catppuccin-powerline\` Preset) muss die Schriftart ein **Nerd Font** sein. Nerd Fonts enthalten zusätzliche Icons und Symbole, die für Powerline-Prompts benötigt werden.
+Bei Starship-Konfigurationen mit Powerline-Symbolen (wie dem \`${starship_preset}\` Preset) muss die Schriftart ein **Nerd Font** sein. Nerd Fonts enthalten zusätzliche Icons und Symbole, die für Powerline-Prompts benötigt werden.
 
 ### Schritt 1: Neuen Nerd Font installieren
 

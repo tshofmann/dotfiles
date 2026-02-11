@@ -57,7 +57,7 @@ generate_readme_md() {
     cat << EOF
 # 🍎 dotfiles
 
-[![CI](https://github.com/tshofmann/dotfiles/actions/workflows/validate.yml/badge.svg)](https://github.com/tshofmann/dotfiles/actions/workflows/validate.yml)
+[![CI](https://github.com/${PROJECT_REPO}/actions/workflows/validate.yml/badge.svg)](https://github.com/${PROJECT_REPO}/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![macOS](https://img.shields.io/badge/macOS-${macos_min}%2B-black?logo=apple)](https://www.apple.com/macos/)
 [![Linux](https://img.shields.io/badge/Linux-vorbereitet-yellow?logo=linux)](https://kernel.org/)
@@ -78,7 +78,7 @@ Alle installierten Pakete: [\`setup/Brewfile\`](setup/Brewfile)
 ## 🚀 Installation
 
 \`\`\`bash
-curl -fsSL https://github.com/tshofmann/dotfiles/archive/refs/heads/main.tar.gz | tar -xz -C ~ && mv ~/dotfiles-main ~/dotfiles && ~/dotfiles/setup/install.sh
+curl -fsSL https://github.com/${PROJECT_REPO}/archive/refs/heads/main.tar.gz | tar -xz -C ~ && mv ~/dotfiles-main ~/dotfiles && ~/dotfiles/setup/install.sh
 \`\`\`
 
 Danach **Terminal neu starten**. Fertig!

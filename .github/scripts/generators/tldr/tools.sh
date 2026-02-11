@@ -29,7 +29,7 @@ generate_dotfiles_page() {
     # Header
     output+="# dotfiles\n\n"
     output+="> ${PROJECT_TAGLINE}\n"
-    output+="> Mehr Informationen: <https://github.com/tshofmann/dotfiles>\n\n"
+    output+="> Mehr Informationen: <https://github.com/${PROJECT_REPO}>\n\n"
 
     # Abhängigkeiten aus dotfiles.alias (Konsistenz mit anderen Pages)
     local nutzt=$(parse_header_field "$dotfiles_alias" "Nutzt")

@@ -284,15 +284,31 @@ generate_kitty_specific_entries() {
     local config_file="$1"
     local output=""
 
-    # SSH mit Terminfo
+    # SSH mit Terminfo (inhärentes Feature der Kitty-Kitten)
     output+="- dotfiles: SSH mit automatischer Kitty-Terminfo-Installation:\n\n\`kitten ssh benutzer@host\`\n\n"
 
-    # Theme anzeigen
-    output+="- dotfiles: Aktuelles Theme anzeigen:\n\n\`cat ~/.config/kitty/current-theme.conf\`\n\n"
+    # Theme-Datei dynamisch aus include-Direktive
+    local theme_file
+    theme_file=$(grep -m1 '^include ' "$config_file" 2>/dev/null | awk '{print $2}')
+    [[ -n "$theme_file" ]] && \
+        output+="- dotfiles: Aktuelles Theme anzeigen:\n\n\`cat ~/.config/kitty/${theme_file}\`\n\n"
 
-    # Shell-Integration Features
-    output+="- dotfiles: Shell-Integration für ZSH (Jump-to-Prompt, Scroll-to-Last-Output)\n"
-    output+="- dotfiles: macOS-optimiert (Option als Alt, Titlebar-Farbe)\n"
+    # Shell-Integration dynamisch prüfen
+    local shell_integration
+    shell_integration=$(grep -m1 '^shell_integration ' "$config_file" 2>/dev/null | awk '{print $2}')
+    [[ "$shell_integration" == "enabled" ]] && \
+        output+="- dotfiles: Shell-Integration für ZSH (Jump-to-Prompt, Scroll-to-Last-Output)\n"
+
+    # macOS-Optimierungen dynamisch aus Config
+    local option_as_alt titlebar_color macos_items=()
+    option_as_alt=$(grep -m1 '^macos_option_as_alt ' "$config_file" 2>/dev/null | awk '{print $2}')
+    titlebar_color=$(grep -m1 '^macos_titlebar_color ' "$config_file" 2>/dev/null | awk '{print $2}')
+    [[ -n "$option_as_alt" && "$option_as_alt" != "no" ]] && macos_items+=("Option als Alt")
+    [[ -n "$titlebar_color" ]] && macos_items+=("Titlebar-Farbe: ${titlebar_color}")
+    (( ${#macos_items[@]} > 0 )) && \
+        output+="- dotfiles: macOS-optimiert (${(j:, :)macos_items})\n"
+
+    # Yazi-Previews (inhärentes Feature des Kitty-Image-Protokolls)
     output+="- dotfiles: Yazi-Previews funktionieren (Image-Protokoll)\n"
 
     echo -e "$output"

@@ -146,3 +146,14 @@ generate_bootstrap_steps_from_modules() {
         extract_module_steps "$module_file"
     done
 }
+
+# Extrahiert Terminal-Profilnamen aus .terminal-Datei im setup/-Verzeichnis
+# Rückgabe: Profilname ohne Endung (z.B. "catppuccin-mocha")
+extract_terminal_profile_name() {
+    local terminal_file
+    terminal_file=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.terminal" | sort | head -1)
+    [[ -f "$terminal_file" ]] || return 1
+
+    # Dateiname ohne Pfad und ohne .terminal-Endung
+    echo "${${terminal_file:t}%.terminal}"
+}

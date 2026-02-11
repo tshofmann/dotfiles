@@ -159,9 +159,15 @@ Das Bootstrap-Skript fragt zu folgenden Zeitpunkten nach dem Admin-Passwort:
 
 ## Schritt 1: Install-Skript ausführen
 
-```bash
-curl -fsSL https://github.com/tshofmann/dotfiles/archive/refs/heads/main.tar.gz | tar -xz -C ~ && mv ~/dotfiles-main ~/dotfiles && ~/dotfiles/setup/install.sh
-```
+PART2
+
+    cat << INSTALL_CMD
+\`\`\`bash
+curl -fsSL https://github.com/${PROJECT_REPO}/archive/refs/heads/main.tar.gz | tar -xz -C ~ && mv ~/dotfiles-main ~/dotfiles && ~/dotfiles/setup/install.sh
+\`\`\`
+INSTALL_CMD
+
+    cat << 'PART3'
 
 > **💡 Warum install.sh?** Das Install-Skript ist POSIX-kompatibel und läuft mit /bin/sh, bash oder zsh. Es stellt sicher, dass zsh installiert ist (ggf. via apt/dnf/pacman) und startet dann das eigentliche Bootstrap.
 
@@ -178,7 +184,7 @@ Das Bootstrap-Skript führt dann folgende Aktionen in dieser Reihenfolge aus:
 
 | Aktion | Beschreibung | Bei Fehler |
 | ------ | ------------ | ---------- |
-PART2
+PART3
 
     # Dynamische Bootstrap-Schritte-Tabelle aus Modulen generieren
     if has_bootstrap_modules; then
@@ -186,14 +192,22 @@ PART2
     else
         # Fallback: Statische Tabelle für Legacy-Bootstrap
         echo "| macOS-Version-Check | Prüft ob macOS ${macos_min}+ (${macos_min_name}) | ❌ Exit |"
-        cat << 'LEGACY_STEPS'
+
+        # Font- und Profilname dynamisch aus Brewfile/Setup-Dateien
+        local legacy_font legacy_profile
+        legacy_font=$(font_display_name "$(extract_installed_nerd_font)")
+        [[ -z "$legacy_font" ]] && legacy_font="Nerd Font"
+        legacy_profile=$(extract_terminal_profile_name)
+        [[ -z "$legacy_profile" ]] && legacy_profile="<profilname>"
+
+        cat << LEGACY_STEPS
 | Netzwerk-Check | Prüft Internetverbindung | ❌ Exit |
-| Schreibrechte-Check | Prüft ob `$HOME` schreibbar ist | ❌ Exit |
+| Schreibrechte-Check | Prüft ob \`\$HOME\` schreibbar ist | ❌ Exit |
 | Xcode CLI Tools | Installiert/prüft Developer Tools | ❌ Exit |
 | Homebrew | Installiert/prüft Homebrew | ❌ Exit |
-| Brewfile | Installiert CLI-Tools via `brew bundle` | ❌ Exit |
-| Font-Verifikation | Prüft MesloLG Nerd Font Installation | ❌ Exit |
-| Terminal-Profil | Importiert `catppuccin-mocha.terminal` als Standard | ⚠️ Warnung |
+| Brewfile | Installiert CLI-Tools via \`brew bundle\` | ❌ Exit |
+| Font-Verifikation | Prüft ${legacy_font} Installation | ❌ Exit |
+| Terminal-Profil | Importiert \`${legacy_profile}.terminal\` als Standard | ⚠️ Warnung |
 | ZSH-Sessions | Prüft SHELL_SESSIONS_DISABLE in ~/.zshenv | ⚠️ Warnung |
 LEGACY_STEPS
     fi

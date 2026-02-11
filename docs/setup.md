@@ -258,7 +258,7 @@ Dies ermöglicht:
 
 Bei fehlenden oder falschen Icons prüfen:
 
-1. **Nerd Font im Terminal?** – Terminal-Profil muss einen Nerd Font verwenden (z.B. MesloLGSDZ oder JetBrainsMono)
+1. **Nerd Font im Terminal?** – Terminal-Profil muss einen Nerd Font verwenden (z.B. JetBrainsMono Nerd Font)
 2. **Nerd Font installiert?** – `brew list --cask | grep font`
 3. **Terminal neu gestartet?** – Nach Font-Installation erforderlich
 

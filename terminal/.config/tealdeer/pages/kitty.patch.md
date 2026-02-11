@@ -15,5 +15,5 @@
 `cat ~/.config/kitty/current-theme.conf`
 
 - dotfiles: Shell-Integration für ZSH (Jump-to-Prompt, Scroll-to-Last-Output)
-- dotfiles: macOS-optimiert (Option als Alt, Titlebar-Farbe)
+- dotfiles: macOS-optimiert (Option als Alt, Titlebar-Farbe: system)
 - dotfiles: Yazi-Previews funktionieren (Image-Protokoll)
