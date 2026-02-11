@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 # ============================================================
 # check-platform-sync.sh - Plattform-Synchronisation prüfen
 # ============================================================
@@ -10,7 +10,7 @@
 # Generiert   : Nichts (nur Validierung)
 # ============================================================
 
-set -euo pipefail
+setopt errexit nounset pipefail
 
 # Dotfiles-Verzeichnis ermitteln
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -47,7 +47,7 @@ check_platform_sync() {
         grep -E '^[[:space:]]+[*a-z][a-z0-9|*]*\)[[:space:]]+(echo[[:space:]]+"(fedora|debian|arch)"|_PLATFORM_DISTRO="(fedora|debian|arch)")' "$1" | \
             sed 's/^[[:space:]]*//' | \
             sed 's/)[[:space:]]*.*//' | \
-            sort
+            sort || true
     }
 
     local p_patterns
@@ -71,8 +71,8 @@ check_platform_sync() {
     # IDs-Zusammenfassung muss identisch sein
     local p_comment
     local i_comment
-    p_comment=$(grep '# IDs:' "$platform_file" | head -1 | sed 's/^[[:space:]]*//')
-    i_comment=$(grep '# IDs:' "$install_file" | head -1 | sed 's/^[[:space:]]*//')
+    p_comment=$(grep '# IDs:' "$platform_file" | head -1 | sed 's/^[[:space:]]*//' || true)
+    i_comment=$(grep '# IDs:' "$install_file" | head -1 | sed 's/^[[:space:]]*//' || true)
 
     if [[ "$p_comment" != "$i_comment" ]]; then
         err "IDs-Zusammenfassung nicht synchron:"

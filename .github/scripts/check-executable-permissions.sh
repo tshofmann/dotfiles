@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 # ============================================================
 # check-executable-permissions.sh - Execute-Berechtigungen prüfen
 # ============================================================
@@ -9,7 +9,7 @@
 # Generiert   : Nichts (nur Validierung)
 # ============================================================
 
-set -euo pipefail
+setopt errexit nounset pipefail
 
 # Dotfiles-Verzeichnis ermitteln
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -27,16 +27,16 @@ check_executable_permissions() {
     local errors=0
 
     # fzf-Helper müssen ausführbar sein (außer config und *.zsh)
-    for file in "$DOTFILES_DIR"/terminal/.config/fzf/*; do
+    for file in "$DOTFILES_DIR"/terminal/.config/fzf/*(N); do
         [[ ! -f "$file" ]] && continue
-        local name
-        name=$(basename "$file")
+        local name="${file:t}"
         # Überspringe config und .zsh Dateien (werden gesourced)
         [[ "$name" == "config" || "$name" == *.zsh ]] && continue
 
         if [[ ! -x "$file" ]]; then
+            local relpath="${file#${DOTFILES_DIR}/}"
             err "fzf/$name: Fehlende Execute-Berechtigung"
-            err "  → chmod +x $file"
+            err "  \u2192 chmod +x $relpath"
             errors=$((errors + 1))
         fi
     done
