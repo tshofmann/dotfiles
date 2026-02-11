@@ -156,9 +156,11 @@ run_stow() {
     else
         warn "Stow hatte Probleme (Exit-Code: $stow_rc):"
         # Jede Zeile einzeln loggen für konsistente Formatierung
-        local line
+        # warn() nutzt print -P: % vor Ausgabe escapen, um Prompt-Escapes zu vermeiden
+        local line safe_line
         while IFS= read -r line; do
-            [[ -n "$line" ]] && warn "  $line"
+            safe_line=${line//\%/%%}
+            [[ -n "$safe_line" ]] && warn "  $safe_line"
         done <<< "$stow_output"
         # Stash trotzdem wiederherstellen bei Fehler
         _restore_stashed_changes
