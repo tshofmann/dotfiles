@@ -25,7 +25,8 @@ _help_list() {
         man)
             # Nur Sektion 1 (Benutzer-Kommandos)
             # Match nur echte Sektion-1-Einträge, nicht "(1)" in Beschreibungen
-            man -k . 2>/dev/null | grep -E ' \(1\) |\(1\) '
+            # sort -u: macOS liefert Duplikate bei mehreren man-db Suchpfaden
+            man -k . 2>/dev/null | grep -E ' \(1\) |\(1\) ' | sort -u
             ;;
         tldr)
             tldr --list 2>/dev/null
