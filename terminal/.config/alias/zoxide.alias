@@ -6,7 +6,8 @@
 # Docs        : https://github.com/ajeetdsouza/zoxide
 # Nutzt       : fzf (Interactive), eza (Preview)
 # Ersetzt     : cd (lernt häufige Verzeichnisse)
-# Aliase      : z, zi, zj
+# Kommandos   : z, zi
+# Aliase      : zj
 # ============================================================
 # Kommandos (via `zoxide init zsh`):
 #   z <query>    Wechsle zu Verzeichnis mit höchstem Score

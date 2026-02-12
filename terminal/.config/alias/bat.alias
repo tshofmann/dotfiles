@@ -35,7 +35,7 @@ if command -v fzf >/dev/null 2>&1; then
     bat-theme() {
         local query="${1:-}"
         local theme
-        local config_file="$HOME/.config/bat/config"
+        local config_file="${XDG_CONFIG_HOME:-$HOME/.config}/bat/config"
 
         # Symlink auflösen für In-Place-Bearbeitung
         [[ -L "$config_file" ]] && config_file=$(readlink -f "$config_file")
@@ -52,7 +52,7 @@ if command -v fzf >/dev/null 2>&1; then
             echo "✓ Theme aktiviert: $theme"
         else
             echo "✗ Konnte Config nicht aktualisieren"
-            echo "  Manuell: --theme=\"$theme\" in ~/.config/bat/config"
+            echo "  Manuell: --theme=\"$theme\" in $config_file"
         fi
     }
 fi
