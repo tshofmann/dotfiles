@@ -294,7 +294,7 @@ Alle Shell-Dateien (`.alias`, `.sh`, `.zsh*`) beginnen mit einem standardisierte
 | `Docs` | ✅ | Link zur offiziellen Dokumentation |
 | `Generiert` | ⚪ | Welche Doku wird aus dieser Datei generiert? |
 | `Nutzt` | ⚪ | Abhängigkeiten zu anderen Tools (fzf, bat, etc.) |
-| `Ersetzt` | ⚪ | Welchen Befehl ersetzt das Tool? (cat, find, ls) |
+| `Ersetzt` | ✅ | Welchen Befehl ersetzt das Tool? (`-` wenn keinen) |
 | `Kommandos` | ⚪ | Extern registrierte Befehle (z.B. via `tool init zsh`) |
 | `Aliase` | ⚪ | Liste der **in dieser Datei** definierten Aliase/Funktionen |
 | `Aufruf` | ⚪ | Für Skripte: Wie wird es aufgerufen? |

@@ -56,8 +56,8 @@ check_alias_format() {
             (( errors++ )) || true
         fi
 
-        # 3. Pflichtfelder im Header (CONTRIBUTING.md: Zweck, Pfad, Docs)
-        for field in Zweck Pfad Docs; do
+        # 3. Pflichtfelder im Header (CONTRIBUTING.md: Zweck, Pfad, Docs, Ersetzt)
+        for field in Zweck Pfad Docs Ersetzt; do
             if ! grep -q "^# ${field}[[:space:]]" "$file"; then
                 err "$name: Pflichtfeld '${field}' fehlt im Header"
                 (( errors++ )) || true

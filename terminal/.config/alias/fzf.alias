@@ -6,6 +6,7 @@
 # Docs        : https://github.com/junegunn/fzf
 # Config      : ~/.config/fzf/config
 # Nutzt       : bat, eza, fd, tldr, pdftotext, 7zz, identify, ffprobe
+# Ersetzt     : -
 # ============================================================
 # Tool-spezifische Funktionen in fd/rg/git/brew/gh.alias.
 #
