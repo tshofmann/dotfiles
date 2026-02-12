@@ -180,13 +180,21 @@ Wiederverwendbare Skripte für fzf-Previews und -Aktionen in `~/.config/fzf/`:
 git config core.hooksPath .github/hooks
 ```
 
-### Verfügbare Hooks
+### Verfügbare Checks
 
-| Hook | Zweck |
-| ------ | ------- |
-| `pre-commit` | 1. ZSH-Syntax (`zsh -n`) für `.github/scripts/**/*.sh`, `terminal/.config/alias/*.alias`, `terminal/.config/zsh/*.zsh`, `terminal/.zsh*`, `terminal/.zprofile`, `terminal/.zlogin`, `setup/*.sh`, `setup/modules/*.sh` |
-| | 2. Doku-Konsistenz (vergleicht generierte mit aktuellen Docs) |
-| | 3. Alias-Format (Header-Block, Guard-Check) |
+Pre-Commit und CI führen fast identische Checks aus – mit einem
+bewussten Unterschied:
+
+| # | Check | Pre-Commit | CI | Hinweis |
+| --- | ------- | :---: | :---: | ------- |
+| 1 | Shell-Syntax (`zsh -n`, `sh -n`) | ✓ | ✓ | |
+| 2 | Dokumentation aktuell | ✓ | ✓ | |
+| 3 | Execute-Berechtigungen | ✓ | ✓ | |
+| 4 | Alias-Datei-Format | ✓ | ✓ | |
+| 5 | Header-Einrückungen | ✓ | ✓ | |
+| 6 | Plattform-Sync | ✓ | ✓ | |
+| 7 | Markdown-Lint | ✓ | ✓ | |
+| 8 | Health-Check | ✓ | – | Prüft reale Installation (Symlinks, Homebrew, Fonts, Plattform-Abstraktionen) – nur lokal sinnvoll |
 
 ### Hook schlägt fehl?
 

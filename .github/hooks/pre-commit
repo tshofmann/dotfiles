@@ -153,7 +153,11 @@ check_markdown() {
 }
 
 # ------------------------------------------------------------
-# 8. Health-Check ausführen
+# 8. Health-Check ausführen (NUR lokal, nicht in CI)
+# Prüft reale Installation: Symlinks, Homebrew-Pakete, Fonts,
+# Plattform-Abstraktionen, Theme-Dateien – setzt vollständiges
+# Setup voraus, das in CI nicht vorhanden ist.
+# Siehe auch: .github/workflows/validate.yml (Checks 1–7)
 # ------------------------------------------------------------
 check_health() {
     log "Führe Health-Check aus..."

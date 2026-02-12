@@ -3,6 +3,9 @@
 # ============================================================
 # Zweck   : Validiert Shell-Syntax, Dokumentation und Alias-Format
 # Trigger : Push auf main, PRs nach main, manuell
+# Checks  : 7 von 8 Pre-Commit-Checks (siehe .github/hooks/pre-commit)
+# Diff    : Health-Check (#8) fehlt – prüft reale Installation
+#           (Symlinks, Homebrew, Fonts), die in CI nicht existiert.
 # ============================================================
 
 name: Dokumentation validieren
