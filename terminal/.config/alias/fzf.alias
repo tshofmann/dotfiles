@@ -56,13 +56,14 @@ procs() {
 # MAN + FZF + BAT: Man-Pages Browser
 # ------------------------------------------------------------
 # Man-Pages interaktiv durchsuchen mit Syntax-Highlighting
-# Man/tldr Browser – Ctrl+S=Modus wechseln (Liste + Preview), Enter=öffnen
+# Man/tldr Browser(suche?) – Ctrl+S=Modus wechseln (Liste + Preview), Enter=öffnen
 help() {
+    local query="${1:-}"
     local output mode selection page section
 
     # Ctrl+S wechselt sowohl Liste als auch Preview zwischen man und tldr
     output=$("$FZF_HELPER_DIR/help" list man | \
-        fzf --prompt='man> ' \
+        fzf --query="$query" --prompt='man> ' \
             --preview="$FZF_HELPER_DIR/help preview man {}" \
             --header='Enter: öffnen | Ctrl+S: man ↔ tldr' \
             --bind="ctrl-s:transform:$FZF_HELPER_DIR/help toggle" \
@@ -133,8 +134,9 @@ cmds() {
 # ENV + FZF: Umgebungsvariablen-Browser
 # ------------------------------------------------------------
 # Umgebungsvariablen durchsuchen mit formatierter Anzeige
-# Variablen Browser – Enter=Export→Edit, Ctrl+Y=Kopieren
+# Variablen Browser(suche?) – Enter=Export→Edit, Ctrl+Y=Kopieren
 vars() {
+    local query="${1:-}"
     local selection name value
 
     # Farbkodiert KEY=VALUE-Zeilen nach Kategorie (Catppuccin Mocha)
@@ -164,7 +166,7 @@ vars() {
         }'
     }
 
-    selection=$(printenv | grep -E '^[a-zA-Z_][a-zA-Z0-9_]*=' | sort | _fenv_colorize | fzf --ansi \
+    selection=$(printenv | grep -E '^[a-zA-Z_][a-zA-Z0-9_]*=' | sort | _fenv_colorize | fzf --ansi --query="$query" \
         --header='Enter: Export → Edit | Ctrl+Y: Wert kopieren' \
         --preview='n=$(echo {} | cut -d"│" -f1 | xargs | grep -E "^[a-zA-Z_][a-zA-Z0-9_]*$")
             [[ -z "$n" ]] && exit 0

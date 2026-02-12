@@ -42,7 +42,7 @@
 
 - dotfiles: Man/tldr Browser (`<Ctrl s>` Modus wechseln (Liste + Preview), `<Enter>` öffnen):
 
-`help`
+`help {{suche}}`
 
 - dotfiles: Befehl Browser (`<Enter>` Übernehmen, `<Ctrl s>` tldr↔Code):
 
@@ -50,7 +50,7 @@
 
 - dotfiles: Variablen Browser (`<Enter>` Export→Edit, `<Ctrl y>` Kopieren):
 
-`vars`
+`vars {{suche}}`
 
 # dotfiles: Shell-Keybindings (Ctrl+X Prefix)
 
