@@ -13,5 +13,9 @@ if ! command -v lazygit >/dev/null 2>&1; then
     return 0
 fi
 
+# ------------------------------------------------------------
+# Basis-Aliase
+# ------------------------------------------------------------
+
 # Terminal-UI für Git
 alias lg='lazygit'
