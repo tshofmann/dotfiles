@@ -2,8 +2,9 @@
 # ============================================================
 # check-alias-format.sh - Alias-Datei-Format prüfen
 # ============================================================
-# Zweck       : Prüft ob alle .alias-Dateien einen Header-Block
-#               und einen Guard-Check besitzen
+# Zweck       : Prüft Format-Konventionen der .alias-Dateien
+#               (Header, Guard, Pflichtfelder, Sektionen,
+#               Beschreibungskommentare)
 # Pfad        : .github/scripts/check-alias-format.sh
 # Aufruf      : ./.github/scripts/check-alias-format.sh
 # Nutzt       : theme-style (Farben)
@@ -26,25 +27,78 @@ ok()   { echo -e "${C_GREEN:-}✔${C_RESET:-} $1"; }
 err()  { echo -e "${C_RED:-}✖${C_RESET:-} $1" >&2; }
 
 # ------------------------------------------------------------
-# Alias-Datei-Format prüfen (Guards, Header)
+# Alias-Datei-Format prüfen
+# ------------------------------------------------------------
+# Prüft 5 Konventionen aus CONTRIBUTING.md:
+#   1. Header-Block (^# ====) in den ersten 3 Zeilen
+#   2. Guard-Check (command -v) vorhanden
+#   3. Pflichtfelder (Zweck, Pfad, Docs) im Header
+#   4. Mindestens eine Sektion mit Trennern (^# ----)
+#   5. Beschreibungskommentar über jeder alias/function-Definition
+#      (private Funktionen mit _prefix sind ausgenommen)
 # ------------------------------------------------------------
 check_alias_format() {
     local errors=0
+    local name field sep_count lnum prevline defline funcline
 
     for file in "$DOTFILES_DIR"/terminal/.config/alias/*.alias(N); do
-        local name=$(basename "$file")
+        name=$(basename "$file")
 
-        # Header-Block vorhanden?
+        # 1. Header-Block vorhanden?
         if ! head -3 "$file" | grep -q "^# ===="; then
             err "$name: Kein Header-Block"
             (( errors++ )) || true
         fi
 
-        # Guard-Check vorhanden?
+        # 2. Guard-Check vorhanden?
         if ! grep -q "command -v.*>/dev/null" "$file"; then
             err "$name: Kein Guard-Check"
             (( errors++ )) || true
         fi
+
+        # 3. Pflichtfelder im Header (CONTRIBUTING.md: Zweck, Pfad, Docs)
+        for field in Zweck Pfad Docs; do
+            if ! grep -q "^# ${field}[[:space:]]" "$file"; then
+                err "$name: Pflichtfeld '${field}' fehlt im Header"
+                (( errors++ )) || true
+            fi
+        done
+
+        # 4. Sektions-Trenner (mindestens eine Sektion nach dem Header)
+        sep_count=$(grep -c "^# ----" "$file") || true
+        if (( sep_count < 2 )); then
+            err "$name: Keine Sektions-Trenner (erwartet: mindestens 2)"
+            (( errors++ )) || true
+        fi
+
+        # 5. Beschreibungskommentar über alias- und Funktionsdefinitionen
+        #    CONTRIBUTING.md: "Jede Funktion und jeder Alias benötigt einen
+        #    Beschreibungskommentar direkt darüber"
+        #    Private Funktionen (_prefix) sind durch das grep-Pattern
+        #    ^[[:space:]]*[a-zA-Z] bereits ausgeschlossen.
+
+        # 5a. Aliases prüfen
+        while IFS=: read -r lnum _; do
+            prevline=$(sed -n "$((lnum - 1))p" "$file")
+            if [[ "$prevline" != *"#"* ]]; then
+                defline=$(sed -n "${lnum}p" "$file")
+                defline="${defline#"${defline%%[![:space:]]*}"}"
+                err "$name:$lnum: Beschreibungskommentar fehlt über '${defline%%=*}'"
+                (( errors++ )) || true
+            fi
+        done < <(grep -n "^[[:space:]]*alias [a-zA-Z]" "$file")
+
+        # 5b. Funktionen prüfen (^[a-zA-Z] schließt _prefix aus)
+        while IFS=: read -r lnum _; do
+            prevline=$(sed -n "$((lnum - 1))p" "$file")
+            if [[ "$prevline" != *"#"* ]]; then
+                funcline=$(sed -n "${lnum}p" "$file")
+                funcline="${funcline%%\(\)*}"
+                funcline="${funcline#"${funcline%%[![:space:]]*}"}"
+                err "$name:$lnum: Beschreibungskommentar fehlt über '${funcline}()'"
+                (( errors++ )) || true
+            fi
+        done < <(grep -n "^[[:space:]]*[a-zA-Z][a-zA-Z0-9_-]*() {" "$file")
     done
 
     if (( errors > 0 )); then
