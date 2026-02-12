@@ -10,7 +10,9 @@
 # ============================================================
 
 # Guard   : Nur wenn resvg installiert ist
-if ! command -v resvg >/dev/null 2>&1; then return 0; fi
+if ! command -v resvg >/dev/null 2>&1; then
+    return 0
+fi
 
 # ------------------------------------------------------------
 # Konvertierung

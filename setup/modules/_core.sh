@@ -174,6 +174,9 @@ ensure_file_writable() {
 #   $1 - Modul-Name (für Logging)
 #   $2 - Funktions-Name
 # Rückgabe: 0 = Erfolg, 1 = Fehler, 2 = Übersprungen
+# TODO    : Aktuell nicht von load_module() genutzt – Kandidat für
+#           Refactoring: load_module() könnte den Ausführungsteil
+#           hierhin delegieren (konsistentes Status-Logging).
 run_module() {
     local module="$1"
     local func="$2"

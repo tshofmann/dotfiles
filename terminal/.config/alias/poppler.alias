@@ -10,7 +10,9 @@
 # ============================================================
 
 # Guard   : Nur wenn poppler installiert ist
-if ! command -v pdftotext >/dev/null 2>&1; then return 0; fi
+if ! command -v pdftotext >/dev/null 2>&1; then
+    return 0
+fi
 
 # ------------------------------------------------------------
 # Text-Extraktion

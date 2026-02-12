@@ -157,15 +157,6 @@ _get_system_default() {
     esac
 }
 
-# JSON-String escapen
-_json_escape() {
-    local str="$1"
-    str="${str//\\/\\\\}"  # Backslashes
-    str="${str//\"/\\\"}"  # Quotes
-    str="${str//$'\n'/\\n}" # Newlines
-    echo "$str"
-}
-
 # ------------------------------------------------------------
 # Backup einer einzelnen Datei
 # ------------------------------------------------------------
@@ -250,19 +241,48 @@ _backup_single_file() {
             ;;
     esac
 
-    # JSON-Objekt ausgeben
-    cat <<EOF
-    {
-      "source": "$(_json_escape "${source#${DOTFILES_DIR}/}")",
-      "target": "$(_json_escape "$target")",
-      "backup": $(if [[ -n "$backup_path" ]]; then echo "\"$(_json_escape "${backup_path#${DOTFILES_DIR}/}")\""; else echo "null"; fi),
-      "type": "$file_type",
-      "existed": $existed,
-      "symlinkTarget": $(if [[ -n "$symlink_target" ]]; then echo "\"$(_json_escape "$symlink_target")\""; else echo "null"; fi),
-      "permissions": $(if [[ -n "$permissions" ]]; then echo "\"$permissions\""; else echo "null"; fi),
-      "systemDefault": $(if [[ -n "$system_default" ]]; then echo "\"$system_default\""; else echo "null"; fi)
-    }
-EOF
+    # JSON-Objekt via jq ausgeben (sicheres Escaping aller Werte)
+    local -a jq_args=(
+        --arg source "${source#${DOTFILES_DIR}/}"
+        --arg target "$target"
+        --arg type "$file_type"
+        --argjson existed "$existed"
+    )
+
+    if [[ -n "$backup_path" ]]; then
+        jq_args+=(--arg backup "${backup_path#${DOTFILES_DIR}/}")
+    else
+        jq_args+=(--argjson backup "null")
+    fi
+
+    if [[ -n "$symlink_target" ]]; then
+        jq_args+=(--arg symlinkTarget "$symlink_target")
+    else
+        jq_args+=(--argjson symlinkTarget "null")
+    fi
+
+    if [[ -n "$permissions" ]]; then
+        jq_args+=(--arg permissions "$permissions")
+    else
+        jq_args+=(--argjson permissions "null")
+    fi
+
+    if [[ -n "$system_default" ]]; then
+        jq_args+=(--arg systemDefault "$system_default")
+    else
+        jq_args+=(--argjson systemDefault "null")
+    fi
+
+    jq -n "${jq_args[@]}" '{
+        source: $source,
+        target: $target,
+        backup: $backup,
+        type: $type,
+        existed: $existed,
+        symlinkTarget: $symlinkTarget,
+        permissions: $permissions,
+        systemDefault: $systemDefault
+    }'
 }
 
 # ------------------------------------------------------------
@@ -276,38 +296,29 @@ _create_manifest() {
     commit=$(cd "$DOTFILES_DIR" && git rev-parse --short HEAD 2>/dev/null || echo "unknown")
     timestamp=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
 
-    # Manifest-Header
-    cat > "$BACKUP_MANIFEST" <<EOF
-{
-  "version": 1,
-  "created": "$timestamp",
-  "hostname": "$hostname",
-  "username": "$username",
-  "dotfiles_commit": "$commit",
-  "files": [
-EOF
+    # Datei-Einträge sammeln (ein JSON-Objekt pro Datei)
+    local entries=""
+    local source target
 
-    # Alle Zieldateien durchgehen
-    local first=true
-    local source target entry
+    while IFS='|' read -r source target; do
+        entries+=$(_backup_single_file "$source" "$target")$'\n'
+    done < <(_get_stow_targets)
 
-    _get_stow_targets | while IFS='|' read -r source target; do
-        entry=$(_backup_single_file "$source" "$target")
-
-        if [[ "$first" == "true" ]]; then
-            first=false
-            printf "%s" "$entry" >> "$BACKUP_MANIFEST"
-        else
-            printf ",\n%s" "$entry" >> "$BACKUP_MANIFEST"
-        fi
-    done
-
-    # Manifest abschließen
-    cat >> "$BACKUP_MANIFEST" <<EOF
-
-  ]
-}
-EOF
+    # Manifest aus Header-Metadaten und Datei-Einträgen zusammenbauen
+    echo "$entries" | jq -s \
+        --argjson version 1 \
+        --arg created "$timestamp" \
+        --arg hostname "$hostname" \
+        --arg username "$username" \
+        --arg commit "$commit" \
+        '{
+            version: $version,
+            created: $created,
+            hostname: $hostname,
+            username: $username,
+            dotfiles_commit: $commit,
+            files: .
+        }' > "$BACKUP_MANIFEST"
 }
 
 # ------------------------------------------------------------
@@ -319,7 +330,7 @@ backup_create_if_needed() {
     # Prüfe ob Backup bereits existiert (Idempotenz!)
     if [[ -f "$BACKUP_MANIFEST" ]]; then
         local created
-        created=$(grep '"created"' "$BACKUP_MANIFEST" | head -1 | sed 's/.*": *"//' | sed 's/".*//')
+        created=$(jq -r '.created' "$BACKUP_MANIFEST")
         skip "Backup existiert bereits (erstellt: $created)"
         _backup_log "SKIP: Backup existiert bereits"
         return 0
@@ -385,8 +396,8 @@ backup_info() {
     fi
 
     local created files_count
-    created=$(grep '"created"' "$BACKUP_MANIFEST" | head -1 | sed 's/.*": *"//' | sed 's/".*//')
-    files_count=$(grep -c '"source"' "$BACKUP_MANIFEST" 2>/dev/null || echo "0")
+    created=$(jq -r '.created' "$BACKUP_MANIFEST")
+    files_count=$(jq '.files | length' "$BACKUP_MANIFEST")
 
     log "Backup-Info:"
     echo "  Erstellt:     $created"

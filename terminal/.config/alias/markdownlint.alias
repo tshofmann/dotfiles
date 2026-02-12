@@ -9,7 +9,9 @@
 # ============================================================
 
 # Guard   : Nur wenn markdownlint-cli2 installiert ist
-if ! command -v markdownlint-cli2 >/dev/null 2>&1; then return 0; fi
+if ! command -v markdownlint-cli2 >/dev/null 2>&1; then
+    return 0
+fi
 
 # ------------------------------------------------------------
 # Aliase (markdownlint-cli2 findet ~/.config nicht automatisch)

@@ -56,7 +56,8 @@ check_executable_permissions() {
 
     # Setup-Skripte müssen ausführbar sein
     for file in "$DOTFILES_DIR"/setup/bootstrap.sh \
-                "$DOTFILES_DIR"/setup/install.sh; do
+                "$DOTFILES_DIR"/setup/install.sh \
+                "$DOTFILES_DIR"/setup/restore.sh; do
         if [[ -f "$file" && ! -x "$file" ]]; then
             err "${file:t}: Fehlende Execute-Berechtigung"
             (( errors++ )) || true
