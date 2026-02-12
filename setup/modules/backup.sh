@@ -301,7 +301,7 @@ _create_manifest() {
     local source target
 
     while IFS='|' read -r source target; do
-        entries+=$(_backup_single_file "$source" "$target")
+        entries+=$(_backup_single_file "$source" "$target")$'\n'
     done < <(_get_stow_targets)
 
     # Manifest aus Header-Metadaten und Datei-Einträgen zusammenbauen

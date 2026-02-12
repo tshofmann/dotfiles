@@ -188,8 +188,8 @@ bewussten Unterschied:
 | # | Check | Pre-Commit | CI | Hinweis |
 | --- | ------- | :---: | :---: | ------- |
 | 1 | Shell-Syntax (`zsh -n`, `sh -n`) | ✓ | ✓ | |
-| 2 | Dokumentation aktuell | ✓ | ✓ | |
-| 3 | Execute-Berechtigungen | ✓ | ✓ | |
+| 2 | Execute-Berechtigungen | ✓ | ✓ | |
+| 3 | Dokumentation aktuell | ✓ | ✓ | |
 | 4 | Alias-Datei-Format | ✓ | ✓ | |
 | 5 | Header-Einrückungen | ✓ | ✓ | |
 | 6 | Plattform-Sync | ✓ | ✓ | |
