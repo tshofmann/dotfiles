@@ -6,6 +6,7 @@
 # Docs        : https://yazi-rs.github.io/
 # Config      : ~/.config/yazi/
 # Nutzt       : fd, rg, fzf, zoxide, ffmpeg, 7zz, jq, poppler, magick, bat
+# Ersetzt     : -
 # Aliase      : y
 # ============================================================
 # Keybindings und Bookmarks: siehe ~/.config/yazi/keymap.toml

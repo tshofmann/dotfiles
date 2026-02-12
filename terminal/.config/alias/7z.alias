@@ -5,7 +5,7 @@
 # Pfad        : ~/.config/alias/7z.alias
 # Docs        : https://7-zip.org/
 # Nutzt       : fzf (7zf), fd (7zf)
-# Ersetzt     : -
+# Ersetzt     : unrar (7-Zip als schnellerer Ersatz)
 # Aliase      : 7za, 7zx, 7zl, 7zt, unrar, 7zf
 # ============================================================
 

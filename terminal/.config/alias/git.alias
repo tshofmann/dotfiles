@@ -5,6 +5,7 @@
 # Pfad        : ~/.config/alias/git.alias
 # Docs        : https://git-scm.com/docs
 # Nutzt       : fzf (Interactive), bat (Diff-Highlighting)
+# Ersetzt     : -
 # Aliase      : git-add, git-commit, git-cm, git-acm, git-push, git-pull, git-co, git-status, git-diff, git-log, git-branch, git-stage, git-stash
 # ============================================================
 # Hinweis     : Interaktive Git-Funktionen (mit fzf) sind unten

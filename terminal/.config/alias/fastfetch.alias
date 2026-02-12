@@ -5,6 +5,7 @@
 # Pfad        : ~/.config/alias/fastfetch.alias
 # Docs        : https://github.com/fastfetch-cli/fastfetch
 # Config      : ~/.config/fastfetch/config.jsonc
+# Ersetzt     : neofetch (schnellere System-Übersicht)
 # Aliase      : ff, neofetch
 # ============================================================
 

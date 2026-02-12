@@ -5,6 +5,7 @@
 # Pfad        : ~/.config/alias/dotfiles.alias
 # Docs        : https://github.com/tshofmann/dotfiles
 # Nutzt       : tldr (für dothelp), stow (für dotstow)
+# Ersetzt     : -
 # Aliase      : dothelp, dh, dothealth, dotdocs, dotstow
 # ============================================================
 # Hinweis     : Kein globaler Guard – nur dothelp/dh benötigen tldr

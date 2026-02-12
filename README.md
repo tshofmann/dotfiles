@@ -19,6 +19,9 @@
 | `find` | `fd` | schneller, intuitive Syntax |
 | `grep` | `rg` | schneller, respektiert .gitignore |
 | `ls` | `eza` | mit Icons und Git-Status |
+| `neofetch` | `fastfetch` | schnellere System-Übersicht |
+| `top, htop` | `btop` | moderner Ressourcen-Monitor |
+| `unrar` | `7z` | 7-Zip als schnellerer Ersatz |
 
 Dazu: **[Catppuccin Mocha](https://catppuccin.com/) Theme** überall, **Hilfe im Terminal** via `dothelp`, **fzf-Integration** für alles.
 
