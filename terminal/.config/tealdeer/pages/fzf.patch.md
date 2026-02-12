@@ -1,6 +1,6 @@
 - dotfiles: Config `~/.config/fzf/config`
 
-- dotfiles: Nutzt `pdftotext (PDF), 7zz (Archive), identify (Bilder), ffprobe (Video/Audio)`
+- dotfiles: Nutzt `bat, eza, fd, tldr, pdftotext, 7zz, identify, ffprobe`
 
 # dotfiles: Globale Tastenkürzel (in allen fzf-Dialogen)
 
