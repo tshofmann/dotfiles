@@ -449,6 +449,7 @@ fi
 rm -f "$test_file"
 
 # clip/clippaste: Roundtrip-Test (nur wenn Display vorhanden)
+# HINWEIS: Überschreibt den aktuellen Clipboard-Inhalt – unvermeidbar für einen echten Roundtrip-Test.
 if [[ "$_PLATFORM_OS" == "macos" ]]; then
   local test_str="health-check-$$"
   if echo "$test_str" | clip && [[ "$(clippaste)" == "$test_str" ]]; then
