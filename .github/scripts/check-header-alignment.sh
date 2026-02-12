@@ -41,6 +41,7 @@ check_header_alignment() {
         "Nutzt       :"
         "Ersetzt     :"
         "Aliase      :"
+        "Kommandos   :"
         "Aufruf      :"
         "Hinweis     :"
         "Verwendung  :"

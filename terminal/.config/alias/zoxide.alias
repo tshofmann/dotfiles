@@ -6,6 +6,7 @@
 # Docs        : https://github.com/ajeetdsouza/zoxide
 # Nutzt       : fzf (Interactive), eza (Preview)
 # Ersetzt     : cd (lernt häufige Verzeichnisse)
+# Kommandos   : z, zi
 # Aliase      : zj
 # ============================================================
 # Kommandos (via `zoxide init zsh`):

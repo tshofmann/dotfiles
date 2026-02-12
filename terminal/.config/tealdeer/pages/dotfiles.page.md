@@ -65,7 +65,7 @@
 
 - cd → zoxide (lernt häufige Verzeichnisse):
 
-`zj`
+`z, zi, zj`
 
 # Homebrew
 

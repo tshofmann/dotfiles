@@ -272,6 +272,7 @@ Alle Shell-Dateien (`.alias`, `.sh`, `.zsh*`) beginnen mit einem standardisierte
 # Docs        : https://github.com/tool/tool (offizielle Doku)
 # Nutzt       : fzf (Preview), bat (Syntax-Highlighting)
 # Ersetzt     : cat (mit Syntax-Highlighting)
+# Kommandos   : z, zi
 # Aliase      : cmd, cmd2, cmd3
 # ============================================================
 ```
@@ -286,7 +287,8 @@ Alle Shell-Dateien (`.alias`, `.sh`, `.zsh*`) beginnen mit einem standardisierte
 | `Generiert` | ⚪ | Welche Doku wird aus dieser Datei generiert? |
 | `Nutzt` | ⚪ | Abhängigkeiten zu anderen Tools (fzf, bat, etc.) |
 | `Ersetzt` | ⚪ | Welchen Befehl ersetzt das Tool? (cat, find, ls) |
-| `Aliase` | ⚪ | Liste der definierten Aliase |
+| `Aliase` | ⚪ | Liste der **in dieser Datei** definierten Aliase/Funktionen |
+| `Kommandos` | ⚪ | Extern registrierte Befehle (z.B. via `tool init zsh`) |
 | `Aufruf` | ⚪ | Für Skripte: Wie wird es aufgerufen? |
 | `Lizenz` | ⚪ | Lizenz für externe/upstream Dateien (z.B. MIT) |
 | `Hinweis` | ⚪ | Nur für **einzigartige** kontextuelle Info (siehe SSOT) |

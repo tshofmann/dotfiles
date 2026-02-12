@@ -16,6 +16,7 @@
 #   - fzf/init.zsh: Globale Ctrl+X Keybindings
 #   - *.alias Header: Ersetzt-Feld für moderne Ersetzungen
 #   - *.alias Header: Aliase-Feld für Beispiele
+#   - *.alias Header: Kommandos-Feld für extern registrierte Befehle
 #   - brew.alias: Sektionen "Update & Wartung", "Versionsübersicht"
 #   - dotfiles.alias: Sektion "Dotfiles Wartung"
 #   - pages/*.patch.md, *.page.md: Verfügbare Hilfeseiten
@@ -84,6 +85,11 @@ generate_dotfiles_page() {
             # Bevorzuge explizites Aliase-Feld, sonst extrahiere aus Code
             local examples=$(parse_header_field "$alias_file" "Aliase")
             [[ -z "$examples" ]] && examples=$(extract_alias_names "$alias_file" 4)
+            # Kommandos-Feld: Extern registrierte Kommandos (z.B. via init)
+            local kommandos=$(parse_header_field "$alias_file" "Kommandos")
+            if [[ -n "$kommandos" ]]; then
+                examples="${kommandos}, ${examples}"
+            fi
             replacements[$tool_name]="${original}|${desc}|${examples}"
         fi
     done

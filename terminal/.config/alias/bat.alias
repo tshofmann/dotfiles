@@ -52,7 +52,7 @@ if command -v fzf >/dev/null 2>&1; then
             echo "✓ Theme aktiviert: $theme"
         else
             echo "✗ Konnte Config nicht aktualisieren"
-            echo "  Manuell: --theme=\"$theme\" in ~/.config/bat/config"
+            echo "  Manuell: --theme=\"$theme\" in $config_file"
         fi
     }
 fi
