@@ -100,7 +100,7 @@ check_symlink() {
     fi
     local actual_target
     actual_target=$(readlink "$link")
-    if [[ "$actual_target" == *"$expected_target"* ]]; then
+    if [[ "$actual_target" == *"$expected_target" ]]; then
       pass "$display_name → korrekt verlinkt"
     else
       fail "$display_name → falsches Ziel: $actual_target"
@@ -200,17 +200,17 @@ typeset -a expected_symlinks=()  # Für bidirektionale Prüfung
 # Prüfe terminal/ und editor/ Verzeichnisse
 for stow_dir in "$TERMINAL_DIR" "$EDITOR_DIR"; do
   [[ -d "$stow_dir" ]] || continue
-  local dir_name="${stow_dir:t}"
+  typeset dir_name="${stow_dir:t}"
 
   while IFS= read -r source_file; do
     [[ -z "$source_file" ]] && continue
 
     # Relativen Pfad berechnen (ab terminal/ oder editor/)
-    local rel_path="${source_file#$stow_dir/}"
+    typeset rel_path="${source_file#$stow_dir/}"
 
     # Ziel-Pfad im Home-Verzeichnis
-    local target_path="$HOME/$rel_path"
-    local display_path="~/$rel_path"
+    typeset target_path="$HOME/$rel_path"
+    typeset display_path="~/$rel_path"
 
     # Für bidirektionale Prüfung merken
     expected_symlinks+=("$target_path")
@@ -219,7 +219,7 @@ for stow_dir in "$TERMINAL_DIR" "$EDITOR_DIR"; do
 
     if [[ -L "$target_path" ]]; then
       # readlink direkt in Vergleich verwenden (vermeidet typeset output)
-      if [[ "$(readlink "$target_path")" == *"dotfiles/$dir_name/$rel_path"* ]]; then
+      if [[ "$(readlink "$target_path")" == *"dotfiles/$dir_name/$rel_path" ]]; then
         pass "$display_path"
       else
         fail "$display_path → falsches Ziel: $(readlink "$target_path")"
@@ -250,8 +250,8 @@ typeset -a orphan_symlinks=()
 while IFS= read -r symlink; do
   [[ -z "$symlink" ]] && continue
 
-  # readlink ohne local (vermeidet typeset output)
-  local link_target=""
+  # readlink (vermeidet Ausgabe bei Fehler)
+  typeset link_target=""
   link_target=$(readlink "$symlink" 2>/dev/null) || continue
 
   # Nur Symlinks die auf dotfiles zeigen
@@ -259,7 +259,7 @@ while IFS= read -r symlink; do
 
   # Prüfe ob die Quelle tatsächlich im Repo existiert
   # (absoluter Pfad zur Quelldatei rekonstruieren)
-  local source_file=""
+  typeset source_file=""
   if [[ "$link_target" == /* ]]; then
     # Absoluter Pfad
     source_file="$link_target"
@@ -272,7 +272,7 @@ while IFS= read -r symlink; do
   [[ -f "$source_file" ]] && continue
 
   # Orphan gefunden - Symlink zeigt auf dotfiles aber Quelle fehlt
-  local display_path="${symlink/#$HOME/~}"
+  typeset display_path="${symlink/#$HOME/~}"
   orphan_symlinks+=("$display_path")
   (( orphan_count++ )) || true
 done < <(find "$HOME/.config" -maxdepth 3 -type l 2>/dev/null | sort)
@@ -281,12 +281,12 @@ done < <(find "$HOME/.config" -maxdepth 3 -type l 2>/dev/null | sort)
 for dotfile in ~/.zshrc ~/.zshenv ~/.zprofile ~/.zlogin ~/.editorconfig; do
   [[ -L "$dotfile" ]] || continue
 
-  local link_target2=""
+  typeset link_target2=""
   link_target2=$(readlink "$dotfile" 2>/dev/null) || continue
   [[ "$link_target2" == *"dotfiles/"* ]] || continue
 
   # Prüfe ob die Quelle tatsächlich existiert
-  local source_file=""
+  typeset source_file=""
   if [[ "$link_target2" == /* ]]; then
     source_file="$link_target2"
   else
@@ -296,7 +296,7 @@ for dotfile in ~/.zshrc ~/.zshenv ~/.zprofile ~/.zlogin ~/.editorconfig; do
   # Wenn Quelle existiert → kein Orphan
   [[ -f "$source_file" ]] && continue
 
-  local display_path="${dotfile/#$HOME/~}"
+  typeset display_path="${dotfile/#$HOME/~}"
   orphan_symlinks+=("$display_path")
   (( orphan_count++ )) || true
 done
@@ -319,7 +319,7 @@ if command -v brew >/dev/null 2>&1; then
 
   # DYNAMISCH: Tools aus Brewfile extrahieren
   if [[ -f "$BREWFILE" ]]; then
-    local -a tools=($(get_tools_from_brewfile "$BREWFILE"))
+    typeset -a tools=($(get_tools_from_brewfile "$BREWFILE"))
     for tool in "${tools[@]}"; do
       check_tool "$tool" "$tool"
     done
@@ -331,7 +331,7 @@ elif [[ "$_hc_os" == "linux" && "$_hc_arch" == armv* ]]; then
   # Prüfe trotzdem alle erwarteten Binaries aus dem Brewfile
   warn "Homebrew nicht verfügbar (32-bit ARM) – prüfe Binaries direkt"
   if [[ -f "$BREWFILE" ]]; then
-    local -a tools=($(get_tools_from_brewfile "$BREWFILE"))
+    typeset -a tools=($(get_tools_from_brewfile "$BREWFILE"))
     for tool in "${tools[@]}"; do
       check_tool "$tool" "$tool"
     done
@@ -378,7 +378,7 @@ if (( ${#font_casks[@]} > 0 )); then
   for font_cask in "${font_casks[@]}"; do
     # Konvertiere cask-name zu Font-Dateiname-Pattern
     # z.B. font-meslo-lg-nerd-font → MesloLG*NerdFont*
-    local font_pattern
+    typeset font_pattern
     case "$font_cask" in
       font-meslo-lg-nerd-font)
         font_pattern="MesloLG*NerdFont*"
@@ -393,7 +393,7 @@ if (( ${#font_casks[@]} > 0 )); then
         ;;
     esac
 
-    local -a font_files=(~/Library/Fonts/${~font_pattern}(N) /Library/Fonts/${~font_pattern}(N))
+    typeset -a font_files=(~/Library/Fonts/${~font_pattern}(N) /Library/Fonts/${~font_pattern}(N))
     if (( ${#font_files} > 0 )); then
       pass "$font_cask installiert (${#font_files} Dateien)"
     else
@@ -412,7 +412,7 @@ fi  # macOS Font-Guard
 section "Plattform-Abstraktionen (platform.zsh)"
 
 # platform.zsh wird früh in .zshrc geladen – hier manuell laden für isolierten Test
-local platform_file="$DOTFILES_DIR/terminal/.config/platform.zsh"
+typeset platform_file="$DOTFILES_DIR/terminal/.config/platform.zsh"
 if [[ -f "$platform_file" ]]; then
   # Guard- und Detection-Variablen zurücksetzen, damit die Erkennung isoliert neu läuft
   unset _PLATFORM_LOADED _PLATFORM_OS _PLATFORM_DISTRO _PLATFORM_HAS_DISPLAY
@@ -438,7 +438,7 @@ for func in clip clippaste xopen sedi; do
 done
 
 # sedi: In-place sed Test (plattformunabhängig – sedi abstrahiert BSD/GNU)
-local test_file=$(mktemp)
+typeset test_file=$(mktemp)
 echo "foo" > "$test_file"
 sedi 's/foo/bar/' "$test_file"
 if [[ "$(cat "$test_file")" == "bar" ]]; then
@@ -451,7 +451,7 @@ rm -f "$test_file"
 # clip/clippaste: Roundtrip-Test (nur wenn Display vorhanden)
 # HINWEIS: Überschreibt den aktuellen Clipboard-Inhalt – unvermeidbar für einen echten Roundtrip-Test.
 if [[ "$_PLATFORM_OS" == "macos" ]]; then
-  local test_str="health-check-$$"
+  typeset test_str="health-check-$$"
   if echo "$test_str" | clip && [[ "$(clippaste)" == "$test_str" ]]; then
     pass "clip/clippaste Roundtrip erfolgreich"
   else
@@ -619,15 +619,15 @@ if command -v brew >/dev/null 2>&1; then
 section "Brewfile Status"
 
 if [[ -n "${HOMEBREW_BUNDLE_FILE:-}" ]] && [[ -f "$HOMEBREW_BUNDLE_FILE" ]]; then
-  local check_output
+  typeset check_output
   check_output=$(brew bundle check --file="$HOMEBREW_BUNDLE_FILE" --verbose 2>&1)
-  local check_exit=$?
+  typeset check_exit=$?
 
   if (( check_exit == 0 )); then
     pass "Alle Brewfile-Abhängigkeiten erfüllt"
   elif echo "$check_output" | grep -qE "needs to be installed"; then
     # Unterscheide: "installed or updated" = Update, nur "installed" = fehlend
-    local missing updated
+    typeset missing updated
     # Updates: Zeilen mit "or updated"
     updated=$(echo "$check_output" | grep "or updated" | grep -oE "(Formula|Cask) [^ ]+" | sed 's/Formula //' | sed 's/Cask //' | tr '\n' ' ')
     # Fehlend: Zeilen mit "installed" aber OHNE "or updated"
