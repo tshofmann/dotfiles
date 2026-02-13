@@ -25,6 +25,6 @@
 
 `pdfsplit {{pdf, muster}}`
 
-- dotfiles: PDFs zusammenfügen (Ausgabe: merged.pdf, Überschreibschutz):
+- dotfiles: PDFs zusammenfügen (Standard: merged.pdf, Überschreibschutz):
 
-`pdfmerge {{pdf, pdf, ...}}`
+`pdfmerge {{pdf, pdf, ..., output}}`

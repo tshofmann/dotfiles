@@ -65,16 +65,26 @@ pdfsplit() {
     pdfseparate "$input" "$pattern"
 }
 
-# PDFs zusammenfügen(pdf, pdf, ...) – Ausgabe: merged.pdf, Überschreibschutz
+# PDFs zusammenfügen(pdf, pdf, ..., output?) – Standard: merged.pdf, Überschreibschutz
 pdfmerge() {
     if [[ $# -lt 2 ]]; then
-        echo "Verwendung: pdfmerge <pdf1> <pdf2> [pdf3 ...]" >&2
+        echo "Verwendung: pdfmerge <pdf1> <pdf2> [... output.pdf]" >&2
+        echo "Ohne Ausgabe-Datei wird 'merged.pdf' erzeugt." >&2
         return 1
     fi
     local output="merged.pdf"
+    local -a inputs
+    inputs=("$@")
+
+    # Letztes Argument als Output, wenn >= 3 Argumente und Datei nicht existiert
+    if [[ $# -ge 3 && ! -e "${@[-1]}" ]]; then
+        output="${@[-1]}"
+        inputs=("${@[1,-2]}")
+    fi
+
     if [[ -e "$output" ]]; then
         echo "Fehler: $output existiert bereits" >&2
         return 1
     fi
-    pdfunite "$@" "$output"
+    pdfunite "${inputs[@]}" "$output"
 }
