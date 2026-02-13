@@ -1,4 +1,4 @@
-- dotfiles: Nutzt `fzf (Interactive), theme-style (Farben für brew-list)`
+- dotfiles: Nutzt `fzf (Interactive), theme-style, jq (JSON-Parsing für Outdated/Drift)`
 
 - dotfiles: Homebrew Komplett-Update:
 
@@ -24,9 +24,9 @@
 
 `masl`
 
-- dotfiles: Brewfile Versionsübersicht:
+- dotfiles: Brewfile Wartungs-Dashboard:
 
-`brew-list`
+`brew-list {{filter}}`
 
 - dotfiles: Brew Install Browser (`<Enter>` Installieren, `<Tab>` Mehrfach):
 

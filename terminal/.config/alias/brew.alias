@@ -4,7 +4,7 @@
 # Zweck       : Aliase für Homebrew Paketverwaltung
 # Pfad        : ~/.config/alias/brew.alias
 # Docs        : https://docs.brew.sh/Manpage
-# Nutzt       : fzf (Interactive), theme-style (Farben für brew-list)
+# Nutzt       : fzf (Interactive), theme-style, jq (JSON-Parsing für Outdated/Drift)
 # Ersetzt     : -
 # Aliase      : brew-up, brew-list, brew-add, brew-rm, maso, masu, mass, masi, masl
 # ============================================================
@@ -50,9 +50,10 @@ fi
 # ------------------------------------------------------------
 # Versionsübersicht
 # ------------------------------------------------------------
-# Nutzt       : theme-style ($C_MAUVE, $C_GREEN, $C_TEXT, $C_RESET)
-# Brewfile Versionsübersicht – zeigt installierte Versionen aller Pakete
+# Nutzt       : theme-style, jq (JSON-Parsing für Outdated/Drift)
+# Brewfile Wartungs-Dashboard(filter?) – Versionen, Updates, Drift
 brew-list() {
+    local filter="${1:-}"
     local brewfile="${DOTFILES_DIR:-$HOME/dotfiles}/setup/Brewfile"
 
     if [[ ! -f "$brewfile" ]]; then
@@ -67,38 +68,72 @@ brew-list() {
         return 1
     fi
 
-    # Batch-Abfrage aller installierten Versionen (O(1) statt O(n))
-    local -A formula_versions cask_versions mas_versions
+    # Datenquellen: brew info JSON (Versionen + Outdated + Drift) oder Fallback
+    local -A formula_info cask_info mas_versions
     local -a formulae casks mas_apps
     local line pkg ver id version name entry
+    local use_json=0
+    local -i outdated_count=0
 
-    # Formulae: Einmalig alle Versionen laden
-    # Format: "pkg 1.2.3" oder "pkg 1.2.3 1.2.4" (mehrere Versionen)
-    while read -r line; do
-        pkg="${line%% *}"
-        ver="${line#* }"
-        formula_versions[$pkg]="$ver"
-    done < <(brew list --formula --versions 2>/dev/null)
+    if command -v jq >/dev/null 2>&1; then
+        use_json=1
+        local tmpfile
+        tmpfile=$(mktemp)
+        brew info --json=v2 --installed 2>/dev/null > "$tmpfile"
 
-    # Casks: Einmalig alle Versionen laden
-    while read -r line; do
-        pkg="${line%% *}"
-        ver="${line#* }"
-        cask_versions[$pkg]="$ver"
-    done < <(brew list --cask --versions 2>/dev/null)
+        # Formulae: name → "version|available|outdated|on_request"
+        while IFS=$'\t' read -r pkg ver available outdated on_request; do
+            formula_info[$pkg]="${ver}|${available}|${outdated}|${on_request}"
+        done < <(jq -r '.formulae[] | "\(.name)\t\(.installed[0].version)\t\(.versions.stable)\t\(.outdated)\t\(.installed[0].installed_on_request)"' "$tmpfile")
+
+        # Casks: token → "installed|available|outdated"
+        while IFS=$'\t' read -r pkg ver available outdated; do
+            cask_info[$pkg]="${ver}|${available}|${outdated}"
+        done < <(jq -r '.casks[] | "\(.token)\t\(.installed)\t\(.version)\t\(.outdated)"' "$tmpfile")
+
+        rm -f "$tmpfile"
+    else
+        # Fallback: nur Versionen (ohne jq)
+        while read -r line; do
+            pkg="${line%% *}"
+            ver="${line#* }"
+            formula_info[$pkg]="${ver}|||"
+        done < <(brew list --formula --versions 2>/dev/null)
+        while read -r line; do
+            pkg="${line%% *}"
+            ver="${line#* }"
+            cask_info[$pkg]="${ver}||"
+        done < <(brew list --cask --versions 2>/dev/null)
+    fi
 
     # MAS Apps: Einmalig alle laden (wenn mas verfügbar)
-    # Format: "408981434  iMovie       (10.4.3)" – ID, Name mit Spaces, Version in Klammern
+    local -A mas_outdated=()
     if command -v mas >/dev/null 2>&1; then
         while read -r line; do
-            # Erste Spalte ist immer die ID (nur Ziffern am Anfang)
             id="${line%%[^0-9]*}"
-            # Version ist immer am Ende in Klammern: extrahiere Text zwischen letztem ( und )
             version="${line##*'('}"
             version="${version%')'}"
             [[ -n "$id" ]] && mas_versions[$id]="$version"
         done < <(mas list 2>/dev/null)
+        # Outdated MAS Apps
+        while read -r line; do
+            id="${line%%[^0-9]*}"
+            [[ -n "$id" ]] && mas_outdated[$id]=1
+        done < <(mas outdated 2>/dev/null)
     fi
+
+    # Helper: Paket mit Versionsinformationen ausgeben
+    _brew_list_pkg() {
+        local pkg="$1" ver="$2" available="$3" outdated="$4" color="$5"
+        if [[ "$outdated" == "true" ]]; then
+            printf "${C_YELLOW}%-30s${C_RESET} ${C_DIM}%s${C_RESET} ${C_YELLOW}→ %s${C_RESET}\n" "$pkg" "$ver" "$available"
+            (( outdated_count++ )) || true
+        elif [[ -n "$ver" ]]; then
+            printf "${color}%-30s${C_RESET} ${C_DIM}%s${C_RESET}\n" "$pkg" "$ver"
+        else
+            printf "${C_RED}%-30s${C_RESET} ${C_DIM}nicht installiert${C_RESET}\n" "$pkg"
+        fi
+    }
 
     # Formulae aus Brewfile extrahieren
     while IFS= read -r line || [[ -n "$line" ]]; do
@@ -109,12 +144,12 @@ brew-list() {
 
     print "${C_MAUVE}━━━ ${C_BOLD}Homebrew Formulae${C_RESET}${C_MAUVE} ━━━${C_RESET}"
     for pkg in "${formulae[@]}"; do
-        version="${formula_versions[$pkg]}"
-        if [[ -n "$version" ]]; then
-            printf "${C_GREEN}%-30s${C_RESET} ${C_DIM}%s${C_RESET}\n" "$pkg" "$version"
-        else
-            printf "${C_RED}%-30s${C_RESET} ${C_DIM}nicht installiert${C_RESET}\n" "$pkg"
-        fi
+        [[ -n "$filter" && "$pkg" != *"$filter"* ]] && continue
+        local info="${formula_info[$pkg]}"
+        local ver="${info%%|*}"; info="${info#*|}"
+        local available="${info%%|*}"; info="${info#*|}"
+        local outdated="${info%%|*}"
+        _brew_list_pkg "$pkg" "$ver" "$available" "$outdated" "$C_GREEN"
     done
 
     # Casks aus Brewfile extrahieren
@@ -126,21 +161,19 @@ brew-list() {
 
     print "\n${C_MAUVE}━━━ ${C_BOLD}Homebrew Casks${C_RESET}${C_MAUVE} ━━━${C_RESET}"
     for pkg in "${casks[@]}"; do
-        version="${cask_versions[$pkg]}"
-        if [[ -n "$version" ]]; then
-            printf "${C_BLUE}%-30s${C_RESET} ${C_DIM}%s${C_RESET}\n" "$pkg" "$version"
-        else
-            printf "${C_RED}%-30s${C_RESET} ${C_DIM}nicht installiert${C_RESET}\n" "$pkg"
-        fi
+        [[ -n "$filter" && "$pkg" != *"$filter"* ]] && continue
+        local info="${cask_info[$pkg]}"
+        local ver="${info%%|*}"; info="${info#*|}"
+        local available="${info%%|*}"; info="${info#*|}"
+        local outdated="${info%%|*}"
+        _brew_list_pkg "$pkg" "$ver" "$available" "$outdated" "$C_BLUE"
     done
 
     # MAS Apps aus Brewfile extrahieren (nur wenn mas verfügbar)
     if command -v mas >/dev/null 2>&1; then
         while IFS= read -r line || [[ -n "$line" ]]; do
-            # Format: mas "Name", id: 123456
             name="${line#mas \"}"
             name="${name%%\"*}"
-            # Robustes ID-Parsing: nur Ziffern direkt nach "id:"
             if [[ "$line" == *"id:"* ]]; then
                 id="${line##*id:}"
                 id="${id##[[:space:]]}"
@@ -153,8 +186,12 @@ brew-list() {
         for entry in "${mas_apps[@]}"; do
             name="${entry%:*}"
             id="${entry#*:}"
+            [[ -n "$filter" && "$name" != *"$filter"* ]] && continue
             version="${mas_versions[$id]}"
-            if [[ -n "$version" ]]; then
+            if [[ -n "${mas_outdated[$id]}" ]]; then
+                printf "${C_YELLOW}%-30s${C_RESET} ${C_DIM}%-12s${C_RESET} ${C_YELLOW}Update verfügbar${C_RESET} ${C_DIM}#%s${C_RESET}\n" "$name" "$version" "$id"
+                (( outdated_count++ )) || true
+            elif [[ -n "$version" ]]; then
                 printf "${C_YELLOW}%-30s${C_RESET} ${C_DIM}%-12s${C_RESET} ${C_DIM}#%s${C_RESET}\n" "$name" "$version" "$id"
             else
                 printf "${C_RED}%-30s${C_RESET} ${C_DIM}nicht installiert${C_RESET} ${C_DIM}#%s${C_RESET}\n" "$name" "$id"
@@ -162,7 +199,37 @@ brew-list() {
         done
     fi
 
-    print "\n${C_DIM}Brewfile: ${#formulae[@]} Formulae | ${#casks[@]} Casks | ${#mas_apps[@]} MAS${C_RESET}"
+    # Drift-Erkennung: Pakete installiert auf Request aber nicht im Brewfile
+    if [[ "$use_json" -eq 1 && -z "$filter" ]]; then
+        local -a drift=()
+        local -A brewfile_formulae=()
+        for pkg in "${formulae[@]}"; do brewfile_formulae[$pkg]=1; done
+
+        for pkg ver in "${(@kv)formula_info}"; do
+            local info="$ver"
+            # on_request ist das 4. Feld
+            local f1="${info#*|}"; local f2="${f1#*|}"; local on_request="${f2#*|}"
+            if [[ "$on_request" == "true" && -z "${brewfile_formulae[$pkg]}" ]]; then
+                drift+=("$pkg")
+            fi
+        done
+
+        if [[ ${#drift[@]} -gt 0 ]]; then
+            print "\n${C_MAUVE}━━━ ${C_BOLD}Nicht im Brewfile${C_RESET}${C_MAUVE} ━━━${C_RESET}"
+            print "${C_DIM}Manuell installiert – nicht in setup/Brewfile deklariert:${C_RESET}"
+            for pkg in "${(@o)drift}"; do
+                printf "${C_DIM}  %s${C_RESET}\n" "$pkg"
+            done
+        fi
+    fi
+
+    # Summary
+    local summary="${C_DIM}Brewfile: ${#formulae[@]} Formulae | ${#casks[@]} Casks | ${#mas_apps[@]} MAS"
+    if [[ $outdated_count -gt 0 ]]; then
+        summary+=" ${C_RESET}${C_YELLOW}| ${outdated_count} veraltet${C_RESET}"
+    fi
+    summary+="${C_RESET}"
+    print "\n${summary}"
 }
 
 # ------------------------------------------------------------

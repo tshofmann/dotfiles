@@ -23,6 +23,28 @@
 | `top, htop` | `btop` | moderner Ressourcen-Monitor |
 | `unrar` | `7z` | 7-Zip als schnellerer Ersatz |
 
+### Interaktive Workflows (fzf)
+
+Alle Workflows nutzen [fzf](https://github.com/junegunn/fzf) mit bat-Preview, Keybindings und Catppuccin-Theming:
+
+| Bereich | Funktionen |
+| ------- | ---------- |
+| Git | `git-log`, `git-branch`, `git-stage`, `git-stash` |
+| GitHub | `gh-pr`, `gh-issue`, `gh-run`, `gh-repo`, `gh-gist` |
+| System | `procs`, `help`, `cmds`, `vars` |
+| Navigation | `jump`, `pick`, `zj` |
+| Suche | `rg-live` |
+| Pakete | `brew-add`, `brew-rm` |
+
+### Media-Toolkit
+
+| Tool | Funktionen |
+| ---- | ---------- |
+| ffmpeg | `v2mp3`, `vthumb`, `vcut`, `vcompress`, `v2gif`, `vinfo` |
+| magick | `imgresize`, `towebp`, `imgmeta`, `imgsize`, `imgcrop` |
+| poppler | `pdf2txt`, `pdf2img`, `pdfmeta`, `pdfpages` |
+| resvg | `svg2png`, `svgscale` |
+
 Dazu: **[Catppuccin Mocha](https://catppuccin.com/) Theme** überall, **Hilfe im Terminal** via `dothelp`, **fzf-Integration** für alles.
 
 Alle installierten Pakete: [`setup/Brewfile`](setup/Brewfile)
