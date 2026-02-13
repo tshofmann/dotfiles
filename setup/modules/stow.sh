@@ -126,8 +126,8 @@ run_stow() {
 
     log "Verlinke Konfigurationsdateien..."
 
-    # Ins dotfiles-Verzeichnis wechseln
-    cd "$DOTFILES_DIR" || {
+    # Ins dotfiles-Verzeichnis wechseln (pushd isoliert den CWD-Wechsel)
+    pushd "$DOTFILES_DIR" >/dev/null || {
         err "Konnte nicht nach $DOTFILES_DIR wechseln"
         return 1
     }
@@ -138,6 +138,7 @@ run_stow() {
 
     if [[ ${#packages[@]} -eq 0 ]]; then
         warn "Keine Stow-Packages gefunden"
+        popd >/dev/null
         return 0
     fi
 
@@ -164,6 +165,7 @@ run_stow() {
         done <<< "$stow_output"
         # Stash trotzdem wiederherstellen bei Fehler
         _restore_stashed_changes
+        popd >/dev/null
         return 0
     fi
 
@@ -183,6 +185,9 @@ run_stow() {
 
     # Gestashte User-Änderungen wiederherstellen
     _restore_stashed_changes
+
+    # CWD wiederherstellen
+    popd >/dev/null
 
     return 0
 }

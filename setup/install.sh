@@ -13,6 +13,9 @@
 # zsh ist eine feste Abhängigkeit – keine interaktive Bestätigung.
 # ============================================================
 
+# POSIX sh kennt kein pipefail – Pipes im Skript wurden so
+# konstruiert, dass der Exit-Status der relevanten (letzten)
+# Stufe korrekt durchgereicht wird.
 set -eu
 
 # Script-Verzeichnis ermitteln (POSIX-kompatibel)
