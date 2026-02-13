@@ -244,7 +244,7 @@ if command -v fzf >/dev/null 2>&1; then
             brew formulae | sed 's/^/[F] /'
             brew casks | sed 's/^/[C] /'
         } | fzf --multi --query="$query" \
-            --preview 'brew info {2}' \
+            --preview 'case {1} in \[C\]) brew info --cask {2};; *) brew info {2};; esac' \
             --header='[F]=Formula [C]=Cask | Enter: Installieren | Tab: Mehrfach')
 
         [[ -z "$selection" ]] && return 0
@@ -268,7 +268,7 @@ if command -v fzf >/dev/null 2>&1; then
             brew leaves | sed 's/^/[F] /'
             brew list --cask 2>/dev/null | sed 's/^/[C] /'
         } | fzf --multi --query="$query" \
-            --preview 'brew info {2}' \
+            --preview 'case {1} in \[C\]) brew info --cask {2};; *) brew info {2};; esac' \
             --header='[F]=Formula [C]=Cask | Enter: Entfernen | Tab: Mehrfach')
 
         [[ -z "$selection" ]] && return 0
