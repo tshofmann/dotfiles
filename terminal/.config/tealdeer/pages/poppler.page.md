@@ -11,7 +11,7 @@
 
 - dotfiles: PDF zu Bildern konvertieren:
 
-`pdf2img {{pdf, auflösung}}`
+`pdf2img {{pdf, auflösung, format}}`
 
 - dotfiles: PDF-Metadaten anzeigen:
 
@@ -20,3 +20,11 @@
 - dotfiles: PDF Seitenzahl anzeigen:
 
 `pdfpages {{pdf}}`
+
+- dotfiles: PDF-Seiten einzeln extrahieren (%d = Seitennummer):
+
+`pdfsplit {{pdf, muster}}`
+
+- dotfiles: PDFs zusammenfügen (Ausgabe: merged.pdf, Überschreibschutz):
+
+`pdfmerge {{pdf, pdf, ...}}`

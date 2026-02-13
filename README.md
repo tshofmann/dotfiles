@@ -40,9 +40,9 @@ Alle Workflows nutzen [fzf](https://github.com/junegunn/fzf) mit bat-Preview, Ke
 
 | Tool | Funktionen |
 | ---- | ---------- |
-| ffmpeg | `v2mp3`, `vthumb`, `vcut`, `vcompress`, `v2gif`, `vinfo` |
-| magick | `imgresize`, `towebp`, `imgmeta`, `imgsize`, `imgcrop` |
-| poppler | `pdf2txt`, `pdf2img`, `pdfmeta`, `pdfpages` |
+| ffmpeg | `v2mp3`, `vthumb`, `vcut`, `vcompress`, `v2gif`, `v2mp4`, `vinfo` |
+| magick | `imgresize`, `towebp`, `topng`, `tojpg`, `imgmeta`, `imgsize`, `imgcrop`, `imgstrip` |
+| poppler | `pdf2txt`, `pdf2img`, `pdfmeta`, `pdfpages`, `pdfsplit`, `pdfmerge` |
 | resvg | `svg2png`, `svgscale` |
 
 Dazu: **[Catppuccin Mocha](https://catppuccin.com/) Theme** überall, **Hilfe im Terminal** via `dothelp`, **fzf-Integration** für alles.

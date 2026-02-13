@@ -1,6 +1,6 @@
 - dotfiles: Nutzt `fzf (Interactive), theme-style, jq (JSON-Parsing für Outdated/Drift)`
 
-- dotfiles: Homebrew Komplett-Update:
+- dotfiles: Homebrew Komplett-Update (update, upgrade, autoremove, cleanup, mas):
 
 `brew-up`
 
@@ -24,7 +24,7 @@
 
 `masl`
 
-- dotfiles: Brewfile Wartungs-Dashboard:
+- dotfiles: Brewfile Wartungs-Dashboard (Versionen, Updates, Drift):
 
 `brew-list {{filter}}`
 

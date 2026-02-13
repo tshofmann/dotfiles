@@ -7,7 +7,7 @@
 # Config      : ~/.config/ImageMagick/policy.xml (Sicherheit)
 # Nutzt       : -
 # Ersetzt     : -
-# Aliase      : imgresize, towebp, imgmeta, imgsize, imgcrop
+# Aliase      : imgresize, towebp, topng, tojpg, imgmeta, imgsize, imgcrop, imgstrip
 # ============================================================
 
 # Guard   : Nur wenn ImageMagick installiert ist
@@ -45,6 +45,29 @@ towebp() {
     magick "$input" -quality "$quality" "$output"
 }
 
+# Bild zu PNG konvertieren(bild, output)
+topng() {
+    if [[ $# -lt 1 ]]; then
+        echo "Verwendung: topng <bild> [output.png]" >&2
+        return 1
+    fi
+    local input="$1"
+    local output="${2:-${input%.*}.png}"
+    magick "$input" "$output"
+}
+
+# Bild zu JPEG konvertieren(bild, qualität=85, output) – Transparenz wird weiß
+tojpg() {
+    if [[ $# -lt 1 ]]; then
+        echo "Verwendung: tojpg <bild> [qualität=85] [output.jpg]" >&2
+        return 1
+    fi
+    local input="$1"
+    local quality="${2:-85}"
+    local output="${3:-${input%.*}.jpg}"
+    magick "$input" -background white -flatten -quality "$quality" "$output"
+}
+
 # ------------------------------------------------------------
 # Info
 # ------------------------------------------------------------
@@ -70,4 +93,13 @@ imgcrop() {
     local y="$5"
     local output="${6:-${input%.*}_crop.${input##*.}}"
     magick "$input" -crop "${w}x${h}+${x}+${y}" "$output"
+}
+
+# Metadaten entfernen(bilder) – in-place, EXIF/GPS/IPTC weg, ICC-Farbprofil bleibt
+imgstrip() {
+    if [[ $# -lt 1 ]]; then
+        echo "Verwendung: imgstrip <bild> [bild2 ...]" >&2
+        return 1
+    fi
+    magick mogrify -auto-orient +profile '!icc,*' "$@"
 }
