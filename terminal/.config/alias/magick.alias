@@ -95,7 +95,7 @@ imgcrop() {
     magick "$input" -crop "${w}x${h}+${x}+${y}" "$output"
 }
 
-# Metadaten entfernen(bilder) – EXIF/GPS/IPTC weg, ICC-Farbprofil bleibt
+# Metadaten entfernen(bilder) – in-place, EXIF/GPS/IPTC weg, ICC-Farbprofil bleibt
 imgstrip() {
     if [[ $# -lt 1 ]]; then
         echo "Verwendung: imgstrip <bild> [bild2 ...]" >&2

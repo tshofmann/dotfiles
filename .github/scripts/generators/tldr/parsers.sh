@@ -207,10 +207,21 @@ format_param_for_tldr() {
     local param="$1"
     [[ -z "$param" ]] && return
 
-    param="${param%%\?}"
-    param="${param%%=*}"
+    # Defaults und ? pro Parameter entfernen (nicht global)
+    local result=""
+    local IFS=','
+    local parts
+    read -rA parts <<< "$param"
+    for p in "${parts[@]}"; do
+        p="${p## }"   # Leerzeichen vorne
+        p="${p%% }"   # Leerzeichen hinten
+        p="${p%%=*}"  # Default-Wert entfernen
+        p="${p%%\?}"  # Optional-Marker entfernen
+        [[ -n "$result" ]] && result+=", "
+        result+="$p"
+    done
 
-    echo "{{${param}}}"
+    echo "{{${result}}}"
 }
 
 # ------------------------------------------------------------

@@ -12,15 +12,15 @@
 
 `vcut {{input, start, ende, output}}`
 
-- dotfiles: Video komprimieren:
+- dotfiles: Video komprimieren (H.264 mit einstellbarem CRF):
 
-`vcompress {{video, output?, crf}}`
+`vcompress {{video, output, crf}}`
 
 - dotfiles: GIF aus Video erstellen:
 
-`v2gif {{input, start}}`
+`v2gif {{input, start, dauer, output}}`
 
-- dotfiles: Beliebiges Videoformat nach MP4 konvertieren:
+- dotfiles: Beliebiges Videoformat nach MP4 konvertieren (H.264, maximale Kompatibilität):
 
 `v2mp4 {{video, output}}`
 

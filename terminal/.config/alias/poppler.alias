@@ -54,7 +54,7 @@ pdfpages() {
 # ------------------------------------------------------------
 # Seiten-Operationen
 # ------------------------------------------------------------
-# PDF-Seiten einzeln extrahieren(pdf, muster)
+# PDF-Seiten einzeln extrahieren(pdf, muster?) – %d = Seitennummer
 pdfsplit() {
     if [[ $# -lt 1 ]]; then
         echo "Verwendung: pdfsplit <pdf> [muster=datei-%d.pdf]" >&2
@@ -65,7 +65,7 @@ pdfsplit() {
     pdfseparate "$input" "$pattern"
 }
 
-# PDFs zusammenfügen(pdf, pdf, ...) – Output: merged.pdf
+# PDFs zusammenfügen(pdf, pdf, ...) – Ausgabe: merged.pdf, Überschreibschutz
 pdfmerge() {
     if [[ $# -lt 2 ]]; then
         echo "Verwendung: pdfmerge <pdf1> <pdf2> [pdf3 ...]" >&2

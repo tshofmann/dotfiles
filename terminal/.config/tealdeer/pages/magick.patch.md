@@ -8,15 +8,15 @@
 
 - dotfiles: Bild zu WebP konvertieren:
 
-`towebp {{bild, qualität}}`
+`towebp {{bild, qualität, output}}`
 
 - dotfiles: Bild zu PNG konvertieren:
 
 `topng {{bild, output}}`
 
-- dotfiles: Bild zu JPEG konvertieren:
+- dotfiles: Bild zu JPEG konvertieren (Transparenz wird weiß):
 
-`tojpg {{bild, qualität}}`
+`tojpg {{bild, qualität, output}}`
 
 - dotfiles: Bildinfo anzeigen (Format, Größe, Farbtiefe):
 
@@ -30,6 +30,6 @@
 
 `imgcrop {{bild, breite, höhe, x, y, output}}`
 
-- dotfiles: Metadaten entfernen:
+- dotfiles: Metadaten entfernen (in-place, EXIF/GPS/IPTC weg, ICC-Farbprofil bleibt):
 
 `imgstrip {{bilder}}`

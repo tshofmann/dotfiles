@@ -62,6 +62,10 @@ generate_patch_for_alias() {
                 local tldr_keys=$(format_keybindings_for_tldr "$keybindings")
 
                 output+="- dotfiles: ${name}"
+                # Text nach – als Zusatzkontext, wenn keine Keybindings
+                if [[ -z "$tldr_keys" && -n "$keybindings" ]]; then
+                    output+=" (${keybindings})"
+                fi
                 [[ -n "$tldr_keys" ]] && output+=" ${tldr_keys}"
                 output+=":\n\n"
                 output+="\`${func_name}"
