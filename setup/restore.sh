@@ -125,13 +125,22 @@ restore_single_file() {
         local backup_path="${DOTFILES_DIR}/${backup}"
         if [[ -e "$backup_path" ]]; then
             # Verzeichnis erstellen falls nötig
-            /bin/mkdir -p "$(dirname "$target")"
+            if ! /bin/mkdir -p "$(dirname "$target")" 2>/dev/null; then
+                warn "Konnte Verzeichnis nicht erstellen: $(dirname "$target")"
+                return 1
+            fi
 
             # Datei/Verzeichnis wiederherstellen
             if [[ -d "$backup_path" ]]; then
-                /bin/cp -Rp "$backup_path" "$target"
+                if ! /bin/cp -Rp "$backup_path" "$target" 2>/dev/null; then
+                    warn "Konnte Verzeichnis nicht wiederherstellen: $target"
+                    return 1
+                fi
             else
-                /bin/cp -p "$backup_path" "$target"
+                if ! /bin/cp -p "$backup_path" "$target" 2>/dev/null; then
+                    warn "Konnte Datei nicht wiederherstellen: $target"
+                    return 1
+                fi
             fi
 
             # Permissions setzen wenn bekannt
@@ -147,8 +156,14 @@ restore_single_file() {
         fi
     elif [[ "$type" == "symlink" && "$symlink_target" != "null" && -n "$symlink_target" ]]; then
         # Fremden Symlink wiederherstellen
-        /bin/mkdir -p "$(dirname "$target")"
-        /bin/ln -s "$symlink_target" "$target"
+        if ! /bin/mkdir -p "$(dirname "$target")" 2>/dev/null; then
+            warn "Konnte Verzeichnis nicht erstellen: $(dirname "$target")"
+            return 1
+        fi
+        if ! /bin/ln -s "$symlink_target" "$target" 2>/dev/null; then
+            warn "Konnte Symlink nicht wiederherstellen: $target -> $symlink_target"
+            return 1
+        fi
         ok "Symlink wiederhergestellt: $target -> $symlink_target"
         return 0
     fi
@@ -276,11 +291,15 @@ main() {
     while IFS= read -r entry; do
         [[ -z "$entry" ]] && continue
 
-        current_target=$(jq -r '.target' <<< "$entry")
-        current_backup=$(jq -r '.backup // "null"' <<< "$entry")
-        current_type=$(jq -r '.type' <<< "$entry")
-        current_symlink=$(jq -r '.symlinkTarget // "null"' <<< "$entry")
-        current_permissions=$(jq -r '.permissions // "null"' <<< "$entry")
+        # Alle Felder in einem jq-Aufruf extrahieren (Tab-separiert)
+        local fields
+        if ! fields=$(jq -r '[.target, (.backup // "null"), .type, (.symlinkTarget // "null"), (.permissions // "null")] | @tsv' <<< "$entry" 2>/dev/null); then
+            warn "Überspringe fehlerhaften Manifest-Eintrag"
+            (( skipped++ )) || true
+            continue
+        fi
+
+        IFS=$'\t' read -r current_target current_backup current_type current_symlink current_permissions <<< "$fields"
 
         [[ -z "$current_target" || "$current_target" == "null" ]] && continue
 
