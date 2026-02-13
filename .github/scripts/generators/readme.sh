@@ -219,7 +219,7 @@ Alle installierten Pakete: [\`setup/Brewfile\`](setup/Brewfile)
 curl -fsSL https://github.com/${PROJECT_REPO}/archive/refs/heads/main.tar.gz | tar -xz -C ~ && mv ~/dotfiles-main ~/dotfiles && ~/dotfiles/setup/install.sh
 \`\`\`
 
-Bestehende Konfigurationen werden automatisch gesichert. Wiederherstellung: \`./setup/restore.sh\`
+Bestehende Konfigurationen werden automatisch gesichert. Wiederherstellung: \`~/dotfiles/setup/restore.sh\`
 
 Danach **Terminal neu starten**. Fertig!
 
