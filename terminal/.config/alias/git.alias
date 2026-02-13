@@ -6,7 +6,7 @@
 # Docs        : https://git-scm.com/docs
 # Nutzt       : fzf (Interactive), bat (Diff-Highlighting)
 # Ersetzt     : -
-# Aliase      : git-add, git-commit, git-cm, git-acm, git-push, git-pull, git-co, git-status, git-diff, git-log, git-branch, git-stage, git-stash
+# Aliase      : git-add, git-commit, git-cm, git-acm, git-amend, git-push, git-pull, git-co, git-status, git-diff, git-log, git-branch, git-stage, git-stash
 # ============================================================
 # Hinweis     : Interaktive Git-Funktionen (mit fzf) sind unten
 #               definiert: git-log, git-branch, git-stage, git-stash
@@ -31,6 +31,9 @@ alias git-cm='git commit -m'
 
 # Alle Änderungen stagen und einen Commit erstellen
 alias git-acm='git add --all && git commit -m'
+
+# Letzten Commit ergänzen (staged Dateien hinzufügen, Message beibehalten)
+alias git-amend='git commit --amend --no-edit'
 
 # Änderungen pushen
 alias git-push='git push'

@@ -16,6 +16,10 @@
 
 `git-acm`
 
+- dotfiles: Letzten Commit ergänzen (staged Dateien hinzufügen, Message beibehalten):
+
+`git-amend`
+
 - dotfiles: Änderungen pushen:
 
 `git-push`
