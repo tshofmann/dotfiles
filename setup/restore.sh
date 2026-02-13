@@ -64,11 +64,20 @@ check_backup_exists() {
 }
 
 # ------------------------------------------------------------
-# Manifest parsen (JSON ohne jq)
+# Abhängigkeit prüfen
+# ------------------------------------------------------------
+if ! command -v jq >/dev/null 2>&1; then
+    err "jq ist nicht installiert – wird zum Lesen des Manifests benötigt"
+    err "Installation: brew install jq"
+    exit 1
+fi
+
+# ------------------------------------------------------------
+# Manifest-Hilfsfunktionen
 # ------------------------------------------------------------
 # Zählt die Einträge im Manifest
 get_manifest_count() {
-    grep -c '"source":' "$BACKUP_MANIFEST" 2>/dev/null || echo "0"
+    jq '.files | length' "$BACKUP_MANIFEST" 2>/dev/null || echo "0"
 }
 
 # ------------------------------------------------------------
@@ -204,7 +213,7 @@ main() {
 
     echo ""
     echo "╔════════════════════════════════════════════════════════════╗"
-    echo "║          DOTFILES RESTORE - Wiederherstellung              ║"
+    echo "║            DOTFILES RESTORE - Wiederherstellung            ║"
     echo "╚════════════════════════════════════════════════════════════╝"
     echo ""
 
@@ -215,7 +224,7 @@ main() {
 
     # Backup-Info anzeigen
     local created count
-    created=$(grep '"created"' "$BACKUP_MANIFEST" | head -1 | sed 's/.*": *"//' | sed 's/".*//')
+    created=$(jq -r '.created' "$BACKUP_MANIFEST")
     count=$(get_manifest_count)
 
     echo "Backup gefunden:"
@@ -245,78 +254,61 @@ main() {
     # Zähler
     local removed=0 restored=0 skipped=0
 
-    # Alle Einträge aus Manifest verarbeiten
-    # Wir parsen das JSON Zeile für Zeile
-    local current_target="" current_backup="" current_type="" current_symlink="" current_permissions=""
+    # Alle Einträge aus Manifest verarbeiten (via jq)
+    local entries
+    entries=$(jq -c '.files[]' "$BACKUP_MANIFEST")
 
-    while IFS= read -r line; do
-        case "$line" in
-            *'"target":'*)
-                current_target=$(echo "$line" | sed 's/.*"target": *"//' | sed 's/".*//')
-                ;;
-            *'"backup":'*)
-                current_backup=$(echo "$line" | sed 's/.*"backup": *//' | sed 's/,$//' | sed 's/"//g')
-                ;;
-            *'"type":'*)
-                current_type=$(echo "$line" | sed 's/.*"type": *"//' | sed 's/".*//')
-                ;;
-            *'"symlinkTarget":'*)
-                current_symlink=$(echo "$line" | sed 's/.*"symlinkTarget": *//' | sed 's/,$//' | sed 's/"//g')
-                ;;
-            *'"permissions":'*)
-                current_permissions=$(echo "$line" | sed 's/.*"permissions": *//' | sed 's/,$//' | sed 's/"//g')
-                ;;
-            *'}'*)
-                # Ende eines Eintrags
-                if [[ -n "$current_target" ]]; then
-                    # Nur verarbeiten wenn nicht dotfiles_symlink (die wurden von uns erstellt)
-                    if [[ "$current_type" == "dotfiles_symlink" ]]; then
-                        # Entferne nur unseren eigenen Symlink (der noch ins Dotfiles-Repo zeigt)
-                        if [[ -L "$current_target" ]]; then
-                            if is_dotfiles_symlink "$current_target"; then
-                                /bin/rm "$current_target" 2>/dev/null && {
-                                    (( removed++ )) || true
-                                }
-                            else
-                                # Fremder Symlink – nicht löschen
-                                (( skipped++ )) || true
-                            fi
-                        fi
-                    elif [[ "$current_type" != "none" ]]; then
-                        # Wiederherstellen wenn:
-                        # 1. Ziel ist noch unser Symlink → entfernen und Original wiederherstellen
-                        # 2. Ziel existiert nicht mehr → User hat manuell gelöscht → Original wiederherstellen
-                        # 3. Ziel existiert aber ist kein dotfiles-Symlink → überspringen (User hat geändert)
-                        if [[ -L "$current_target" ]] && is_dotfiles_symlink "$current_target"; then
-                            # Fall 1: Unser Symlink existiert noch
-                            /bin/rm "$current_target" 2>/dev/null
-                            if restore_single_file "$current_target" "$current_backup" "$current_type" "$current_symlink" "$current_permissions"; then
-                                (( restored++ )) || true
-                            else
-                                (( skipped++ )) || true
-                            fi
-                        elif [[ ! -e "$current_target" ]] && [[ ! -L "$current_target" ]]; then
-                            # Fall 2: Ziel existiert nicht mehr (manuell gelöscht)
-                            if restore_single_file "$current_target" "$current_backup" "$current_type" "$current_symlink" "$current_permissions"; then
-                                (( restored++ )) || true
-                            else
-                                (( skipped++ )) || true
-                            fi
-                        else
-                            # Fall 3: Existiert aber kein dotfiles-Symlink
-                            (( skipped++ )) || true
-                        fi
-                    fi
+    local current_target current_backup current_type current_symlink current_permissions
+
+    while IFS= read -r entry; do
+        [[ -z "$entry" ]] && continue
+
+        current_target=$(jq -r '.target' <<< "$entry")
+        current_backup=$(jq -r '.backup // "null"' <<< "$entry")
+        current_type=$(jq -r '.type' <<< "$entry")
+        current_symlink=$(jq -r '.symlinkTarget // "null"' <<< "$entry")
+        current_permissions=$(jq -r '.permissions // "null"' <<< "$entry")
+
+        [[ -z "$current_target" || "$current_target" == "null" ]] && continue
+
+        if [[ "$current_type" == "dotfiles_symlink" ]]; then
+            # Entferne nur unseren eigenen Symlink (der noch ins Dotfiles-Repo zeigt)
+            if [[ -L "$current_target" ]]; then
+                if is_dotfiles_symlink "$current_target"; then
+                    /bin/rm "$current_target" 2>/dev/null && {
+                        log "Entfernt: $current_target"
+                        (( removed++ )) || true
+                    }
+                else
+                    # Fremder Symlink – nicht löschen
+                    (( skipped++ )) || true
                 fi
-                # Reset für nächsten Eintrag
-                current_target=""
-                current_backup=""
-                current_type=""
-                current_symlink=""
-                current_permissions=""
-                ;;
-        esac
-    done < "$BACKUP_MANIFEST"
+            fi
+        elif [[ "$current_type" != "none" ]]; then
+            # Wiederherstellen wenn:
+            # 1. Ziel ist noch unser Symlink → entfernen und Original wiederherstellen
+            # 2. Ziel existiert nicht mehr → User hat manuell gelöscht → Original wiederherstellen
+            # 3. Ziel existiert aber ist kein dotfiles-Symlink → überspringen (User hat geändert)
+            if [[ -L "$current_target" ]] && is_dotfiles_symlink "$current_target"; then
+                # Fall 1: Unser Symlink existiert noch → restore_single_file entfernt und stellt her
+                if restore_single_file "$current_target" "$current_backup" "$current_type" "$current_symlink" "$current_permissions"; then
+                    (( restored++ )) || true
+                else
+                    (( skipped++ )) || true
+                fi
+            elif [[ ! -e "$current_target" ]] && [[ ! -L "$current_target" ]]; then
+                # Fall 2: Ziel existiert nicht mehr (manuell gelöscht)
+                if restore_single_file "$current_target" "$current_backup" "$current_type" "$current_symlink" "$current_permissions"; then
+                    (( restored++ )) || true
+                else
+                    (( skipped++ )) || true
+                fi
+            else
+                # Fall 3: Existiert aber kein dotfiles-Symlink
+                (( skipped++ )) || true
+            fi
+        fi
+    done <<< "$entries"
 
     echo ""
     ok "Wiederherstellung abgeschlossen"
