@@ -99,7 +99,7 @@
 
 `dotdocs`
 
-- Symlinks neu verlinken (nach Änderungen in terminal/ oder editor/):
+- Symlinks neu verlinken (nach Änderungen in Stow-Packages):
 
 `dotstow`
 
