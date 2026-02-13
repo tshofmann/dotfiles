@@ -64,15 +64,6 @@ check_backup_exists() {
 }
 
 # ------------------------------------------------------------
-# Abhängigkeit prüfen
-# ------------------------------------------------------------
-if ! command -v jq >/dev/null 2>&1; then
-    err "jq ist nicht installiert – wird zum Lesen des Manifests benötigt"
-    err "Installation: brew install jq"
-    exit 1
-fi
-
-# ------------------------------------------------------------
 # Manifest-Hilfsfunktionen
 # ------------------------------------------------------------
 # Zählt die Einträge im Manifest
@@ -211,6 +202,13 @@ main() {
         esac
     done
 
+    # jq-Abhängigkeit prüfen (nach --help, damit Help ohne jq funktioniert)
+    if ! command -v jq >/dev/null 2>&1; then
+        err "jq ist nicht installiert – wird zum Lesen des Manifests benötigt"
+        err "Installation: brew install jq"
+        return 1
+    fi
+
     echo ""
     echo "╔════════════════════════════════════════════════════════════╗"
     echo "║            DOTFILES RESTORE - Wiederherstellung            ║"
@@ -224,7 +222,10 @@ main() {
 
     # Backup-Info anzeigen
     local created count
-    created=$(jq -r '.created' "$BACKUP_MANIFEST")
+    if ! created=$(jq -r '.created' "$BACKUP_MANIFEST" 2>/dev/null); then
+        err "Backup-Manifest ist ungültig oder beschädigt: $BACKUP_MANIFEST"
+        return 1
+    fi
     count=$(get_manifest_count)
 
     echo "Backup gefunden:"
@@ -256,7 +257,11 @@ main() {
 
     # Alle Einträge aus Manifest verarbeiten (via jq)
     local entries
-    entries=$(jq -c '.files[]' "$BACKUP_MANIFEST")
+    if ! entries=$(jq -c '.files[]' "$BACKUP_MANIFEST" 2>/dev/null); then
+        err "Konnte Manifest nicht parsen – fehlt das 'files'-Array?"
+        err "Datei: $BACKUP_MANIFEST"
+        return 1
+    fi
 
     local current_target current_backup current_type current_symlink current_permissions
 
