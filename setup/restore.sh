@@ -4,7 +4,7 @@
 # ============================================================
 # Zweck       : Stellt Backup wieder her und entfernt Symlinks
 # Pfad        : setup/restore.sh
-# Benötigt    : Ein vorhandenes Backup unter .backup/
+# Benötigt    : Ein vorhandenes Backup unter .backup/, jq
 # Aufruf      : ./setup/restore.sh [--yes]
 # Optionen    : --yes  Keine Bestätigung erforderlich
 #
