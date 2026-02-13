@@ -1,7 +1,7 @@
 ---
 name: 💡 Feature Request
 about: Idee für eine Verbesserung oder neues Feature
-title: ''
+title: 'feat: '
 labels: enhancement
 assignees: ''
 ---
