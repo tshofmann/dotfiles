@@ -1,7 +1,7 @@
 ---
 name: 🐛 Bug Report
 about: Etwas funktioniert nicht wie erwartet
-title: ''
+title: 'fix: '
 labels: bug
 assignees: ''
 ---

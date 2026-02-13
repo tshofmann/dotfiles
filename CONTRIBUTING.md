@@ -629,7 +629,7 @@ exec zsh
 
 ```zsh
 git add .
-git commit -m "type: beschreibung"
+git commit -m "type(scope): beschreibung"
 ```
 
 **Commit-Typen:**
@@ -639,6 +639,19 @@ git commit -m "type: beschreibung"
 - `docs:` – Nur Dokumentation
 - `refactor:` – Code-Umstrukturierung
 - `chore:` – Maintenance (deps, configs)
+
+**Optionaler Scope:** Betroffenes Tool oder Modul in Klammern:
+
+```text
+feat(starship): Erweiterte Module hinzufügen
+fix(fzf): Sonderzeichen in Vorschau escapen
+refactor(setup): Toter Code in _core.sh entfernen
+docs(readme): Feature-Highlights sichtbar machen
+```
+
+Gängige Scopes: `fzf`, `brew`, `git`, `bat`, `starship`, `stow`, `setup`, `readme`, `restore`
+
+> **Issue-Titel** folgen derselben Konvention wie Commit-Messages.
 
 ### 5. Push & PR
 
