@@ -55,11 +55,13 @@ Alle installierten Pakete: [`setup/Brewfile`](setup/Brewfile)
 curl -fsSL https://github.com/tshofmann/dotfiles/archive/refs/heads/main.tar.gz | tar -xz -C ~ && mv ~/dotfiles-main ~/dotfiles && ~/dotfiles/setup/install.sh
 ```
 
+Bestehende Konfigurationen werden automatisch gesichert. Wiederherstellung: `./setup/restore.sh`
+
 Danach **Terminal neu starten**. Fertig!
 
 > 💡 **Tipp:** Gib `dothelp` ein – zeigt Keybindings, Aliase und Wartungsbefehle.
 >
-> ⚠️ **Probleme?** `dothealth` prüft die Installation. Backup liegt in `~/dotfiles/.backup/`.
+> ⚠️ **Probleme?** `dothealth` prüft die Installation.
 
 ### Voraussetzungen
 
