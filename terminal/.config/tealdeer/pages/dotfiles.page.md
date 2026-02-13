@@ -85,7 +85,7 @@
 
 `brew-up`
 
-- Brewfile Versionsübersicht:
+- Brewfile Wartungs-Dashboard(filter?):
 
 `brew-list`
 
