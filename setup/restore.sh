@@ -226,6 +226,10 @@ main() {
         err "Backup-Manifest ist ungültig oder beschädigt: $BACKUP_MANIFEST"
         return 1
     fi
+    if [[ -z "$created" || "$created" == "null" ]]; then
+        err "Backup-Manifest ist ungültig: Feld .created fehlt oder ist leer"
+        return 1
+    fi
     count=$(get_manifest_count)
 
     echo "Backup gefunden:"
@@ -280,10 +284,13 @@ main() {
             # Entferne nur unseren eigenen Symlink (der noch ins Dotfiles-Repo zeigt)
             if [[ -L "$current_target" ]]; then
                 if is_dotfiles_symlink "$current_target"; then
-                    /bin/rm "$current_target" 2>/dev/null && {
+                    if /bin/rm "$current_target" 2>/dev/null; then
                         log "Entfernt: $current_target"
                         (( removed++ )) || true
-                    }
+                    else
+                        warn "Konnte Symlink nicht entfernen: $current_target"
+                        (( skipped++ )) || true
+                    fi
                 else
                     # Fremder Symlink – nicht löschen
                     (( skipped++ )) || true
