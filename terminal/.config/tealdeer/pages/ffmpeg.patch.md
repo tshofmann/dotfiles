@@ -20,6 +20,10 @@
 
 `v2gif {{input, start}}`
 
+- dotfiles: Beliebiges Videoformat nach MP4 konvertieren:
+
+`v2mp4 {{video, output}}`
+
 - dotfiles: Video-/Audio-Informationen anzeigen:
 
 `vinfo`

@@ -20,3 +20,11 @@
 - dotfiles: PDF Seitenzahl anzeigen:
 
 `pdfpages {{pdf}}`
+
+- dotfiles: PDF-Seiten einzeln extrahieren:
+
+`pdfsplit {{pdf, muster}}`
+
+- dotfiles: PDFs zusammenfügen:
+
+`pdfmerge {{pdf, pdf, ...}}`

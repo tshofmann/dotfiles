@@ -10,6 +10,14 @@
 
 `towebp {{bild, qualität}}`
 
+- dotfiles: Bild zu PNG konvertieren:
+
+`topng {{bild, output}}`
+
+- dotfiles: Bild zu JPEG konvertieren:
+
+`tojpg {{bild, qualität}}`
+
 - dotfiles: Bildinfo anzeigen (Format, Größe, Farbtiefe):
 
 `imgmeta`
@@ -21,3 +29,7 @@
 - dotfiles: Bild zuschneiden:
 
 `imgcrop {{bild, breite, höhe, x, y, output}}`
+
+- dotfiles: Metadaten entfernen:
+
+`imgstrip {{bilder}}`

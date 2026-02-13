@@ -6,7 +6,7 @@
 # Docs        : https://poppler.freedesktop.org/
 # Nutzt       : -
 # Ersetzt     : -
-# Aliase      : pdf2txt, pdf2img, pdfmeta, pdfpages
+# Aliase      : pdf2txt, pdf2img, pdfmeta, pdfpages, pdfsplit, pdfmerge
 # ============================================================
 
 # Guard   : Nur wenn poppler installiert ist
@@ -49,4 +49,32 @@ pdfpages() {
         return 1
     fi
     pdfinfo "$1" | grep "Pages:" | awk '{print $2}'
+}
+
+# ------------------------------------------------------------
+# Seiten-Operationen
+# ------------------------------------------------------------
+# PDF-Seiten einzeln extrahieren(pdf, muster)
+pdfsplit() {
+    if [[ $# -lt 1 ]]; then
+        echo "Verwendung: pdfsplit <pdf> [muster=datei-%d.pdf]" >&2
+        return 1
+    fi
+    local input="$1"
+    local pattern="${2:-${input%.*}-%d.pdf}"
+    pdfseparate "$input" "$pattern"
+}
+
+# PDFs zusammenfügen(pdf, pdf, ...) – Output: merged.pdf
+pdfmerge() {
+    if [[ $# -lt 2 ]]; then
+        echo "Verwendung: pdfmerge <pdf1> <pdf2> [pdf3 ...]" >&2
+        return 1
+    fi
+    local output="merged.pdf"
+    if [[ -e "$output" ]]; then
+        echo "Fehler: $output existiert bereits" >&2
+        return 1
+    fi
+    pdfunite "$@" "$output"
 }
