@@ -82,7 +82,7 @@ if command -v fzf >/dev/null 2>&1; then
             fzf --ansi --query="$query" \
                 --preview 'git log --oneline --color=always {1} | head -20' \
                 --header='Enter: Checkout | Ctrl+D: Löschen' \
-                --bind 'ctrl-d:execute(git branch -d {1})+reload(git branch --all --color=always | grep -v HEAD)' | \
+                --bind 'ctrl-d:execute(read -q "REPLY?Branch {1} löschen? [y/N] " && git branch -d {1}; echo)+reload(git branch --all --color=always | grep -v HEAD)' | \
             sed 's/^[* ]*//' | sed 's|remotes/[^/]*/||')
 
         [[ -n "$branch" ]] && git checkout "$branch"
@@ -93,11 +93,12 @@ if command -v fzf >/dev/null 2>&1; then
         local query="${1:-}"
         local files
 
-        files=$(git -c color.status=always status --short | \
+        # git quotet Dateinamen mit Sonderzeichen ("file name") → sed entfernt diese Quotes
+        files=$(git -c color.status=always status --short | sed 's/ "\(.*\)"$/ \1/' | \
             fzf --ansi --multi --query="$query" \
                 --preview "$FZF_HELPER_DIR/action git-diff {2..}" \
                 --header='Enter: Add | Tab: Mehrfach | Ctrl+R: Reset' \
-                --bind "ctrl-r:execute($FZF_HELPER_DIR/action git-restore {+2..})+reload(git -c color.status=always status --short)" | \
+                --bind "ctrl-r:execute($FZF_HELPER_DIR/action git-restore {+2..})+reload(git -c color.status=always status --short | sed 's/ \"\\(.*\\)\"\$/ \\1/')" | \
             awk '{$1=""; print substr($0,2)}')
 
         if [[ -n "$files" ]]; then

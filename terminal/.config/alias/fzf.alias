@@ -41,13 +41,27 @@ fi
 # Prozess Browser(signal=15) – Enter=Beenden, Tab=Mehrfach, Ctrl+S=Apps↔Alle
 procs() {
     local pid
+    local -a fzf_opts=(-m --freeze-left=1)
 
-    pid=$("$FZF_HELPER_DIR/procs" list apps | \
-        fzf -m \
-            --freeze-left=1 \
-            --prompt='Apps> ' \
-            --header='Enter: Beenden | Tab: Mehrfach | Ctrl+S: Apps/Alle' \
-            --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Apps> ' ]] && echo 'reload($FZF_HELPER_DIR/procs list all)+change-prompt(Alle> )' || echo 'reload($FZF_HELPER_DIR/procs list apps)+change-prompt(Apps> )'" | \
+    # macOS: Default apps (.app-Bundles), Toggle mit Ctrl+S
+    # Linux: Default all (kein .app-Konzept), kein Toggle
+    if [[ "$(uname -s)" == "Darwin" ]]; then
+        local mode="apps"
+        fzf_opts+=(
+            --prompt='Apps> '
+            --header='Enter: Beenden | Tab: Mehrfach | Ctrl+S: Apps/Alle'
+            --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Apps> ' ]] && echo 'reload($FZF_HELPER_DIR/procs list all)+change-prompt(Alle> )' || echo 'reload($FZF_HELPER_DIR/procs list apps)+change-prompt(Apps> )'"
+        )
+    else
+        local mode="all"
+        fzf_opts+=(
+            --prompt='Procs> '
+            --header='Enter: Beenden | Tab: Mehrfach'
+        )
+    fi
+
+    pid=$("$FZF_HELPER_DIR/procs" list "$mode" | \
+        fzf "${fzf_opts[@]}" | \
         awk '{print $1}')
 
     [[ -n "$pid" ]] && echo "$pid" | xargs kill -${1:-15}
@@ -184,6 +198,7 @@ vars() {
         name=$(echo "$selection" | cut -d'│' -f1 | xargs)
         value=$(printenv "$name")
         # Export-Statement ins Edit-Buffer (editierbar vor Ausführung)
-        print -z "export ${name}=\"${value}\""
+        # ${(qq)} erzeugt sicheres Single-Quote-Escaping für alle Sonderzeichen
+        print -z "export ${name}=${(qq)value}"
     fi
 }
