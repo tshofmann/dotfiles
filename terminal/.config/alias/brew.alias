@@ -244,12 +244,12 @@ if command -v fzf >/dev/null 2>&1; then
             brew formulae | sed 's/^/[F] /'
             brew casks | sed 's/^/[C] /'
         } | fzf --multi --query="$query" \
-            --preview 'brew info {2}' \
+            --preview 'case {1} in \[C\]) brew info --cask {2};; *) brew info {2};; esac' \
             --header='[F]=Formula [C]=Cask | Enter: Installieren | Tab: Mehrfach')
 
         [[ -z "$selection" ]] && return 0
 
-        echo "$selection" | while read -r line; do
+        while read -r line; do
             type="${line:1:1}"
             pkg="${line:4}"
             if [[ "$type" == "C" ]]; then
@@ -257,17 +257,30 @@ if command -v fzf >/dev/null 2>&1; then
             else
                 brew install "$pkg"
             fi
-        done
+        done <<< "$selection"
     }
 
     # Brew Remove Browser(suche?) – Enter=Entfernen, Tab=Mehrfach
     brew-rm() {
         local query="${1:-}"
-        local pkg
-        pkg=$(brew leaves | fzf --multi --query="$query" \
-            --preview 'brew info {}' \
-            --header='Enter: Entfernen | Tab: Mehrfach')
+        local selection type pkg
+        selection=$({
+            brew leaves | sed 's/^/[F] /'
+            brew list --cask 2>/dev/null | sed 's/^/[C] /'
+        } | fzf --multi --query="$query" \
+            --preview 'case {1} in \[C\]) brew info --cask {2};; *) brew info {2};; esac' \
+            --header='[F]=Formula [C]=Cask | Enter: Entfernen | Tab: Mehrfach')
 
-        [[ -n "$pkg" ]] && echo "$pkg" | xargs brew uninstall
+        [[ -z "$selection" ]] && return 0
+
+        while read -r line; do
+            type="${line:1:1}"
+            pkg="${line:4}"
+            if [[ "$type" == "C" ]]; then
+                brew uninstall --cask "$pkg"
+            else
+                brew uninstall "$pkg"
+            fi
+        done <<< "$selection"
     }
 fi
