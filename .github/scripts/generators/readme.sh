@@ -44,7 +44,7 @@ generate_tool_replacements_table() {
 # Helper: fzf-Funktionsnamen aus einer .alias-Datei extrahieren
 # ------------------------------------------------------------
 # Liest "# Aliase"-Header und filtert Funktionen die fzf nutzen.
-# fzf-Erkennung: Sucht "fzf" zwischen Funktionsstart und nächster Funktion/Dateiende
+# fzf-Erkennung: Sucht "fzf" zwischen Funktionsstart und passender schließender } (per Brace-Depth, inkl. verschachtelter Blöcke)
 extract_fzf_functions() {
     local alias_file="$1"
     local is_fzf_file="$2"  # "1" wenn Datei selbst das fzf-Tool ist
