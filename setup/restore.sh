@@ -68,7 +68,7 @@ check_backup_exists() {
 # ------------------------------------------------------------
 # Zählt die Einträge im Manifest
 get_manifest_count() {
-    jq '.files | length' "$BACKUP_MANIFEST" 2>/dev/null || echo "0"
+    jq 'if (.files | type) == "array" then (.files | length) else 0 end' "$BACKUP_MANIFEST" 2>/dev/null || echo "0"
 }
 
 # ------------------------------------------------------------
@@ -106,8 +106,12 @@ restore_single_file() {
 
     # Nur dotfiles-Symlinks entfernen
     if [[ -L "$target" ]] && is_dotfiles_symlink "$target"; then
-        /bin/rm "$target"
-        log "Entfernt: $target"
+        if /bin/rm "$target" 2>/dev/null; then
+            log "Entfernt: $target"
+        else
+            warn "Konnte Symlink nicht entfernen: $target"
+            return 1
+        fi
     elif [[ -L "$target" ]]; then
         warn "Übersprungen (fremder Symlink): $target"
         return 1
@@ -202,21 +206,21 @@ main() {
         esac
     done
 
-    # jq-Abhängigkeit prüfen (nach --help, damit Help ohne jq funktioniert)
-    if ! command -v jq >/dev/null 2>&1; then
-        err "jq ist nicht installiert – wird zum Lesen des Manifests benötigt"
-        err "Installation: brew install jq"
-        return 1
-    fi
-
     echo ""
     echo "╔════════════════════════════════════════════════════════════╗"
     echo "║            DOTFILES RESTORE - Wiederherstellung            ║"
     echo "╚════════════════════════════════════════════════════════════╝"
     echo ""
 
-    # Prüfen ob Backup existiert
+    # Prüfen ob Backup existiert (vor jq-Guard, da kein jq benötigt)
     if ! check_backup_exists; then
+        return 1
+    fi
+
+    # jq-Abhängigkeit prüfen (nach --help und check_backup_exists)
+    if ! command -v jq >/dev/null 2>&1; then
+        err "jq ist nicht installiert – wird zum Lesen des Manifests benötigt"
+        err "Installation: brew install jq"
         return 1
     fi
 
