@@ -31,5 +31,36 @@ alias dothealth='"${DOTFILES_DIR:-$HOME/dotfiles}/.github/scripts/health-check.s
 # Dokumentation neu generieren
 alias dotdocs='"${DOTFILES_DIR:-$HOME/dotfiles}/.github/scripts/generate-docs.sh" --generate'
 
-# Symlinks neu verlinken (nach Änderungen in terminal/ oder editor/)
-alias dotstow='cd "${DOTFILES_DIR:-$HOME/dotfiles}" && stow -R terminal editor'
+# Symlinks neu verlinken (nach Änderungen in Stow-Packages)
+dotstow() {
+    local dotdir="${DOTFILES_DIR:-$HOME/dotfiles}"
+    if [[ ! -d "$dotdir" ]]; then
+        echo "Dotfiles-Verzeichnis nicht gefunden: $dotdir" >&2
+        return 1
+    fi
+
+    # Stow-Packages dynamisch erkennen
+    local -a pkgs=()
+    local dir name
+    for dir in "$dotdir"/*/; do
+        [[ -d "$dir" ]] || continue
+        name="${dir%/}"
+        name="${name##*/}"
+
+        # Bekannte Nicht-Packages überspringen
+        [[ "$name" == "setup" || "$name" == "docs" || "$name" == ".git" || "$name" == ".backup" || "$name" == ".github" ]] && continue
+
+        # Prüfe ob es Dotfiles oder .config enthält
+        if [[ -n "$(find "$dir" -maxdepth 1 -name '.*' -not -name '.DS_Store' -type f 2>/dev/null | head -1)" ]] ||
+           [[ -d "${dir}.config" ]]; then
+            pkgs+=("$name")
+        fi
+    done
+
+    if [[ ${#pkgs[@]} -eq 0 ]]; then
+        echo "Keine Stow-Packages gefunden in: $dotdir" >&2
+        return 1
+    fi
+
+    cd "$dotdir" && stow -R "${pkgs[@]}"
+}
