@@ -263,11 +263,24 @@ if command -v fzf >/dev/null 2>&1; then
     # Brew Remove Browser(suche?) – Enter=Entfernen, Tab=Mehrfach
     brew-rm() {
         local query="${1:-}"
-        local pkg
-        pkg=$(brew leaves | fzf --multi --query="$query" \
-            --preview 'brew info {}' \
-            --header='Enter: Entfernen | Tab: Mehrfach')
+        local selection type pkg
+        selection=$({
+            brew leaves | sed 's/^/[F] /'
+            brew list --cask 2>/dev/null | sed 's/^/[C] /'
+        } | fzf --multi --query="$query" \
+            --preview 'brew info {2}' \
+            --header='[F]=Formula [C]=Cask | Enter: Entfernen | Tab: Mehrfach')
 
-        [[ -n "$pkg" ]] && echo "$pkg" | xargs brew uninstall
+        [[ -z "$selection" ]] && return 0
+
+        echo "$selection" | while read -r line; do
+            type="${line:1:1}"
+            pkg="${line:4}"
+            if [[ "$type" == "C" ]]; then
+                brew uninstall --cask "$pkg"
+            else
+                brew uninstall "$pkg"
+            fi
+        done
     }
 fi
