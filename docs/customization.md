@@ -12,14 +12,19 @@ Das gesamte Setup verwendet [Catppuccin Mocha](https://catppuccin.com/) als einh
 
 | Tool | Theme-Datei | Status |
 | ---- | ----------- | ------ |
-| **Terminal.app** | `setup/catppuccin-mocha.terminal` | Via Bootstrap importiert + als Standard gesetzt |
-| **Starship** | `terminal/.config/starship/starship.toml` | Via Stow verlinkt |
 | **bat** | `terminal/.config/bat/themes/` | Via Stow verlinkt (+ Cache-Build) |
-| **fzf** | `terminal/.config/fzf/config` | Farben in Config-Datei (via Stow) |
 | **btop** | `terminal/.config/btop/themes/` | Via Stow verlinkt |
 | **eza** | `terminal/.config/eza/theme.yml` | Via Stow verlinkt |
-| **yazi** | `terminal/.config/yazi/theme.toml` | Versioniert (catppuccin/yazi Mauve) |
-| **zsh-syntax-highlighting** | `terminal/.config/zsh/` | Via Stow verlinkt |
+| **fastfetch** | `terminal/.config/fastfetch/config.jsonc` | Via Stow verlinkt |
+| **fzf** | `terminal/.config/fzf/config` | Farben in Config-Datei (via Stow) |
+| **jq** | `terminal/.config/theme-style` | Via Stow verlinkt |
+| **kitty** | `terminal/.config/kitty/current-theme.conf` | Via Stow verlinkt |
+| **lazygit** | `terminal/.config/lazygit/config.yml` | Via Stow verlinkt |
+| **starship** | `terminal/.config/starship/starship.toml` | Via Stow verlinkt |
+| **tealdeer** | `terminal/.config/tealdeer/config.toml` | Via Stow verlinkt |
+| **yazi** | `terminal/.config/yazi/theme.toml` | Via Stow verlinkt |
+| **zsh-syntax-highlighting** | `terminal/.config/zsh/catppuccin_mocha-*` | Via Stow verlinkt |
+| **Terminal.app** | `setup/catppuccin-mocha.terminal` | Via Bootstrap importiert + als Standard gesetzt |
 | **Xcode** | `setup/Catppuccin Mocha.xccolortheme` | Via Bootstrap kopiert (manuelle Aktivierung) |
 
 ### Xcode Theme aktivieren
@@ -66,11 +71,14 @@ Alle verfügbaren Shell-Farbvariablen aus `~/.config/theme-style`:
 | Mantle | `#181825` | `C_MANTLE` |
 | Crust | `#11111B` | `C_CRUST` |
 
+> **Text-Styles:** Zusätzlich zu den Farben stehen `C_RESET`, `C_BOLD`, `C_DIM`, `C_ITALIC` und `C_UNDERLINE` zur Verfügung.
+>
 > **Verwendung in Skripten:**
 
 ```zsh
 source ~/.config/theme-style
 echo "${C_GREEN}Erfolg${C_RESET}"
+echo "${C_BOLD}Fett${C_RESET}"
 ```
 
 Vollständige Palette: [catppuccin.com/palette](https://catppuccin.com/palette)
@@ -175,6 +183,18 @@ git commit -m "Terminal-Profil: <Neuer Font Name>"
 
 ## Aliase anpassen
 
+### Wie Aliase geladen werden
+
+Die `.zshrc` lädt beim Start alle `.alias`-Dateien aus `~/.config/alias/` automatisch in **alphabetischer Reihenfolge**:
+
+```zsh
+for alias_file in "$HOME/.config/alias"/*.alias(N-.on); do
+    source "$alias_file"
+done
+```
+
+Jede `.alias`-Datei repräsentiert ein Tool und beginnt mit einem Guard, der prüft ob das Tool installiert ist. Fehlt das Tool, wird die Datei übersprungen.
+
 ### Eigene Aliase hinzufügen
 
 Erstelle eine neue Datei in `terminal/.config/alias/`:
@@ -243,10 +263,14 @@ bindkey '^X3' fzf-cd-widget              # Ctrl+X 3 = Verzeichnisse
 | Was | Wo | Format |
 | --- | -- | ------ |
 | bat Theme | `~/.config/bat/config` | `--theme="..."` |
+| btop Einstellungen | `~/.config/btop/btop.conf` | Konfig-Datei |
 | fd Ignore-Patterns | `~/.config/fd/ignore` | Glob-Patterns |
-| ripgrep Optionen | `~/.config/ripgrep/config` | CLI-Flags |
-| lazygit Keybindings | `~/.config/lazygit/config.yml` | YAML |
 | fastfetch Modules | `~/.config/fastfetch/config.jsonc` | JSONC |
+| kitty Terminal | `~/.config/kitty/kitty.conf` | Konfig-Datei |
+| lazygit Keybindings | `~/.config/lazygit/config.yml` | YAML |
+| ripgrep Optionen | `~/.config/ripgrep/config` | CLI-Flags |
+| tealdeer Farben | `~/.config/tealdeer/config.toml` | TOML |
+| yazi File Manager | `~/.config/yazi/yazi.toml` | TOML |
 
 ---
 
@@ -257,7 +281,7 @@ bindkey '^X3' fzf-cd-widget              # Ctrl+X 3 = Verzeichnisse
     │
     ├── Login-Shell?
     │       │
-    │       └── .zprofile (PATH, EDITOR, etc.)
+    │       └── .zprofile (DOTFILES_DIR, Homebrew)
     │
     └── Interactive?
             │
@@ -268,7 +292,7 @@ bindkey '^X3' fzf-cd-widget              # Ctrl+X 3 = Verzeichnisse
 
 | Datei | Wann geladen | Verwendung |
 | ----- | ------------ | ---------- |
-| `.zshenv` | Immer | Umgebungsvariablen die VOR allen anderen Configs geladen werden |
-| `.zprofile` | Login-Shell | PATH, EDITOR, etc. (einmalig) |
+| `.zshenv` | Immer | Umgebungsvariablen (XDG, EDITOR, VISUAL) |
+| `.zprofile` | Login-Shell | DOTFILES_DIR, Homebrew (einmalig) |
 | `.zshrc` | Interaktiv | Aliase, Prompt, Keybindings |
 | `.zlogin` | Nach Login | Background-Tasks nach `.zshrc` |

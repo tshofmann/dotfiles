@@ -130,7 +130,6 @@ Das ist alles! Das Bootstrap-Skript hat bereits:
 - ✅ Git-Hooks aktiviert
 - ✅ bat-Cache für das Catppuccin Theme gebaut
 - ✅ tldr-Pages heruntergeladen
-- ✅ Kitty-Theme konfiguriert (falls installiert)
 
 > **💡 Warum Terminal neu starten?** Das Terminal muss neu gestartet werden, damit alle Konfigurationen (Profile, Umgebungsvariablen) vollständig aktiv werden.
 
