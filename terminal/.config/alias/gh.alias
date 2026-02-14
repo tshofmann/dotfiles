@@ -31,30 +31,44 @@ alias gh-status='gh status'
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # PRs durchsuchen(suche?) – Enter=Checkout, Ctrl+D=Diff, Ctrl+O=Browser
+    # PRs durchsuchen(suche?) – Enter=Checkout/Browser, Ctrl+D=Diff, Ctrl+O=Browser, Ctrl+S=Open↔Alle
     gh-pr() {
         local query="${1:-}"
-        local pr
-        pr=$(gh pr list --limit 50 | \
+        local result pr_num pr_state
+        result=$(gh pr list --limit 50 | \
             fzf --ansi --query="$query" \
+                --delimiter='\t' \
+                --prompt='Open> ' \
                 --preview 'gh pr view {1}' \
-                --header='Enter: Checkout | Ctrl+D: Diff | Ctrl+O: Browser' \
+                --header='Enter: Checkout/Browser | Ctrl+D: Diff | Ctrl+O: Browser | Ctrl+S: Open/Alle' \
                 --bind 'ctrl-o:execute-silent(gh pr view {1} --web)' \
-                --bind 'ctrl-d:execute(gh pr diff {1} | bat --color=always -l diff)' | \
-            awk '{print $1}')
+                --bind 'ctrl-d:execute(gh pr diff {1} | bat --color=always -l diff)' \
+                --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Open> ' ]] && echo 'reload(gh pr list --state all --limit 50)+change-prompt(Alle> )' || echo 'reload(gh pr list --state open --limit 50)+change-prompt(Open> )'"
+            )
 
-        [[ -n "$pr" ]] && gh pr checkout "$pr"
+        [[ -z "$result" ]] && return 0
+        pr_num=$(echo "$result" | cut -f1)
+        pr_state=$(echo "$result" | cut -f4)
+
+        if [[ "$pr_state" == "OPEN" || "$pr_state" == "DRAFT" ]]; then
+            gh pr checkout "$pr_num"
+        else
+            gh pr view "$pr_num" --web
+        fi
     }
 
-    # Issues durchsuchen(suche?) – Enter=Browser, Ctrl+E=Bearbeiten
+    # Issues durchsuchen(suche?) – Enter=Browser, Ctrl+E=Bearbeiten, Ctrl+S=Open↔Alle
     gh-issue() {
         local query="${1:-}"
         local issue
         issue=$(gh issue list --limit 50 | \
             fzf --ansi --query="$query" \
+                --delimiter='\t' \
+                --prompt='Open> ' \
                 --preview 'gh issue view {1}' \
-                --header='Enter: Browser | Ctrl+E: Bearbeiten' \
-                --bind 'ctrl-e:execute(gh issue edit {1})' | \
+                --header='Enter: Browser | Ctrl+E: Bearbeiten | Ctrl+S: Open/Alle' \
+                --bind 'ctrl-e:execute(gh issue edit {1})' \
+                --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Open> ' ]] && echo 'reload(gh issue list --state all --limit 50)+change-prompt(Alle> )' || echo 'reload(gh issue list --state open --limit 50)+change-prompt(Open> )'" | \
             awk '{print $1}')
 
         [[ -n "$issue" ]] && gh issue view "$issue" --web
