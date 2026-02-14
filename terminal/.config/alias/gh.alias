@@ -4,7 +4,7 @@
 # Zweck       : Interaktive GitHub-Workflows mit gh CLI
 # Pfad        : ~/.config/alias/gh.alias
 # Docs        : https://cli.github.com/manual/
-# Nutzt       : fzf (Interactive), bat (Diff-Highlighting)
+# Nutzt       : fzf (Interactive), bat (Diff-Highlighting), fzf-Helper (gh)
 # Ersetzt     : -
 # Aliase      : gh-open, gh-status, gh-pr, gh-issue, gh-run, gh-repo, gh-gist
 # ============================================================
@@ -31,31 +31,45 @@ alias gh-status='gh status'
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # PRs durchsuchen(suche?) – Enter=Checkout, Ctrl+D=Diff, Ctrl+O=Browser
+    # PRs durchsuchen(suche?) – Enter=Checkout/Browser, Ctrl+D=Diff, Ctrl+O=Browser, Ctrl+S=Open↔Alle
     gh-pr() {
         local query="${1:-}"
-        local pr
-        pr=$(gh pr list --limit 50 | \
+        local result pr_num pr_state
+        result=$("$FZF_HELPER_DIR/gh" list-pr | \
             fzf --ansi --query="$query" \
+                --delimiter='\t' \
+                --prompt='Open> ' \
                 --preview 'gh pr view {1}' \
-                --header='Enter: Checkout | Ctrl+D: Diff | Ctrl+O: Browser' \
+                --header='Enter: Checkout/Browser | Ctrl+D: Diff | Ctrl+O: Browser | Ctrl+S: Open/Alle' \
                 --bind 'ctrl-o:execute-silent(gh pr view {1} --web)' \
-                --bind 'ctrl-d:execute(gh pr diff {1} | bat --color=always -l diff)' | \
-            awk '{print $1}')
+                --bind 'ctrl-d:execute(gh pr diff {1} | bat --color=always -l diff)' \
+                --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Open> ' ]] && echo 'reload($FZF_HELPER_DIR/gh list-pr all)+change-prompt(Alle> )' || echo 'reload($FZF_HELPER_DIR/gh list-pr open)+change-prompt(Open> )'"
+            )
 
-        [[ -n "$pr" ]] && gh pr checkout "$pr"
+        [[ -z "$result" ]] && return 0
+        pr_num=$(echo "$result" | cut -f1)
+        pr_state=$(echo "$result" | cut -f4)
+
+        if [[ "$pr_state" == "OPEN" || "$pr_state" == "DRAFT" ]]; then
+            gh pr checkout "$pr_num"
+        else
+            gh pr view "$pr_num" --web
+        fi
     }
 
-    # Issues durchsuchen(suche?) – Enter=Browser, Ctrl+E=Bearbeiten
+    # Issues durchsuchen(suche?) – Enter=Browser, Ctrl+E=Bearbeiten, Ctrl+S=Open↔Alle
     gh-issue() {
         local query="${1:-}"
         local issue
-        issue=$(gh issue list --limit 50 | \
+        issue=$("$FZF_HELPER_DIR/gh" list-issue | \
             fzf --ansi --query="$query" \
+                --delimiter='\t' \
+                --prompt='Open> ' \
                 --preview 'gh issue view {1}' \
-                --header='Enter: Browser | Ctrl+E: Bearbeiten' \
-                --bind 'ctrl-e:execute(gh issue edit {1})' | \
-            awk '{print $1}')
+                --header='Enter: Browser | Ctrl+E: Bearbeiten | Ctrl+S: Open/Alle' \
+                --bind 'ctrl-e:execute(gh issue edit {1})' \
+                --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Open> ' ]] && echo 'reload($FZF_HELPER_DIR/gh list-issue all)+change-prompt(Alle> )' || echo 'reload($FZF_HELPER_DIR/gh list-issue open)+change-prompt(Open> )'" | \
+            cut -f1)
 
         [[ -n "$issue" ]] && gh issue view "$issue" --web
     }

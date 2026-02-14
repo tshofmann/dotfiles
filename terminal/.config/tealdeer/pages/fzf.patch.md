@@ -24,6 +24,8 @@
 
 - dotfiles: `config` – Native fzf-Konfiguration (FZF_DEFAULT_OPTS_FILE)
 
+- dotfiles: `gh` – GitHub CLI Listen für fzf (stabiles Tab-Format)
+
 - dotfiles: `help` – Subcommands für man/tldr Browser
 
 - dotfiles: `init.zsh` – fzf Keybindings und fd-Backend aktivieren

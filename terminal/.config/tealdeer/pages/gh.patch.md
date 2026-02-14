@@ -1,4 +1,4 @@
-- dotfiles: Nutzt `fzf (Interactive), bat (Diff-Highlighting)`
+- dotfiles: Nutzt `fzf (Interactive), bat (Diff-Highlighting), fzf-Helper (gh)`
 
 - dotfiles: Repository im Browser öffnen:
 
@@ -8,11 +8,11 @@
 
 `gh-status`
 
-- dotfiles: PRs durchsuchen (`<Enter>` Checkout, `<Ctrl d>` Diff, `<Ctrl o>` Browser):
+- dotfiles: PRs durchsuchen (`<Enter>` Checkout/Browser, `<Ctrl d>` Diff, `<Ctrl o>` Browser, `<Ctrl s>` Open↔Alle):
 
 `gh-pr {{suche}}`
 
-- dotfiles: Issues durchsuchen (`<Enter>` Browser, `<Ctrl e>` Bearbeiten):
+- dotfiles: Issues durchsuchen (`<Enter>` Browser, `<Ctrl e>` Bearbeiten, `<Ctrl s>` Open↔Alle):
 
 `gh-issue {{suche}}`
 
