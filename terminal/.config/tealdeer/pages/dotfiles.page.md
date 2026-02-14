@@ -53,7 +53,7 @@
 
 - top → btop (moderner Ressourcen-Monitor):
 
-`top, htop`
+`top`
 
 - ls → eza (mit Icons und Git-Status):
 
