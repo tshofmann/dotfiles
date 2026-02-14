@@ -1,0 +1,55 @@
+#!/usr/bin/env zsh
+# ============================================================
+# gh - Helper für gh-pr() und gh-issue() Funktionen
+# ============================================================
+# Zweck       : GitHub CLI Listen für fzf (stabiles Tab-Format)
+# Pfad        : ~/.config/fzf/gh
+# Aufruf      : gh <list-pr|list-issue> [open|all]
+# ============================================================
+# Hinweis     : Nutzt --json + --template für stabiles Format
+#               (unabhängig von gh-Version und Locale)
+# ============================================================
+
+# Gemeinsame Bibliothek laden (Farben, Dispatch)
+source "${0:A:h}/lib.zsh"
+
+# ------------------------------------------------------------
+# Subcommand: list-pr
+# ------------------------------------------------------------
+# Format: Nummer\tTitel\tBranch\tState (OPEN|DRAFT|MERGED|CLOSED)
+_gh_list-pr() {
+    local state="${1:-open}"
+    gh pr list --limit 50 --state "$state" \
+        --json number,title,headRefName,state,isDraft \
+        --template '{{range .}}{{.number}}{{"\t"}}{{.title}}{{"\t"}}{{.headRefName}}{{"\t"}}{{if .isDraft}}DRAFT{{else}}{{.state}}{{end}}{{"\n"}}{{end}}'
+}
+
+# ------------------------------------------------------------
+# Subcommand: list-issue
+# ------------------------------------------------------------
+# Format: Nummer\tTitel\tLabels\tState (OPEN|CLOSED)
+_gh_list-issue() {
+    local state="${1:-open}"
+    gh issue list --limit 50 --state "$state" \
+        --json number,title,labels,state \
+        --template '{{range .}}{{.number}}{{"\t"}}{{.title}}{{"\t"}}{{range $i, $l := .labels}}{{if $i}}, {{end}}{{$l.name}}{{end}}{{"\t"}}{{.state}}{{"\n"}}{{end}}'
+}
+
+# ------------------------------------------------------------
+# Usage
+# ------------------------------------------------------------
+_gh_usage() {
+    cat <<EOF
+Usage: gh <command> [args...]
+
+Commands:
+  list-pr [open|all]      PR-Liste generieren (Default: open)
+  list-issue [open|all]   Issue-Liste generieren (Default: open)
+
+EOF
+}
+
+# ------------------------------------------------------------
+# Main Dispatch
+# ------------------------------------------------------------
+_fzf_dispatch "gh" "$@"

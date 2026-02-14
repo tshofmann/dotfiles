@@ -1,4 +1,4 @@
-- dotfiles: Nutzt `fzf (Interactive), bat (Diff-Highlighting)`
+- dotfiles: Nutzt `fzf (Interactive), bat (Diff-Highlighting), fzf-Helper (gh)`
 
 - dotfiles: Repository im Browser öffnen:
 
