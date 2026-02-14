@@ -73,52 +73,79 @@ extract_fzf_keybindings() {
 # extract_installed_nerd_font() und font_display_name() → common/brewfile.sh
 
 # ------------------------------------------------------------
-# Theme-Konfigurationen sammeln
+# Theme-Konfigurationen sammeln (dynamisch aus theme-style)
 # ------------------------------------------------------------
-# Durchsucht bekannte Konfigurationspfade nach Theme-Einstellungen
+# Parst die Theme-Quellen-Tabelle in theme-style und generiert Markdown.
+# Format in theme-style: #   tool | config-pfad | upstream-repo | status
 collect_theme_configs() {
-    local output=""
+    local theme_style="$DOTFILES_DIR/terminal/.config/theme-style"
+    [[ -f "$theme_style" ]] || return 1
 
-    # Terminal-Profil und Xcode-Theme dynamisch ermitteln (alphabetisch erste)
-    local terminal_file
-    terminal_file=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.terminal" | sort | head -1)
-
-    local xcode_file
-    xcode_file=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.xccolortheme" | sort | head -1)
-
-    # Bekannte Theme-Dateien
-    local -A theme_files=(
-        ["Terminal.app"]="$terminal_file|Via Bootstrap importiert + als Standard gesetzt"
-        ["Starship"]="$DOTFILES_DIR/terminal/.config/starship/starship.toml|Via Stow verlinkt"
-        ["bat"]="$DOTFILES_DIR/terminal/.config/bat/themes/|Via Stow verlinkt (+ Cache-Build)"
-        ["fzf"]="$DOTFILES_DIR/terminal/.config/fzf/config|Farben in Config-Datei (via Stow)"
-        ["btop"]="$DOTFILES_DIR/terminal/.config/btop/themes/|Via Stow verlinkt"
-        ["eza"]="$DOTFILES_DIR/terminal/.config/eza/theme.yml|Via Stow verlinkt"
-        ["yazi"]="$DOTFILES_DIR/terminal/.config/yazi/theme.toml|Versioniert (catppuccin/yazi Mauve)"
-        ["zsh-syntax-highlighting"]="$DOTFILES_DIR/terminal/.config/zsh/|Via Stow verlinkt"
-        ["Xcode"]="$xcode_file|Via Bootstrap kopiert (manuelle Aktivierung)"
+    # Sonderfälle: Deployment-Details die nicht aus dem Pfad ableitbar sind
+    local -A deploy_overrides=(
+        ["Terminal.app"]="Via Bootstrap importiert + als Standard gesetzt"
+        ["Xcode"]="Via Bootstrap kopiert (manuelle Aktivierung)"
+        ["bat"]="Via Stow verlinkt (+ Cache-Build)"
+        ["fzf"]="Farben in Config-Datei (via Stow)"
     )
 
+    # Terminal-Profil und Xcode-Theme dynamisch ermitteln (alphabetisch erste)
+    local terminal_file xcode_file
+    terminal_file=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.terminal" | sort | head -1)
+    xcode_file=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.xccolortheme" | sort | head -1)
+
+    local output=""
     output+="| Tool | Theme-Datei | Status |\n"
     output+="| ---- | ----------- | ------ |\n"
 
-    for tool in "Terminal.app" "Starship" "bat" "fzf" "btop" "eza" "yazi" "zsh-syntax-highlighting" "Xcode"; do
-        local info="${theme_files[$tool]}"
-        local file="${info%%|*}"
-        local stat="${info##*|}"
+    # Variablen vor der Schleife deklarieren (ZSH: local in Schleife leakt Output)
+    local tool config_path display_tool file_path deploy_status
 
-        # Überspringen wenn Datei leer (optionale Themes: Terminal.app, Xcode)
-        [[ -z "$file" && ( "$tool" == "Xcode" || "$tool" == "Terminal.app" ) ]] && continue
+    # Theme-Quellen-Tabelle parsen
+    while IFS= read -r line; do
+        # Format: #   tool  | config-pfad | upstream-repo | status
+        [[ "$line" =~ ^'#   '([a-zA-Z._-]+)[[:space:]]*'\|'[[:space:]]*([^|]+)[[:space:]]*'\|' ]] || continue
 
-        # Datei/Verzeichnis kürzen für Anzeige
-        local display_file="$file"
-        if [[ "$file" == "$DOTFILES_DIR"* ]]; then
-            display_file="${file#$DOTFILES_DIR/}"
-            display_file="\`$display_file\`"
+        tool="${match[1]}"
+        config_path="${match[2]}"
+        # Whitespace trimmen (alle führenden/nachfolgenden Spaces)
+        config_path="${config_path#"${config_path%%[! ]*}"}"
+        config_path="${config_path%"${config_path##*[! ]}"}"
+
+        # theme-style selbst überspringen (ist die Quelldatei, kein Tool-Theme)
+        [[ "$tool" == "theme-style" ]] && continue
+
+        # Display-Name: zsh-syntax → zsh-syntax-highlighting
+        display_tool="$tool"
+        [[ "$tool" == "zsh-syntax" ]] && display_tool="zsh-syntax-highlighting"
+
+        # Konkreten Dateipfad ermitteln
+        file_path="$config_path"
+        if [[ "$tool" == "Terminal.app" ]]; then
+            [[ -z "$terminal_file" ]] && continue
+            file_path="${terminal_file#$DOTFILES_DIR/}"
+        elif [[ "$tool" == "Xcode" ]]; then
+            [[ -z "$xcode_file" ]] && continue
+            file_path="${xcode_file#$DOTFILES_DIR/}"
+        elif [[ "$config_path" == "~/.config/"* ]]; then
+            # ~/.config/X → terminal/.config/X (Repo-Pfad)
+            file_path="terminal/.config/${config_path#\~/.config/}"
         fi
 
-        output+="| **$tool** | $display_file | $stat |\n"
-    done
+        # Deployment-Status ableiten
+        deploy_status=""
+        if [[ -n "${deploy_overrides[$tool]:-}" ]]; then
+            deploy_status="${deploy_overrides[$tool]}"
+        elif [[ -n "${deploy_overrides[$display_tool]:-}" ]]; then
+            deploy_status="${deploy_overrides[$display_tool]}"
+        elif [[ "$config_path" == *"~/dotfiles/setup/"* || "$file_path" == "setup/"* ]]; then
+            deploy_status="Via Bootstrap"
+        else
+            deploy_status="Via Stow verlinkt"
+        fi
+
+        output+="| **$display_tool** | \`$file_path\` | $deploy_status |\n"
+    done < "$theme_style"
 
     echo "$output"
 }
@@ -177,11 +204,14 @@ FONT_SECTION
 
     cat << 'AFTER_COLORS'
 
+> **Text-Styles:** Zusätzlich zu den Farben stehen `C_RESET`, `C_BOLD`, `C_DIM`, `C_ITALIC` und `C_UNDERLINE` zur Verfügung.
+>
 > **Verwendung in Skripten:**
 
 ```zsh
 source ~/.config/theme-style
 echo "${C_GREEN}Erfolg${C_RESET}"
+echo "${C_BOLD}Fett${C_RESET}"
 ```
 
 Vollständige Palette: [catppuccin.com/palette](https://catppuccin.com/palette)
@@ -331,6 +361,18 @@ FONT_EXAMPLE
 
 ## Aliase anpassen
 
+### Wie Aliase geladen werden
+
+Die `.zshrc` lädt beim Start alle `.alias`-Dateien aus `~/.config/alias/` automatisch in **alphabetischer Reihenfolge**:
+
+```zsh
+for alias_file in "$HOME/.config/alias"/*.alias(N-.on); do
+    source "$alias_file"
+done
+```
+
+Jede `.alias`-Datei repräsentiert ein Tool und beginnt mit einem Guard, der prüft ob das Tool installiert ist. Fehlt das Tool, wird die Datei übersprungen.
+
 ### Eigene Aliase hinzufügen
 
 Erstelle eine neue Datei in `terminal/.config/alias/`:
@@ -390,10 +432,14 @@ FZF_KEYBINDINGS
 | Was | Wo | Format |
 | --- | -- | ------ |
 | bat Theme | `~/.config/bat/config` | `--theme="..."` |
+| btop Einstellungen | `~/.config/btop/btop.conf` | Konfig-Datei |
 | fd Ignore-Patterns | `~/.config/fd/ignore` | Glob-Patterns |
-| ripgrep Optionen | `~/.config/ripgrep/config` | CLI-Flags |
-| lazygit Keybindings | `~/.config/lazygit/config.yml` | YAML |
 | fastfetch Modules | `~/.config/fastfetch/config.jsonc` | JSONC |
+| kitty Terminal | `~/.config/kitty/kitty.conf` | Konfig-Datei |
+| lazygit Keybindings | `~/.config/lazygit/config.yml` | YAML |
+| ripgrep Optionen | `~/.config/ripgrep/config` | CLI-Flags |
+| tealdeer Farben | `~/.config/tealdeer/config.toml` | TOML |
+| yazi File Manager | `~/.config/yazi/yazi.toml` | TOML |
 
 ---
 
@@ -404,7 +450,7 @@ FZF_KEYBINDINGS
     │
     ├── Login-Shell?
     │       │
-    │       └── .zprofile (PATH, EDITOR, etc.)
+    │       └── .zprofile (DOTFILES_DIR, Homebrew)
     │
     └── Interactive?
             │
@@ -415,8 +461,8 @@ FZF_KEYBINDINGS
 
 | Datei | Wann geladen | Verwendung |
 | ----- | ------------ | ---------- |
-| `.zshenv` | Immer | Umgebungsvariablen die VOR allen anderen Configs geladen werden |
-| `.zprofile` | Login-Shell | PATH, EDITOR, etc. (einmalig) |
+| `.zshenv` | Immer | Umgebungsvariablen (XDG, EDITOR, VISUAL) |
+| `.zprofile` | Login-Shell | DOTFILES_DIR, Homebrew (einmalig) |
 | `.zshrc` | Interaktiv | Aliase, Prompt, Keybindings |
 | `.zlogin` | Nach Login | Background-Tasks nach `.zshrc` |
 
