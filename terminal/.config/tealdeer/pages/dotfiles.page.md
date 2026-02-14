@@ -47,25 +47,17 @@
 
 # Tool-Ersetzungen
 
-- unrar → 7z (7-Zip als schnellerer Ersatz):
-
-`7za, 7zx, 7zl, 7zt, unrar, 7zf`
-
 - cat → bat (mit Syntax-Highlighting):
 
 `cat, catn, catd, bat-theme`
 
-- top, htop → btop (moderner Ressourcen-Monitor):
+- top → btop (moderner Ressourcen-Monitor):
 
-`top, htop`
+`top`
 
 - ls → eza (mit Icons und Git-Status):
 
 `ls, ll, la, lt, lt3, lss, lst`
-
-- neofetch → fastfetch (schnellere System-Übersicht):
-
-`ff, neofetch`
 
 - find → fd (schneller, intuitive Syntax):
 

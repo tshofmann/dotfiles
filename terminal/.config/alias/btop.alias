@@ -5,8 +5,8 @@
 # Pfad        : ~/.config/alias/btop.alias
 # Docs        : https://github.com/aristocratos/btop
 # Config      : ~/.config/btop/btop.conf (Catppuccin Mocha Theme)
-# Ersetzt     : top, htop (moderner Ressourcen-Monitor)
-# Aliase      : top, htop
+# Ersetzt     : top (moderner Ressourcen-Monitor)
+# Aliase      : top
 # ============================================================
 
 # Guard   : Nur wenn btop installiert ist
