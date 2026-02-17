@@ -46,7 +46,7 @@
 
 `help {{suche}}`
 
-- dotfiles: Befehl Browser (`<Enter>` Übernehmen, `<Ctrl s>` tldr↔Code):
+- dotfiles: Befehl Browser (`<Enter>` Übernehmen, `<Ctrl s>` tldr↔Code, `<Ctrl e>` Datei editieren):
 
 `cmds {{suche}}`
 

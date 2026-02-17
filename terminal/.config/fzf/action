@@ -5,13 +5,13 @@
 # Zweck       : Führt Aktionen Shell-Injection-sicher aus
 # Pfad        : ~/.config/fzf/action
 # Aufruf      : action <command> "argument" [...]
-# Nutzt       : platform.zsh (clip, xopen)
+# Nutzt       : platform.zsh (clip)
 # ============================================================
-# Commands: copy, copy-env, edit, open, git-diff, git-restore, git-add,
+# Commands: copy, copy-env, edit, git-diff, git-restore, git-add,
 #           zoxide-remove
 # ============================================================
 
-# Plattform-Abstraktionen laden (clip, xopen)
+# Plattform-Abstraktionen laden (clip)
 # Wird als separater Prozess von fzf aufgerufen – muss platform.zsh selbst laden
 source "${XDG_CONFIG_HOME:-$HOME/.config}/platform.zsh" 2>/dev/null || {
     echo "action: platform.zsh nicht gefunden" >&2
@@ -46,11 +46,6 @@ case "${1:-}" in
             ${EDITOR:-vim} -- "$file"
         fi
         ;;
-    open)
-        # Datei mit Standard-App öffnen
-        shift
-        xopen "$1"
-        ;;
     git-diff)
         # Git diff für Datei
         shift
@@ -83,7 +78,6 @@ Commands:
   copy <path>            Pfad ins Clipboard kopieren
   copy-env <fzf-line>    Umgebungsvariable aus vars()-Zeile kopieren
   edit <file> [line]     Datei im Editor öffnen
-  open <file>            Datei mit Standard-App öffnen
   git-diff <file>        Git diff für Datei anzeigen
   git-restore <files...> Git restore für Datei(en)
   git-add <files...>     Git add für Datei(en)

@@ -3,7 +3,7 @@
 > Dotfiles mit Catppuccin-Theme und modernen CLI-Tools.
 > Mehr Informationen: <https://github.com/tshofmann/dotfiles>
 
-- dotfiles: Nutzt `tldr (für dothelp), stow (für dotstow)`
+- dotfiles: Nutzt `tldr (für dothelp), stow (für dotstow), fzf+fd (für dotedit)`
 
 - Diese Hilfe (Schnellreferenz):
 
@@ -94,6 +94,10 @@
 - Symlinks neu verlinken (nach Änderungen in Stow-Packages):
 
 `dotstow`
+
+- Dotfiles Config editieren(suche?):
+
+`dotedit`
 
 # Vollständige Dokumentation
 

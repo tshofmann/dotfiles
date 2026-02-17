@@ -15,7 +15,7 @@
 #   init.zsh  – Shell-Integration (Ctrl+X Keybindings, FZF_DEFAULT_COMMAND)
 #   lib.zsh   – Shared Utilities (Farben, ANSI-Strip)
 #   preview   – Vorschau (file|dir) mit bat/eza
-#   action    – Sichere Aktionen (copy, edit, open, git-*, zoxide-*)
+#   action    – Sichere Aktionen (copy, edit, git-*, zoxide-*)
 #   help      – Helper für help() (list|preview|toggle)
 #   procs     – Helper für procs() (list)
 #   cmds      – Helper für cmds() (preview)
@@ -111,10 +111,11 @@ help() {
 # ALIAS + FZF: Alias-/Funktions-Browser
 # ------------------------------------------------------------
 # Fuzzy-Suche für Aliase und Funktionen aus allen .alias-Dateien
-# Befehl Browser(suche?) – Enter=Übernehmen, Ctrl+S=tldr↔Code
+# Befehl Browser(suche?) – Enter=Übernehmen, Ctrl+S=tldr↔Code, Ctrl+E=Datei editieren
 cmds() {
     local query="${1:-}"
     local selection name
+    local alias_dir="${XDG_CONFIG_HOME:-$HOME/.config}/alias"
 
     # Formatierte Ausgabe für fzf (Farben aus theme-style)
     selection=$("$FZF_HELPER_DIR/cmds" list | awk -F'|' \
@@ -134,9 +135,10 @@ cmds() {
         }
     ' | fzf --ansi --query="$query" \
         --prompt='tldr> ' \
-        --header='Enter: Befehl übernehmen | Ctrl+S: tldr ↔ Code' \
+        --header='Enter: Übernehmen | Ctrl+S: tldr ↔ Code | Ctrl+E: Datei editieren' \
         --preview "[[ \$FZF_PROMPT == 'code> ' ]] && zsh '$FZF_HELPER_DIR/cmds' preview code {} || zsh '$FZF_HELPER_DIR/cmds' preview tldr {}" \
-        --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'tldr> ' ]] && echo 'change-prompt(code> )+refresh-preview' || echo 'change-prompt(tldr> )+refresh-preview'")
+        --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'tldr> ' ]] && echo 'change-prompt(code> )+refresh-preview' || echo 'change-prompt(tldr> )+refresh-preview'" \
+        --bind "ctrl-e:execute(cat=$(echo {} | sed 's/\x1b\[[0-9;]*m//g' | awk '{print \$3}'); ${EDITOR:-vim} -- '${alias_dir}/'\""\${cat}"\"'.alias')+refresh-preview")
 
     # Bei Enter: Befehl ins Edit-Buffer (kann editiert/ausgeführt werden)
     if [[ -n "$selection" ]]; then

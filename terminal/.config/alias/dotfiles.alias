@@ -4,11 +4,12 @@
 # Zweck       : Zentrale Einstiegspunkte für dotfiles-Hilfe
 # Pfad        : ~/.config/alias/dotfiles.alias
 # Docs        : https://github.com/tshofmann/dotfiles
-# Nutzt       : tldr (für dothelp), stow (für dotstow)
+# Nutzt       : tldr (für dothelp), stow (für dotstow), fzf+fd (für dotedit)
 # Ersetzt     : -
-# Aliase      : dothelp, dh, dothealth, dotdocs, dotstow
+# Aliase      : dothelp, dh, dothealth, dotdocs, dotstow, dotedit
 # ============================================================
-# Hinweis     : Kein globaler Guard – nur dothelp/dh benötigen tldr
+# Hinweis     : Kein globaler Guard – nur dothelp/dh benötigen tldr,
+#               dotedit benötigt fzf+fd
 # ============================================================
 
 # ------------------------------------------------------------
@@ -64,3 +65,32 @@ dotstow() {
 
     cd "$dotdir" && stow -R "${pkgs[@]}"
 }
+
+# Guard: fzf+fd für interaktive Funktionen
+if command -v fzf >/dev/null 2>&1 && command -v fd >/dev/null 2>&1; then
+    # Dotfiles Config editieren(suche?) – Enter=Editieren, Ctrl+Y=Pfad kopieren
+    dotedit() {
+        local query="${1:-}"
+        local dotdir="${DOTFILES_DIR:-$HOME/dotfiles}"
+        local file
+
+        file=$(fd --type f --hidden --follow \
+            --exclude .git \
+            --exclude .DS_Store \
+            --exclude '*.tmTheme' \
+            --exclude '*.png' \
+            --exclude '*.xccolortheme' \
+            --exclude '*.terminal' \
+            --exclude 'LICENSE' \
+            . "$dotdir/terminal" "$dotdir/setup" "$dotdir/CONTRIBUTING.md" "$dotdir/.github" \
+            | sed "s|^${dotdir}/||" \
+            | sort \
+            | fzf --ansi --query="$query" \
+                --prompt='dotedit> ' \
+                --header='Enter: Editieren | Ctrl+Y: Pfad kopieren' \
+                --preview "zsh '$FZF_HELPER_DIR/preview' file '${dotdir}/{}'" \
+                --bind="ctrl-y:execute-silent($FZF_HELPER_DIR/action copy '${dotdir}/{}')+abort")
+
+        [[ -n "$file" ]] && ${EDITOR:-vim} -- "${dotdir}/${file}"
+    }
+fi
