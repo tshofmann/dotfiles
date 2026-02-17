@@ -104,9 +104,14 @@ extract_section_items() {
     local found_header=false      # Sektionsheader gefunden
     local in_header_block=false   # Zwischen den Trennlinien des Headers
     local skip_next_sep=false     # Nächste Trennlinie (nach Header) überspringen
+    local trimmed                 # Zeile ohne führende Whitespace
 
     while IFS= read -r line; do
-        # Trennlinie behandeln
+        # Führende Whitespace entfernen für Pattern-Matching
+        # (Guards rücken Aliase/Funktionen ein → original $line für Sektionsgrenzen)
+        trimmed="${line#"${line%%[![:space:]]*}"}"
+
+        # Trennlinie behandeln (nur Top-Level, nicht eingerückt)
         if [[ "$line" == "# ---"* ]]; then
             if [[ "$skip_next_sep" == true ]]; then
                 # Trennlinie direkt nach Sektionsheader → überspringen
@@ -136,9 +141,12 @@ extract_section_items() {
 
         # Nächste Sektion oder Datei-Header beendet aktuelle Sektion
         if [[ "$in_section" == true ]]; then
-            # Neue Sektion beginnt (aber nicht Trennlinie)
-            if [[ "$line" == "# "* && "$line" != "# ---"* ]]; then
-                local content="${line#\# }"
+            # Datei-Header beendet alles (VOR Kommentar-Check, da "# ===" auch "# "* matcht)
+            if [[ "$line" == "# ==="* ]]; then
+                break
+            # Kommentar gefunden (auch eingerückt, z.B. innerhalb Guards)
+            elif [[ "$trimmed" == "# "* && "$trimmed" != "# ---"* ]]; then
+                local content="${trimmed#\# }"
                 # Prüfe ob es ein neuer Sektionsheader ist (keine Metadaten)
                 local first_word="${content%% *}"
                 case "$first_word" in
@@ -151,19 +159,16 @@ extract_section_items() {
                         prev_comment="${content%% –*}"
                         ;;
                 esac
-            # Alias gefunden
-            elif [[ "$line" =~ "^alias ([a-z0-9][a-z0-9_-]*)=" ]]; then
+            # Alias gefunden (auch eingerückt, z.B. innerhalb Guards)
+            elif [[ "$trimmed" =~ "^alias ([a-z0-9][a-z0-9_-]*)=" ]]; then
                 local name="${match[1]}"
                 [[ -n "$prev_comment" ]] && echo "${name}|${prev_comment}"
                 prev_comment=""
-            # Funktion gefunden
-            elif [[ "$line" =~ "^([a-z0-9][a-z0-9_-]*)\(\) \{" ]]; then
+            # Funktion gefunden (auch eingerückt, z.B. innerhalb Guards)
+            elif [[ "$trimmed" =~ "^([a-z0-9][a-z0-9_-]*)\(\) \{" ]]; then
                 local name="${match[1]}"
                 [[ -n "$prev_comment" ]] && echo "${name}|${prev_comment}"
                 prev_comment=""
-            # Datei-Header beendet alles
-            elif [[ "$line" == "# ==="* ]]; then
-                break
             # Leere Zeile behält Kommentar (für mehrzeilige Kommentare)
             elif [[ "$line" != "" ]]; then
                 prev_comment=""
