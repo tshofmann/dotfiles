@@ -68,13 +68,12 @@ dotstow() {
 
 # Guard: fzf+fd für interaktive Funktionen
 if command -v fzf >/dev/null 2>&1 && command -v fd >/dev/null 2>&1; then
-    # Dotfiles Config editieren(suche?) – Enter=Editieren, Ctrl+Y=Pfad kopieren
+    # Config Browser(suche?) – Enter=Editieren, Ctrl+Y=Pfad kopieren
     dotedit() {
         local query="${1:-}"
         local dotdir="${DOTFILES_DIR:-$HOME/dotfiles}"
-        local file
 
-        file=$(fd --type f --hidden --follow \
+        { fd --type f --hidden --follow \
             --exclude .git \
             --exclude .DS_Store \
             --exclude '*.tmTheme' \
@@ -82,15 +81,15 @@ if command -v fzf >/dev/null 2>&1 && command -v fd >/dev/null 2>&1; then
             --exclude '*.xccolortheme' \
             --exclude '*.terminal' \
             --exclude 'LICENSE' \
-            . "$dotdir/terminal" "$dotdir/setup" "$dotdir/CONTRIBUTING.md" "$dotdir/.github" \
+            . "$dotdir/terminal" "$dotdir/setup" "$dotdir/.github"
+            echo "${dotdir}/CONTRIBUTING.md"; } \
             | sed "s|^${dotdir}/||" \
             | sort \
             | fzf --ansi --query="$query" \
                 --prompt='dotedit> ' \
-                --header='Enter: Editieren | Ctrl+Y: Pfad kopieren' \
+                --header='Enter: Editieren | Ctrl+Y: Pfad kopieren | Esc: Beenden' \
                 --preview "zsh '$FZF_HELPER_DIR/preview' file '${dotdir}/{}'" \
-                --bind="ctrl-y:execute-silent($FZF_HELPER_DIR/action copy '${dotdir}/{}')+abort")
-
-        [[ -n "$file" ]] && ${EDITOR:-vim} -- "${dotdir}/${file}"
+                --bind="enter:execute(${EDITOR:-vi} -- '${dotdir}/{}')+refresh-preview" \
+                --bind="ctrl-y:execute-silent('$FZF_HELPER_DIR/action' copy '${dotdir}/{}')+abort"
     }
 fi

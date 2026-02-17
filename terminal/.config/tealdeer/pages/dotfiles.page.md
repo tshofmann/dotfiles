@@ -95,7 +95,7 @@
 
 `dotstow`
 
-- Dotfiles Config editieren(suche?):
+- Config Browser(suche?):
 
 `dotedit`
 

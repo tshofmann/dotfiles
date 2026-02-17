@@ -10,11 +10,66 @@
 # Abhängigkeiten: common.sh, tldr/*.sh Module
 
 # ------------------------------------------------------------
+# Helper: tldr-Cache aktuell halten
+# ------------------------------------------------------------
+# Prüft ob der tealdeer-Cache älter als 7 Tage ist und aktualisiert
+# automatisch. Verhindert falsche patch↔page Konvertierungen wenn
+# neue offizielle tldr-Seiten hinzugefügt werden.
+_ensure_tldr_cache_fresh() {
+    command -v tldr >/dev/null 2>&1 || return 0
+
+    local cache_base
+    case "$OSTYPE" in
+        darwin*) cache_base="${HOME}/Library/Caches/tealdeer/tldr-pages" ;;
+        *)       cache_base="${XDG_CACHE_HOME:-$HOME/.cache}/tealdeer/tldr-pages" ;;
+    esac
+
+    # Kein Cache → Update nötig
+    if [[ ! -d "$cache_base" ]]; then
+        dim "  tldr-Cache nicht vorhanden – aktualisiere..."
+        if ! tldr --update >/dev/null 2>&1; then
+            warn "  tldr-Cache-Update fehlgeschlagen"
+        fi
+        return 0
+    fi
+
+    # Cache-Alter prüfen (7 Tage = 604800 Sekunden)
+    local cache_age_max=604800
+    local now=$(date +%s)
+    local cache_mtime
+
+    # Plattform-kompatible Zeitstempel-Abfrage
+    case "$OSTYPE" in
+        darwin*) cache_mtime=$(stat -f "%m" "$cache_base" 2>/dev/null) ;;
+        *)       cache_mtime=$(stat -c "%Y" "$cache_base" 2>/dev/null) ;;
+    esac
+
+    # stat-Fehler → Update erzwingen
+    if [[ -z "$cache_mtime" ]]; then
+        dim "  tldr-Cache-Zeitstempel nicht lesbar – aktualisiere..."
+        tldr --update >/dev/null 2>&1
+        return 0
+    fi
+
+    local age=$(( now - cache_mtime ))
+    if (( age > cache_age_max )); then
+        local days=$(( age / 86400 ))
+        dim "  tldr-Cache veraltet (${days} Tage) – aktualisiere..."
+        if ! tldr --update >/dev/null 2>&1; then
+            warn "  tldr-Cache-Update fehlgeschlagen – arbeite mit vorhandenem Cache"
+        fi
+    fi
+}
+
+# ------------------------------------------------------------
 # Öffentliche Funktion: Alle tldr-Patches generieren/prüfen
 # ------------------------------------------------------------
 generate_tldr_patches() {
     local mode="${1:---check}"
     local errors=0
+
+    # Cache-Frische sicherstellen (verhindert falsche patch↔page Konvertierungen)
+    _ensure_tldr_cache_fresh
 
     case "$mode" in
         --check)
