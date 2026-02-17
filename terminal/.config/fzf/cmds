@@ -9,6 +9,7 @@
 # Commands:
 #   list                   – Listet alle Aliase und Funktionen
 #   preview <mode> <sel>   – Generiert Preview (code|tldr)
+#   edit <selection>       – Öffnet .alias-Datei im Editor
 # ============================================================
 
 # Benötigt für ZSH-Pattern mit # (0+ Zeichen)
@@ -180,6 +181,29 @@ _cmds_preview() {
 }
 
 # ------------------------------------------------------------
+# Subcommand: edit
+# ------------------------------------------------------------
+# Öffnet die .alias-Datei der Kategorie im Editor
+# Kategorie wird aus der fzf-Auswahl extrahiert (3. Feld)
+_cmds_edit() {
+    local selection="$*"
+    local alias_dir="${XDG_CONFIG_HOME:-$HOME/.config}/alias"
+
+    # Kategorie aus 3. Feld extrahieren (ANSI-Codes entfernen)
+    local category
+    category=$(echo "$selection" | _fzf_strip_ansi | awk '{print $3}')
+
+    [[ -z "$category" ]] && return 1
+    # Nur gültige Dateinamen erlauben (Schutz vor Path-Traversal)
+    [[ "$category" =~ ^[a-zA-Z0-9_-]+$ ]] || return 1
+
+    local file="${alias_dir}/${category}.alias"
+    [[ -f "$file" ]] || return 1
+
+    ${=EDITOR:-vi} -- "$file"
+}
+
+# ------------------------------------------------------------
 # Usage
 # ------------------------------------------------------------
 _cmds_usage() {
@@ -190,6 +214,7 @@ Commands:
   list                        Liste aller Aliase und Funktionen
   preview <mode> <selection>  Generiere Preview für Auswahl
                               Modes: code, tldr
+  edit <selection>            Alias-Datei im Editor öffnen
 
 EOF
 }
