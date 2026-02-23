@@ -48,7 +48,7 @@ alias unrar='7zz x'
         fzf --preview='zsh -c '\''7zz l -- "$1" 2>/dev/null | head -50'\'' -- {}' \
             --header='Enter: Entpacken | Ctrl+Y: Pfad kopieren' \
             --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Entpacken' 'Ctrl+Y: Pfad kopieren'" \
-            --bind="ctrl-y:execute-silent($FZF_HELPER_DIR/action copy {})+abort")
+            --bind "ctrl-y:execute-silent($FZF_HELPER_DIR/action copy {})+abort")
 
     [[ -n "$archive" ]] && 7zz x -- "$archive"
 }

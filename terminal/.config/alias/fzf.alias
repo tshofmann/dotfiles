@@ -83,9 +83,9 @@ help() {
         fzf --query="$query" --prompt='man> ' \
             --preview="$FZF_HELPER_DIR/help preview man {}" \
             --header='Enter: öffnen | Ctrl+S: man ↔ tldr' \
-            --bind="start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: öffnen' 'Ctrl+S: man ↔ tldr'" \
-            --bind="ctrl-s:transform:$FZF_HELPER_DIR/help toggle" \
-            --bind="enter:transform:[[ \$FZF_PROMPT == 'tldr> ' ]] && echo 'print(tldr)+accept' || echo 'print(man)+accept'")
+            --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: öffnen' 'Ctrl+S: man ↔ tldr'" \
+            --bind "ctrl-s:transform:$FZF_HELPER_DIR/help toggle" \
+            --bind "enter:transform:[[ \$FZF_PROMPT == 'tldr> ' ]] && echo 'print(tldr)+accept' || echo 'print(man)+accept'")
 
     [[ -z "$output" ]] && return 0
 
@@ -198,7 +198,7 @@ vars() {
             else
                 echo "$v"
             fi' \
-        --bind="ctrl-y:execute-silent($FZF_HELPER_DIR/action copy-env {})+abort")
+        --bind "ctrl-y:execute-silent($FZF_HELPER_DIR/action copy-env {})+abort")
 
     if [[ -n "$selection" ]]; then
         name=$(echo "$selection" | cut -d'│' -f1 | xargs)

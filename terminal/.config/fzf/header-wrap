@@ -43,6 +43,9 @@ _header_available_width() {
 }
 
 # Header-Text mit intelligenten Zeilenumbrüchen
+# Nutzt ${#var} (Zeichenanzahl, nicht Display-Spalten) für Breitenberechnung.
+# Für Latin/Deutsch (inkl. Umlaute) korrekt. Bei CJK-Zeichen (2 Spalten breit)
+# oder Combining Characters würde die Breite unterschätzt.
 _header_wrap() {
     local available="$1"
     shift
