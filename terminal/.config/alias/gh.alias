@@ -31,7 +31,7 @@ alias gh-status='gh status'
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # PRs durchsuchen(suche?) – Enter=Checkout/Browser, Ctrl+D=Diff, Ctrl+O=Browser, Ctrl+S=Open↔Alle
+    # PRs durchsuchen(suche?) – Enter=Checkout/Browser, Ctrl+D=Diff, Ctrl+O=Browser, Ctrl+S=Open ↔ Alle
     gh-pr() {
         local query="${1:-}"
         local result pr_num pr_state
@@ -40,8 +40,8 @@ if command -v fzf >/dev/null 2>&1; then
                 --delimiter='\t' \
                 --prompt='Open> ' \
                 --preview 'gh pr view {1}' \
-                --header='Enter: Checkout/Browser | Ctrl+D: Diff | Ctrl+O: Browser | Ctrl+S: Open/Alle' \
-                --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Checkout/Browser | Ctrl+D: Diff' 'Ctrl+O: Browser | Ctrl+S: Open/Alle'" \
+                --header='Enter: Checkout/Browser | Ctrl+D: Diff | Ctrl+O: Browser | Ctrl+S: Open ↔ Alle' \
+                --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Checkout/Browser | Ctrl+D: Diff' 'Ctrl+O: Browser | Ctrl+S: Open ↔ Alle'" \
                 --bind 'ctrl-o:execute-silent(gh pr view {1} --web)' \
                 --bind 'ctrl-d:execute(gh pr diff {1} | bat --color=always -l diff)' \
                 --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Open> ' ]] && echo 'reload($FZF_HELPER_DIR/gh list-pr all)+change-prompt(Alle> )' || echo 'reload($FZF_HELPER_DIR/gh list-pr open)+change-prompt(Open> )'"
@@ -58,7 +58,7 @@ if command -v fzf >/dev/null 2>&1; then
         fi
     }
 
-    # Issues durchsuchen(suche?) – Enter=Browser, Ctrl+E=Bearbeiten, Ctrl+S=Open↔Alle
+    # Issues durchsuchen(suche?) – Enter=Browser, Ctrl+E=Bearbeiten, Ctrl+S=Open ↔ Alle
     gh-issue() {
         local query="${1:-}"
         local issue
@@ -67,8 +67,8 @@ if command -v fzf >/dev/null 2>&1; then
                 --delimiter='\t' \
                 --prompt='Open> ' \
                 --preview 'gh issue view {1}' \
-                --header='Enter: Browser | Ctrl+E: Bearbeiten | Ctrl+S: Open/Alle' \
-                --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Browser | Ctrl+E: Bearbeiten' 'Ctrl+S: Open/Alle'" \
+                --header='Enter: Browser | Ctrl+E: Bearbeiten | Ctrl+S: Open ↔ Alle' \
+                --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Browser | Ctrl+E: Bearbeiten' 'Ctrl+S: Open ↔ Alle'" \
                 --bind 'ctrl-e:execute(gh issue edit {1})' \
                 --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Open> ' ]] && echo 'reload($FZF_HELPER_DIR/gh list-issue all)+change-prompt(Alle> )' || echo 'reload($FZF_HELPER_DIR/gh list-issue open)+change-prompt(Open> )'" | \
             cut -f1)

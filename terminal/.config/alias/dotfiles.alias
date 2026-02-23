@@ -87,8 +87,8 @@ if command -v fzf >/dev/null 2>&1 && command -v fd >/dev/null 2>&1; then
             | sort \
             | fzf --ansi --query="$query" \
                 --prompt='dotedit> ' \
-                --header='Enter: Editieren | Ctrl+Y: Pfad kopieren | Esc: Beenden' \
-                --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Editieren' 'Ctrl+Y: Pfad kopieren' 'Esc: Beenden'" \
+                --header='Enter: Editieren | Ctrl+Y: Pfad kopieren' \
+                --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Editieren' 'Ctrl+Y: Pfad kopieren'" \
                 --preview "zsh '$FZF_HELPER_DIR/preview' file '${dotdir}/{}'" \
                 --bind "enter:execute(${EDITOR:-vi} -- '${dotdir}/{}')+refresh-preview" \
                 --bind "ctrl-y:execute-silent('$FZF_HELPER_DIR/action' copy '${dotdir}/{}')+abort"

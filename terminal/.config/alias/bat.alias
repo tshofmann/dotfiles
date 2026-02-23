@@ -42,8 +42,8 @@ if command -v fzf >/dev/null 2>&1; then
 
         theme=$(bat --list-themes | fzf --query="$query" \
             --preview='bat --theme={} --color=always ~/.zshrc' \
-            --header='Enter: Theme aktivieren | Esc: Abbrechen' \
-            --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Theme aktivieren' 'Esc: Abbrechen'")
+            --header='Enter: Theme aktivieren' \
+            --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Theme aktivieren'")
 
         [[ -z "$theme" ]] && return 0
 

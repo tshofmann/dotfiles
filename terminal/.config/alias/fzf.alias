@@ -38,7 +38,7 @@ fi
 # KILL + FZF: Prozess-Management
 # ------------------------------------------------------------
 # Prozesse interaktiv suchen und beenden (Tab für Mehrfachauswahl)
-# Prozess Browser(signal=15) – Enter=Beenden, Tab=Mehrfach, Ctrl+S=Apps↔Alle
+# Prozess Browser(signal=15) – Enter=Beenden, Tab=Mehrfach, Ctrl+S=Apps ↔ Alle
 procs() {
     local pid
     local -a fzf_opts=(-m --freeze-left=1)
@@ -49,8 +49,8 @@ procs() {
         local mode="apps"
         fzf_opts+=(
             --prompt='Apps> '
-            --header='Enter: Beenden | Tab: Mehrfach | Ctrl+S: Apps/Alle'
-            --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Beenden | Tab: Mehrfach' 'Ctrl+S: Apps/Alle'"
+            --header='Enter: Beenden | Tab: Mehrfach | Ctrl+S: Apps ↔ Alle'
+            --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Beenden | Tab: Mehrfach' 'Ctrl+S: Apps ↔ Alle'"
             --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Apps> ' ]] && echo 'reload($FZF_HELPER_DIR/procs list all)+change-prompt(Alle> )' || echo 'reload($FZF_HELPER_DIR/procs list apps)+change-prompt(Apps> )'"
         )
     else
@@ -73,7 +73,7 @@ procs() {
 # MAN + FZF + BAT: Man-Pages Browser
 # ------------------------------------------------------------
 # Man-Pages interaktiv durchsuchen mit Syntax-Highlighting
-# Man/tldr Browser(suche?) – Ctrl+S=Modus wechseln (Liste + Preview), Enter=öffnen
+# Man/tldr Browser(suche?) – Enter=öffnen, Ctrl+S=man ↔ tldr
 help() {
     local query="${1:-}"
     local output mode selection page section
@@ -114,7 +114,7 @@ help() {
 # ALIAS + FZF: Alias-/Funktions-Browser
 # ------------------------------------------------------------
 # Fuzzy-Suche für Aliase und Funktionen aus allen .alias-Dateien
-# Befehl Browser(suche?) – Enter=Übernehmen, Ctrl+S=tldr↔Code, Ctrl+E=Datei editieren
+# Befehl Browser(suche?) – Enter=Übernehmen, Ctrl+S=tldr ↔ Code, Ctrl+E=Datei editieren
 cmds() {
     local query="${1:-}"
     local selection name
@@ -154,7 +154,7 @@ cmds() {
 # ENV + FZF: Umgebungsvariablen-Browser
 # ------------------------------------------------------------
 # Umgebungsvariablen durchsuchen mit formatierter Anzeige
-# Variablen Browser(suche?) – Enter=Export→Edit, Ctrl+Y=Kopieren
+# Variablen Browser(suche?) – Enter=Export → Edit, Ctrl+Y=Wert kopieren
 vars() {
     local query="${1:-}"
     local selection name value
