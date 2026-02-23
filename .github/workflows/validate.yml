@@ -53,11 +53,11 @@ jobs:
         run: |
           set -uo pipefail
           helper="terminal/.config/fzf/header-wrap"
-          if [[ -x "$helper" ]]; then
-            "$helper" --test
-          else
-            echo "⚠ header-wrap nicht gefunden oder nicht ausführbar"
+          if [[ ! -x "$helper" ]]; then
+            echo "✖ header-wrap nicht gefunden oder nicht ausführbar"
+            exit 1
           fi
+          "$helper" --test
 
       - name: POSIX-Syntax prüfen
         shell: bash

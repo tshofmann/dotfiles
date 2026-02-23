@@ -25,18 +25,20 @@
 # Verfügbare Header-Breite berechnen
 _header_available_width() {
     local cols=${FZF_COLUMNS:-80}
+    local preview_cols=${FZF_PREVIEW_COLUMNS:-0}
+    # Minimale Hauptbereich-Breite: darunter wird oben/unten angenommen
+    local min_main_width=10
 
-    if [[ -z "${FZF_PREVIEW_COLUMNS:-}" ]]; then
-        # Kein Preview oder Preview versteckt (Ctrl+/)
+    if (( preview_cols == 0 )); then
+        # Kein Preview, Preview versteckt (Ctrl+/) oder FZF_PREVIEW_COLUMNS=0
         printf '%d' "$cols"
-    elif (( FZF_PREVIEW_COLUMNS + 10 >= cols )); then
+    elif (( preview_cols + min_main_width >= cols )); then
         # Preview oben/unten → Header nutzt volle Breite
-        # Schwelle: Hauptbereich < 10 Spalten → muss top/bottom sein
         printf '%d' "$cols"
     else
         # Preview links/rechts → Header nur im Hauptbereich
         # Separator zwischen Main und Preview = 2 Zeichen (empirisch verifiziert)
-        printf '%d' "$(( cols - FZF_PREVIEW_COLUMNS - 2 ))"
+        printf '%d' "$(( cols - preview_cols - 2 ))"
     fi
 }
 
@@ -52,6 +54,8 @@ _header_wrap() {
     local sep_len=3
 
     for group in "${groups[@]}"; do
+        # Leere Gruppen überspringen (Guard gegen Doppel-Separator)
+        [[ -z "$group" ]] && continue
         if [[ -z "$line" ]]; then
             line="$group"
         elif (( ${#line} + sep_len + ${#group} <= available )); then
@@ -163,65 +167,108 @@ _header_test() {
         "Enter: Beenden | Tab: Mehrfach" \
         "$(_header_wrap 40 'Enter: Beenden | Tab: Mehrfach')"
 
+    # Test 15: Überbreite Einzelgruppe (breiter als available)
+    _assert "Überbreite Gruppe — wird nicht abgeschnitten" \
+        "Enter: Checkout/Browser | Ctrl+D: Diff" \
+        "$(_header_wrap 10 'Enter: Checkout/Browser | Ctrl+D: Diff')"
+
+    # Test 16: available=0 (Extremfall)
+    _assert "available=0 — jede Gruppe eigene Zeile" \
+        $'A\nB' \
+        "$(_header_wrap 0 'A' 'B')"
+
+    # Test 17: available=1 (Extremfall)
+    _assert "available=1 — jede Gruppe eigene Zeile" \
+        $'AAA\nBBB' \
+        "$(_header_wrap 1 'AAA' 'BBB')"
+
+    # Test 18: Leere Gruppe zwischen nicht-leeren (Guard-Test)
+    _assert "Leere Gruppe wird übersprungen" \
+        "A | B" \
+        "$(_header_wrap 80 'A' '' 'B')"
+
+    # Test 19: Nur leere Gruppen
+    _assert "Nur leere Gruppen — leere Ausgabe" \
+        "" \
+        "$(_header_wrap 80 '' '' '')"
+
+    # Test 20: Kein Trailing-Newline im Output
+    # Sentinel-Technik: $() strippt trailing Newlines, daher 'x' anhängen
+    local raw
+    raw="$(_header_wrap 80 'A' 'B'; printf x)"
+    raw="${raw%x}"
+    _assert "Kein Trailing-Newline (Wert)" \
+        "A | B" \
+        "$raw"
+    local last_char="${raw: -1}"
+    _assert "Kein Trailing-Newline (letztes Zeichen)" \
+        "false" \
+        "$([[ "$last_char" == $'\n' ]] && echo true || echo false)"
+
     printf '\nBreitenberechnung\n'
     printf '──────────────────\n'
 
-    # Test 15: Ohne Preview
+    # Test 21: Ohne Preview
     _assert "Ohne Preview → volle Breite" \
         "74" \
         "$(FZF_COLUMNS=74 FZF_PREVIEW_COLUMNS= _header_available_width)"
 
-    # Test 16: Preview rechts 50% (empirisch: C=74, PC=33)
+    # Test 22: Preview rechts 50% (empirisch: C=74, PC=33)
     _assert "Preview rechts 50% → Hauptbereich" \
         "39" \
         "$(FZF_COLUMNS=74 FZF_PREVIEW_COLUMNS=33 _header_available_width)"
 
-    # Test 17: Preview oben 60% (empirisch: C=74, PC=70)
+    # Test 23: Preview oben 60% (empirisch: C=74, PC=70)
     _assert "Preview oben 60% → volle Breite" \
         "74" \
         "$(FZF_COLUMNS=74 FZF_PREVIEW_COLUMNS=70 _header_available_width)"
 
-    # Test 18: Preview versteckt (Ctrl+/)
+    # Test 24: Preview versteckt (Ctrl+/)
     _assert "Preview versteckt → volle Breite" \
         "74" \
         "$(FZF_COLUMNS=74 FZF_PREVIEW_COLUMNS= _header_available_width)"
 
-    # Test 19: Kein FZF_COLUMNS (Fallback)
+    # Test 25: Kein FZF_COLUMNS (Fallback)
     _assert "Kein FZF_COLUMNS → Fallback 80" \
         "80" \
         "$(FZF_COLUMNS= FZF_PREVIEW_COLUMNS= _header_available_width)"
 
-    # Test 20: Preview rechts 80% (empirisch: C=74, PC=55)
+    # Test 26: Preview rechts 80% (empirisch: C=74, PC=55)
     _assert "Preview rechts 80% → schmaler Hauptbereich" \
         "17" \
         "$(FZF_COLUMNS=74 FZF_PREVIEW_COLUMNS=55 _header_available_width)"
 
-    # Test 21: Großes Terminal 120col (C=114, PC=54 bei right:50%)
+    # Test 27: Großes Terminal 120col (C=114, PC=54 bei right:50%)
     _assert "120col Terminal mit Preview rechts 50%" \
         "58" \
         "$(FZF_COLUMNS=114 FZF_PREVIEW_COLUMNS=54 _header_available_width)"
 
-    # Test 22: Schwelle oben/unten (Hauptbereich = 9 → gerade noch seitlich)
+    # Test 28: Schwelle oben/unten (Hauptbereich = 9 → gerade noch seitlich)
     _assert "Hauptbereich 9 Spalten → seitlich erkannt" \
         "9" \
         "$(FZF_COLUMNS=74 FZF_PREVIEW_COLUMNS=63 _header_available_width)"
 
-    # Test 23: Schwelle oben/unten (Hauptbereich = 8 → als oben/unten erkannt)
+    # Test 29: Schwelle oben/unten (Hauptbereich = 8 → als oben/unten erkannt)
     _assert "Hauptbereich 8 Spalten → oben/unten erkannt" \
         "74" \
         "$(FZF_COLUMNS=74 FZF_PREVIEW_COLUMNS=64 _header_available_width)"
 
+    # Test 30: FZF_PREVIEW_COLUMNS=0 (kein Preview, nicht als seitlich interpretieren)
+    _assert "FZF_PREVIEW_COLUMNS=0 → volle Breite" \
+        "74" \
+        "$(FZF_COLUMNS=74 FZF_PREVIEW_COLUMNS=0 _header_available_width)"
+
     printf '\nIntegration\n'
     printf '───────────\n'
 
-    # Test 24: Volle Pipeline (Breite + Umbruch kombiniert)
+    # Test 31: Volle Pipeline (Breite + Umbruch kombiniert)
     local avail
     avail=$(FZF_COLUMNS=74 FZF_PREVIEW_COLUMNS=33 _header_available_width)
     _assert "Pipeline: 80col+Preview → gh-pr umbricht" \
         $'Enter: Checkout/Browser | Ctrl+D: Diff\nCtrl+O: Browser | Ctrl+S: Open/Alle' \
         "$(_header_wrap "$avail" 'Enter: Checkout/Browser | Ctrl+D: Diff' 'Ctrl+O: Browser | Ctrl+S: Open/Alle')"
 
-    # Test 25: Volle Pipeline ohne Preview
+    # Test 32: Volle Pipeline ohne Preview
     # Gruppe 1 (39) + " | " (3) + Gruppe 2 (37) = 79 > 74 → umbricht auch hier
     avail=$(FZF_COLUMNS=74 FZF_PREVIEW_COLUMNS= _header_available_width)
     _assert "Pipeline: 80col ohne Preview → gh-pr umbricht (79 > 74)" \
