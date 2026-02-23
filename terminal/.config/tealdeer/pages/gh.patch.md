@@ -8,11 +8,11 @@
 
 `gh-status`
 
-- dotfiles: PRs durchsuchen (`<Enter>` Checkout/Browser, `<Ctrl d>` Diff, `<Ctrl o>` Browser, `<Ctrl s>` Open↔Alle):
+- dotfiles: PRs durchsuchen (`<Enter>` Checkout/Browser, `<Ctrl d>` Diff, `<Ctrl o>` Browser, `<Ctrl s>` Open ↔ Alle):
 
 `gh-pr {{suche}}`
 
-- dotfiles: Issues durchsuchen (`<Enter>` Browser, `<Ctrl e>` Bearbeiten, `<Ctrl s>` Open↔Alle):
+- dotfiles: Issues durchsuchen (`<Enter>` Browser, `<Ctrl e>` Bearbeiten, `<Ctrl s>` Open ↔ Alle):
 
 `gh-issue {{suche}}`
 

@@ -46,7 +46,8 @@ if command -v fzf >/dev/null 2>&1; then
                 --preview "$FZF_HELPER_DIR/preview dir {2..} 2" \
                 --bind "ctrl-d:execute-silent($FZF_HELPER_DIR/action zoxide-remove {2..})+reload(zoxide query -l -s)" \
                 --bind "ctrl-y:execute-silent($FZF_HELPER_DIR/action copy {2..})" \
-                --header='Enter: Wechseln | Ctrl+D: Eintrag löschen | Ctrl+Y: Pfad kopieren')
+                --header='Enter: Wechseln | Ctrl+D: Eintrag löschen | Ctrl+Y: Pfad kopieren' \
+                --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Wechseln' 'Ctrl+D: Eintrag löschen' 'Ctrl+Y: Pfad kopieren'")
 
         # Pfad extrahieren: Score entfernen (awk ist sicherer bei Leerzeichen)
         [[ -n "$selection" ]] && dir=$(echo "$selection" | awk '{$1=""; print substr($0,2)}') && cd "$dir"

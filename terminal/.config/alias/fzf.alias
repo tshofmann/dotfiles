@@ -38,7 +38,7 @@ fi
 # KILL + FZF: Prozess-Management
 # ------------------------------------------------------------
 # Prozesse interaktiv suchen und beenden (Tab für Mehrfachauswahl)
-# Prozess Browser(signal=15) – Enter=Beenden, Tab=Mehrfach, Ctrl+S=Apps↔Alle
+# Prozess Browser(signal=15) – Enter=Beenden, Tab=Mehrfach, Ctrl+S=Apps ↔ Alle
 procs() {
     local pid
     local -a fzf_opts=(-m --freeze-left=1)
@@ -49,7 +49,8 @@ procs() {
         local mode="apps"
         fzf_opts+=(
             --prompt='Apps> '
-            --header='Enter: Beenden | Tab: Mehrfach | Ctrl+S: Apps/Alle'
+            --header='Enter: Beenden | Tab: Mehrfach | Ctrl+S: Apps ↔ Alle'
+            --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Beenden | Tab: Mehrfach' 'Ctrl+S: Apps ↔ Alle'"
             --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Apps> ' ]] && echo 'reload($FZF_HELPER_DIR/procs list all)+change-prompt(Alle> )' || echo 'reload($FZF_HELPER_DIR/procs list apps)+change-prompt(Apps> )'"
         )
     else
@@ -57,6 +58,7 @@ procs() {
         fzf_opts+=(
             --prompt='Procs> '
             --header='Enter: Beenden | Tab: Mehrfach'
+            --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Beenden | Tab: Mehrfach'"
         )
     fi
 
@@ -71,7 +73,7 @@ procs() {
 # MAN + FZF + BAT: Man-Pages Browser
 # ------------------------------------------------------------
 # Man-Pages interaktiv durchsuchen mit Syntax-Highlighting
-# Man/tldr Browser(suche?) – Ctrl+S=Modus wechseln (Liste + Preview), Enter=öffnen
+# Man/tldr Browser(suche?) – Enter=öffnen, Ctrl+S=man ↔ tldr
 help() {
     local query="${1:-}"
     local output mode selection page section
@@ -81,8 +83,9 @@ help() {
         fzf --query="$query" --prompt='man> ' \
             --preview="$FZF_HELPER_DIR/help preview man {}" \
             --header='Enter: öffnen | Ctrl+S: man ↔ tldr' \
-            --bind="ctrl-s:transform:$FZF_HELPER_DIR/help toggle" \
-            --bind="enter:transform:[[ \$FZF_PROMPT == 'tldr> ' ]] && echo 'print(tldr)+accept' || echo 'print(man)+accept'")
+            --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: öffnen' 'Ctrl+S: man ↔ tldr'" \
+            --bind "ctrl-s:transform:$FZF_HELPER_DIR/help toggle" \
+            --bind "enter:transform:[[ \$FZF_PROMPT == 'tldr> ' ]] && echo 'print(tldr)+accept' || echo 'print(man)+accept'")
 
     [[ -z "$output" ]] && return 0
 
@@ -111,7 +114,7 @@ help() {
 # ALIAS + FZF: Alias-/Funktions-Browser
 # ------------------------------------------------------------
 # Fuzzy-Suche für Aliase und Funktionen aus allen .alias-Dateien
-# Befehl Browser(suche?) – Enter=Übernehmen, Ctrl+S=tldr↔Code, Ctrl+E=Datei editieren
+# Befehl Browser(suche?) – Enter=Übernehmen, Ctrl+S=tldr ↔ Code, Ctrl+E=Datei editieren
 cmds() {
     local query="${1:-}"
     local selection name
@@ -135,6 +138,7 @@ cmds() {
     ' | fzf --ansi --query="$query" \
         --prompt='tldr> ' \
         --header='Enter: Übernehmen | Ctrl+S: tldr ↔ Code | Ctrl+E: Datei editieren' \
+        --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Übernehmen' 'Ctrl+S: tldr ↔ Code' 'Ctrl+E: Datei editieren'" \
         --preview "[[ \$FZF_PROMPT == 'code> ' ]] && zsh '$FZF_HELPER_DIR/cmds' preview code {} || zsh '$FZF_HELPER_DIR/cmds' preview tldr {}" \
         --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'tldr> ' ]] && echo 'change-prompt(code> )+refresh-preview' || echo 'change-prompt(tldr> )+refresh-preview'" \
         --bind "ctrl-e:execute(zsh '$FZF_HELPER_DIR/cmds' edit '{}')+refresh-preview")
@@ -150,7 +154,7 @@ cmds() {
 # ENV + FZF: Umgebungsvariablen-Browser
 # ------------------------------------------------------------
 # Umgebungsvariablen durchsuchen mit formatierter Anzeige
-# Variablen Browser(suche?) – Enter=Export→Edit, Ctrl+Y=Kopieren
+# Variablen Browser(suche?) – Enter=Export → Edit, Ctrl+Y=Wert kopieren
 vars() {
     local query="${1:-}"
     local selection name value
@@ -184,6 +188,7 @@ vars() {
 
     selection=$(printenv | grep -E '^[a-zA-Z_][a-zA-Z0-9_]*=' | sort | _fenv_colorize | fzf --ansi --query="$query" \
         --header='Enter: Export → Edit | Ctrl+Y: Wert kopieren' \
+        --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Export → Edit' 'Ctrl+Y: Wert kopieren'" \
         --preview='n=$(echo {} | cut -d"│" -f1 | xargs | grep -E "^[a-zA-Z_][a-zA-Z0-9_]*$")
             [[ -z "$n" ]] && exit 0
             v=$(printenv "$n" 2>/dev/null)
@@ -193,7 +198,7 @@ vars() {
             else
                 echo "$v"
             fi' \
-        --bind="ctrl-y:execute-silent($FZF_HELPER_DIR/action copy-env {})+abort")
+        --bind "ctrl-y:execute-silent($FZF_HELPER_DIR/action copy-env {})+abort")
 
     if [[ -n "$selection" ]]; then
         name=$(echo "$selection" | cut -d'│' -f1 | xargs)

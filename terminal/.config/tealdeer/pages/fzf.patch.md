@@ -26,6 +26,8 @@
 
 - dotfiles: `gh` – GitHub CLI Listen für fzf (stabiles Tab-Format)
 
+- dotfiles: `header-wrap` – Dynamischer fzf-Header-Umbruch nach verfügbarer Breite
+
 - dotfiles: `help` – Subcommands für man/tldr Browser
 
 - dotfiles: `init.zsh` – fzf Keybindings und fd-Backend aktivieren
@@ -38,19 +40,19 @@
 
 # dotfiles: Funktionen (aus fzf.alias)
 
-- dotfiles: Prozess Browser (`<Enter>` Beenden, `<Tab>` Mehrfach, `<Ctrl s>` Apps↔Alle):
+- dotfiles: Prozess Browser (`<Enter>` Beenden, `<Tab>` Mehrfach, `<Ctrl s>` Apps ↔ Alle):
 
 `procs {{signal}}`
 
-- dotfiles: Man/tldr Browser (`<Ctrl s>` Modus wechseln (Liste + Preview), `<Enter>` öffnen):
+- dotfiles: Man/tldr Browser (`<Enter>` öffnen, `<Ctrl s>` man ↔ tldr):
 
 `help {{suche}}`
 
-- dotfiles: Befehl Browser (`<Enter>` Übernehmen, `<Ctrl s>` tldr↔Code, `<Ctrl e>` Datei editieren):
+- dotfiles: Befehl Browser (`<Enter>` Übernehmen, `<Ctrl s>` tldr ↔ Code, `<Ctrl e>` Datei editieren):
 
 `cmds {{suche}}`
 
-- dotfiles: Variablen Browser (`<Enter>` Export→Edit, `<Ctrl y>` Kopieren):
+- dotfiles: Variablen Browser (`<Enter>` Export → Edit, `<Ctrl y>` Wert kopieren):
 
 `vars {{suche}}`
 

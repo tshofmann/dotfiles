@@ -245,7 +245,8 @@ if command -v fzf >/dev/null 2>&1; then
             brew casks | sed 's/^/[C] /'
         } | fzf --multi --query="$query" \
             --preview 'case {1} in \[C\]) brew info --cask {2};; *) brew info {2};; esac' \
-            --header='[F]=Formula [C]=Cask | Enter: Installieren | Tab: Mehrfach')
+            --header='[F]=Formula [C]=Cask | Enter: Installieren | Tab: Mehrfach' \
+            --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap '[F]=Formula [C]=Cask' 'Enter: Installieren | Tab: Mehrfach'")
 
         [[ -z "$selection" ]] && return 0
 
@@ -269,7 +270,8 @@ if command -v fzf >/dev/null 2>&1; then
             brew list --cask 2>/dev/null | sed 's/^/[C] /'
         } | fzf --multi --query="$query" \
             --preview 'case {1} in \[C\]) brew info --cask {2};; *) brew info {2};; esac' \
-            --header='[F]=Formula [C]=Cask | Enter: Entfernen | Tab: Mehrfach')
+            --header='[F]=Formula [C]=Cask | Enter: Entfernen | Tab: Mehrfach' \
+            --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap '[F]=Formula [C]=Cask' 'Enter: Entfernen | Tab: Mehrfach'")
 
         [[ -z "$selection" ]] && return 0
 

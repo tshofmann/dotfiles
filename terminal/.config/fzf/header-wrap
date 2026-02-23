@@ -1,0 +1,307 @@
+#!/usr/bin/env zsh
+# ============================================================
+# header-wrap - Dynamischer Header-Umbruch für fzf
+# ============================================================
+# Zweck       : Dynamischer fzf-Header-Umbruch nach verfügbarer Breite
+# Pfad        : ~/.config/fzf/header-wrap
+# Aufruf      : header-wrap [--test|-h|--help] GROUP [GROUP ...]
+# Docs        : https://github.com/tshofmann/dotfiles/issues/302
+# ============================================================
+# Semantische Gruppen:
+#   Jedes Argument = eine Gruppe zusammengehöriger Keybindings
+#   Gruppen werden mit " | " verbunden (3 Zeichen)
+#   Umbruch nur ZWISCHEN Gruppen, nie innerhalb
+#
+# Umgebungsvariablen (von fzf gesetzt, in transform-header):
+#   FZF_COLUMNS          – Innere Breite (ohne Margin/Border/Padding)
+#   FZF_PREVIEW_COLUMNS  – Preview-Breite (leer wenn kein/verstecktes Preview)
+#
+# Breitenberechnung:
+#   Kein Preview / versteckt / oben/unten → volle FZF_COLUMNS
+#   Preview seitlich → FZF_COLUMNS - FZF_PREVIEW_COLUMNS - 2 (Separator)
+#   Separator = 2 Zeichen (empirisch verifiziert bei right:50% und right:80%)
+# ============================================================
+
+# Verfügbare Header-Breite berechnen
+_header_available_width() {
+    local cols=${FZF_COLUMNS:-80}
+    local preview_cols=${FZF_PREVIEW_COLUMNS:-0}
+    # Minimale Hauptbereich-Breite: darunter wird oben/unten angenommen
+    local min_main_width=10
+
+    if (( preview_cols == 0 )); then
+        # Kein Preview, Preview versteckt (Ctrl+/) oder FZF_PREVIEW_COLUMNS=0
+        printf '%d' "$cols"
+    elif (( preview_cols + min_main_width >= cols )); then
+        # Preview oben/unten → Header nutzt volle Breite
+        printf '%d' "$cols"
+    else
+        # Preview links/rechts → Header nur im Hauptbereich
+        # Separator zwischen Main und Preview = 2 Zeichen (empirisch verifiziert)
+        printf '%d' "$(( cols - preview_cols - 2 ))"
+    fi
+}
+
+# Header-Text mit intelligenten Zeilenumbrüchen
+# Nutzt ${#var} (Zeichenanzahl, nicht Display-Spalten) für Breitenberechnung.
+# Für Latin/Deutsch (inkl. Umlaute) korrekt. Bei CJK-Zeichen (2 Spalten breit)
+# oder Combining Characters würde die Breite unterschätzt.
+_header_wrap() {
+    local available="$1"
+    shift
+    local -a groups=("$@")
+
+    [[ ${#groups[@]} -eq 0 ]] && return 0
+
+    local line="" result="" separator=" | "
+    local sep_len=3
+
+    for group in "${groups[@]}"; do
+        # Leere Gruppen überspringen (Guard gegen Doppel-Separator)
+        [[ -z "$group" ]] && continue
+        if [[ -z "$line" ]]; then
+            line="$group"
+        elif (( ${#line} + sep_len + ${#group} <= available )); then
+            line+="${separator}${group}"
+        else
+            [[ -n "$result" ]] && result+=$'\n'
+            result+="$line"
+            line="$group"
+        fi
+    done
+
+    [[ -n "$result" ]] && result+=$'\n'
+    result+="$line"
+    printf '%s' "$result"
+}
+
+# Selbsttest (für Pre-Commit/CI)
+_header_test() {
+    local pass=0 fail=0 total=0
+
+    _assert() {
+        local desc="$1" expected="$2" actual="$3"
+        (( total++ )) || true
+        if [[ "$expected" == "$actual" ]]; then
+            (( pass++ )) || true
+            printf '  ✓ %s\n' "$desc"
+        else
+            (( fail++ )) || true
+            printf '  ✗ %s\n' "$desc"
+            printf '    Erwartet: %s\n' "${expected//$'\n'/\\n}"
+            printf '    Erhalten: %s\n' "${actual//$'\n'/\\n}"
+        fi
+    }
+
+    printf 'header-wrap Selbsttest\n'
+    printf '══════════════════════\n\n'
+    printf 'Zeilenumbruch\n'
+    printf '──────────────\n'
+
+    # Test 1: Alles passt auf eine Zeile
+    _assert "Breites Terminal — einzeilig" \
+        "Enter: Foo | Ctrl+D: Bar | Ctrl+O: Baz" \
+        "$(_header_wrap 80 'Enter: Foo' 'Ctrl+D: Bar' 'Ctrl+O: Baz')"
+
+    # Test 2: Umbruch nötig
+    _assert "Schmales Terminal — Umbruch" \
+        $'Enter: Foo | Ctrl+D: Bar\nCtrl+O: Baz | Ctrl+S: All' \
+        "$(_header_wrap 30 'Enter: Foo' 'Ctrl+D: Bar' 'Ctrl+O: Baz' 'Ctrl+S: All')"
+
+    # Test 3: Einzelgruppe
+    _assert "Einzelgruppe — immer einzeilig" \
+        "Enter: Foo" \
+        "$(_header_wrap 10 'Enter: Foo')"
+
+    # Test 4: Leere Eingabe
+    _assert "Keine Gruppen — leere Ausgabe" \
+        "" \
+        "$(_header_wrap 80)"
+
+    # Test 5: Realistisches Szenario (gh-pr bei 45 Spalten)
+    _assert "gh-pr bei 45 Spalten — Umbruch nach Gruppe 1" \
+        $'Enter: Checkout/Browser | Ctrl+D: Diff\nCtrl+O: Browser | Ctrl+S: Open/Alle' \
+        "$(_header_wrap 45 'Enter: Checkout/Browser | Ctrl+D: Diff' 'Ctrl+O: Browser | Ctrl+S: Open/Alle')"
+
+    # Test 6: Exakt passende Breite (Grenzwert)
+    _assert "Exakt passende Breite — einzeilig" \
+        "A | B" \
+        "$(_header_wrap 5 'A' 'B')"
+
+    # Test 7: Ein Zeichen zu wenig
+    _assert "Ein Zeichen zu wenig — Umbruch" \
+        $'A\nB' \
+        "$(_header_wrap 4 'A' 'B')"
+
+    # Test 8: Pipe innerhalb Gruppe bleibt erhalten
+    _assert "Pipe innerhalb Gruppe bleibt erhalten" \
+        "Enter: Foo | Ctrl+D: Bar" \
+        "$(_header_wrap 80 'Enter: Foo | Ctrl+D: Bar')"
+
+    # Test 9: Drei Gruppen — 2+1 Verteilung
+    _assert "Drei Gruppen — 2+1 Verteilung" \
+        $'Enter: Foo | Ctrl+D: Bar\nCtrl+O: Browser-Fenster-öffnen' \
+        "$(_header_wrap 30 'Enter: Foo' 'Ctrl+D: Bar' 'Ctrl+O: Browser-Fenster-öffnen')"
+
+    # Test 10: Alle Gruppen einzeln (sehr schmal)
+    _assert "Sehr schmal — jede Gruppe eigene Zeile" \
+        $'AAAAAA\nBBBBBB\nCCCCCC' \
+        "$(_header_wrap 8 'AAAAAA' 'BBBBBB' 'CCCCCC')"
+
+    # Test 11: Zwei Gruppen passen exakt (Grenzwert mit Separator)
+    _assert "Zwei Gruppen exakt passend" \
+        "ABC | DEF" \
+        "$(_header_wrap 9 'ABC' 'DEF')"
+
+    # Test 12: gh-pr bei voller Breite (120col ohne Preview-Abzug)
+    _assert "gh-pr bei voller Breite — einzeilig" \
+        "Enter: Checkout/Browser | Ctrl+D: Diff | Ctrl+O: Browser | Ctrl+S: Open/Alle" \
+        "$(_header_wrap 114 'Enter: Checkout/Browser | Ctrl+D: Diff' 'Ctrl+O: Browser | Ctrl+S: Open/Alle')"
+
+    # Test 13: Realistisches Szenario (cmds bei 39 Spalten = 80col + Preview rechts)
+    # "Enter: Übernehmen" (17) + " | Ctrl+S: tldr ↔ Code" (+22) = 39 = exakt passend
+    # Dann "Ctrl+E: Datei editieren" (24) extra → Umbruch davor
+    _assert "cmds bei 39 Spalten — Umbruch nach Gruppe 2" \
+        $'Enter: Übernehmen | Ctrl+S: tldr ↔ Code\nCtrl+E: Datei editieren' \
+        "$(_header_wrap 39 'Enter: Übernehmen' 'Ctrl+S: tldr ↔ Code' 'Ctrl+E: Datei editieren')"
+
+    # Test 14: Einzelgruppe mit Pipe (procs Linux)
+    _assert "Einzelgruppe mit Pipe" \
+        "Enter: Beenden | Tab: Mehrfach" \
+        "$(_header_wrap 40 'Enter: Beenden | Tab: Mehrfach')"
+
+    # Test 15: Überbreite Einzelgruppe (breiter als available)
+    _assert "Überbreite Gruppe — wird nicht abgeschnitten" \
+        "Enter: Checkout/Browser | Ctrl+D: Diff" \
+        "$(_header_wrap 10 'Enter: Checkout/Browser | Ctrl+D: Diff')"
+
+    # Test 16: available=0 (Extremfall)
+    _assert "available=0 — jede Gruppe eigene Zeile" \
+        $'A\nB' \
+        "$(_header_wrap 0 'A' 'B')"
+
+    # Test 17: available=1 (Extremfall)
+    _assert "available=1 — jede Gruppe eigene Zeile" \
+        $'AAA\nBBB' \
+        "$(_header_wrap 1 'AAA' 'BBB')"
+
+    # Test 18: Leere Gruppe zwischen nicht-leeren (Guard-Test)
+    _assert "Leere Gruppe wird übersprungen" \
+        "A | B" \
+        "$(_header_wrap 80 'A' '' 'B')"
+
+    # Test 19: Nur leere Gruppen
+    _assert "Nur leere Gruppen — leere Ausgabe" \
+        "" \
+        "$(_header_wrap 80 '' '' '')"
+
+    # Test 20: Kein Trailing-Newline im Output
+    # Sentinel-Technik: $() strippt trailing Newlines, daher 'x' anhängen
+    local raw
+    raw="$(_header_wrap 80 'A' 'B'; printf x)"
+    raw="${raw%x}"
+    _assert "Kein Trailing-Newline (Wert)" \
+        "A | B" \
+        "$raw"
+    local last_char="${raw: -1}"
+    _assert "Kein Trailing-Newline (letztes Zeichen)" \
+        "false" \
+        "$([[ "$last_char" == $'\n' ]] && echo true || echo false)"
+
+    printf '\nBreitenberechnung\n'
+    printf '──────────────────\n'
+
+    # Test 21: Ohne Preview
+    _assert "Ohne Preview → volle Breite" \
+        "74" \
+        "$(FZF_COLUMNS=74 FZF_PREVIEW_COLUMNS= _header_available_width)"
+
+    # Test 22: Preview rechts 50% (empirisch: C=74, PC=33)
+    _assert "Preview rechts 50% → Hauptbereich" \
+        "39" \
+        "$(FZF_COLUMNS=74 FZF_PREVIEW_COLUMNS=33 _header_available_width)"
+
+    # Test 23: Preview oben 60% (empirisch: C=74, PC=70)
+    _assert "Preview oben 60% → volle Breite" \
+        "74" \
+        "$(FZF_COLUMNS=74 FZF_PREVIEW_COLUMNS=70 _header_available_width)"
+
+    # Test 24: Preview versteckt (Ctrl+/)
+    _assert "Preview versteckt → volle Breite" \
+        "74" \
+        "$(FZF_COLUMNS=74 FZF_PREVIEW_COLUMNS= _header_available_width)"
+
+    # Test 25: Kein FZF_COLUMNS (Fallback)
+    _assert "Kein FZF_COLUMNS → Fallback 80" \
+        "80" \
+        "$(FZF_COLUMNS= FZF_PREVIEW_COLUMNS= _header_available_width)"
+
+    # Test 26: Preview rechts 80% (empirisch: C=74, PC=55)
+    _assert "Preview rechts 80% → schmaler Hauptbereich" \
+        "17" \
+        "$(FZF_COLUMNS=74 FZF_PREVIEW_COLUMNS=55 _header_available_width)"
+
+    # Test 27: Großes Terminal 120col (C=114, PC=54 bei right:50%)
+    _assert "120col Terminal mit Preview rechts 50%" \
+        "58" \
+        "$(FZF_COLUMNS=114 FZF_PREVIEW_COLUMNS=54 _header_available_width)"
+
+    # Test 28: Schwelle oben/unten (Hauptbereich = 9 → gerade noch seitlich)
+    _assert "Hauptbereich 9 Spalten → seitlich erkannt" \
+        "9" \
+        "$(FZF_COLUMNS=74 FZF_PREVIEW_COLUMNS=63 _header_available_width)"
+
+    # Test 29: Schwelle oben/unten (Hauptbereich = 8 → als oben/unten erkannt)
+    _assert "Hauptbereich 8 Spalten → oben/unten erkannt" \
+        "74" \
+        "$(FZF_COLUMNS=74 FZF_PREVIEW_COLUMNS=64 _header_available_width)"
+
+    # Test 30: FZF_PREVIEW_COLUMNS=0 (kein Preview, nicht als seitlich interpretieren)
+    _assert "FZF_PREVIEW_COLUMNS=0 → volle Breite" \
+        "74" \
+        "$(FZF_COLUMNS=74 FZF_PREVIEW_COLUMNS=0 _header_available_width)"
+
+    printf '\nIntegration\n'
+    printf '───────────\n'
+
+    # Test 31: Volle Pipeline (Breite + Umbruch kombiniert)
+    local avail
+    avail=$(FZF_COLUMNS=74 FZF_PREVIEW_COLUMNS=33 _header_available_width)
+    _assert "Pipeline: 80col+Preview → gh-pr umbricht" \
+        $'Enter: Checkout/Browser | Ctrl+D: Diff\nCtrl+O: Browser | Ctrl+S: Open/Alle' \
+        "$(_header_wrap "$avail" 'Enter: Checkout/Browser | Ctrl+D: Diff' 'Ctrl+O: Browser | Ctrl+S: Open/Alle')"
+
+    # Test 32: Volle Pipeline ohne Preview
+    # Gruppe 1 (39) + " | " (3) + Gruppe 2 (37) = 79 > 74 → umbricht auch hier
+    avail=$(FZF_COLUMNS=74 FZF_PREVIEW_COLUMNS= _header_available_width)
+    _assert "Pipeline: 80col ohne Preview → gh-pr umbricht (79 > 74)" \
+        $'Enter: Checkout/Browser | Ctrl+D: Diff\nCtrl+O: Browser | Ctrl+S: Open/Alle' \
+        "$(_header_wrap "$avail" 'Enter: Checkout/Browser | Ctrl+D: Diff' 'Ctrl+O: Browser | Ctrl+S: Open/Alle')"
+
+    printf '\n══════════════════════\n'
+    printf 'Ergebnis: %d/%d bestanden' "$pass" "$total"
+    [[ $fail -gt 0 ]] && printf ' (%d fehlgeschlagen)' "$fail"
+    printf '\n'
+
+    return "$fail"
+}
+
+# Hauptprogramm
+case "${1:-}" in
+    --test)
+        _header_test
+        ;;
+    -h|--help)
+        printf 'Verwendung: header-wrap [--test|-h] GROUP [GROUP ...]\n'
+        printf 'Bricht fzf-Header an semantischen Gruppen um.\n\n'
+        printf 'Argumente:\n'
+        printf '  GROUP    Zusammengehörige Keybindings (ein Argument pro Gruppe)\n'
+        printf '  --test   Selbsttest ausführen\n'
+        printf '  -h       Diese Hilfe anzeigen\n\n'
+        printf 'Nutzt FZF_COLUMNS und FZF_PREVIEW_COLUMNS automatisch.\n'
+        printf 'Aufruf via fzf: --bind "start,resize:transform-header:header-wrap G1 G2"\n'
+        ;;
+    *)
+        _header_wrap "$(_header_available_width)" "$@"
+        ;;
+esac
