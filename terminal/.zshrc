@@ -38,6 +38,10 @@ setopt HIST_VERIFY           # History-Expansion (!!) erst in Buffer laden
 # Benötigt für (#q...) Glob-Qualifier-Syntax (z.B. bei compinit)
 setopt EXTENDED_GLOB
 
+# Kommentare (#) in interaktiven Shells erlauben
+# Ohne diese Option interpretiert ZSH # als Extended-Glob-Operator
+setopt INTERACTIVE_COMMENTS
+
 # ------------------------------------------------------------
 # Completion-System initialisieren
 # ------------------------------------------------------------
