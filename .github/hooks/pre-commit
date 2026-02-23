@@ -45,8 +45,10 @@ check_shell_syntax() {
 
     # ZSH-Dateien prüfen: .sh, .alias, .zsh, .zshrc, .zshenv, .zprofile, .zlogin
     # POSIX-Dateien (install.sh, logging.sh) werden übersprungen
+    # fzf-Helper ohne Extension: config und *.zsh ausschließen (werden gesourced)
     for file in "$DOTFILES_DIR"/.github/scripts/**/*.sh(N) \
                 "$DOTFILES_DIR"/terminal/.config/alias/*.alias(N) \
+                "$DOTFILES_DIR"/terminal/.config/fzf/*(N) \
                 "$DOTFILES_DIR"/terminal/.config/**/*.zsh(N) \
                 "$DOTFILES_DIR"/terminal/.zsh*(N) \
                 "$DOTFILES_DIR"/terminal/.zprofile(N) \
@@ -55,6 +57,8 @@ check_shell_syntax() {
                 "$DOTFILES_DIR"/setup/restore.sh(N) \
                 "$DOTFILES_DIR"/setup/modules/*.sh(N); do
         if [[ -f "$file" ]]; then
+            # fzf config ist kein Shell-Skript
+            [[ "${file:t}" == "config" ]] && continue
             if ! zsh -n "$file" 2>/dev/null; then
                 err "Syntax-Fehler in: ${file#$DOTFILES_DIR/}"
                 zsh -n "$file" 2>&1 | head -3
@@ -157,7 +161,7 @@ check_markdown() {
 # Prüft reale Installation: Symlinks, Homebrew-Pakete, Fonts,
 # Plattform-Abstraktionen, Theme-Dateien – setzt vollständiges
 # Setup voraus, das in CI nicht vorhanden ist.
-# Siehe auch: .github/workflows/validate.yml (Checks 1–7)
+# Siehe auch: .github/workflows/validate.yml (Checks 1–8)
 # ------------------------------------------------------------
 check_health() {
     log "Führe Health-Check aus..."
@@ -188,6 +192,40 @@ check_health() {
 }
 
 # ------------------------------------------------------------
+# 9. fzf header-wrap Selbsttests
+# Prüft den dynamischen Header-Umbruch-Algorithmus mit
+# verschiedenen Breiten, Gruppen und Edge-Cases.
+# Läuft auch in CI (siehe .github/workflows/validate.yml)
+# ------------------------------------------------------------
+check_header_wrap() {
+    log "Führe header-wrap Selbsttests aus..."
+
+    local helper="$DOTFILES_DIR/terminal/.config/fzf/header-wrap"
+
+    if [[ ! -f "$helper" ]]; then
+        err "header-wrap nicht gefunden: $helper"
+        return 1
+    fi
+
+    if [[ ! -x "$helper" ]]; then
+        err "header-wrap nicht ausführbar – chmod +x erforderlich"
+        return 1
+    fi
+
+    # Selbsttests ausführen (Ausgabe unterdrücken, nur Exit-Code prüfen)
+    if ! "$helper" --test >/dev/null 2>&1; then
+        err "header-wrap Selbsttests fehlgeschlagen!"
+        print ""
+        print "  ${C_DIM}Details anzeigen mit:${C_RESET}"
+        print "    ${C_BOLD}~/.config/fzf/header-wrap --test${C_RESET}"
+        return 1
+    fi
+
+    ok "header-wrap Selbsttests OK"
+    return 0
+}
+
+# ------------------------------------------------------------
 # Hauptprogramm
 # ------------------------------------------------------------
 print ""
@@ -206,6 +244,7 @@ check_header_alignment || { (( failed++ )) || true; }
 check_platform_sync || { (( failed++ )) || true; }
 check_markdown || { (( failed++ )) || true; }
 check_health || { (( failed++ )) || true; }
+check_header_wrap || { (( failed++ )) || true; }
 
 print ""
 print "${C_OVERLAY0}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
