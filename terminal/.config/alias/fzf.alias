@@ -50,6 +50,7 @@ procs() {
         fzf_opts+=(
             --prompt='Apps> '
             --header='Enter: Beenden | Tab: Mehrfach | Ctrl+S: Apps/Alle'
+            --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Beenden | Tab: Mehrfach' 'Ctrl+S: Apps/Alle'"
             --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Apps> ' ]] && echo 'reload($FZF_HELPER_DIR/procs list all)+change-prompt(Alle> )' || echo 'reload($FZF_HELPER_DIR/procs list apps)+change-prompt(Apps> )'"
         )
     else
@@ -57,6 +58,7 @@ procs() {
         fzf_opts+=(
             --prompt='Procs> '
             --header='Enter: Beenden | Tab: Mehrfach'
+            --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Beenden | Tab: Mehrfach'"
         )
     fi
 
@@ -81,6 +83,7 @@ help() {
         fzf --query="$query" --prompt='man> ' \
             --preview="$FZF_HELPER_DIR/help preview man {}" \
             --header='Enter: öffnen | Ctrl+S: man ↔ tldr' \
+            --bind="start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: öffnen' 'Ctrl+S: man ↔ tldr'" \
             --bind="ctrl-s:transform:$FZF_HELPER_DIR/help toggle" \
             --bind="enter:transform:[[ \$FZF_PROMPT == 'tldr> ' ]] && echo 'print(tldr)+accept' || echo 'print(man)+accept'")
 
@@ -135,6 +138,7 @@ cmds() {
     ' | fzf --ansi --query="$query" \
         --prompt='tldr> ' \
         --header='Enter: Übernehmen | Ctrl+S: tldr ↔ Code | Ctrl+E: Datei editieren' \
+        --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Übernehmen' 'Ctrl+S: tldr ↔ Code' 'Ctrl+E: Datei editieren'" \
         --preview "[[ \$FZF_PROMPT == 'code> ' ]] && zsh '$FZF_HELPER_DIR/cmds' preview code {} || zsh '$FZF_HELPER_DIR/cmds' preview tldr {}" \
         --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'tldr> ' ]] && echo 'change-prompt(code> )+refresh-preview' || echo 'change-prompt(tldr> )+refresh-preview'" \
         --bind "ctrl-e:execute(zsh '$FZF_HELPER_DIR/cmds' edit '{}')+refresh-preview")
@@ -184,6 +188,7 @@ vars() {
 
     selection=$(printenv | grep -E '^[a-zA-Z_][a-zA-Z0-9_]*=' | sort | _fenv_colorize | fzf --ansi --query="$query" \
         --header='Enter: Export → Edit | Ctrl+Y: Wert kopieren' \
+        --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Export → Edit' 'Ctrl+Y: Wert kopieren'" \
         --preview='n=$(echo {} | cut -d"│" -f1 | xargs | grep -E "^[a-zA-Z_][a-zA-Z0-9_]*$")
             [[ -z "$n" ]] && exit 0
             v=$(printenv "$n" 2>/dev/null)

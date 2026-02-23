@@ -62,6 +62,7 @@ if command -v fzf >/dev/null 2>&1; then
         dir=$(fd --type d --hidden --follow --exclude .git . "${1:-.}" | \
             fzf --preview "$FZF_HELPER_DIR/preview dir {}" \
                 --header='Enter: Wechseln | Ctrl+Y: Pfad kopieren' \
+                --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Wechseln' 'Ctrl+Y: Pfad kopieren'" \
                 --bind="ctrl-y:execute-silent($FZF_HELPER_DIR/action copy {})+abort")
 
         [[ -n "$dir" ]] && cd "$dir"
@@ -74,6 +75,7 @@ if command -v fzf >/dev/null 2>&1; then
         file=$(fd --type f --hidden --follow --exclude .git . "${1:-.}" | \
             fzf --preview "$FZF_HELPER_DIR/preview file {}" \
                 --header='Enter: Öffnen | Ctrl+Y: Pfad kopieren' \
+                --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Öffnen' 'Ctrl+Y: Pfad kopieren'" \
                 --bind="ctrl-y:execute-silent($FZF_HELPER_DIR/action copy {})+abort")
 
         # xopen aus platform.zsh (wird vor Aliase geladen)

@@ -26,6 +26,8 @@
 
 - dotfiles: `gh` – GitHub CLI Listen für fzf (stabiles Tab-Format)
 
+- dotfiles: `header-wrap` – Dynamischer fzf-Header-Umbruch nach verfügbarer Breite
+
 - dotfiles: `help` – Subcommands für man/tldr Browser
 
 - dotfiles: `init.zsh` – fzf Keybindings und fd-Backend aktivieren

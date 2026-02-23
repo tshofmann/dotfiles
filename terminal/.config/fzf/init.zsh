@@ -33,7 +33,8 @@ fi
 # Nutzt fzf/action für plattformübergreifendes Clipboard
 export FZF_CTRL_R_OPTS="
     --bind 'ctrl-y:execute-silent(${FZF_HELPER_DIR}/action copy {2..})+abort'
-    --header 'Ctrl+Y: Kopieren'"
+    --header 'Ctrl+Y: Kopieren'
+    --bind \"start,resize:transform-header:${FZF_HELPER_DIR}/header-wrap 'Ctrl+Y: Kopieren'\""
 
 # Ctrl+X 2: Dateisuche mit Syntax-Highlighting Vorschau
 if command -v bat >/dev/null 2>&1; then
