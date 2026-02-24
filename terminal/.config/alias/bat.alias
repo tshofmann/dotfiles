@@ -41,7 +41,7 @@ if command -v fzf >/dev/null 2>&1; then
         [[ -L "$config_file" ]] && config_file=$(readlink -f "$config_file")
 
         theme=$(bat --list-themes | fzf --query="$query" \
-            --preview='bat --theme={} --color=always ~/.zshrc' \
+            --preview='bat --theme {} --color=always ~/.zshrc' \
             --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Theme aktivieren'")
 
         [[ -z "$theme" ]] && return 0

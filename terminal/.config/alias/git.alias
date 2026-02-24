@@ -120,10 +120,11 @@ if command -v fzf >/dev/null 2>&1; then
         local stash
         stash=$(git stash list | \
             fzf --ansi --query="$query" \
-                --preview 'echo {} | cut -d: -f1 | xargs git stash show -p | { bat --style=numbers --color=always -l diff 2>/dev/null || cat; }' \
+                --delimiter ':' \
+                --preview 'git stash show -p {1} | { bat --style=numbers --color=always -l diff 2>/dev/null || cat; }' \
                 --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Apply' 'Ctrl+P: Pop | Ctrl+D: Drop'" \
-                --bind 'ctrl-d:execute(echo {} | cut -d: -f1 | xargs git stash drop)+reload(git stash list)' \
-                --bind 'ctrl-p:execute(echo {} | cut -d: -f1 | xargs git stash pop)+abort' | \
+                --bind 'ctrl-d:execute(git stash drop {1})+reload(git stash list)' \
+                --bind 'ctrl-p:execute(git stash pop {1})+abort' | \
             cut -d: -f1)
 
         [[ -n "$stash" ]] && git stash apply "$stash"
