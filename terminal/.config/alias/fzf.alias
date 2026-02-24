@@ -141,7 +141,7 @@ cmds() {
         --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Übernehmen' 'Ctrl+S: tldr ↔ Code' 'Ctrl+E: Datei editieren'" \
         --preview "[[ \$FZF_PROMPT == 'code> ' ]] && zsh '$FZF_HELPER_DIR/cmds' preview code {} || zsh '$FZF_HELPER_DIR/cmds' preview tldr {}" \
         --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'tldr> ' ]] && echo 'change-prompt(code> )+refresh-preview' || echo 'change-prompt(tldr> )+refresh-preview'" \
-        --bind "ctrl-e:execute(zsh '$FZF_HELPER_DIR/cmds' edit '{}')+refresh-preview")
+        --bind "ctrl-e:execute(zsh '$FZF_HELPER_DIR/cmds' edit {})+refresh-preview")
 
     # Bei Enter: Befehl ins Edit-Buffer (kann editiert/ausgeführt werden)
     if [[ -n "$selection" ]]; then
