@@ -400,7 +400,7 @@ Funktionen mit fzf-UI nutzen ein erweitertes Format:
 **Beispiele:**
 
 ```zsh
-# zoxide Browser – Enter=Wechseln, Ctrl+D=Löschen, Ctrl+Y=Kopieren
+# zoxide Browser(suche?) – Enter=Wechseln, Ctrl+D=Eintrag löschen, Ctrl+Y=Pfad kopieren
 zj() { ... }  # in zoxide.alias (Tool-Zuordnung!)
 
 # Verzeichnis wechseln(pfad=.) – Enter=Wechseln, Ctrl+Y=Pfad kopieren
@@ -418,6 +418,48 @@ rg-live() { ... }
 >
 > Der Generator prüft den tealdeer-Cache (`~/Library/Caches/tealdeer/tldr-pages/`)
 > und wählt automatisch das richtige Format.
+
+#### Keybinding-Architektur (Drift-Prävention)
+
+Jede fzf-Funktion hat **zwei synchronisierte Keybinding-Quellen**:
+
+| Quelle | Format | Zweck |
+| -------- | -------- | ------- |
+| **Beschreibungskommentar** | `Key=Aktion, Key=Aktion` | Autorität — wird von Generatoren gelesen |
+| **header-wrap Argumente** | `'Key: Aktion' 'Key: Aktion'` | Dynamische fzf-Header (Zeilenumbruch bei schmalen Terminals) |
+
+> **Warum nur zwei Quellen?**
+>
+> Früher gab es eine dritte Quelle: `--header='...'` als statischer Fallback.
+> Da `transform-header` den `--header`-Text beim `start`-Event sofort ersetzt,
+> war `--header` redundant und wurde entfernt (Issue #305).
+
+**Sync-Regel:** Der Aktions-Text muss **exakt** übereinstimmen:
+
+```text
+# Kommentar:   Enter=Wechseln, Ctrl+D=Eintrag löschen
+# header-wrap: 'Enter: Wechseln' 'Ctrl+D: Eintrag löschen'
+#                       ↑ identischer Text ↑
+```
+
+**Sonderfälle:**
+
+- **Legenden** (`[F]=Formula [C]=Cask`) stehen nur in header-wrap, nicht im Kommentar
+- **Plattform-Branches** (z.B. `procs`): Der Kommentar dokumentiert alle Keys
+  der Primärplattform (macOS). Andere Plattformen können eine Teilmenge verwenden.
+- **`rg-live` `start:+`**: Nutzt additives Binding (`start:+transform-header`)
+  statt überschreibendes (`start,resize:transform-header`), da ein vorheriges
+  `start`-Event den initialen Suchlauf startet.
+
+**Neue fzf-Funktion hinzufügen:**
+
+1. Beschreibungskommentar mit `Key=Aktion` Format schreiben
+2. `--bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Key: Aktion'"` hinzufügen
+3. **Kein `--header=`** — wurde entfernt, header-wrap übernimmt
+4. `.github/scripts/check-header-sync.sh` ausführen → muss grün sein
+
+**Automatisierte Prüfung:** `check-header-sync.sh` (Pre-Commit Check 10)
+vergleicht beide Quellen und meldet Abweichungen.
 
 ### Ausnahmen vom Header-Format
 
@@ -589,8 +631,8 @@ Diese Regeln gelten für alle Shell-Dateien:
 | **Guard-Kommentar** | Mit Tool-Name | `# Guard   : Nur wenn X installiert ist` |
 | **Sektions-Trenner** | `----` (60 Zeichen) | `# --------------------------------------------------------` |
 | **Header-Block** | `====` nur oben | Erste Zeilen der Datei |
-| **fzf-Header** | `Enter:` zuerst | `--header='Enter: Aktion'` |
-| **Header Pipe-Zeichen** | ASCII | Kein Unicode in `--header` |
+| **fzf-Header** | `Enter:` zuerst, via header-wrap | `--bind "...:header-wrap 'Enter: Aktion'"` |
+| **Header Pipe-Zeichen** | ASCII `\|` in header-wrap Gruppen | `'Enter: Aktion \| Tab: Mehrfach'` |
 
 ### Dokumentation
 

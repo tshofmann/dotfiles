@@ -34,7 +34,7 @@ fi
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # zoxide Browser(suche?) – Enter=Wechseln, Ctrl+D=Löschen, Ctrl+Y=Kopieren
+    # zoxide Browser(suche?) – Enter=Wechseln, Ctrl+D=Eintrag löschen, Ctrl+Y=Pfad kopieren
     zj() {
         local query="${1:-}"
         local selection dir
@@ -46,7 +46,6 @@ if command -v fzf >/dev/null 2>&1; then
                 --preview "$FZF_HELPER_DIR/preview dir {2..} 2" \
                 --bind "ctrl-d:execute-silent($FZF_HELPER_DIR/action zoxide-remove {2..})+reload(zoxide query -l -s)" \
                 --bind "ctrl-y:execute-silent($FZF_HELPER_DIR/action copy {2..})" \
-                --header='Enter: Wechseln | Ctrl+D: Eintrag löschen | Ctrl+Y: Pfad kopieren' \
                 --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Wechseln' 'Ctrl+D: Eintrag löschen' 'Ctrl+Y: Pfad kopieren'")
 
         # Pfad extrahieren: Score entfernen (awk ist sicherer bei Leerzeichen)

@@ -127,6 +127,10 @@ jobs:
         shell: zsh {0}
         run: ./.github/scripts/check-header-alignment.sh
 
+      - name: Keybinding-Sync prüfen
+        shell: zsh {0}
+        run: ./.github/scripts/check-header-sync.sh
+
       - name: Markdown prüfen
         run: |
           echo "Prüfe Markdown-Dateien..."

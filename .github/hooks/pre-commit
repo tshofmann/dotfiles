@@ -226,6 +226,16 @@ check_header_wrap() {
 }
 
 # ------------------------------------------------------------
+# 10. Keybinding-Sync: Beschreibungskommentar ↔ header-wrap
+# Prüft ob die Keybinding-Texte in beiden Quellen identisch
+# sind (Single Source of Truth = Beschreibungskommentar).
+# Läuft auch in CI (siehe .github/workflows/validate.yml)
+# ------------------------------------------------------------
+check_header_sync() {
+    "$DOTFILES_DIR/.github/scripts/check-header-sync.sh"
+}
+
+# ------------------------------------------------------------
 # Hauptprogramm
 # ------------------------------------------------------------
 print ""
@@ -245,6 +255,7 @@ check_platform_sync || { (( failed++ )) || true; }
 check_markdown || { (( failed++ )) || true; }
 check_health || { (( failed++ )) || true; }
 check_header_wrap || { (( failed++ )) || true; }
+check_header_sync || { (( failed++ )) || true; }
 
 print ""
 print "${C_OVERLAY0}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
