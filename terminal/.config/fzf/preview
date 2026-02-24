@@ -4,12 +4,16 @@
 # ============================================================
 # Zweck       : Zeigt Vorschau für Dateien und Verzeichnisse
 # Pfad        : ~/.config/fzf/preview
-# Aufruf      : preview <file|dir> <path> [args...]
+# Aufruf      : ~/.config/fzf/preview <file|dir> <path> [args...]
 # Nutzt       : bat (Code), eza (Dir), pdftotext (PDF), jq (JSON),
 #               7zz (Archive), identify (Bilder), ffprobe (Video/Audio)
 # ============================================================
 # Hinweis     : Pfad wird als Argument übergeben, nicht interpoliert
 # ============================================================
+
+# Shell-Farben laden (für Fehlermeldungen)
+source "${XDG_CONFIG_HOME:-$HOME/.config}/theme-style" 2>/dev/null
+: "${C_RED:=}" "${C_RESET:=}"
 
 # ------------------------------------------------------------
 # Subcommand: file
@@ -150,7 +154,7 @@ _preview_dir() {
 # ------------------------------------------------------------
 _preview_usage() {
     cat <<EOF
-Usage: preview <command> [args...]
+Usage: ~/.config/fzf/preview <command> [args...]
 
 Commands:
   file <path> [line]   Datei-Vorschau (optional mit Zeile hervorheben)
@@ -168,7 +172,7 @@ case "${1:-}" in
     -h|--help) _preview_usage ;;
     "")   _preview_usage ;;
     *)
-        echo "Unknown command: $1" >&2
+        echo "${C_RED}Unbekannter Befehl:${C_RESET} $1" >&2
         _preview_usage >&2
         exit 1
         ;;

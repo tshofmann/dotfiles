@@ -4,7 +4,7 @@
 # ============================================================
 # Zweck       : Prozessliste für fzf
 # Pfad        : ~/.config/fzf/procs
-# Aufruf      : procs list [apps|all]
+# Aufruf      : ~/.config/fzf/procs list [apps|all]
 # ============================================================
 # Hinweis     : macOS-spezifisch! Das Pattern \.app\/ filtert nach
 #               macOS App-Bundles. Für Linux-Portabilität müsste
@@ -52,7 +52,7 @@ _procs_list() {
 # ------------------------------------------------------------
 _procs_usage() {
     cat <<EOF
-Usage: procs <command> [args...]
+Usage: ~/.config/fzf/procs <command> [args...]
 
 Commands:
   list [apps|all]  Prozessliste generieren (Default: apps)

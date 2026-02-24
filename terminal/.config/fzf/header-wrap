@@ -4,7 +4,7 @@
 # ============================================================
 # Zweck       : Dynamischer fzf-Header-Umbruch nach verfügbarer Breite
 # Pfad        : ~/.config/fzf/header-wrap
-# Aufruf      : header-wrap [--test|-h|--help] GROUP [GROUP ...]
+# Aufruf      : ~/.config/fzf/header-wrap [--test|-h|--help] GROUP [GROUP ...]
 # Docs        : https://github.com/tshofmann/dotfiles/issues/302
 # ============================================================
 # Semantische Gruppen:
@@ -292,14 +292,14 @@ case "${1:-}" in
         _header_test
         ;;
     -h|--help)
-        printf 'Verwendung: header-wrap [--test|-h] GROUP [GROUP ...]\n'
+        printf 'Verwendung: ~/.config/fzf/header-wrap [--test|-h] GROUP [GROUP ...]\n'
         printf 'Bricht fzf-Header an semantischen Gruppen um.\n\n'
         printf 'Argumente:\n'
         printf '  GROUP    Zusammengehörige Keybindings (ein Argument pro Gruppe)\n'
         printf '  --test   Selbsttest ausführen\n'
         printf '  -h       Diese Hilfe anzeigen\n\n'
         printf 'Nutzt FZF_COLUMNS und FZF_PREVIEW_COLUMNS automatisch.\n'
-        printf 'Aufruf via fzf: --bind "start,resize:transform-header:header-wrap G1 G2"\n'
+        printf 'Aufruf via fzf: --bind "start,resize:transform-header:~/.config/fzf/header-wrap G1 G2"\n'
         ;;
     *)
         _header_wrap "$(_header_available_width)" "$@"

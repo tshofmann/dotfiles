@@ -56,7 +56,7 @@ _fzf_dispatch() {
                 shift
                 "_${name}_${cmd}" "$@"
             else
-                echo "${C_RED}Unknown command:${C_RESET} $cmd" >&2
+                echo "${C_RED}Unbekannter Befehl:${C_RESET} $cmd (Helper: ~/.config/fzf/$name)" >&2
                 "_${name}_usage" >&2
                 return 1
             fi

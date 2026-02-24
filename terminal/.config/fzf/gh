@@ -4,7 +4,7 @@
 # ============================================================
 # Zweck       : GitHub CLI Listen für fzf (stabiles Tab-Format)
 # Pfad        : ~/.config/fzf/gh
-# Aufruf      : gh <list-pr|list-issue> [open|all]
+# Aufruf      : ~/.config/fzf/gh <list-pr|list-issue> [open|all]
 # ============================================================
 # Hinweis     : Nutzt --json + --template für stabiles Format
 #               (unabhängig von gh-Version und Locale)
@@ -40,7 +40,7 @@ _gh_list-issue() {
 # ------------------------------------------------------------
 _gh_usage() {
     cat <<EOF
-Usage: gh <command> [args...]
+Usage: ~/.config/fzf/gh <command> [args...]
 
 Commands:
   list-pr [open|all]      PR-Liste generieren (Default: open)
