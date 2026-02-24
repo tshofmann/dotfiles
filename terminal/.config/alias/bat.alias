@@ -31,7 +31,7 @@ alias catd='bat --diff'
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # Theme Browser(suche?) – Enter=Aktivieren
+    # Theme Browser(suche?) – Enter=Theme aktivieren
     bat-theme() {
         local query="${1:-}"
         local theme
@@ -42,7 +42,6 @@ if command -v fzf >/dev/null 2>&1; then
 
         theme=$(bat --list-themes | fzf --query="$query" \
             --preview='bat --theme={} --color=always ~/.zshrc' \
-            --header='Enter: Theme aktivieren' \
             --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Theme aktivieren'")
 
         [[ -z "$theme" ]] && return 0

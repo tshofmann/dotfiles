@@ -14,6 +14,6 @@
 
 `catd`
 
-- dotfiles: Theme Browser (`<Enter>` Aktivieren):
+- dotfiles: Theme Browser (`<Enter>` Theme aktivieren):
 
 `bat-theme {{suche}}`

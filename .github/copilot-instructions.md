@@ -21,6 +21,7 @@
 | **Variablen quoten** | `"$var"` statt `$var` |
 | **Deutsch schreiben** | Kommentare, Doku, Commits |
 | **Pre-Commit durchlaufen** | Hooks validieren vor Commit |
+| **Projekt-Config nutzen** | Linter/Checks nur mit `--config` oder via Hook |
 | **Bei Unklarheit fragen** | Rückfrage statt Annahme |
 
 ## DON'Ts ✗
@@ -31,6 +32,7 @@
 | **Niemals blind ändern** | Repository-Zustand ist die Wahrheit |
 | **Niemals statische Zahlen** | "X Tools installiert" veraltet sofort |
 | **Niemals Annahmen** | Erst recherchieren, dann handeln |
+| **Niemals nackte Linter** | Immer Projekt-Config verwenden, nie `npx tool datei` ohne `--config` |
 | **Niemals `/Users/<name>`** | Öffentlich sichtbar → `~` oder `$HOME` |
 | **ZSH ist die Ziel-Shell** | POSIX sh nur in `setup/install.sh` und `setup/lib/logging.sh` (weil zsh auf frischen Linux-Systemen fehlen kann) |
 
@@ -158,6 +160,10 @@ func() {
 ## GitHub PRs
 
 ### Merge-Workflow (KRITISCH)
+
+**PRs niemals eigenständig mergen** – immer den User fragen!
+
+**PRs niemals eigenständig erstellen** – immer den User fragen!
 
 **VOR jedem Merge diese Schritte ausführen:**
 

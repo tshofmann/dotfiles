@@ -29,11 +29,10 @@ if command -v fd >/dev/null 2>&1; then
     export FZF_ALT_C_COMMAND='fd --type d --strip-cwd-prefix --hidden --follow --exclude .git'
 fi
 
-# Ctrl+X 1: History-Suche mit Kopier-Funktion
+# Ctrl+X 1: History-Suche – Ctrl+Y=Kopieren
 # Nutzt fzf/action für plattformübergreifendes Clipboard
 export FZF_CTRL_R_OPTS="
     --bind 'ctrl-y:execute-silent(${FZF_HELPER_DIR}/action copy {2..})+abort'
-    --header 'Ctrl+Y: Kopieren'
     --bind \"start,resize:transform-header:${FZF_HELPER_DIR}/header-wrap 'Ctrl+Y: Kopieren'\""
 
 # Ctrl+X 2: Dateisuche mit Syntax-Highlighting Vorschau

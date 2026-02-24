@@ -40,7 +40,6 @@ if command -v fzf >/dev/null 2>&1; then
                 --delimiter='\t' \
                 --prompt='Open> ' \
                 --preview 'gh pr view {1}' \
-                --header='Enter: Checkout/Browser | Ctrl+D: Diff | Ctrl+O: Browser | Ctrl+S: Open ↔ Alle' \
                 --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Checkout/Browser | Ctrl+D: Diff' 'Ctrl+O: Browser | Ctrl+S: Open ↔ Alle'" \
                 --bind 'ctrl-o:execute-silent(gh pr view {1} --web)' \
                 --bind 'ctrl-d:execute(gh pr diff {1} | bat --color=always -l diff)' \
@@ -67,7 +66,6 @@ if command -v fzf >/dev/null 2>&1; then
                 --delimiter='\t' \
                 --prompt='Open> ' \
                 --preview 'gh issue view {1}' \
-                --header='Enter: Browser | Ctrl+E: Bearbeiten | Ctrl+S: Open ↔ Alle' \
                 --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Browser | Ctrl+E: Bearbeiten' 'Ctrl+S: Open ↔ Alle'" \
                 --bind 'ctrl-e:execute(gh issue edit {1})' \
                 --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Open> ' ]] && echo 'reload($FZF_HELPER_DIR/gh list-issue all)+change-prompt(Alle> )' || echo 'reload($FZF_HELPER_DIR/gh list-issue open)+change-prompt(Open> )'" | \
@@ -104,7 +102,6 @@ if command -v fzf >/dev/null 2>&1; then
             fzf --ansi --query="$query" \
                 --delimiter='\t' \
                 --preview 'gh run view {1}' \
-                --header='Enter: Logs | Ctrl+R: Rerun | Ctrl+O: Browser' \
                 --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Logs | Ctrl+R: Rerun' 'Ctrl+O: Browser'" \
                 --bind 'ctrl-o:execute-silent(gh run view {1} --web)' \
                 --bind 'ctrl-r:execute(gh run rerun {1})' | \
@@ -120,7 +117,6 @@ if command -v fzf >/dev/null 2>&1; then
         repo=$(gh repo list --limit 30 | \
             fzf --ansi --query="$query" \
                 --preview 'gh repo view {1}' \
-                --header='Enter: Klonen | Ctrl+O: Browser' \
                 --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Klonen' 'Ctrl+O: Browser'" \
                 --bind 'ctrl-o:execute-silent(gh repo view {1} --web)' | \
             awk '{print $1}')
@@ -135,7 +131,6 @@ if command -v fzf >/dev/null 2>&1; then
         gist=$(gh gist list --limit 30 | \
             fzf --ansi --query="$query" \
                 --preview 'gh gist view {1}' \
-                --header='Enter: Anzeigen | Ctrl+E: Bearbeiten | Ctrl+O: Browser' \
                 --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Anzeigen' 'Ctrl+E: Bearbeiten | Ctrl+O: Browser'" \
                 --bind 'ctrl-e:execute(gh gist edit {1})' \
                 --bind 'ctrl-o:execute-silent(gh gist view {1} --web)' | \

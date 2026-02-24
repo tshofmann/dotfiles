@@ -77,7 +77,6 @@ if command -v fzf >/dev/null 2>&1; then
             --freeze-left=1 \
             --preview "$FZF_HELPER_DIR/preview file {1} {2}" \
             --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' \
-            --header='Enter: Datei öffnen | Ctrl+Y: Pfad kopieren' \
             --bind "start:+transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Datei öffnen' 'Ctrl+Y: Pfad kopieren'" \
             --bind "resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Datei öffnen' 'Ctrl+Y: Pfad kopieren'" \
             --bind "ctrl-y:execute-silent($FZF_HELPER_DIR/action copy {1})+abort" \
