@@ -158,17 +158,38 @@ Wiederverwendbare Skripte für fzf-Previews und -Aktionen in `~/.config/fzf/`:
 
 **Warum Helper statt Inline-Code?**
 
-- Shell-Injection-sicher (Argumente statt String-Interpolation)
-- Wiederverwendbar über mehrere `.alias`-Dateien
-- Testbar und wartbar
+fzf quotet Placeholders (`{}`, `{1}`, `{q}`, etc.) automatisch per Single-Quote-Escaping
+([QuoteEntry](https://github.com/junegunn/fzf/blob/master/src/util/util_unix.go) – seit v0.13.0).
+Inline-Placeholders wie `--preview 'bat {}'` sind daher **nicht** unsicher.
+
+Trotzdem bevorzugen wir Helper-Skripte für komplexe Aktionen:
+
+- **Defense-in-Depth** – doppelte Absicherung durch `"$1"` und `--` im Skript
+- **Wiederverwendbar** über mehrere `.alias`-Dateien
+- **Testbar und wartbar** – Logik in eigenständigen Dateien
+- **Eingabevalidierung** – Helper können Argumente prüfen (z.B. Regex)
+
+Für einfache, einmalige Ausdrücke ist Inline akzeptabel:
 
 ```zsh
-# RICHTIG: Exportierte Variable $FZF_HELPER_DIR verwenden (gesetzt in fzf/init.zsh)
+# BEVORZUGT: Helper für komplexe/wiederverwendbare Logik
 --preview "$FZF_HELPER_DIR/preview file {1}"
 
-# FALSCH: Inline-Code (Shell-Injection-Risiko)
---preview 'bat {}'
+# OK: Inline für einfache, einmalige Ausdrücke
+--preview 'bat --color=always {}'
+
+# VERBOTEN: {r}-Flag (umgeht QuoteEntry → Shell-Injection möglich)
+--preview 'bat {r}'
 ```
+
+### fzf Placeholder-Regeln
+
+| Regel | Beispiel | Begründung |
+| ----- | -------- | ---------- |
+| **`{r}`-Flag ist verboten** | ~~`{r}`~~, ~~`{r1}`~~ | Einziger Weg, QuoteEntry zu umgehen |
+| **Feld-Expressions statt Pipes** | `{1}` statt `echo {} \| cut` | Lesbarer, kein Pipeline-Overhead |
+| **`--delimiter` nutzen** | `--delimiter ':'` + `{1}` | fzf-nativer Ansatz für Feld-Extraktion |
+| **Standalone bevorzugen** | `--theme {}` statt `--theme={}` | Lesbarer, gleiche Sicherheit |
 
 ---
 
