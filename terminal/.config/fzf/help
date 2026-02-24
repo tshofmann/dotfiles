@@ -4,7 +4,7 @@
 # ============================================================
 # Zweck       : Subcommands für man/tldr Browser
 # Pfad        : ~/.config/fzf/help
-# Aufruf      : help <list|preview|toggle> [args...]
+# Aufruf      : ~/.config/fzf/help <list|preview|toggle> [args...]
 # ============================================================
 # Commands:
 #   list [man|tldr]        – Listet Einträge
@@ -74,7 +74,7 @@ _help_toggle() {
 # ------------------------------------------------------------
 _help_usage() {
     cat <<EOF
-Usage: help <command> [args...]
+Usage: ~/.config/fzf/help <command> [args...]
 
 Commands:
   list [man|tldr]        Liste Einträge (Default: man)

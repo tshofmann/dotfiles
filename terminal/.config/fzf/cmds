@@ -4,7 +4,7 @@
 # ============================================================
 # Zweck       : Liste und Preview für cmds (Alias-Browser) in fzf
 # Pfad        : ~/.config/fzf/cmds
-# Aufruf      : cmds <list|preview> [args...]
+# Aufruf      : ~/.config/fzf/cmds <list|preview|edit> [args...]
 # ============================================================
 # Commands:
 #   list                   – Listet alle Aliase und Funktionen
@@ -208,7 +208,7 @@ _cmds_edit() {
 # ------------------------------------------------------------
 _cmds_usage() {
     cat <<EOF
-Usage: cmds <command> [args...]
+Usage: ~/.config/fzf/cmds <command> [args...]
 
 Commands:
   list                        Liste aller Aliase und Funktionen

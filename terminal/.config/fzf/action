@@ -4,7 +4,7 @@
 # ============================================================
 # Zweck       : Führt Aktionen Shell-Injection-sicher aus
 # Pfad        : ~/.config/fzf/action
-# Aufruf      : action <command> "argument" [...]
+# Aufruf      : ~/.config/fzf/action <command> "argument" [...]
 # Nutzt       : platform.zsh (clip)
 # ============================================================
 # Commands: copy, copy-env, edit, git-diff, git-restore, git-add,
@@ -17,6 +17,10 @@ source "${XDG_CONFIG_HOME:-$HOME/.config}/platform.zsh" 2>/dev/null || {
     echo "action: platform.zsh nicht gefunden" >&2
     exit 1
 }
+
+# Shell-Farben laden (für Fehlermeldungen)
+source "${XDG_CONFIG_HOME:-$HOME/.config}/theme-style" 2>/dev/null
+: "${C_RED:=}" "${C_RESET:=}"
 
 case "${1:-}" in
     copy)
@@ -72,7 +76,7 @@ case "${1:-}" in
         ;;
     -h|--help)
         cat <<EOF
-Usage: action <command> [args...]
+Usage: ~/.config/fzf/action <command> [args...]
 
 Commands:
   copy <path>            Pfad ins Clipboard kopieren
@@ -86,12 +90,12 @@ Commands:
 EOF
         ;;
     "")
-        echo "Usage: action <command> [args...]" >&2
-        echo "Try 'action --help' for more information." >&2
+        echo "Usage: ~/.config/fzf/action <command> [args...]" >&2
+        echo "Siehe '~/.config/fzf/action --help' für Details." >&2
         exit 1
         ;;
     *)
-        echo "Unknown action: $1" >&2
+        echo "${C_RED}Unbekannte Aktion:${C_RESET} $1" >&2
         exit 1
         ;;
 esac
