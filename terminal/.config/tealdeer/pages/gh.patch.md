@@ -8,19 +8,19 @@
 
 `gh-status`
 
-- dotfiles: PRs durchsuchen (`<Enter>` Checkout/Browser, `<Ctrl d>` Diff, `<Ctrl o>` Browser, `<Ctrl s>` Open ↔ Alle):
+- dotfiles: PRs durchsuchen (`<Enter>` Checkout/Browser, `<Ctrl d>` Diff, `<Ctrl o>` Browser, `<Ctrl s>` Open ↔ Alle, `<Ctrl y>` Nr. kopieren):
 
 `gh-pr {{suche}}`
 
-- dotfiles: Issues durchsuchen (`<Enter>` Browser, `<Ctrl e>` Bearbeiten, `<Ctrl s>` Open ↔ Alle):
+- dotfiles: Issues durchsuchen (`<Enter>` Anzeigen, `<Ctrl e>` Bearbeiten, `<Ctrl o>` Browser, `<Ctrl s>` Open ↔ Alle, `<Ctrl y>` Nr. kopieren):
 
 `gh-issue {{suche}}`
 
-- dotfiles: Actions Runs (`<Enter>` Logs, `<Ctrl r>` Rerun, `<Ctrl o>` Browser):
+- dotfiles: Actions Runs (`<Enter>` Logs, `<Ctrl r>` Rerun, `<Ctrl o>` Browser, `<Ctrl y>` ID kopieren):
 
 `gh-run {{suche}}`
 
-- dotfiles: Repo Browser (`<Enter>` Klonen, `<Ctrl o>` Browser):
+- dotfiles: Repo Browser (`<Enter>` Klonen, `<Ctrl o>` Browser, `<Ctrl y>` Repo kopieren):
 
 `gh-repo {{suche}}`
 

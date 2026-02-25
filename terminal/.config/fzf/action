@@ -7,8 +7,8 @@
 # Aufruf      : ~/.config/fzf/action <command> "argument" [...]
 # Nutzt       : platform.zsh (clip)
 # ============================================================
-# Commands: copy, copy-env, edit, git-diff, git-restore, git-add,
-#           zoxide-remove
+# Commands: copy, copy-branch, copy-env, edit, git-diff, git-restore,
+#           git-add, zoxide-remove
 # ============================================================
 
 # Plattform-Abstraktionen laden (clip)
@@ -27,6 +27,16 @@ case "${1:-}" in
         # Pfad ins Clipboard kopieren
         shift
         printf '%s' "$1" | clip
+        ;;
+    copy-branch)
+        # Branch-Name aus fzf-Zeile bereinigen und kopieren
+        # Input per {}: "* main", "  feature-branch", "  remotes/origin/feat/x"
+        # fzf --ansi strippt ANSI-Codes; sed entfernt ANSI als Defense-in-Depth
+        shift
+        printf '%s' "$*" \
+            | sed 's/\x1b\[[0-9;]*m//g; s/^[* ]*//' \
+            | sed 's|^remotes/[^/]*/||' \
+            | clip
         ;;
     copy-env)
         # Umgebungsvariable aus farbkodierter fzf-Zeile ins Clipboard kopieren
@@ -80,6 +90,7 @@ Usage: ~/.config/fzf/action <command> [args...]
 
 Commands:
   copy <path>            Pfad ins Clipboard kopieren
+  copy-branch <line>     Branch aus git-branch-Zeile bereinigen + kopieren
   copy-env <fzf-line>    Umgebungsvariable aus vars()-Zeile kopieren
   edit <file> [line]     Datei im Editor öffnen
   git-diff <file>        Git diff für Datei anzeigen

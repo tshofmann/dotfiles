@@ -44,14 +44,14 @@
 
 `git-log {{suche}}`
 
-- dotfiles: Branch wechseln (`<Enter>` Checkout, `<Ctrl d>` Löschen):
+- dotfiles: Branch wechseln (`<Enter>` Checkout, `<Ctrl d>` Löschen, `<Ctrl y>` Branch kopieren):
 
 `git-branch {{suche}}`
 
-- dotfiles: Status (`<Enter>` Add, `<Tab>` Mehrfach, `<Ctrl r>` Reset):
+- dotfiles: Status (`<Enter>` Add, `<Tab>` Mehrfach, `<Ctrl r>` Reset, `<Ctrl y>` Pfad kopieren):
 
 `git-stage {{suche}}`
 
-- dotfiles: Stash-Browser (`<Enter>` Apply, `<Ctrl p>` Pop, `<Ctrl d>` Drop):
+- dotfiles: Stash-Browser (`<Enter>` Apply, `<Ctrl p>` Pop, `<Ctrl d>` Drop, `<Ctrl y>` Ref kopieren):
 
 `git-stash {{suche}}`

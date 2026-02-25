@@ -31,7 +31,7 @@ alias gh-status='gh status'
 # Interaktive Funktionen (mit fzf)
 # ------------------------------------------------------------
 if command -v fzf >/dev/null 2>&1; then
-    # PRs durchsuchen(suche?) – Enter=Checkout/Browser, Ctrl+D=Diff, Ctrl+O=Browser, Ctrl+S=Open ↔ Alle
+    # PRs durchsuchen(suche?) – Enter=Checkout/Browser, Ctrl+D=Diff, Ctrl+O=Browser, Ctrl+S=Open ↔ Alle, Ctrl+Y=Nr. kopieren
     gh-pr() {
         local query="${1:-}"
         local result pr_num pr_state
@@ -40,10 +40,11 @@ if command -v fzf >/dev/null 2>&1; then
                 --delimiter='\t' \
                 --prompt='Open> ' \
                 --preview 'gh pr view {1}' \
-                --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Checkout/Browser | Ctrl+D: Diff' 'Ctrl+O: Browser | Ctrl+S: Open ↔ Alle'" \
+                --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Checkout/Browser | Ctrl+D: Diff' 'Ctrl+O: Browser | Ctrl+S: Open ↔ Alle' 'Ctrl+Y: Nr. kopieren'" \
                 --bind 'ctrl-o:execute-silent(gh pr view {1} --web)' \
                 --bind 'ctrl-d:execute(gh pr diff {1} | bat --color=always -l diff)' \
-                --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Open> ' ]] && echo 'reload($FZF_HELPER_DIR/gh list-pr all)+change-prompt(Alle> )' || echo 'reload($FZF_HELPER_DIR/gh list-pr open)+change-prompt(Open> )'"
+                --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Open> ' ]] && echo 'reload($FZF_HELPER_DIR/gh list-pr all)+change-prompt(Alle> )' || echo 'reload($FZF_HELPER_DIR/gh list-pr open)+change-prompt(Open> )'" \
+                --bind "ctrl-y:execute-silent($FZF_HELPER_DIR/action copy {1})"
             )
 
         [[ -z "$result" ]] && return 0
@@ -57,7 +58,7 @@ if command -v fzf >/dev/null 2>&1; then
         fi
     }
 
-    # Issues durchsuchen(suche?) – Enter=Browser, Ctrl+E=Bearbeiten, Ctrl+S=Open ↔ Alle
+    # Issues durchsuchen(suche?) – Enter=Anzeigen, Ctrl+E=Bearbeiten, Ctrl+O=Browser, Ctrl+S=Open ↔ Alle, Ctrl+Y=Nr. kopieren
     gh-issue() {
         local query="${1:-}"
         local issue
@@ -66,15 +67,17 @@ if command -v fzf >/dev/null 2>&1; then
                 --delimiter='\t' \
                 --prompt='Open> ' \
                 --preview 'gh issue view {1}' \
-                --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Browser | Ctrl+E: Bearbeiten' 'Ctrl+S: Open ↔ Alle'" \
+                --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Anzeigen | Ctrl+E: Bearbeiten' 'Ctrl+O: Browser | Ctrl+S: Open ↔ Alle' 'Ctrl+Y: Nr. kopieren'" \
                 --bind 'ctrl-e:execute(gh issue edit {1})' \
-                --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Open> ' ]] && echo 'reload($FZF_HELPER_DIR/gh list-issue all)+change-prompt(Alle> )' || echo 'reload($FZF_HELPER_DIR/gh list-issue open)+change-prompt(Open> )'" | \
+                --bind 'ctrl-o:execute-silent(gh issue view {1} --web)' \
+                --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Open> ' ]] && echo 'reload($FZF_HELPER_DIR/gh list-issue all)+change-prompt(Alle> )' || echo 'reload($FZF_HELPER_DIR/gh list-issue open)+change-prompt(Open> )'" \
+                --bind "ctrl-y:execute-silent($FZF_HELPER_DIR/action copy {1})" | \
             cut -f1)
 
-        [[ -n "$issue" ]] && gh issue view "$issue" --web
+        [[ -n "$issue" ]] && gh issue view "$issue" | bat --color=always -l md
     }
 
-    # Actions Runs(suche?) – Enter=Logs, Ctrl+R=Rerun, Ctrl+O=Browser
+    # Actions Runs(suche?) – Enter=Logs, Ctrl+R=Rerun, Ctrl+O=Browser, Ctrl+Y=ID kopieren
     gh-run() {
         local query="${1:-}"
         local run_id
@@ -102,23 +105,25 @@ if command -v fzf >/dev/null 2>&1; then
             fzf --ansi --query="$query" \
                 --delimiter='\t' \
                 --preview 'gh run view {1}' \
-                --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Logs | Ctrl+R: Rerun' 'Ctrl+O: Browser'" \
+                --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Logs | Ctrl+R: Rerun' 'Ctrl+O: Browser' 'Ctrl+Y: ID kopieren'" \
                 --bind 'ctrl-o:execute-silent(gh run view {1} --web)' \
-                --bind 'ctrl-r:execute(gh run rerun {1})' | \
+                --bind 'ctrl-r:execute(gh run rerun {1})' \
+                --bind "ctrl-y:execute-silent($FZF_HELPER_DIR/action copy {1})" | \
             cut -f1)
 
         [[ -n "$run_id" ]] && gh run view "$run_id" --log | bat --color=always
     }
 
-    # Repo Browser(suche?) – Enter=Klonen, Ctrl+O=Browser
+    # Repo Browser(suche?) – Enter=Klonen, Ctrl+O=Browser, Ctrl+Y=Repo kopieren
     gh-repo() {
         local query="${1:-}"
         local repo
         repo=$(gh repo list --limit 30 | \
             fzf --ansi --query="$query" \
                 --preview 'gh repo view {1}' \
-                --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Klonen' 'Ctrl+O: Browser'" \
-                --bind 'ctrl-o:execute-silent(gh repo view {1} --web)' | \
+                --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Klonen' 'Ctrl+O: Browser' 'Ctrl+Y: Repo kopieren'" \
+                --bind 'ctrl-o:execute-silent(gh repo view {1} --web)' \
+                --bind "ctrl-y:execute-silent($FZF_HELPER_DIR/action copy {1})" | \
             awk '{print $1}')
 
         [[ -n "$repo" ]] && gh repo clone "$repo"
