@@ -46,6 +46,6 @@
 
 `jump {{pfad}}`
 
-- dotfiles: Datei öffnen (`<Enter>` Öffnen, `<Ctrl y>` Pfad kopieren):
+- dotfiles: Dateien öffnen (`<Enter>` Öffnen, `<Tab>` Mehrfach, `<Ctrl y>` Pfad kopieren):
 
 `pick {{pfad}}`
