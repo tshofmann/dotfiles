@@ -67,16 +67,17 @@ if command -v fzf >/dev/null 2>&1; then
         [[ -n "$dir" ]] && cd "$dir"
     }
 
-    # Datei öffnen(pfad=.) – Enter=Öffnen, Ctrl+Y=Pfad kopieren
+    # Dateien öffnen(pfad=.) – Enter=Öffnen, Tab=Mehrfach, Ctrl+Y=Pfad kopieren
     pick() {
-        local file
+        local files
 
-        file=$(fd --type f --hidden --follow --exclude .git . "${1:-.}" | \
-            fzf --preview "$FZF_HELPER_DIR/preview file {}" \
-                --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Öffnen' 'Ctrl+Y: Pfad kopieren'" \
-                --bind "ctrl-y:execute-silent($FZF_HELPER_DIR/action copy {})+abort")
+        files=$(fd --type f --hidden --follow --exclude .git . "${1:-.}" | \
+            fzf --multi \
+                --preview "$FZF_HELPER_DIR/preview file {}" \
+                --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Öffnen | Tab: Mehrfach' 'Ctrl+Y: Pfad kopieren'" \
+                --bind "ctrl-y:execute-silent($FZF_HELPER_DIR/action copy {})")
 
         # xopen aus platform.zsh (wird vor Aliase geladen)
-        [[ -n "$file" ]] && xopen "$file"
+        [[ -n "$files" ]] && while IFS= read -r f; do xopen "$f"; done <<< "$files"
     }
 fi

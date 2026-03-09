@@ -76,7 +76,7 @@ if command -v fzf >/dev/null 2>&1; then
         fi
     }
 
-    # Branch wechseln(suche?) mit Log-Vorschau – Enter=Checkout, Ctrl+D=Löschen
+    # Branch wechseln(suche?) mit Log-Vorschau – Enter=Checkout, Ctrl+D=Löschen, Ctrl+Y=Branch kopieren
     git-branch() {
         local query="${1:-}"
         local branch
@@ -84,14 +84,15 @@ if command -v fzf >/dev/null 2>&1; then
             grep -v HEAD | \
             fzf --ansi --query="$query" \
                 --preview 'git log --oneline --color=always {1} | head -20' \
-                --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Checkout' 'Ctrl+D: Löschen'" \
-                --bind 'ctrl-d:execute(read -q "REPLY?Branch {1} löschen? [y/N] " && git branch -d {1}; echo)+reload(git branch --all --color=always | grep -v HEAD)' | \
+                --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Checkout' 'Ctrl+D: Löschen' 'Ctrl+Y: Branch kopieren'" \
+                --bind 'ctrl-d:execute(read -q "REPLY?Branch {1} löschen? [y/N] " && git branch -d {1}; echo)+reload(git branch --all --color=always | grep -v HEAD)' \
+                --bind "ctrl-y:execute-silent($FZF_HELPER_DIR/action copy-branch {})" | \
             sed 's/^[* ]*//' | sed 's|remotes/[^/]*/||')
 
         [[ -n "$branch" ]] && git checkout "$branch"
     }
 
-    # Status(suche?) mit Diff-Vorschau (bat) – Enter=Add, Tab=Mehrfach, Ctrl+R=Reset
+    # Status(suche?) mit Diff-Vorschau (bat) – Enter=Add, Tab=Mehrfach, Ctrl+R=Reset, Ctrl+Y=Pfad kopieren
     git-stage() {
         local query="${1:-}"
         local files
@@ -101,8 +102,9 @@ if command -v fzf >/dev/null 2>&1; then
         files=$(git -c color.status=always -c core.quotepath=off status --short | sed 's/ "\(.*\)"$/ \1/' | \
             fzf --ansi --multi --query="$query" \
                 --preview "$FZF_HELPER_DIR/action git-diff {2..}" \
-                --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Add | Tab: Mehrfach' 'Ctrl+R: Reset'" \
-                --bind "ctrl-r:execute($FZF_HELPER_DIR/action git-restore {+2..})+reload(git -c color.status=always -c core.quotepath=off status --short | sed 's/ \"\\(.*\\)\"\$/ \\1/')" | \
+                --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Add | Tab: Mehrfach' 'Ctrl+R: Reset' 'Ctrl+Y: Pfad kopieren'" \
+                --bind "ctrl-r:execute($FZF_HELPER_DIR/action git-restore {+2..})+reload(git -c color.status=always -c core.quotepath=off status --short | sed 's/ \"\\(.*\\)\"\$/ \\1/')" \
+                --bind "ctrl-y:execute-silent($FZF_HELPER_DIR/action copy {2..})" | \
             awk '{$1=""; print substr($0,2)}')
 
         if [[ -n "$files" ]]; then
@@ -114,7 +116,7 @@ if command -v fzf >/dev/null 2>&1; then
         fi
     }
 
-    # Stash-Browser(suche?) – Enter=Apply, Ctrl+P=Pop, Ctrl+D=Drop
+    # Stash-Browser(suche?) – Enter=Apply, Ctrl+P=Pop, Ctrl+D=Drop, Ctrl+Y=Ref kopieren
     git-stash() {
         local query="${1:-}"
         local stash
@@ -122,9 +124,10 @@ if command -v fzf >/dev/null 2>&1; then
             fzf --ansi --query="$query" \
                 --delimiter ':' \
                 --preview 'git stash show -p {1} | { bat --style=numbers --color=always -l diff 2>/dev/null || cat; }' \
-                --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Apply' 'Ctrl+P: Pop | Ctrl+D: Drop'" \
+                --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Apply' 'Ctrl+P: Pop | Ctrl+D: Drop' 'Ctrl+Y: Ref kopieren'" \
                 --bind 'ctrl-d:execute(git stash drop {1})+reload(git stash list)' \
-                --bind 'ctrl-p:execute(git stash pop {1})+abort' | \
+                --bind 'ctrl-p:execute(git stash pop {1})+abort' \
+                --bind "ctrl-y:execute-silent($FZF_HELPER_DIR/action copy {1})" | \
             cut -d: -f1)
 
         [[ -n "$stash" ]] && git stash apply "$stash"
