@@ -62,7 +62,7 @@ Falls du die dotfiles-Installation rückgängig machen möchtest:
 | Aktion | Beschreibung |
 | ------ | ------------ |
 | Symlinks entfernen | Alle dotfiles-Symlinks aus `~` werden gelöscht |
-| Backup wiederstellen | Originale Konfigurationsdateien werden aus `.backup/` zurückkopiert |
+| Backup wiederherstellen | Originale Konfigurationsdateien werden aus `.backup/` zurückkopiert |
 | Terminal-Profil | Wird auf "Basic" zurückgesetzt (macOS) |
 
 ### Optionen

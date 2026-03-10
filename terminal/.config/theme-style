@@ -136,7 +136,7 @@ typeset -gx RGB_SURFACE1="69;71;90"
 #   Error/Invalid       │ Red      │ #F38BA8 │ Fehler, Git Deleted
 #   Warning/Modified    │ Yellow   │ #F9E2AF │ Git Modified, Warnungen
 #   Info/Link           │ Blue     │ #89B4FA │ Symlinks, URLs, Referenzen
-#   Special/Executable  │ Teal     │ #94E2D5 │ Ausführbare Dateien
+#   Special/Executable  │ Green    │ #A6E3A1 │ Ausführbare Dateien
 #   Directory           │ Mauve    │ #CBA6F7 │ Verzeichnisse
 #   String              │ Yellow   │ #F9E2AF │ Strings in Code/Shell
 #   Variable/Parameter  │ Mauve    │ #CBA6F7 │ Variablen in Beispielen
