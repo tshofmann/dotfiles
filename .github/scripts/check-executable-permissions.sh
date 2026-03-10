@@ -47,7 +47,7 @@ check_executable_permissions() {
     done
 
     # Alle Skripte in .github/scripts/ müssen ausführbar sein (dynamisch)
-    for file in "$DOTFILES_DIR"/.github/scripts/*.sh(N); do
+    for file in "$DOTFILES_DIR"/.github/scripts/*.sh(N) "$DOTFILES_DIR"/.github/scripts/tests/**/*.sh(N); do
         if [[ -f "$file" && ! -x "$file" ]]; then
             err "${file:t}: Fehlende Execute-Berechtigung"
             (( errors++ )) || true
