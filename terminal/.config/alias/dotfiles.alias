@@ -63,7 +63,7 @@ dotstow() {
         return 1
     fi
 
-    cd "$dotdir" && stow -R "${pkgs[@]}"
+    (cd "$dotdir" && stow -R "${pkgs[@]}")
 }
 
 # Guard: fzf+fd für interaktive Funktionen
