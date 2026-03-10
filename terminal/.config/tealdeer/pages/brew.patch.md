@@ -1,4 +1,6 @@
-- dotfiles: Nutzt `fzf (Interactive), theme-style, jq (JSON-Parsing für Outdated/Drift)`
+- dotfiles: Config `~/.config/homebrew/check.conf`
+
+- dotfiles: Nutzt `fzf (Interactive), theme-style, jq, platform.zsh (notify)`
 
 - dotfiles: Homebrew Komplett-Update (update, upgrade, autoremove, cleanup, mas):
 

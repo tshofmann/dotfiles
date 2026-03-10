@@ -10,6 +10,7 @@
 #   clippaste - Clipboard lesen (Zwischenablage → stdout)
 #   xopen     - Datei/URL mit Standard-App öffnen
 #   sedi      - In-place sed (BSD/GNU kompatibel)
+#   notify    - Desktop-Benachrichtigung senden
 # ============================================================
 # Plattformen:
 #   macOS     - Apple Silicon (arm64) + Intel (x86_64)
@@ -228,6 +229,42 @@ case "$_PLATFORM_OS" in
 esac
 
 # ------------------------------------------------------------
+# notify: Desktop-Benachrichtigung senden
+# ------------------------------------------------------------
+# Verwendung: notify "Titel" "Nachricht"
+#
+# macOS: osascript (Notification Center, immer verfügbar)
+# Linux: notify-send (Desktop mit libnotify)
+# Headless: Stiller No-Op (kein Display vorhanden)
+
+case "$_PLATFORM_OS" in
+    macos)
+        notify() {
+            local title="${1:-Benachrichtigung}"
+            local message="${2:-}"
+            # Sicherheitskritisch: Quotes für AppleScript escapen
+            title="${title//\"/\\\"}"
+            message="${message//\"/\\\"}"
+            osascript -e "display notification \"$message\" with title \"$title\" sound name \"default\"" 2>/dev/null
+        }
+        ;;
+    linux)
+        if command -v notify-send >/dev/null 2>&1; then
+            notify() { notify-send -i package-x-generic "$1" "${2:-}"; }
+        elif (( _PLATFORM_HAS_DISPLAY )); then
+            # Desktop ohne notify-send – Aufrufer nutzt Fallback
+            notify() { return 1; }
+        else
+            # Headless: Stiller No-Op
+            notify() { :; }
+        fi
+        ;;
+    *)
+        notify() { :; }
+        ;;
+esac
+
+# ------------------------------------------------------------
 # Debug-Hilfsfunktion (nur wenn DEBUG gesetzt)
 # ------------------------------------------------------------
 if [[ -n "${DEBUG:-}" ]]; then
@@ -239,5 +276,6 @@ if [[ -n "${DEBUG:-}" ]]; then
         echo "clippaste: $(whence -w clippaste 2>/dev/null || echo 'undefined')"
         echo "xopen:   $(whence -w xopen 2>/dev/null || echo 'undefined')"
         echo "sedi:    $(whence -w sedi 2>/dev/null || echo 'undefined')"
+        echo "notify:  $(whence -w notify 2>/dev/null || echo 'undefined')"
     }
 fi

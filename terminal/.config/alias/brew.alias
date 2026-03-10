@@ -4,12 +4,17 @@
 # Zweck       : Aliase für Homebrew Paketverwaltung
 # Pfad        : ~/.config/alias/brew.alias
 # Docs        : https://docs.brew.sh/Manpage
-# Nutzt       : fzf (Interactive), theme-style, jq (JSON-Parsing für Outdated/Drift)
+# Nutzt       : fzf (Interactive), theme-style, jq, platform.zsh (notify)
+# Config      : ~/.config/homebrew/check.conf
 # Ersetzt     : -
 # Aliase      : brew-up, brew-list, brew-add, brew-rm, maso, masu, mass, masi, masl
 # ============================================================
 # Hinweis     : Kein Guard – auf Systemen ohne Homebrew werden
 #               diese Funktionen einfach nicht genutzt.
+#               Outdated-Check: Zählung synchron (~1s, lokaler
+#               Index), Index-Update im Background. Ergebnis
+#               wird als System-Notification oder Terminal-Meldung
+#               (einmal pro Session) angezeigt.
 # ============================================================
 
 # ------------------------------------------------------------
@@ -20,6 +25,13 @@ brew-up() {
     brew update && brew upgrade
     command -v mas >/dev/null 2>&1 && mas upgrade
     brew autoremove && brew cleanup
+    # Timer zurücksetzen – nächster Check erst wieder in 24h
+    [[ -d "${_BREW_CHECK_STATE:-}" ]] && {
+        touch "$_BREW_CHECK_STATE/last-check"
+        rm -f "$_BREW_CHECK_STATE/last-check.result"
+    }
+    # Session-Flag zurücksetzen (Meldung erlauben falls erneut veraltet)
+    _BREW_NOTIFIED=0
 }
 
 # ------------------------------------------------------------
@@ -45,6 +57,99 @@ if command -v mas >/dev/null 2>&1; then
 
     # Alle installierten Mac App Store Apps auflisten
     alias masl='mas list'
+fi
+
+# ------------------------------------------------------------
+# Automatische Outdated-Prüfung (Background, read-only)
+# ------------------------------------------------------------
+# Prüft im Hintergrund ob Homebrew-Pakete veraltet sind.
+# Zeigt einmalig eine Benachrichtigung – kein Auto-Upgrade.
+# State: ${XDG_STATE_HOME}/homebrew/ (maschinenlokal, nicht in Git)
+# ------------------------------------------------------------
+# Guard: precmd-Hooks nur registrieren wenn brew installiert ist
+if command -v brew >/dev/null 2>&1; then
+    # Konfiguration laden
+    _brew_conf="${XDG_CONFIG_HOME:-$HOME/.config}/homebrew/check.conf"
+    [[ -f "$_brew_conf" ]] && source "$_brew_conf"
+    unset _brew_conf
+    typeset -g _BREW_CHECK_INTERVAL="${_BREW_CHECK_INTERVAL:-86400}"
+    typeset -g _BREW_CHECK_NOTIFY="${_BREW_CHECK_NOTIFY:-auto}"
+    typeset -g _BREW_CHECK_TITLE="${_BREW_CHECK_TITLE:-🍺 Homebrew}"
+    typeset -g _BREW_CHECK_MESSAGE=${_BREW_CHECK_MESSAGE:-'{count} Updates verfügbar – Zeit für brew-up'}
+    typeset -g _BREW_CHECK_STATE="${XDG_STATE_HOME:-$HOME/.local/state}/homebrew"
+    typeset -gi _BREW_NOTIFIED=0
+
+    _brew_outdated_check() {
+        local stamp="$_BREW_CHECK_STATE/last-check"
+
+        # Verzeichnis sicherstellen (einmalig)
+        [[ -d "$_BREW_CHECK_STATE" ]] || mkdir -p "$_BREW_CHECK_STATE" || return
+
+        # Timestamp frisch genug? → ZSH Glob Qualifier: ms+N = älter als N Sekunden
+        if [[ -f "$stamp" ]] && [[ -z "$stamp"(#qN.ms+${_BREW_CHECK_INTERVAL}) ]]; then
+            return
+        fi
+
+        # Sofort aktualisieren (Race-Condition-Schutz bei mehreren Shells)
+        touch "$stamp"
+
+        # Background: Index aktualisieren (Netzwerk, blockiert nicht)
+        {
+            export HOMEBREW_LOCK_CONTEXT="brew-outdated-check (background)"
+            brew update-if-needed 2>/dev/null
+        } &!
+
+        # Synchron: Lokalen Index lesen (~1s, kein Netzwerk)
+        local brew_count=0 mas_count=0
+        local brew_out
+        brew_out=$(HOMEBREW_NO_AUTO_UPDATE=1 brew outdated --quiet 2>/dev/null)
+        [[ -n "$brew_out" ]] && brew_count=$(echo "$brew_out" | wc -l | tr -d ' ')
+
+        if command -v mas >/dev/null 2>&1; then
+            local mas_out
+            mas_out=$(mas outdated 2>/dev/null)
+            [[ -n "$mas_out" ]] && mas_count=$(echo "$mas_out" | wc -l | tr -d ' ')
+        fi
+
+        local total=$((brew_count + mas_count))
+        if (( total > 0 )); then
+            echo "$total" > "$stamp.result.tmp" \
+                && mv "$stamp.result.tmp" "$stamp.result" \
+                || rm -f "$stamp.result.tmp"
+        else
+            rm -f "$stamp.result" "$stamp.result.tmp"
+        fi
+    }
+
+    _brew_outdated_notify() {
+        # Deaktiviert per Config
+        [[ "$_BREW_CHECK_NOTIFY" == off ]] && return
+        # Einmal pro Session anzeigen (Datei bleibt für neue Sessions)
+        (( _BREW_NOTIFIED )) && return
+        local result="$_BREW_CHECK_STATE/last-check.result"
+        [[ -f "$result" ]] || return
+        local count
+        count=$(<"$result")
+        if (( count > 0 )); then
+            local msg="${_BREW_CHECK_MESSAGE//\{count\}/$count}"
+            case "$_BREW_CHECK_NOTIFY" in
+                desktop)
+                    notify "$_BREW_CHECK_TITLE" "$msg" 2>/dev/null ;;
+                terminal)
+                    echo "${C_YELLOW}${_BREW_CHECK_TITLE}: ${msg}${C_RESET}" ;;
+                *)  # auto: Desktop mit Terminal-Fallback
+                    (( _PLATFORM_HAS_DISPLAY )) && notify "$_BREW_CHECK_TITLE" "$msg" 2>/dev/null \
+                        || echo "${C_YELLOW}${_BREW_CHECK_TITLE}: ${msg}${C_RESET}" ;;
+            esac
+            typeset -g _BREW_NOTIFIED=1
+        fi
+    }
+
+    autoload -Uz add-zsh-hook
+    add-zsh-hook precmd _brew_outdated_notify
+
+    # Check sofort starten (Zählung synchron ~1s, Index-Update im Background)
+    [[ "$_BREW_CHECK_NOTIFY" != off ]] && _brew_outdated_check
 fi
 
 # ------------------------------------------------------------
