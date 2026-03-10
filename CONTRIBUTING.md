@@ -214,8 +214,11 @@ bewussten Unterschied:
 | 4 | Alias-Datei-Format | ✓ | ✓ | |
 | 5 | Header-Einrückungen | ✓ | ✓ | |
 | 6 | Plattform-Sync | ✓ | ✓ | |
-| 7 | Markdown-Lint | ✓ | ✓ | |
-| 8 | Health-Check | ✓ | – | Prüft reale Installation (Symlinks, Homebrew, Fonts, Plattform-Abstraktionen) – nur lokal sinnvoll |
+| 7 | Brewfile-Mapping | ✓ | ✓ | Brewfile ↔ BREW_TO_ALT Sync |
+| 8 | Markdown-Lint | ✓ | ✓ | |
+| 9 | Health-Check | ✓ | – | Prüft reale Installation (Symlinks, Homebrew, Fonts, Plattform-Abstraktionen) – nur lokal sinnvoll |
+| 10 | fzf header-wrap Tests | ✓ | ✓ | Dynamischer Header-Umbruch-Algorithmus |
+| 11 | Keybinding-Sync | ✓ | ✓ | Beschreibungskommentar ↔ header-wrap |
 
 ### Hook schlägt fehl?
 
@@ -753,10 +756,11 @@ Nach PR-Erstellung das passende Label hinzufügen:
 ### Neues Tool hinzufügen
 
 1. **Brewfile** erweitern: `setup/Brewfile`
-2. **Alias-Datei** erstellen: `terminal/.config/alias/tool.alias`
-3. **Falls Tool Shell-Init braucht:** `terminal/.zshrc` erweitern (siehe unten)
-4. `./.github/scripts/generate-docs.sh --generate` ausführen (generiert tldr-Patch automatisch)
-5. Änderungen prüfen und committen
+2. **BREW_TO_ALT** erweitern: `setup/modules/apt-packages.sh` (Linux-Mapping)
+3. **Alias-Datei** erstellen: `terminal/.config/alias/tool.alias`
+4. **Falls Tool Shell-Init braucht:** `terminal/.zshrc` erweitern (siehe unten)
+5. `./.github/scripts/generate-docs.sh --generate` ausführen (generiert tldr-Patch automatisch)
+6. Änderungen prüfen und committen
 
 #### Tool-Initialisierung in .zshrc
 

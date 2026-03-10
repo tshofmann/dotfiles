@@ -125,7 +125,14 @@ check_platform_sync() {
 }
 
 # ------------------------------------------------------------
-# 7. Markdown-Lint prüfen
+# 7. Brewfile-Mapping prüfen (delegiert an gemeinsames Skript)
+# ------------------------------------------------------------
+check_brewfile_mapping() {
+    "$DOTFILES_DIR/.github/scripts/check-brewfile-mapping.sh"
+}
+
+# ------------------------------------------------------------
+# 8. Markdown-Lint prüfen
 # ------------------------------------------------------------
 check_markdown() {
     log "Prüfe Markdown-Dateien..."
@@ -157,7 +164,7 @@ check_markdown() {
 }
 
 # ------------------------------------------------------------
-# 8. Health-Check ausführen (NUR lokal, nicht in CI)
+# 9. Health-Check ausführen (NUR lokal, nicht in CI)
 # Prüft reale Installation: Symlinks, Homebrew-Pakete, Fonts,
 # Plattform-Abstraktionen, Theme-Dateien – setzt vollständiges
 # Setup voraus, das in CI nicht vorhanden ist.
@@ -192,7 +199,7 @@ check_health() {
 }
 
 # ------------------------------------------------------------
-# 9. fzf header-wrap Selbsttests
+# 10. fzf header-wrap Selbsttests
 # Prüft den dynamischen Header-Umbruch-Algorithmus mit
 # verschiedenen Breiten, Gruppen und Edge-Cases.
 # Läuft auch in CI (siehe .github/workflows/validate.yml)
@@ -226,7 +233,7 @@ check_header_wrap() {
 }
 
 # ------------------------------------------------------------
-# 10. Keybinding-Sync: Beschreibungskommentar ↔ header-wrap
+# 11. Keybinding-Sync: Beschreibungskommentar ↔ header-wrap
 # Prüft ob die Keybinding-Texte in beiden Quellen identisch
 # sind (Single Source of Truth = Beschreibungskommentar).
 # Läuft auch in CI (siehe .github/workflows/validate.yml)
@@ -252,6 +259,7 @@ check_docs || { (( failed++ )) || true; }
 check_alias_format || { (( failed++ )) || true; }
 check_header_alignment || { (( failed++ )) || true; }
 check_platform_sync || { (( failed++ )) || true; }
+check_brewfile_mapping || { (( failed++ )) || true; }
 check_markdown || { (( failed++ )) || true; }
 check_health || { (( failed++ )) || true; }
 check_header_wrap || { (( failed++ )) || true; }
