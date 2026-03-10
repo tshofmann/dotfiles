@@ -19,7 +19,7 @@ source "$SCRIPT_DIR/../generators/common/parsers.sh"
 # ============================================================
 echo "=== parse_description_comment ==="
 
-# Format: name|param|keybindings|description
+# Format: name|param|suffix (Keybindings oder Text nach Separator)|description
 
 # Standard: Name(param?) – Key=Aktion
 result=$(parse_description_comment "# Navigate(query?) – Enter=Öffnen, Ctrl+Y=Kopieren")
