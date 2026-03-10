@@ -218,7 +218,8 @@ bewussten Unterschied:
 | 8 | Markdown-Lint | ✓ | ✓ | |
 | 9 | Health-Check | ✓ | – | Prüft reale Installation (Symlinks, Homebrew, Fonts, Plattform-Abstraktionen) – nur lokal sinnvoll |
 | 10 | fzf header-wrap Tests | ✓ | ✓ | Dynamischer Header-Umbruch-Algorithmus |
-| 11 | Keybinding-Sync | ✓ | ✓ | Beschreibungskommentar ↔ header-wrap |
+| 11 | Generator Unit Tests | ✓ | ✓ | Parser-Funktionen der Doku-Generatoren |
+| 12 | Keybinding-Sync | ✓ | ✓ | Beschreibungskommentar ↔ header-wrap |
 
 ### Hook schlägt fehl?
 

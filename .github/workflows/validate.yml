@@ -3,7 +3,7 @@
 # ============================================================
 # Zweck   : Validiert Shell-Syntax, Dokumentation und Alias-Format
 # Trigger : Push auf main, PRs nach main, manuell
-# Checks  : 10 von 11 Pre-Commit-Checks (siehe .github/hooks/pre-commit)
+# Checks  : 11 von 12 Pre-Commit-Checks (siehe .github/hooks/pre-commit)
 # Diff    : Health-Check (#9) fehlt – prüft reale Installation
 #           (Symlinks, Homebrew, Fonts), die in CI nicht existiert.
 # ============================================================
@@ -57,6 +57,10 @@ jobs:
             exit 1
           fi
           echo "✔ Shell-Syntax OK"
+
+      - name: Generator Unit Tests
+        shell: zsh {0}
+        run: ./.github/scripts/tests/run-all.sh
 
       - name: header-wrap Selbsttests
         shell: zsh {0}
