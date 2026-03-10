@@ -75,7 +75,9 @@ check_brewfile_mapping() {
                 break
             fi
             # Key extrahieren: [key]=value
-            if [[ "$line" =~ '\[([a-z0-9_-]+)\]=' ]]; then
+            # Erlaubte Zeichen: a-z 0-9 _ - @ . / (deckt versionierte
+            # Formulae wie python@3.12 und Taps wie homebrew/core/llvm ab)
+            if [[ "$line" =~ '\[([a-z0-9_@./-]+)\]=' ]]; then
                 mapping_keys+=("${match[1]}")
             fi
         fi
