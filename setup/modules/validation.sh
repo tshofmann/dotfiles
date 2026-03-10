@@ -114,7 +114,7 @@ validate_network() {
     local test_urls=("https://github.com" "https://cloudflare.com" "https://google.com")
     local connected=false
     for url in "${test_urls[@]}"; do
-        if curl -sfL --head --connect-timeout 3 --max-time 5 "$url" >/dev/null 2>&1; then
+        if curl -sfL --head --connect-timeout 3 --max-time 3 "$url" >/dev/null 2>&1; then
             connected=true
             break
         fi
