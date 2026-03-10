@@ -22,7 +22,8 @@ get_macos_codename() {
         13) echo "Ventura" ;;
         14) echo "Sonoma" ;;
         15) echo "Sequoia" ;;
-        26) echo "Tahoe" ;;  # macOS 26 (2025)
+        # Apple sprang von Version 15 → 26 (2025, Alignment mit Jahreszahl)
+        26) echo "Tahoe" ;;
         *)  echo "macOS $version" ;;
     esac
 }

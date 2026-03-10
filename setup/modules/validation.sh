@@ -110,9 +110,16 @@ validate_platform() {
 validate_network() {
     CURRENT_STEP="Netzwerk-Prüfung"
 
-    # Plattformunabhängiger Test gegen google.com (zuverlässiger als apple.com auf Linux)
-    local test_url="https://google.com"
-    if ! curl -sfL --head --connect-timeout 5 --max-time 10 "$test_url" >/dev/null 2>&1; then
+    # Fallback-Kette: github.com (Homebrew/Git), cloudflare.com (CDN), google.com
+    local test_urls=("https://github.com" "https://cloudflare.com" "https://google.com")
+    local connected=false
+    for url in "${test_urls[@]}"; do
+        if curl -sfL --head --connect-timeout 3 --max-time 5 "$url" >/dev/null 2>&1; then
+            connected=true
+            break
+        fi
+    done
+    if [[ "$connected" != true ]]; then
         err "Keine Internetverbindung verfügbar"
         err "Das Bootstrap-Skript benötigt eine aktive Internetverbindung für:"
         err "  • Homebrew/Linuxbrew-Installation"
