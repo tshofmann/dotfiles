@@ -250,7 +250,11 @@ case "$_PLATFORM_OS" in
         ;;
     linux)
         if command -v notify-send >/dev/null 2>&1; then
-            notify() { notify-send -i package-x-generic "$1" "${2:-}"; }
+            notify() {
+                local title="${1:-Benachrichtigung}"
+                local body="${2:-}"
+                notify-send -i package-x-generic -- "$title" "$body"
+            }
         elif (( _PLATFORM_HAS_DISPLAY )); then
             # Desktop ohne notify-send – Aufrufer nutzt Fallback
             notify() { return 1; }
