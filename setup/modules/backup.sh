@@ -34,7 +34,7 @@ readonly BACKUP_HOME="${BACKUP_DIR}/home"
 # ------------------------------------------------------------
 _backup_log() {
     local msg="[$(date '+%Y-%m-%d %H:%M:%S')] $*"
-    echo "$msg" >> "$BACKUP_LOG"
+    echo "$msg" >> "$BACKUP_LOG" 2>/dev/null || true
 }
 
 # ------------------------------------------------------------
@@ -305,7 +305,8 @@ _create_manifest() {
     done < <(_get_stow_targets)
 
     # Manifest aus Header-Metadaten und Datei-Einträgen zusammenbauen
-    echo "$entries" | jq -s \
+    # Atomischer Write: tmp-Datei schreiben, dann umbenennen
+    if echo "$entries" | jq -s \
         --argjson version 1 \
         --arg created "$timestamp" \
         --arg hostname "$hostname" \
@@ -318,7 +319,14 @@ _create_manifest() {
             username: $username,
             dotfiles_commit: $commit,
             files: .
-        }' > "$BACKUP_MANIFEST"
+        }' > "${BACKUP_MANIFEST}.tmp" \
+        && mv "${BACKUP_MANIFEST}.tmp" "$BACKUP_MANIFEST"; then
+        _backup_log "Manifest erstellt: $BACKUP_MANIFEST"
+    else
+        rm -f "${BACKUP_MANIFEST}.tmp"
+        err "Manifest konnte nicht erstellt werden"
+        return 1
+    fi
 }
 
 # ------------------------------------------------------------

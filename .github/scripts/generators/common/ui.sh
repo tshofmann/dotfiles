@@ -72,8 +72,13 @@ write_if_changed() {
         return 0
     fi
 
-    # printf statt echo um trailing newline zu vermeiden
-    printf '%s\n' "$content" > "$file"
-    ok "Generiert: $(basename "$file")"
-    return 0
+    # Atomischer Write: tmp-Datei schreiben, dann umbenennen
+    if printf '%s\n' "$content" > "${file}.tmp" \
+        && mv "${file}.tmp" "$file"; then
+        ok "Generiert: $(basename "$file")"
+    else
+        rm -f "${file}.tmp"
+        err "Fehler beim Schreiben: $(basename "$file")"
+        return 1
+    fi
 }
