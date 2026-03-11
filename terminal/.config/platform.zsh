@@ -10,6 +10,7 @@
 #   clippaste - Clipboard lesen (Zwischenablage → stdout)
 #   xopen     - Datei/URL mit Standard-App öffnen
 #   sedi      - In-place sed (BSD/GNU kompatibel)
+#   notify    - Desktop-Benachrichtigung senden
 # ============================================================
 # Plattformen:
 #   macOS     - Apple Silicon (arm64) + Intel (x86_64)
@@ -228,6 +229,49 @@ case "$_PLATFORM_OS" in
 esac
 
 # ------------------------------------------------------------
+# notify: Desktop-Benachrichtigung senden
+# ------------------------------------------------------------
+# Verwendung: notify "Titel" "Nachricht"
+#
+# macOS: osascript (Notification Center, immer verfügbar)
+# Linux: notify-send (Desktop mit libnotify; ohne Display kann non-zero
+#         zurückgeben – Aufrufer sollte Fallback nutzen)
+# Headless ohne notify-send: Stiller No-Op
+
+case "$_PLATFORM_OS" in
+    macos)
+        notify() {
+            local title="${1:-Benachrichtigung}"
+            local message="${2:-}"
+            # on run argv: User-Input wird nie Teil des AppleScript-Codes
+            osascript \
+                -e 'on run argv' \
+                -e 'display notification (item 2 of argv) with title (item 1 of argv) sound name "default"' \
+                -e 'end run' \
+                -- "$title" "$message" 2>/dev/null
+        }
+        ;;
+    linux)
+        if command -v notify-send >/dev/null 2>&1; then
+            notify() {
+                local title="${1:-Benachrichtigung}"
+                local body="${2:-}"
+                notify-send -i package-x-generic -- "$title" "$body"
+            }
+        elif (( _PLATFORM_HAS_DISPLAY )); then
+            # Desktop ohne notify-send – Aufrufer nutzt Fallback
+            notify() { return 1; }
+        else
+            # Headless: Stiller No-Op
+            notify() { :; }
+        fi
+        ;;
+    *)
+        notify() { :; }
+        ;;
+esac
+
+# ------------------------------------------------------------
 # Debug-Hilfsfunktion (nur wenn DEBUG gesetzt)
 # ------------------------------------------------------------
 if [[ -n "${DEBUG:-}" ]]; then
@@ -239,5 +283,6 @@ if [[ -n "${DEBUG:-}" ]]; then
         echo "clippaste: $(whence -w clippaste 2>/dev/null || echo 'undefined')"
         echo "xopen:   $(whence -w xopen 2>/dev/null || echo 'undefined')"
         echo "sedi:    $(whence -w sedi 2>/dev/null || echo 'undefined')"
+        echo "notify:  $(whence -w notify 2>/dev/null || echo 'undefined')"
     }
 fi
