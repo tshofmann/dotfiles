@@ -64,7 +64,7 @@ fi
 # ------------------------------------------------------------
 # Prüft im Hintergrund ob Homebrew-Pakete veraltet sind.
 # Zeigt einmalig eine Benachrichtigung – kein Auto-Upgrade.
-# State: ${XDG_STATE_HOME}/homebrew/ (maschinenlokal, nicht in Git)
+# State: ${XDG_STATE_HOME:-~/.local/state}/homebrew (maschinenlokal, nicht in Git)
 # ------------------------------------------------------------
 # Guard: precmd-Hooks nur registrieren wenn brew installiert ist
 if command -v brew >/dev/null 2>&1; then

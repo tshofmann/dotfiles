@@ -242,10 +242,12 @@ case "$_PLATFORM_OS" in
         notify() {
             local title="${1:-Benachrichtigung}"
             local message="${2:-}"
-            # Sicherheitskritisch: Quotes für AppleScript escapen
-            title="${title//\"/\\\"}"
-            message="${message//\"/\\\"}"
-            osascript -e "display notification \"$message\" with title \"$title\" sound name \"default\"" 2>/dev/null
+            # on run argv: User-Input wird nie Teil des AppleScript-Codes
+            osascript \
+                -e 'on run argv' \
+                -e 'display notification (item 2 of argv) with title (item 1 of argv) sound name "default"' \
+                -e 'end run' \
+                -- "$title" "$message" 2>/dev/null
         }
         ;;
     linux)
