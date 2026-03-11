@@ -106,8 +106,6 @@ if [[ -z "${_PLATFORM_HAS_DISPLAY+x}" ]]; then
     elif [[ -n "${WAYLAND_DISPLAY:-}" ]]; then
         # Fallback falls XDG_SESSION_TYPE nicht gesetzt (z.B. manueller Compositor-Start)
         _PLATFORM_HAS_DISPLAY=1
-    elif [[ "${XDG_SESSION_TYPE:-}" == "x11" ]] || [[ -n "${DISPLAY:-}" ]]; then
-        _PLATFORM_HAS_DISPLAY=1
     else
         _PLATFORM_HAS_DISPLAY=0
     fi
