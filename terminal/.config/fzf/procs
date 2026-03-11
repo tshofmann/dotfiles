@@ -14,6 +14,13 @@
 #               weil comm nur Basename liefert.
 #               System-Daemons ausgeschlossen
 #   Alle      - all: Alle User-Prozesse
+# Limitierung :
+#   Linux apps-Modus nutzt $4 aus ps args (Executable-Pfad).
+#   Prozesse die ohne vollen Pfad gestartet werden (z.B.
+#   "firefox" statt "/usr/bin/firefox") erscheinen nicht.
+#   Betrifft v.a. Terminal-Starts; Desktop-Launcher und
+#   systemd-Services liefern i.d.R. volle Pfade.
+#   Fallback: Ctrl+S → Alle zeigt alle User-Prozesse.
 # ============================================================
 
 # Gemeinsame Bibliothek laden (Farben, ANSI-Strip)
