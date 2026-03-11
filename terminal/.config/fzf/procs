@@ -2,15 +2,17 @@
 # ============================================================
 # procs - Helper für procs() Funktion
 # ============================================================
-# Zweck       : Prozessliste für fzf
+# Zweck       : Prozessliste für fzf (plattformübergreifend)
 # Pfad        : ~/.config/fzf/procs
 # Aufruf      : ~/.config/fzf/procs list [apps|all]
 # ============================================================
-# Hinweis     : macOS-spezifisch! Das Pattern \.app\/ filtert nach
-#               macOS App-Bundles. Für Linux-Portabilität müsste
-#               dieses Pattern durch Desktop-Anwendungserkennung
-#               ersetzt werden (z.B. via .desktop-Dateien oder
-#               /proc/<pid>/exe Symlink-Analyse).
+# Plattform   :
+#   macOS     - apps: .app Bundles + Homebrew
+#               (/opt/homebrew, /usr/local)
+#   Linux     - apps: Pfad-basierte Heuristik (/usr/bin,
+#               /opt, /snap, /flatpak, linuxbrew),
+#               System-Daemons ausgeschlossen
+#   Alle      - all: Alle User-Prozesse (plattformunabhängig)
 # ============================================================
 
 # Gemeinsame Bibliothek laden (Farben, ANSI-Strip)
@@ -23,19 +25,30 @@ _procs_list() {
     local mode="${1:-apps}"
 
     if [[ "$mode" == "apps" ]]; then
-        # Nur .app Prozesse (macOS-spezifisch – siehe Hinweis oben)
-        # Prozessnamen können Leerzeichen enthalten → alles ab $4 als Pfad behandeln
-        ps -u "$USER" -o pid,pcpu,pmem,comm | \
-            awk '/\.app\// {
-                pid=$1; cpu=$2; mem=$3
-                $1=$2=$3=""
-                sub(/^[[:space:]]+/, "")
-                n=split($0,a,"/")
-                printf "%7s %5s%% %5s%%  %s\n", pid, cpu, mem, a[n]
-            }'
+        if [[ "$OSTYPE" == darwin* ]]; then
+            # macOS: .app Bundles + Homebrew-Pfade (/opt/homebrew, /usr/local)
+            ps -u "$USER" -o pid,pcpu,pmem,comm | \
+                awk 'NR>1 && (/\.app\// || /\/opt\/homebrew\// || /\/usr\/local\//) {
+                    pid=$1; cpu=$2; mem=$3
+                    $1=$2=$3=""
+                    sub(/^[[:space:]]+/, "")
+                    n=split($0,a,"/")
+                    printf "%7s %5s%% %5s%%  %s\n", pid, cpu, mem, a[n]
+                }'
+        else
+            # Linux: Desktop-Anwendungen heuristisch filtern
+            # Typische App-Pfade, ohne bekannte System-Daemons
+            ps -u "$USER" -o pid,pcpu,pmem,comm | \
+                awk 'NR>1 && (/\/usr\/(bin|lib|libexec)\// || /\/(opt|snap|flatpak)\// || /linuxbrew/) && !/daemon|dbus|gvfs|pulse|pipewire|systemd|at-spi|ibus|xdg-/ {
+                    pid=$1; cpu=$2; mem=$3
+                    $1=$2=$3=""
+                    sub(/^[[:space:]]+/, "")
+                    n=split($0,a,"/")
+                    printf "%7s %5s%% %5s%%  %s\n", pid, cpu, mem, a[n]
+                }'
+        fi
     else
-        # Alle User-Prozesse
-        # Prozessnamen können Leerzeichen enthalten → alles ab $4 als Pfad behandeln
+        # Alle User-Prozesse (plattformunabhängig)
         ps -u "$USER" -o pid,pcpu,pmem,comm | \
             awk 'NR>1 {
                 pid=$1; cpu=$2; mem=$3

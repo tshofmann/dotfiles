@@ -43,9 +43,9 @@ procs() {
     local pid
     local -a fzf_opts=(-m --freeze-left=1)
 
-    # macOS: Default apps (.app-Bundles), Toggle mit Ctrl+S
-    # Linux: Default all (kein .app-Konzept), kein Toggle
-    if [[ "$(uname -s)" == "Darwin" ]]; then
+    # macOS: Default apps (.app-Bundles + Homebrew), Toggle mit Ctrl+S
+    # Linux: Default all (Pfad-Heuristik für apps), Toggle mit Ctrl+S
+    if [[ "$_PLATFORM_OS" == "macos" ]]; then
         local mode="apps"
         fzf_opts+=(
             --prompt='Apps> '
@@ -55,8 +55,9 @@ procs() {
     else
         local mode="all"
         fzf_opts+=(
-            --prompt='Procs> '
-            --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Beenden | Tab: Mehrfach'"
+            --prompt='Alle> '
+            --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Beenden | Tab: Mehrfach' 'Ctrl+S: Apps ↔ Alle'"
+            --bind "ctrl-s:transform:[[ \$FZF_PROMPT == 'Alle> ' ]] && echo 'reload($FZF_HELPER_DIR/procs list apps)+change-prompt(Apps> )' || echo 'reload($FZF_HELPER_DIR/procs list all)+change-prompt(Alle> )'"
         )
     fi
 

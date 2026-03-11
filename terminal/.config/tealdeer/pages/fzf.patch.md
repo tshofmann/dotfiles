@@ -36,7 +36,7 @@
 
 - dotfiles: `preview` – Zeigt Vorschau für Dateien und Verzeichnisse
 
-- dotfiles: `procs` – Prozessliste für fzf
+- dotfiles: `procs` – Prozessliste für fzf (plattformübergreifend)
 
 # dotfiles: Funktionen (aus fzf.alias)
 
