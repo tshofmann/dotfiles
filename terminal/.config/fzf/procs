@@ -2,15 +2,25 @@
 # ============================================================
 # procs - Helper für procs() Funktion
 # ============================================================
-# Zweck       : Prozessliste für fzf
+# Zweck       : Prozessliste für fzf (plattformübergreifend)
 # Pfad        : ~/.config/fzf/procs
 # Aufruf      : ~/.config/fzf/procs list [apps|all]
 # ============================================================
-# Hinweis     : macOS-spezifisch! Das Pattern \.app\/ filtert nach
-#               macOS App-Bundles. Für Linux-Portabilität müsste
-#               dieses Pattern durch Desktop-Anwendungserkennung
-#               ersetzt werden (z.B. via .desktop-Dateien oder
-#               /proc/<pid>/exe Symlink-Analyse).
+# Plattform   :
+#   macOS     - apps: .app Bundles + Homebrew
+#               (/opt/homebrew, /usr/local), ps comm = voller Pfad
+#   Linux     - apps: Pfad-basierte Heuristik (/usr/bin,
+#               /opt, /snap, /flatpak, linuxbrew), ps args
+#               weil comm nur Basename liefert.
+#               System-Daemons ausgeschlossen
+#   Alle      - all: Alle User-Prozesse
+# Limitierung :
+#   Linux apps-Modus nutzt $4 aus ps args (Executable-Pfad).
+#   Prozesse die ohne vollen Pfad gestartet werden (z.B.
+#   "firefox" statt "/usr/bin/firefox") erscheinen nicht.
+#   Betrifft v.a. Terminal-Starts; Desktop-Launcher und
+#   systemd-Services liefern i.d.R. volle Pfade.
+#   Fallback: Ctrl+S → Alle zeigt alle User-Prozesse.
 # ============================================================
 
 # Gemeinsame Bibliothek laden (Farben, ANSI-Strip)
@@ -23,27 +33,48 @@ _procs_list() {
     local mode="${1:-apps}"
 
     if [[ "$mode" == "apps" ]]; then
-        # Nur .app Prozesse (macOS-spezifisch – siehe Hinweis oben)
-        # Prozessnamen können Leerzeichen enthalten → alles ab $4 als Pfad behandeln
-        ps -u "$USER" -o pid,pcpu,pmem,comm | \
-            awk '/\.app\// {
-                pid=$1; cpu=$2; mem=$3
-                $1=$2=$3=""
-                sub(/^[[:space:]]+/, "")
-                n=split($0,a,"/")
-                printf "%7s %5s%% %5s%%  %s\n", pid, cpu, mem, a[n]
-            }'
+        if [[ "$OSTYPE" == darwin* ]]; then
+            # macOS: .app Bundles + Homebrew-Pfade (/opt/homebrew, /usr/local)
+            ps -u "$USER" -o pid,pcpu,pmem,comm | \
+                awk 'NR>1 && (/\.app\// || /\/opt\/homebrew\// || /\/usr\/local\//) {
+                    pid=$1; cpu=$2; mem=$3
+                    $1=$2=$3=""
+                    sub(/^[[:space:]]+/, "")
+                    n=split($0,a,"/")
+                    printf "%7s %5s%% %5s%%  %s\n", pid, cpu, mem, a[n]
+                }'
+        else
+            # Linux: Desktop-Anwendungen heuristisch filtern
+            # comm liefert auf Linux nur den Basename → args für vollen Pfad
+            ps -u "$USER" -o pid,pcpu,pmem,args | \
+                awk 'NR>1 {
+                    cmd=$4
+                    if ((cmd ~ /\/usr\/(bin|lib|libexec)\// || cmd ~ /\/(opt|snap|flatpak)\// || cmd ~ /linuxbrew/) && cmd !~ /daemon|dbus|gvfs|pulse|pipewire|systemd|at-spi|ibus|xdg-/) {
+                        n=split(cmd,a,"/")
+                        printf "%7s %5s%% %5s%%  %s\n", $1, $2, $3, a[n]
+                    }
+                }'
+        fi
     else
         # Alle User-Prozesse
-        # Prozessnamen können Leerzeichen enthalten → alles ab $4 als Pfad behandeln
-        ps -u "$USER" -o pid,pcpu,pmem,comm | \
-            awk 'NR>1 {
-                pid=$1; cpu=$2; mem=$3
-                $1=$2=$3=""
-                sub(/^[[:space:]]+/, "")
-                n=split($0,a,"/")
-                printf "%7s %5s%% %5s%%  %s\n", pid, cpu, mem, a[n]
-            }'
+        if [[ "$OSTYPE" == darwin* ]]; then
+            # macOS: comm liefert vollen Pfad
+            ps -u "$USER" -o pid,pcpu,pmem,comm | \
+                awk 'NR>1 {
+                    pid=$1; cpu=$2; mem=$3
+                    $1=$2=$3=""
+                    sub(/^[[:space:]]+/, "")
+                    n=split($0,a,"/")
+                    printf "%7s %5s%% %5s%%  %s\n", pid, cpu, mem, a[n]
+                }'
+        else
+            # Linux: args für vollen Pfad (comm nur Basename)
+            ps -u "$USER" -o pid,pcpu,pmem,args | \
+                awk 'NR>1 {
+                    n=split($4,a,"/")
+                    printf "%7s %5s%% %5s%%  %s\n", $1, $2, $3, a[n]
+                }'
+        fi
     fi
 }
 
