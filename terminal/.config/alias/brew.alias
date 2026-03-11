@@ -103,12 +103,12 @@ if command -v brew >/dev/null 2>&1; then
         local brew_count=0 mas_count=0
         local brew_out
         brew_out=$(HOMEBREW_NO_AUTO_UPDATE=1 brew outdated --quiet 2>/dev/null)
-        [[ -n "$brew_out" ]] && brew_count=$(echo "$brew_out" | wc -l | tr -d ' ')
+        [[ -n "$brew_out" ]] && brew_count=${#${(f)brew_out}}
 
         if command -v mas >/dev/null 2>&1; then
             local mas_out
             mas_out=$(mas outdated 2>/dev/null)
-            [[ -n "$mas_out" ]] && mas_count=$(echo "$mas_out" | wc -l | tr -d ' ')
+            [[ -n "$mas_out" ]] && mas_count=${#${(f)mas_out}}
         fi
 
         local total=$((brew_count + mas_count))

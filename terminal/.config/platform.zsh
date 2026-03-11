@@ -106,6 +106,8 @@ if [[ -z "${_PLATFORM_HAS_DISPLAY+x}" ]]; then
     elif [[ -n "${WAYLAND_DISPLAY:-}" ]]; then
         # Fallback falls XDG_SESSION_TYPE nicht gesetzt (z.B. manueller Compositor-Start)
         _PLATFORM_HAS_DISPLAY=1
+    elif [[ "${XDG_SESSION_TYPE:-}" == "x11" ]] || [[ -n "${DISPLAY:-}" ]]; then
+        _PLATFORM_HAS_DISPLAY=1
     else
         _PLATFORM_HAS_DISPLAY=0
     fi
@@ -234,8 +236,9 @@ esac
 # Verwendung: notify "Titel" "Nachricht"
 #
 # macOS: osascript (Notification Center, immer verfügbar)
-# Linux: notify-send (Desktop mit libnotify)
-# Headless: Stiller No-Op (kein Display vorhanden)
+# Linux: notify-send (Desktop mit libnotify; ohne Display kann non-zero
+#         zurückgeben – Aufrufer sollte Fallback nutzen)
+# Headless ohne notify-send: Stiller No-Op
 
 case "$_PLATFORM_OS" in
     macos)
