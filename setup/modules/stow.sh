@@ -75,6 +75,7 @@ _stash_uncommitted_changes() {
         fi
     else
         warn "Stash konnte nicht erstellt werden" >&2
+        return 1
     fi
 
     return 0
@@ -172,7 +173,12 @@ run_stow() {
     # Wichtig: Nach dem Stash sind nur noch adopt-Änderungen sichtbar
     # SHA wird für TOCTOU-sichere Wiederherstellung gespeichert
     local stash_sha
-    stash_sha=$(_stash_uncommitted_changes)
+    stash_sha=$(_stash_uncommitted_changes) || {
+        err "Stash fehlgeschlagen – überspringe stow --adopt um Datenverlust zu vermeiden"
+        warn "Bitte manuell committen oder stashen, dann erneut ausführen"
+        popd >/dev/null
+        return 1
+    }
 
     # Stow mit --adopt ausführen (übernimmt existierende Dateien)
     # -R = Restow (erst unstow, dann stow)

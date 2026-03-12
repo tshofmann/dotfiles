@@ -63,6 +63,11 @@ _acquire_bootstrap_lock() {
                 local lock_pid
                 lock_pid=$(<"$_BOOTSTRAP_LOCKDIR/pid")
                 if ! kill -0 "$lock_pid" 2>/dev/null; then
+                    # EPERM prüfen: kill -0 scheitert auch ohne Rechte
+                    if ps -p "$lock_pid" >/dev/null 2>&1; then
+                        err "Bootstrap-Lock von laufendem Prozess (PID $lock_pid) gehalten – keine Berechtigung"
+                        return 1
+                    fi
                     warn "Stale Lock von PID $lock_pid erkannt, entferne..."
                     rm -rf "$_BOOTSTRAP_LOCKDIR"
                     continue
