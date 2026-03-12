@@ -87,7 +87,9 @@ _acquire_bootstrap_lock() {
 }
 
 _release_bootstrap_lock() {
-    if [[ -d "$_BOOTSTRAP_LOCKDIR" ]]; then
+    [[ -d "$_BOOTSTRAP_LOCKDIR" ]] || return 0
+    # Nur eigenen Lock löschen (Ownership-Check über PID)
+    if [[ -f "$_BOOTSTRAP_LOCKDIR/pid" ]] && [[ "$(<"$_BOOTSTRAP_LOCKDIR/pid")" == "$$" ]]; then
         rm -f "$_BOOTSTRAP_LOCKDIR/pid" 2>/dev/null
         rmdir "$_BOOTSTRAP_LOCKDIR" 2>/dev/null
     fi || true

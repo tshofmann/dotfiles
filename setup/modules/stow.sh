@@ -65,8 +65,14 @@ _stash_uncommitted_changes() {
 
     if (( stash_count_after > stash_count_before )); then
         # SHA ausgeben für TOCTOU-sichere Referenzierung beim Restore
-        git rev-parse stash@{0} 2>/dev/null
-        ok "Changes gesichert in: stash@{0}" >&2
+        local stash_sha
+        stash_sha=$(git rev-parse stash@{0} 2>/dev/null) || true
+        if [[ -n "$stash_sha" ]]; then
+            print "$stash_sha"
+            ok "Changes gesichert in: stash@{0}" >&2
+        else
+            warn "Stash erstellt, aber SHA konnte nicht ermittelt werden" >&2
+        fi
     else
         warn "Stash konnte nicht erstellt werden" >&2
     fi
@@ -103,11 +109,11 @@ _restore_stashed_changes() {
 
     # --index erhält den Staging-Zustand
     if git stash apply --index "$stash_ref" >/dev/null 2>&1; then
-        git stash drop "$stash_ref" >/dev/null 2>&1
+        git stash drop "$stash_ref" >/dev/null 2>&1 || warn "Stash apply OK, aber drop fehlgeschlagen für: $stash_ref"
         ok "Deine Änderungen wurden wiederhergestellt"
     elif git stash apply "$stash_ref" >/dev/null 2>&1; then
         # Fallback ohne --index (falls Index-Konflikte)
-        git stash drop "$stash_ref" >/dev/null 2>&1
+        git stash drop "$stash_ref" >/dev/null 2>&1 || warn "Stash apply OK, aber drop fehlgeschlagen für: $stash_ref"
         ok "Änderungen wiederhergestellt (Staging-Zustand nicht erhalten)"
     else
         # Konflikt - Stash bleibt erhalten
