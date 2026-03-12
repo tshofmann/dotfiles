@@ -57,6 +57,7 @@ elif is_linux; then
         [trixie]=13
         [forky]=14
     )
+    readonly DEBIAN_VERSION_MAP
     DEBIAN_MIN_CODENAME="trixie"
     DEBIAN_MIN_VERSION=13
     export DEBIAN_MIN_CODENAME DEBIAN_MIN_VERSION
