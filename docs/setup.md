@@ -74,6 +74,7 @@ Das Bootstrap-Skript führt dann folgende Aktionen in dieser Reihenfolge aus:
 | ------ | ------------ | ---------- |
 | Architektur-Check | Prüft ob arm64 oder x86_64 | ❌ Exit |
 | macOS-Version-Check | Prüft ob macOS 26+ (Tahoe) installiert ist | ❌ Exit |
+| Debian-Version-Check | Prüft ob Debian Trixie (13+) auf 32-bit ARM | ❌ Exit |
 | Netzwerk-Check | Prüft Internetverbindung | ❌ Exit |
 | Schreibrechte-Check | Prüft ob `$HOME` schreibbar ist | ❌ Exit |
 | Xcode CLI Tools | Installiert/prüft Developer Tools | ❌ Exit |

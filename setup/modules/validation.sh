@@ -9,6 +9,7 @@
 #
 # STEP        : Architektur-Check | Prüft ob arm64 oder x86_64 | ❌ Exit
 # STEP        : macOS-Version-Check | Prüft ob macOS ${MACOS_MIN_VERSION} installiert ist | ❌ Exit
+# STEP        : Debian-Version-Check | Prüft ob Debian Trixie (13+) auf 32-bit ARM | ❌ Exit
 # STEP        : Netzwerk-Check | Prüft Internetverbindung | ❌ Exit
 # STEP        : Schreibrechte-Check | Prüft ob `$HOME` schreibbar ist | ❌ Exit
 # STEP        : Xcode CLI Tools | Installiert/prüft Developer Tools | ❌ Exit
@@ -44,9 +45,76 @@ if is_macos; then
 elif is_linux; then
     # Linuxbrew-Prefix
     BREW_PREFIX="/home/linuxbrew/.linuxbrew"
+
+    # Debian-Mindestversion für 32-bit ARM (Single Source of Truth)
+    # apt-packages.sh setzt Trixie voraus – ältere Versionen haben
+    # starship, eza, lazygit, fastfetch u.a. nicht in den offiziellen Repos.
+    # Trixie ist seit Oktober 2025 das Standard-Raspberry Pi OS.
+    typeset -A DEBIAN_VERSION_MAP=(
+        [buster]=10
+        [bullseye]=11
+        [bookworm]=12
+        [trixie]=13
+        [forky]=14
+    )
+    DEBIAN_MIN_CODENAME="trixie"
+    DEBIAN_MIN_VERSION=13
+    export DEBIAN_MIN_CODENAME DEBIAN_MIN_VERSION
+    readonly DEBIAN_MIN_CODENAME DEBIAN_MIN_VERSION
 fi
 export BREW_PREFIX
 readonly BREW_PREFIX
+
+# ------------------------------------------------------------
+# Debian-Versionsprüfung (intern, von validate_platform aufgerufen)
+# ------------------------------------------------------------
+# Liest VERSION_CODENAME aus /etc/os-release und vergleicht mit Minimum.
+# Unbekannte Codenames werden toleriert (Warnung), fehlende ignoriert.
+# SYNC-CHECK: os-release-Pfad-Suche auch in setup/install.sh und
+#             terminal/.config/platform.zsh – bei Änderung alle anpassen.
+_validate_debian_version() {
+    local codename="" osrelease=""
+
+    [[ -f /etc/os-release ]] && osrelease="/etc/os-release"
+    [[ -z "$osrelease" && -f /usr/lib/os-release ]] && osrelease="/usr/lib/os-release"
+
+    if [[ -n "$osrelease" ]]; then
+        codename=$(. "$osrelease" 2>/dev/null && printf '%s' "${VERSION_CODENAME:-}")
+    fi
+
+    if [[ -z "$codename" ]]; then
+        warn "VERSION_CODENAME nicht in /etc/os-release gefunden"
+        warn "Kann Debian-Version nicht prüfen – fahre fort"
+        return 0
+    fi
+
+    local version="${DEBIAN_VERSION_MAP[$codename]:-0}"
+
+    if (( version == 0 )); then
+        warn "Unbekannter Debian-Codename: $codename"
+        warn "Kann Debian-Version nicht prüfen – fahre fort"
+        return 0
+    fi
+
+    if (( version < DEBIAN_MIN_VERSION )); then
+        err "Debian $codename ($version) wird nicht unterstützt"
+        err "Minimum: Debian ${DEBIAN_MIN_CODENAME} (${DEBIAN_MIN_VERSION})"
+        err ""
+        err "Die APT-Paketliste setzt Debian Trixie voraus."
+        err "Auf älteren Versionen fehlen: starship, eza, lazygit, fastfetch u.a."
+        err ""
+        err "Raspberry Pi OS auf Trixie aktualisieren:"
+        err "  Neues Image mit Raspberry Pi Imager schreiben (empfohlen)"
+        err "  oder: sudo apt update && sudo apt full-upgrade"
+        err ""
+        err "Trixie ist seit Oktober 2025 das Standard-Raspberry Pi OS"
+        err "und läuft auf allen Pi-Modellen (inkl. Pi 1 und Zero)."
+        return 1
+    fi
+
+    ok "Debian $codename ($version) – Minimum ${DEBIAN_MIN_CODENAME} (${DEBIAN_MIN_VERSION}) erfüllt"
+    return 0
+}
 
 # ------------------------------------------------------------
 # Plattform-Prüfung
@@ -94,6 +162,11 @@ validate_platform() {
         if [[ "$PLATFORM_ARCH" == armv* ]]; then
             warn "32-bit ARM erkannt – Homebrew/Linuxbrew unterstützt nur arm64/x86_64"
             warn "Homebrew wird übersprungen – Tools via apt/cargo (siehe apt-packages.sh)"
+
+            # Debian-Version prüfen (apt-packages.sh setzt Trixie voraus)
+            if is_debian; then
+                _validate_debian_version || return 1
+            fi
         fi
     else
         err "Nicht unterstützte Plattform: $PLATFORM_OS"
