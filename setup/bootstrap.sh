@@ -57,6 +57,13 @@ _acquire_bootstrap_lock() {
     local waited=0
 
     while ! mkdir -m 700 "$_BOOTSTRAP_LOCKDIR" 2>/dev/null; do
+        # mkdir fehlgeschlagen – Ursache unterscheiden
+        if [[ ! -d "$_BOOTSTRAP_LOCKDIR" ]]; then
+            # Verzeichnis existiert nicht → kein Lock-Konflikt, sondern FS-Problem
+            err "Kann Lock-Verzeichnis nicht erstellen: $_BOOTSTRAP_LOCKDIR"
+            err "Prüfe Schreibrechte auf $DOTFILES_DIR"
+            return 1
+        fi
         if (( waited >= max_wait )); then
             # Stale-Lock prüfen (Prozess nicht mehr aktiv?)
             if [[ -f "$_BOOTSTRAP_LOCKDIR/pid" ]]; then

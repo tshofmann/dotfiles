@@ -184,9 +184,10 @@ run_stow() {
 
     # Stow mit --adopt ausführen (übernimmt existierende Dateien)
     # -R = Restow (erst unstow, dann stow)
-    local stow_output stow_rc
-    stow_output=$(stow --adopt -R "${packages[@]}" 2>&1)
-    stow_rc=$?
+    # || stow_rc=$? verhindert, dass set -e das Script abbricht
+    # bevor _restore_stashed_changes aufgerufen wird
+    local stow_output stow_rc=0
+    stow_output=$(stow --adopt -R "${packages[@]}" 2>&1) || stow_rc=$?
 
     if (( stow_rc == 0 )); then
         ok "Symlinks erstellt für: ${packages[*]}"
