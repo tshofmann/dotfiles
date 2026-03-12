@@ -47,8 +47,12 @@ if command -v fzf >/dev/null 2>&1; then
         [[ -z "$theme" ]] && return 0
 
         if [[ -f "$config_file" ]] && grep -q '^--theme=' "$config_file"; then
+            # sed-Sonderzeichen im Theme-Namen escapen (Delimiter: |)
+            local safe_theme="${theme//\\/\\\\}"
+            safe_theme="${safe_theme//|/\\|}"
+            safe_theme="${safe_theme//&/\\&}"
             # sedi aus platform.zsh (BSD/GNU kompatibel, wird vor Aliase geladen)
-            sedi "s/^--theme=.*$/--theme=\"$theme\"/" "$config_file"
+            sedi "s|^--theme=.*$|--theme=\"$safe_theme\"|" "$config_file"
             echo "✓ Theme aktiviert: $theme"
         else
             echo "✗ Konnte Config nicht aktualisieren"
