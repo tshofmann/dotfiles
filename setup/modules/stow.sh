@@ -164,7 +164,9 @@ run_stow() {
             [[ -n "$safe_line" ]] && warn "  $safe_line"
         done <<< "$stow_output"
         # Stash trotzdem wiederherstellen bei Fehler
-        _restore_stashed_changes
+        if ! _restore_stashed_changes; then
+            warn "Bootstrap fortgesetzt – Stash manuell wiederherstellen"
+        fi
         popd >/dev/null
         return 0
     fi
@@ -184,7 +186,9 @@ run_stow() {
     fi
 
     # Gestashte User-Änderungen wiederherstellen
-    _restore_stashed_changes
+    if ! _restore_stashed_changes; then
+        warn "Bootstrap fortgesetzt – Stash manuell wiederherstellen"
+    fi
 
     # CWD wiederherstellen
     popd >/dev/null

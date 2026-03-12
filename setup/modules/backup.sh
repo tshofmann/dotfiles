@@ -374,7 +374,10 @@ backup_create_if_needed() {
     log "Analysiere $total_files Dateien..."
 
     # Manifest erstellen (inkl. Backups)
-    _create_manifest
+    _create_manifest || {
+        err "Backup-Manifest fehlgeschlagen – Abbruch"
+        return 1
+    }
 
     _backup_log "END: Backup abgeschlossen"
 
@@ -418,5 +421,5 @@ backup_info() {
 # ------------------------------------------------------------
 setup_backup() {
     CURRENT_STEP="Backup Setup"
-    backup_create_if_needed
+    backup_create_if_needed || return 1
 }
