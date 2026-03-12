@@ -72,6 +72,8 @@ _stash_uncommitted_changes() {
             ok "Changes gesichert in: stash@{0}" >&2
         else
             warn "Stash erstellt, aber SHA konnte nicht ermittelt werden" >&2
+            warn "Prüfe manuell: git stash list" >&2
+            return 1
         fi
     else
         warn "Stash konnte nicht erstellt werden" >&2
