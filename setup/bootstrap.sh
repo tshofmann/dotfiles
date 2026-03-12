@@ -35,6 +35,7 @@ source "$MODULES_DIR/_core.sh"
 # ------------------------------------------------------------
 cleanup() {
     local exit_code=$?
+    _release_bootstrap_lock
     if (( exit_code != 0 )); then
         print ""
         warn "Bootstrap abgebrochen bei: $CURRENT_STEP"
@@ -45,6 +46,52 @@ cleanup() {
     fi
 }
 trap cleanup EXIT
+
+# ------------------------------------------------------------
+# Bootstrap-Lock (verhindert parallele Ausführung)
+# ------------------------------------------------------------
+readonly _BOOTSTRAP_LOCKDIR="$DOTFILES_DIR/.bootstrap.lock"
+
+_acquire_bootstrap_lock() {
+    local max_wait=10
+    local waited=0
+
+    while ! mkdir -m 700 "$_BOOTSTRAP_LOCKDIR" 2>/dev/null; do
+        if (( waited >= max_wait )); then
+            # Stale-Lock prüfen (Prozess nicht mehr aktiv?)
+            if [[ -f "$_BOOTSTRAP_LOCKDIR/pid" ]]; then
+                local lock_pid
+                lock_pid=$(<"$_BOOTSTRAP_LOCKDIR/pid")
+                if ! kill -0 "$lock_pid" 2>/dev/null; then
+                    warn "Stale Lock von PID $lock_pid erkannt, entferne..."
+                    rm -rf "$_BOOTSTRAP_LOCKDIR"
+                    continue
+                fi
+            else
+                # Lock-Verzeichnis ohne PID-Datei = defekter Lock
+                warn "Defekter Lock ohne PID erkannt, entferne..."
+                rm -rf "$_BOOTSTRAP_LOCKDIR"
+                continue
+            fi
+            err "Bootstrap läuft bereits (Lock nach ${max_wait}s nicht erhalten)"
+            return 1
+        fi
+        log "Bootstrap läuft bereits – warte... (${waited}s)"
+        sleep 1
+        (( waited++ )) || true
+    done
+
+    # PID für Stale-Detection speichern
+    print $$ > "$_BOOTSTRAP_LOCKDIR/pid"
+    return 0
+}
+
+_release_bootstrap_lock() {
+    if [[ -d "$_BOOTSTRAP_LOCKDIR" ]]; then
+        rm -f "$_BOOTSTRAP_LOCKDIR/pid" 2>/dev/null
+        rmdir "$_BOOTSTRAP_LOCKDIR" 2>/dev/null
+    fi || true
+}
 
 # ------------------------------------------------------------
 # Modul-Loader
@@ -135,6 +182,9 @@ readonly -a MODULES=(
 # Hauptprogramm
 # ------------------------------------------------------------
 main() {
+    # Lock gegen parallele Ausführung erwerben
+    _acquire_bootstrap_lock || exit 1
+
     # Versions-Info für Banner
     local os_version
     if is_macos; then
