@@ -76,13 +76,21 @@ _acquire_bootstrap_lock() {
                         return 1
                     fi
                     warn "Stale Lock von PID $lock_pid erkannt, entferne..."
-                    rm -rf "$_BOOTSTRAP_LOCKDIR"
+                    if ! rm -rf "$_BOOTSTRAP_LOCKDIR"; then
+                        err "Konnte stale Lock-Verzeichnis nicht entfernen: $_BOOTSTRAP_LOCKDIR"
+                        err "Bitte Lock manuell löschen und erneut versuchen"
+                        return 1
+                    fi
                     continue
                 fi
             else
                 # Lock-Verzeichnis ohne PID-Datei = defekter Lock
                 warn "Defekter Lock ohne PID erkannt, entferne..."
-                rm -rf "$_BOOTSTRAP_LOCKDIR"
+                if ! rm -rf "$_BOOTSTRAP_LOCKDIR"; then
+                    err "Konnte defektes Lock-Verzeichnis nicht entfernen: $_BOOTSTRAP_LOCKDIR"
+                    err "Bitte Lock manuell löschen und erneut versuchen"
+                    return 1
+                fi
                 continue
             fi
             err "Bootstrap läuft bereits (Lock nach ${max_wait}s nicht erhalten)"

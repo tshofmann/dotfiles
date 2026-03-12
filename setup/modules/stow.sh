@@ -53,32 +53,31 @@ _stash_uncommitted_changes() {
     warn "Uncommitted Changes im Repository erkannt" >&2
     log "Stashe Änderungen vor stow --adopt..." >&2
 
-    # Stash-Anzahl vorher merken (Exit-Code von git stash ist unzuverlässig)
-    local stash_count_before stash_count_after
-    stash_count_before=$(git stash list 2>/dev/null | wc -l | tr -d ' ')
+    # Stash mit -u (untracked files), PID im Message für Identifikation
+    local stash_msg="auto: pre-stow $$-$(date +%Y%m%d-%H%M%S)"
+    git stash push -u -m "$stash_msg" >/dev/null 2>&1
 
-    # Stash mit -u (untracked files) und Zeitstempel
-    git stash push -u -m "auto: pre-stow $(date +%Y%m%d-%H%M%S)" >/dev/null 2>&1
+    # SHA sofort nach push ermitteln (Mikrosekunden-Fenster, Single-User)
+    local stash_sha
+    stash_sha=$(git rev-parse stash@{0} 2>/dev/null) || true
 
-    # Verifizieren dass Stash erstellt wurde
-    stash_count_after=$(git stash list 2>/dev/null | wc -l | tr -d ' ')
-
-    if (( stash_count_after > stash_count_before )); then
-        # SHA ausgeben für TOCTOU-sichere Referenzierung beim Restore
-        local stash_sha
-        stash_sha=$(git rev-parse stash@{0} 2>/dev/null) || true
-        if [[ -n "$stash_sha" ]]; then
-            print "$stash_sha"
-            ok "Changes gesichert in: stash@{0}" >&2
-        else
-            warn "Stash erstellt, aber SHA konnte nicht ermittelt werden" >&2
-            warn "Prüfe manuell: git stash list" >&2
-            return 1
-        fi
-    else
+    if [[ -z "$stash_sha" ]]; then
         warn "Stash konnte nicht erstellt werden" >&2
         return 1
     fi
+
+    # Verifizierung: Message muss unsere PID enthalten
+    local top_msg
+    top_msg=$(git --no-pager stash list -1 --format="%s" 2>/dev/null)
+    if [[ "$top_msg" != *"$$-"* ]]; then
+        warn "Stash-Verifizierung fehlgeschlagen (Race Condition?)" >&2
+        warn "Erwartet PID $$ in Message, gefunden: $top_msg" >&2
+        warn "Prüfe manuell: git stash list" >&2
+        return 1
+    fi
+
+    print "$stash_sha"
+    ok "Changes gesichert (SHA: ${stash_sha:0:8})" >&2
 
     return 0
 }
@@ -122,7 +121,7 @@ _restore_stashed_changes() {
         # Konflikt - Stash bleibt erhalten
         warn "Automatische Wiederherstellung fehlgeschlagen"
         warn "Deine Änderungen sind sicher in: $stash_ref"
-        warn "Nach Bootstrap manuell ausführen: git stash pop"
+        warn "Nach Bootstrap manuell ausführen: git stash apply $stash_sha"
         return 1
     fi
 
