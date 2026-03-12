@@ -35,6 +35,7 @@ source "$MODULES_DIR/_core.sh"
 # ------------------------------------------------------------
 cleanup() {
     local exit_code=$?
+    _release_bootstrap_lock
     if (( exit_code != 0 )); then
         print ""
         warn "Bootstrap abgebrochen bei: $CURRENT_STEP"
@@ -45,6 +46,74 @@ cleanup() {
     fi
 }
 trap cleanup EXIT
+
+# ------------------------------------------------------------
+# Bootstrap-Lock (verhindert parallele Ausführung)
+# ------------------------------------------------------------
+readonly _BOOTSTRAP_LOCKDIR="$DOTFILES_DIR/.bootstrap.lock"
+
+_acquire_bootstrap_lock() {
+    local max_wait=10
+    local waited=0
+
+    while ! mkdir -m 700 "$_BOOTSTRAP_LOCKDIR" 2>/dev/null; do
+        # mkdir fehlgeschlagen – Ursache unterscheiden
+        if [[ ! -d "$_BOOTSTRAP_LOCKDIR" ]]; then
+            # Verzeichnis existiert nicht → kein Lock-Konflikt, sondern FS-Problem
+            err "Kann Lock-Verzeichnis nicht erstellen: $_BOOTSTRAP_LOCKDIR"
+            err "Prüfe Schreibrechte auf $DOTFILES_DIR"
+            return 1
+        fi
+        if (( waited >= max_wait )); then
+            # Stale-Lock prüfen (Prozess nicht mehr aktiv?)
+            if [[ -f "$_BOOTSTRAP_LOCKDIR/pid" ]]; then
+                local lock_pid
+                lock_pid=$(<"$_BOOTSTRAP_LOCKDIR/pid")
+                if ! kill -0 "$lock_pid" 2>/dev/null; then
+                    # EPERM prüfen: kill -0 scheitert auch ohne Rechte
+                    if ps -p "$lock_pid" >/dev/null 2>&1; then
+                        err "Bootstrap-Lock von laufendem Prozess (PID $lock_pid) gehalten – keine Berechtigung"
+                        return 1
+                    fi
+                    warn "Stale Lock von PID $lock_pid erkannt, entferne..."
+                    if ! rm -rf "$_BOOTSTRAP_LOCKDIR"; then
+                        err "Konnte stale Lock-Verzeichnis nicht entfernen: $_BOOTSTRAP_LOCKDIR"
+                        err "Bitte Lock manuell löschen und erneut versuchen"
+                        return 1
+                    fi
+                    continue
+                fi
+            else
+                # Lock-Verzeichnis ohne PID-Datei = defekter Lock
+                warn "Defekter Lock ohne PID erkannt, entferne..."
+                if ! rm -rf "$_BOOTSTRAP_LOCKDIR"; then
+                    err "Konnte defektes Lock-Verzeichnis nicht entfernen: $_BOOTSTRAP_LOCKDIR"
+                    err "Bitte Lock manuell löschen und erneut versuchen"
+                    return 1
+                fi
+                continue
+            fi
+            err "Bootstrap läuft bereits (Lock nach ${max_wait}s nicht erhalten)"
+            return 1
+        fi
+        log "Bootstrap läuft bereits – warte... (${waited}s)"
+        sleep 1
+        (( waited++ )) || true
+    done
+
+    # PID für Stale-Detection speichern
+    print $$ > "$_BOOTSTRAP_LOCKDIR/pid"
+    return 0
+}
+
+_release_bootstrap_lock() {
+    [[ -d "$_BOOTSTRAP_LOCKDIR" ]] || return 0
+    # Nur eigenen Lock löschen (Ownership-Check über PID)
+    if [[ -f "$_BOOTSTRAP_LOCKDIR/pid" ]] && [[ "$(<"$_BOOTSTRAP_LOCKDIR/pid")" == "$$" ]]; then
+        rm -f "$_BOOTSTRAP_LOCKDIR/pid" 2>/dev/null
+        rmdir "$_BOOTSTRAP_LOCKDIR" 2>/dev/null
+    fi || true
+}
 
 # ------------------------------------------------------------
 # Modul-Loader
@@ -135,6 +204,9 @@ readonly -a MODULES=(
 # Hauptprogramm
 # ------------------------------------------------------------
 main() {
+    # Lock gegen parallele Ausführung erwerben
+    _acquire_bootstrap_lock || exit 1
+
     # Versions-Info für Banner
     local os_version
     if is_macos; then

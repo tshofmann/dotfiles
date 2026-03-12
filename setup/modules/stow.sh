@@ -34,10 +34,8 @@ stow_installed() {
 # ------------------------------------------------------------
 # Stasht alle uncommitted Änderungen (inkl. untracked) VOR stow --adopt,
 # damit sie nach git reset --hard wiederhergestellt werden können.
-# Setzt _STOW_STASH_CREATED=1 wenn Stash erstellt wurde.
+# Gibt den SHA des erstellten Stash auf stdout aus (leer wenn kein Stash nötig).
 _stash_uncommitted_changes() {
-    _STOW_STASH_CREATED=0
-
     # Kein Git? Überspringen.
     command -v git >/dev/null 2>&1 || return 0
     git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return 0
@@ -52,25 +50,34 @@ _stash_uncommitted_changes() {
     fi
 
     # Änderungen gefunden - stashen
-    warn "Uncommitted Changes im Repository erkannt"
-    log "Stashe Änderungen vor stow --adopt..."
+    warn "Uncommitted Changes im Repository erkannt" >&2
+    log "Stashe Änderungen vor stow --adopt..." >&2
 
-    # Stash-Anzahl vorher merken (Exit-Code von git stash ist unzuverlässig)
-    local stash_count_before stash_count_after
-    stash_count_before=$(git stash list 2>/dev/null | wc -l | tr -d ' ')
+    # Stash mit -u (untracked files), PID im Message für Identifikation
+    local stash_msg="auto: pre-stow $$-$(date +%Y%m%d-%H%M%S)"
+    git stash push -u -m "$stash_msg" >/dev/null 2>&1
 
-    # Stash mit -u (untracked files) und Zeitstempel
-    git stash push -u -m "auto: pre-stow $(date +%Y%m%d-%H%M%S)" >/dev/null 2>&1
+    # SHA sofort nach push ermitteln (Mikrosekunden-Fenster, Single-User)
+    local stash_sha
+    stash_sha=$(git rev-parse stash@{0} 2>/dev/null) || true
 
-    # Verifizieren dass Stash erstellt wurde
-    stash_count_after=$(git stash list 2>/dev/null | wc -l | tr -d ' ')
-
-    if (( stash_count_after > stash_count_before )); then
-        _STOW_STASH_CREATED=1
-        ok "Changes gesichert in: stash@{0}"
-    else
-        warn "Stash konnte nicht erstellt werden"
+    if [[ -z "$stash_sha" ]]; then
+        warn "Stash konnte nicht erstellt werden" >&2
+        return 1
     fi
+
+    # Verifizierung: Message muss unsere PID enthalten
+    local top_msg
+    top_msg=$(git --no-pager stash list -1 --format="%s" 2>/dev/null)
+    if [[ "$top_msg" != *"$$-"* ]]; then
+        warn "Stash-Verifizierung fehlgeschlagen (Race Condition?)" >&2
+        warn "Erwartet PID $$ in Message, gefunden: $top_msg" >&2
+        warn "Prüfe manuell: git stash list" >&2
+        return 1
+    fi
+
+    print "$stash_sha"
+    ok "Changes gesichert (SHA: ${stash_sha:0:8})" >&2
 
     return 0
 }
@@ -78,22 +85,43 @@ _stash_uncommitted_changes() {
 # ------------------------------------------------------------
 # Gestashte Changes wiederherstellen (nach git reset --hard)
 # ------------------------------------------------------------
+# Argument: $1 = SHA des Stash (von _stash_uncommitted_changes)
 _restore_stashed_changes() {
-    [[ "${_STOW_STASH_CREATED:-0}" -eq 1 ]] || return 0
+    local stash_sha="$1"
+    [[ -n "$stash_sha" ]] || return 0
 
     log "Stelle deine uncommitted Changes wieder her..."
 
+    # SHA → stash@{N} auflösen (TOCTOU-sicher: unabhängig von Stash-Reihenfolge)
+    local stash_ref=""
+    local line ref
+    while IFS= read -r line; do
+        ref="${line%%:*}"
+        if [[ "$(git rev-parse "$ref" 2>/dev/null)" == "$stash_sha" ]]; then
+            stash_ref="$ref"
+            break
+        fi
+    done < <(git --no-pager stash list 2>/dev/null)
+
+    if [[ -z "$stash_ref" ]]; then
+        warn "Stash mit SHA $stash_sha nicht mehr gefunden"
+        warn "Prüfe manuell: git stash list"
+        return 1
+    fi
+
     # --index erhält den Staging-Zustand
-    if git stash pop --index >/dev/null 2>&1; then
+    if git stash apply --index "$stash_ref" >/dev/null 2>&1; then
+        git stash drop "$stash_ref" >/dev/null 2>&1 || warn "Stash apply OK, aber drop fehlgeschlagen für: $stash_ref"
         ok "Deine Änderungen wurden wiederhergestellt"
-    elif git stash pop >/dev/null 2>&1; then
+    elif git stash apply "$stash_ref" >/dev/null 2>&1; then
         # Fallback ohne --index (falls Index-Konflikte)
+        git stash drop "$stash_ref" >/dev/null 2>&1 || warn "Stash apply OK, aber drop fehlgeschlagen für: $stash_ref"
         ok "Änderungen wiederhergestellt (Staging-Zustand nicht erhalten)"
     else
         # Konflikt - Stash bleibt erhalten
         warn "Automatische Wiederherstellung fehlgeschlagen"
-        warn "Deine Änderungen sind sicher in: stash@{0}"
-        warn "Nach Bootstrap manuell ausführen: git stash pop"
+        warn "Deine Änderungen sind sicher in: $stash_ref"
+        warn "Nach Bootstrap manuell ausführen: git stash apply $stash_sha"
         return 1
     fi
 
@@ -144,13 +172,21 @@ run_stow() {
 
     # Uncommitted Changes sichern VOR stow --adopt
     # Wichtig: Nach dem Stash sind nur noch adopt-Änderungen sichtbar
-    _stash_uncommitted_changes
+    # SHA wird für TOCTOU-sichere Wiederherstellung gespeichert
+    local stash_sha
+    stash_sha=$(_stash_uncommitted_changes) || {
+        err "Stash fehlgeschlagen – überspringe stow --adopt um Datenverlust zu vermeiden"
+        warn "Bitte manuell committen oder stashen, dann erneut ausführen"
+        popd >/dev/null
+        return 1
+    }
 
     # Stow mit --adopt ausführen (übernimmt existierende Dateien)
     # -R = Restow (erst unstow, dann stow)
-    local stow_output stow_rc
-    stow_output=$(stow --adopt -R "${packages[@]}" 2>&1)
-    stow_rc=$?
+    # || stow_rc=$? verhindert, dass set -e das Script abbricht
+    # bevor _restore_stashed_changes aufgerufen wird
+    local stow_output stow_rc=0
+    stow_output=$(stow --adopt -R "${packages[@]}" 2>&1) || stow_rc=$?
 
     if (( stow_rc == 0 )); then
         ok "Symlinks erstellt für: ${packages[*]}"
@@ -164,7 +200,7 @@ run_stow() {
             [[ -n "$safe_line" ]] && warn "  $safe_line"
         done <<< "$stow_output"
         # Stash trotzdem wiederherstellen bei Fehler
-        if ! _restore_stashed_changes; then
+        if ! _restore_stashed_changes "$stash_sha"; then
             warn "Bootstrap fortgesetzt – Stash manuell wiederherstellen"
         fi
         popd >/dev/null
@@ -186,7 +222,7 @@ run_stow() {
     fi
 
     # Gestashte User-Änderungen wiederherstellen
-    if ! _restore_stashed_changes; then
+    if ! _restore_stashed_changes "$stash_sha"; then
         warn "Bootstrap fortgesetzt – Stash manuell wiederherstellen"
     fi
 
