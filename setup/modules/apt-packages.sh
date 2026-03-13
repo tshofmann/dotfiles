@@ -241,36 +241,21 @@ _install_cargo_tools() {
 
     warn "Cargo-Kompilierung auf 32-bit ARM ist langsam (je Tool 5-30 Min)"
 
-    # Env-Variablen vor der Schleife setzen, nicht inline
-    # ${:+NAME=val} wird nach Expansion nicht als Prefix-Assignment erkannt
-    # Vorherige Werte sichern, damit sie nach dem Build wiederhergestellt werden
-    local _prev_cargo_jobs="${CARGO_BUILD_JOBS:-}"
-    local _prev_rustflags="${RUSTFLAGS:-}"
-    [[ -n "$cargo_jobs" ]] && export CARGO_BUILD_JOBS="$cargo_jobs"
-    [[ -n "$cargo_rustflags" ]] && export RUSTFLAGS="${cargo_rustflags} ${RUSTFLAGS:-}"
+    # Subshell isoliert CARGO_BUILD_JOBS/RUSTFLAGS – kein manuelles Cleanup
+    # nötig, Env-Variablen können auch bei Abbruch (Ctrl+C) nicht leaken
+    (
+        [[ -n "$cargo_jobs" ]] && export CARGO_BUILD_JOBS="$cargo_jobs"
+        [[ -n "$cargo_rustflags" ]] && export RUSTFLAGS="${RUSTFLAGS:+$RUSTFLAGS }${cargo_rustflags}"
 
-    for crate in "${missing_crates[@]}"; do
-        log "Installiere $crate via cargo..."
-        if cargo install --locked "$crate"; then
-            ok "$crate installiert via cargo"
-        else
-            warn "$crate: cargo install fehlgeschlagen"
-        fi
-    done
-
-    # Aufräumen: vorherige Werte wiederherstellen oder entfernen
-    if [[ -n "$_prev_cargo_jobs" ]]; then
-        export CARGO_BUILD_JOBS="$_prev_cargo_jobs"
-    else
-        unset CARGO_BUILD_JOBS
-    fi
-    if [[ -n "$cargo_rustflags" ]]; then
-        if [[ -n "$_prev_rustflags" ]]; then
-            export RUSTFLAGS="$_prev_rustflags"
-        else
-            unset RUSTFLAGS
-        fi
-    fi
+        for crate in "${missing_crates[@]}"; do
+            log "Installiere $crate via cargo..."
+            if cargo install --locked "$crate"; then
+                ok "$crate installiert via cargo"
+            else
+                warn "$crate: cargo install fehlgeschlagen"
+            fi
+        done
+    )
 
     return 0
 }
