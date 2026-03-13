@@ -113,6 +113,8 @@ jobs:
           echo "Installiere tealdeer v1.8.1..."
           curl -fsSL "https://github.com/tealdeer-rs/tealdeer/releases/download/v1.8.1/tealdeer-linux-x86_64-musl" \
             -o /tmp/tldr
+          # SHA256-Verifizierung (offizielle Checksum von GitHub Releases)
+          echo "6f2fad4435e0110484d3f25cdc4bf20129dae03238f32d06ebdd00bdc50ae2ed  /tmp/tldr" | sha256sum -c
           sudo install -m 755 /tmp/tldr /usr/local/bin/tldr
           tldr --version
           echo "✔ tealdeer installiert"
