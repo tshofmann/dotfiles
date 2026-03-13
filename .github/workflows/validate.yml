@@ -26,14 +26,17 @@ concurrency:
 
 jobs:
   validate:
-    # macos-latest: Bewusst nicht gepinnt – Workflow validiert nur Syntax, Docs
-    # und Format. Keine macOS-spezifischen Features nötig. Dependabot kann
-    # Runner-Labels nicht aktualisieren, Pinning erfordert manuelle Wartung.
-    runs-on: macos-latest
+    # ubuntu-latest: Alle Checks sind Linux-kompatibel (kein macOS-API nötig).
+    # Vorher macos-latest (10× teurer), jetzt ubuntu-latest für maximale
+    # Kosteneffizienz + Linux-Validierung. Siehe #329.
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: ZSH installieren
+        run: sudo apt-get update && sudo apt-get install -y zsh
 
       - name: ZSH-Syntax prüfen
         shell: zsh {0}
@@ -105,19 +108,14 @@ jobs:
         shell: zsh {0}
         run: ./.github/scripts/check-brewfile-mapping.sh
 
-      - name: Homebrew Cache
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
-        with:
-          path: ~/Library/Caches/Homebrew
-          key: ${{ runner.os }}-homebrew-${{ hashFiles('setup/Brewfile') }}
-          restore-keys: |
-            ${{ runner.os }}-homebrew-
-
-      - name: Homebrew-Pakete installieren
+      - name: tealdeer installieren
         run: |
-          echo "Installiere benötigte Pakete..."
-          brew install tealdeer markdownlint-cli2
-          echo "✔ Pakete installiert"
+          echo "Installiere tealdeer v1.8.1..."
+          curl -fsSL "https://github.com/tealdeer-rs/tealdeer/releases/download/v1.8.1/tealdeer-linux-x86_64-musl" \
+            -o /tmp/tldr
+          sudo install -m 755 /tmp/tldr /usr/local/bin/tldr
+          tldr --version
+          echo "✔ tealdeer installiert"
 
       - name: tealdeer Cache initialisieren
         run: |
@@ -155,5 +153,6 @@ jobs:
         run: |
           echo "Prüfe Markdown-Dateien..."
           # Config aus terminal/.config/ (wird lokal via Stow verlinkt)
-          markdownlint-cli2 --config terminal/.config/markdownlint-cli2/.markdownlint-cli2.jsonc '**/*.md' '#node_modules'
+          # markdownlint-cli2 via npx – Node.js auf ubuntu-latest vorinstalliert
+          npx --yes markdownlint-cli2@0.21.0 --config terminal/.config/markdownlint-cli2/.markdownlint-cli2.jsonc '**/*.md' '#node_modules'
           echo "✔ Markdown OK"
