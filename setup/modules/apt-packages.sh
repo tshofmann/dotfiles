@@ -245,7 +245,7 @@ _install_cargo_tools() {
     # nötig, Env-Variablen können auch bei Abbruch (Ctrl+C) nicht leaken
     (
         [[ -n "$cargo_jobs" ]] && export CARGO_BUILD_JOBS="$cargo_jobs"
-        [[ -n "$cargo_rustflags" ]] && export RUSTFLAGS="${cargo_rustflags} ${RUSTFLAGS:-}"
+        [[ -n "$cargo_rustflags" ]] && export RUSTFLAGS="${RUSTFLAGS:+$RUSTFLAGS }${cargo_rustflags}"
 
         for crate in "${missing_crates[@]}"; do
             log "Installiere $crate via cargo..."
