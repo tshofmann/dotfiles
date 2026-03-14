@@ -103,7 +103,7 @@ generate_cross_references() {
     local output=""
 
     for alias_file in "$ALIAS_DIR"/*.alias(N); do
-        local tool_name=$(basename "$alias_file" .alias)
+        local tool_name="${${alias_file:t}%.alias}"
 
         # Nicht auf sich selbst verweisen
         [[ "$tool_name" == "fzf" ]] && continue
@@ -252,7 +252,7 @@ generate_complete_patch() {
         local cross_refs
         cross_refs=$(generate_cross_references)
         if [[ -n "${cross_refs//[[:space:]]/}" ]]; then
-            output+="\n\n# dotfiles: Tool-spezifische fzf-Funktionen\n\n"
+            output+="\n\n# dotfiles: Tools mit fzf-Integration\n\n"
             output+="$cross_refs"
         fi
     fi

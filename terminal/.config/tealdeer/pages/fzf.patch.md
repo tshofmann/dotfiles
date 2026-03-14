@@ -70,7 +70,7 @@
 
 `<Ctrl x> 3`
 
-# dotfiles: Tool-spezifische fzf-Funktionen
+# dotfiles: Tools mit fzf-Integration
 
 - dotfiles: Siehe `tldr 7z` für `7za`, `7zx`, `7zl`, `7zt`, `unrar`, `7zf`
 - dotfiles: Siehe `tldr bat` für `cat`, `catn`, `catd`, `bat-theme`
