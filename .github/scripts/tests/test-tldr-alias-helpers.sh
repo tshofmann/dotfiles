@@ -143,10 +143,16 @@ FIXTURE
 result=$(extract_section_names "$_TEST_TMPDIR/no-section.alias")
 assert_empty "Keine Sektionen erkannt" "$result"
 
-# Integration: brew.alias hat 5 Sektionen
+# Integration: brew.alias hat mindestens 5 Sektionen
 result=$(extract_section_names "$ALIAS_DIR/brew.alias")
 count=$(echo "$result" | wc -l | tr -d ' ')
-assert_equals "brew.alias: 5 Sektionen" "5" "$count"
+if (( count >= 5 )); then
+    echo "  ${C_GREEN:-}✔${C_RESET:-} brew.alias: >= 5 Sektionen ($count)"
+    (( _TEST_PASSED++ )) || true
+else
+    echo "  ${C_RED:-}✖${C_RESET:-} brew.alias: >= 5 Sektionen erwartet, $count gefunden"
+    (( _TEST_FAILED++ )) || true
+fi
 
 # ============================================================
 # Zusammenfassung

@@ -9,6 +9,29 @@
 # Abhängigkeiten: common.sh, tldr/parsers.sh, tldr/alias-helpers.sh
 
 # ------------------------------------------------------------
+# Helper: Beschreibung+Name als dothelp-Item formatieren
+# ------------------------------------------------------------
+# Wandelt Parameter-Notation (param?) in tldr-Format {{param}} um
+# Parameter: $1=name, $2=beschreibung (aus extract_section_items)
+# Ausgabe: "- Beschreibung:\n\n`name {{param}}`\n\n"
+format_dothelp_item() {
+    local name="$1" desc="$2"
+    local param=""
+    if [[ "$desc" == *[a-zA-Z0-9]"("*")"* ]]; then
+        param="${desc#*\(}"
+        param="${param%%\)*}"
+        param="${param%%=*}"
+        param="${param%\?}"
+        desc="${desc%%\(*}"
+    fi
+    if [[ -n "$param" ]]; then
+        printf '%s' "- ${desc}:\n\n\`${name} {{${param}}}\`\n\n"
+    else
+        printf '%s' "- ${desc}:\n\n\`${name}\`\n\n"
+    fi
+}
+
+# ------------------------------------------------------------
 # Generator: dotfiles.page.md Schnellreferenz
 # ------------------------------------------------------------
 # Quellen (alle dynamisch extrahiert):
@@ -114,22 +137,7 @@ generate_dotfiles_page() {
     if [[ -f "$brew_alias" ]]; then
         while IFS= read -r section; do
             while IFS='|' read -r name desc; do
-                if [[ -n "$name" && -n "$desc" ]]; then
-                    # Parameter-Notation (param?) in tldr-Format {{param}} umwandeln
-                    local param=""
-                    if [[ "$desc" == *[a-zA-Z0-9]"("*")"* ]]; then
-                        param="${desc#*\(}"
-                        param="${param%%\)*}"
-                        param="${param%%=*}"
-                        param="${param%\?}"
-                        desc="${desc%%\(*}"
-                    fi
-                    if [[ -n "$param" ]]; then
-                        output+="- ${desc}:\n\n\`${name} {{${param}}}\`\n\n"
-                    else
-                        output+="- ${desc}:\n\n\`${name}\`\n\n"
-                    fi
-                fi
+                [[ -n "$name" && -n "$desc" ]] && output+=$(format_dothelp_item "$name" "$desc")
             done < <(extract_section_items "$brew_alias" "$section")
         done < <(extract_section_names "$brew_alias")
     fi
@@ -138,22 +146,7 @@ generate_dotfiles_page() {
     output+="# Dotfiles-Wartung\n\n"
     if [[ -f "$dotfiles_alias" ]]; then
         while IFS='|' read -r name desc; do
-            if [[ -n "$name" && -n "$desc" ]]; then
-                # Parameter-Notation (param?) in tldr-Format {{param}} umwandeln
-                local param=""
-                if [[ "$desc" == *[a-zA-Z0-9]"("*")"* ]]; then
-                    param="${desc#*\(}"
-                    param="${param%%\)*}"
-                    param="${param%%=*}"
-                    param="${param%\?}"
-                    desc="${desc%%\(*}"
-                fi
-                if [[ -n "$param" ]]; then
-                    output+="- ${desc}:\n\n\`${name} {{${param}}}\`\n\n"
-                else
-                    output+="- ${desc}:\n\n\`${name}\`\n\n"
-                fi
-            fi
+            [[ -n "$name" && -n "$desc" ]] && output+=$(format_dothelp_item "$name" "$desc")
         done < <(extract_section_items "$dotfiles_alias" "Dotfiles Wartung")
     fi
 
