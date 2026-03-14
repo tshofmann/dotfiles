@@ -255,10 +255,11 @@ check_fzf_header_summary() {
     local trimmed="${header_line#\#}"
     trimmed="${trimmed#"${trimmed%%[![:space:]]*}"}"
     local -A header_map=()
-    local -a pairs=("${(@s:, :)trimmed}")
+    local -a pairs=("${(@s:,:)trimmed}")
     local pair
     for pair in "${pairs[@]}"; do
         [[ -z "$pair" ]] && continue
+        pair="${pair#"${pair%%[![:space:]]*}"}"; pair="${pair%"${pair##*[![:space:]]}"}"
         [[ "$pair" != *" = "* ]] && continue
         local key="${pair%% =*}"
         local desc="${pair#*= }"
