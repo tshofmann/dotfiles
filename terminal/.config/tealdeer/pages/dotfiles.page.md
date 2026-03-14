@@ -3,8 +3,6 @@
 > Dotfiles mit Catppuccin-Theme und modernen CLI-Tools.
 > Mehr Informationen: <https://github.com/tshofmann/dotfiles>
 
-- dotfiles: Nutzt `tldr (für dothelp), stow (für dotstow), fzf+fd (für dotedit)`
-
 - Diese Hilfe (Schnellreferenz):
 
 `dothelp`
@@ -17,7 +15,7 @@
 
 `tldr {{tool}}`
 
-# Keybindings
+# Autosuggestions (History-Vorschläge beim Tippen)
 
 - Vorschlag komplett übernehmen:
 
@@ -31,21 +29,21 @@
 
 `Escape`
 
-# fzf-Shortcuts (Ctrl+X Prefix)
+# fzf-Shortcuts (interaktive Suche, Ctrl+X Prefix)
 
-- History:
+- Befehlsverlauf durchsuchen:
 
 `Ctrl+X 1`
 
-- Dateien:
+- Dateien im Verzeichnis suchen:
 
 `Ctrl+X 2`
 
-- Verzeichnisse:
+- In Unterverzeichnis wechseln:
 
 `Ctrl+X 3`
 
-# Tool-Ersetzungen
+# Tool-Ersetzungen (moderne CLI-Alternativen)
 
 - cat → bat (mit Syntax-Highlighting):
 
@@ -71,7 +69,7 @@
 
 `z, zi, zj`
 
-# Homebrew
+# Homebrew (inkl. Mac App Store)
 
 - Homebrew Komplett-Update:
 

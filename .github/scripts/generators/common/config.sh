@@ -43,7 +43,7 @@ readonly PROJECT_DESCRIPTION="Automatisiertes Dotfile-Setup mit modernen CLI-Ers
 
 # dothelp-Kategorien (Single Source of Truth für readme.sh + tldr.sh)
 readonly DOTHELP_CAT_ALIASES="Aliase"
-readonly DOTHELP_CAT_KEYBINDINGS="Keybindings"
+readonly DOTHELP_CAT_KEYBINDINGS="Autosuggestions"
 readonly DOTHELP_CAT_FZF="fzf-Shortcuts"
 readonly DOTHELP_CAT_REPLACEMENTS="Tool-Ersetzungen"
 

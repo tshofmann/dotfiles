@@ -55,17 +55,13 @@ generate_dotfiles_page() {
     output+="> ${PROJECT_TAGLINE}\n"
     output+="> Mehr Informationen: <https://github.com/${PROJECT_REPO}>\n\n"
 
-    # Abhängigkeiten aus dotfiles.alias (Konsistenz mit anderen Pages)
-    local nutzt=$(parse_header_field "$dotfiles_alias" "Nutzt")
-    [[ -n "$nutzt" && "$nutzt" != "-" ]] && output+="- dotfiles: Nutzt \`${nutzt}\`\n\n"
-
     # Einstiegspunkte – prominenter Block
     output+="- Diese Hilfe (Schnellreferenz):\n\n\`dothelp\`\n\n"
     output+="- Alle Aliase+Funktionen interaktiv durchsuchen:\n\n\`cmds {{suche}}\`\n\n"
     output+="- Vollständige Tool-Dokumentation:\n\n\`tldr {{tool}}\`\n"
 
     # Shell-Keybindings aus .zshrc (Format: #   Key   Beschreibung)
-    output+="\n# ${DOTHELP_CAT_KEYBINDINGS}\n\n"
+    output+="\n# ${DOTHELP_CAT_KEYBINDINGS} (History-Vorschläge beim Tippen)\n\n"
     if [[ -f "$zshrc" ]]; then
         while IFS= read -r line; do
             # Format: #   →        Vorschlag komplett übernehmen
@@ -82,11 +78,11 @@ generate_dotfiles_page() {
     fi
 
     # Globale Keybindings aus fzf/init.zsh
-    output+="# ${DOTHELP_CAT_FZF} (Ctrl+X Prefix)\n\n"
+    output+="# ${DOTHELP_CAT_FZF} (interaktive Suche, Ctrl+X Prefix)\n\n"
     if [[ -f "$fzf_init" ]]; then
         while IFS= read -r line; do
             if [[ "$line" == "bindkey '^X"*"'"*"# Ctrl+X"* ]]; then
-                # Extrahiere: bindkey '^X1' fzf-history-widget  # Ctrl+X 1 = History
+                # Extrahiere: bindkey '^X1' fzf-history-widget  # Ctrl+X 1 = Befehlsverlauf durchsuchen
                 local comment="${line#*\# }"
                 local key="${comment%% =*}"
                 local desc="${comment#*= }"
@@ -96,7 +92,7 @@ generate_dotfiles_page() {
     fi
 
     # Moderne Ersetzungen aus *.alias Ersetzt-Feldern + Aliase-Feld
-    output+="# ${DOTHELP_CAT_REPLACEMENTS}\n\n"
+    output+="# ${DOTHELP_CAT_REPLACEMENTS} (moderne CLI-Alternativen)\n\n"
     local -A replacements=()
     for alias_file in "$ALIAS_DIR"/*.alias(N); do
         local tool_name=$(basename "$alias_file" .alias)
@@ -133,7 +129,7 @@ generate_dotfiles_page() {
     done
 
     # Homebrew – dynamisch alle Sektionen mit öffentlichen Items
-    output+="# Homebrew\n\n"
+    output+="# Homebrew (inkl. Mac App Store)\n\n"
     if [[ -f "$brew_alias" ]]; then
         while IFS= read -r section; do
             while IFS='|' read -r name desc; do
