@@ -19,7 +19,7 @@
 # ------------------------------------------------------------
 # Konfiguration
 # ------------------------------------------------------------
-readonly HOOKS_PATH=".github/hooks"
+typeset -gr HOOKS_PATH=".github/hooks"
 
 # ------------------------------------------------------------
 # Plist Diff-Treiber konfigurieren
@@ -29,7 +29,7 @@ readonly HOOKS_PATH=".github/hooks"
 # ------------------------------------------------------------
 configure_plist_diff_driver() {
     local current_textconv
-    current_textconv=$(git config --get diff.plist.textconv 2>/dev/null || echo "")
+    current_textconv=$(git -C "$DOTFILES_DIR" config --get diff.plist.textconv 2>/dev/null || echo "")
 
     if [[ "$current_textconv" == "plutil -convert xml1 -o -" ]]; then
         ok "Plist Diff-Treiber bereits konfiguriert"
@@ -37,7 +37,7 @@ configure_plist_diff_driver() {
     fi
 
     if command -v plutil >/dev/null 2>&1; then
-        git config diff.plist.textconv "plutil -convert xml1 -o -"
+        git -C "$DOTFILES_DIR" config diff.plist.textconv "plutil -convert xml1 -o -"
         ok "Plist Diff-Treiber konfiguriert (plutil)"
     else
         warn "plutil nicht gefunden – Plist Diff-Treiber übersprungen"
@@ -50,8 +50,8 @@ configure_plist_diff_driver() {
 configure_git_hooks() {
     CURRENT_STEP="Git Hooks"
 
-    # Prüfe ob wir in einem Git-Repository sind
-    if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    # Prüfe ob dotfiles ein Git-Repository ist (CWD-unabhängig)
+    if ! git -C "$DOTFILES_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
         warn "Kein Git-Repository – Hooks übersprungen"
         return 0
     fi
@@ -65,16 +65,14 @@ configure_git_hooks() {
 
     # Aktuellen hooksPath prüfen
     local current_hooks
-    current_hooks=$(git config --get core.hooksPath 2>/dev/null || echo "")
+    current_hooks=$(git -C "$DOTFILES_DIR" config --get core.hooksPath 2>/dev/null || echo "")
 
     if [[ "$current_hooks" == "$HOOKS_PATH" ]]; then
         ok "Git Hooks bereits aktiviert"
     else
         log "Aktiviere Git Pre-Commit Hooks..."
 
-        cd "$DOTFILES_DIR" || return 1
-
-        if git config core.hooksPath "$HOOKS_PATH"; then
+        if git -C "$DOTFILES_DIR" config core.hooksPath "$HOOKS_PATH"; then
             ok "Git Hooks aktiviert: $HOOKS_PATH"
         else
             warn "Konnte Git Hooks nicht aktivieren"
@@ -96,7 +94,8 @@ setup_git_hooks() {
 }
 
 # Modul ausführen wenn direkt aufgerufen
-if [[ "${(%):-%N}" == "$0" ]]; then
+# ZSH_EVAL_CONTEXT endet auf :shfunc:file wenn per source aus load_module() geladen
+if [[ "$ZSH_EVAL_CONTEXT" == "toplevel:file" ]]; then
     source "${0:A:h}/_core.sh"
     setup_git_hooks
 fi

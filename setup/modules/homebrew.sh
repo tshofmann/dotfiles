@@ -25,7 +25,7 @@
 # ------------------------------------------------------------
 # Konfiguration
 # ------------------------------------------------------------
-readonly BREWFILE="${SCRIPT_DIR}/Brewfile"
+typeset -gr BREWFILE="${SCRIPT_DIR}/Brewfile"
 
 # ------------------------------------------------------------
 # Homebrew Installation
@@ -59,6 +59,7 @@ install_homebrew() {
 # ------------------------------------------------------------
 # Brewfile Installation
 # ------------------------------------------------------------
+
 install_brewfile() {
     CURRENT_STEP="Brewfile Installation"
 
@@ -68,13 +69,46 @@ install_brewfile() {
         return 1
     fi
 
-    # CLI-Tools und Font über Brewfile installieren
     # HOMEBREW_NO_AUTO_UPDATE=1: Kein automatisches 'brew update' vor Installation
     # --no-upgrade: Bestehende Formulae nicht upgraden (schneller, reproduzierbarer)
     log "Installiere Abhängigkeiten aus Brewfile"
-    if ! HOMEBREW_NO_AUTO_UPDATE=1 brew bundle --no-upgrade --file="$BREWFILE"; then
-        err "Brew Bundle fehlgeschlagen – Setup wird abgebrochen"
-        return 1
+
+    # mas-Downloads benötigen --verbose, damit der Fortschrittsbalken sichtbar ist.
+    # Ohne --verbose schluckt brew bundle den Output (IO.popen statt system()),
+    # mas erkennt kein Terminal und zeigt keinen Fortschritt → sieht aus wie ein Hänger.
+    # Deshalb: brew/cask/tap kompakt, mas-Einträge separat mit --verbose.
+    if grep -q '^mas ' "$BREWFILE" && is_macos; then
+        local tmpfile_main tmpfile_mas
+        tmpfile_main=$(mktemp) || { err "Kann temporäre Datei nicht erstellen"; return 1; }
+        tmpfile_mas=$(mktemp) || { rm -f "$tmpfile_main"; err "Kann temporäre Datei nicht erstellen"; return 1; }
+
+        # || true: grep gibt Exit 1 bei 0 Matches → set -e würde abbrechen
+        { grep -v '^mas ' "$BREWFILE" || true; } > "$tmpfile_main"
+        grep '^mas ' "$BREWFILE" > "$tmpfile_mas"
+
+        # Schritt 1: brew/cask/tap (kompakter Output, leer wenn Brewfile nur mas hat)
+        if [[ -s "$tmpfile_main" ]]; then
+            if ! HOMEBREW_NO_AUTO_UPDATE=1 brew bundle --no-upgrade --file="$tmpfile_main"; then
+                rm -f "$tmpfile_main" "$tmpfile_mas"
+                err "Brew Bundle fehlgeschlagen – Setup wird abgebrochen"
+                return 1
+            fi
+        fi
+
+        # Schritt 2: mas-Apps (verbose → Fortschrittsbalken sichtbar)
+        log "Installiere App Store Apps (Administratorrechte können nötig sein)"
+        if ! HOMEBREW_NO_AUTO_UPDATE=1 brew bundle --no-upgrade --verbose --file="$tmpfile_mas"; then
+            rm -f "$tmpfile_main" "$tmpfile_mas"
+            err "Brew Bundle fehlgeschlagen – Setup wird abgebrochen"
+            return 1
+        fi
+
+        rm -f "$tmpfile_main" "$tmpfile_mas"
+    else
+        if ! HOMEBREW_NO_AUTO_UPDATE=1 brew bundle --no-upgrade --file="$BREWFILE"; then
+            err "Brew Bundle fehlgeschlagen – Setup wird abgebrochen"
+            return 1
+        fi
     fi
 
     ok "Abhängigkeiten installiert"

@@ -21,7 +21,7 @@
 # ------------------------------------------------------------
 # Konfiguration
 # ------------------------------------------------------------
-readonly XCODE_THEMES_DIR="$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
+typeset -gr XCODE_THEMES_DIR="$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
 
 # ------------------------------------------------------------
 # Theme-Datei ermitteln

@@ -24,7 +24,7 @@
 # Konfiguration
 # ------------------------------------------------------------
 # Unterstützte Nerd Fonts (aus Brewfile)
-readonly -a FONT_GLOBS=(
+typeset -gr -a FONT_GLOBS=(
     "JetBrainsMono*NerdFont*"
     "MesloLG*NerdFont*"
 )

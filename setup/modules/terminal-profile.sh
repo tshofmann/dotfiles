@@ -29,7 +29,7 @@ if [[ ! "$PROFILE_IMPORT_TIMEOUT" =~ ^[1-9][0-9]*$ ]]; then
     warn "PROFILE_IMPORT_TIMEOUT='$PROFILE_IMPORT_TIMEOUT' ungültig, nutze Default: ${PROFILE_IMPORT_TIMEOUT_DEFAULT}s"
     PROFILE_IMPORT_TIMEOUT="$PROFILE_IMPORT_TIMEOUT_DEFAULT"
 fi
-readonly PROFILE_IMPORT_TIMEOUT_DEFAULT PROFILE_IMPORT_TIMEOUT
+typeset -gr PROFILE_IMPORT_TIMEOUT_DEFAULT PROFILE_IMPORT_TIMEOUT
 
 # Terminal-Profil dynamisch ermitteln (alphabetisch erste .terminal-Datei in setup/)
 detect_profile_file() {

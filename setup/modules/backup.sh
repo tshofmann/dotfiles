@@ -24,10 +24,12 @@
 # ------------------------------------------------------------
 # Konfiguration
 # ------------------------------------------------------------
-readonly BACKUP_DIR="${DOTFILES_DIR}/.backup"
-readonly BACKUP_MANIFEST="${BACKUP_DIR}/manifest.json"
-readonly BACKUP_LOG="${BACKUP_DIR}/backup.log"
-readonly BACKUP_HOME="${BACKUP_DIR}/home"
+# typeset -gr = global readonly: Variablen bleiben über den load_module()-Scope
+# hinaus sichtbar, damit stow.sh backup_exists() aufrufen kann.
+typeset -gr BACKUP_DIR="${DOTFILES_DIR}/.backup"
+typeset -gr BACKUP_MANIFEST="${BACKUP_DIR}/manifest.json"
+typeset -gr BACKUP_LOG="${BACKUP_DIR}/backup.log"
+typeset -gr BACKUP_HOME="${BACKUP_DIR}/home"
 
 # ------------------------------------------------------------
 # Logging (in Datei und stdout)
@@ -382,9 +384,16 @@ backup_create_if_needed() {
     _backup_log "END: Backup abgeschlossen"
 
     # Zusammenfassung
-    local backed_up
-    backed_up=$(find "$BACKUP_HOME" -type f 2>/dev/null | wc -l | tr -d ' ' || echo "0")
-    ok "Backup erstellt: $backed_up Dateien gesichert"
+    local backed_up symlink_count
+    backed_up=$({ find "$BACKUP_HOME" -type f 2>/dev/null || true; } | wc -l | tr -d ' ')
+    symlink_count=$(jq '[.files[] | select(.type == "dotfiles_symlink")] | length' "$BACKUP_MANIFEST" 2>/dev/null || echo "0")
+    if (( backed_up > 0 )); then
+        ok "Backup erstellt: $backed_up Dateien gesichert"
+    elif (( symlink_count == total_files )); then
+        ok "Backup erstellt: Alle $symlink_count Dateien bereits dotfiles-Symlinks"
+    else
+        ok "Backup erstellt: $backed_up Dateien gesichert, $symlink_count bereits verlinkt"
+    fi
     section_end "Manifest: ${BACKUP_MANIFEST#${DOTFILES_DIR}/}"
 
     return 0
