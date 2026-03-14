@@ -3,8 +3,6 @@
 > Praktische Aliase für SVG-Konvertierung.
 > Mehr Informationen: <https://github.com/RazrFalcon/resvg>
 
-- dotfiles: Nutzt `-`
-
 - dotfiles: SVG zu PNG konvertieren:
 
 `svg2png`

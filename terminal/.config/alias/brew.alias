@@ -4,8 +4,8 @@
 # Zweck       : Aliase für Homebrew Paketverwaltung
 # Pfad        : ~/.config/alias/brew.alias
 # Docs        : https://docs.brew.sh/Manpage
-# Nutzt       : fzf (Interactive), theme-style, jq, platform.zsh (notify)
 # Config      : ~/.config/homebrew/check.conf
+# Nutzt       : fzf (Interactive), theme-style, jq, platform.zsh (notify)
 # Ersetzt     : -
 # Aliase      : brew-up, brew-list, brew-add, brew-rm, maso, masu, mass, masi, masl
 # ============================================================
