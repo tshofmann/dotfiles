@@ -15,7 +15,7 @@
 #   # Zweck       : Beschreibung
 #   # Docs        : https://...
 #   # Hinweis     : Kann mehrzeilig sein
-#                   Fortsetzung mit Einrückung
+#   #               Fortsetzung mit Einrückung
 # Rückgabe: Wert oder leer
 parse_header_field() {
     local file="$1"
@@ -35,10 +35,11 @@ parse_header_field() {
         fi
 
         # Fortsetzungszeile (mit Einrückung, Teil des aktuellen Felds)
+        # Format: '#               Text' (# + 15 Spaces = aligned mit Wert nach ': ')
         if $in_field; then
-            if [[ "$line" == "#           "* ]]; then
-                # Fortsetungszeile - füge zum Wert hinzu
-                local continuation="${line#\#           }"
+            if [[ "$line" == "#               "* ]]; then
+                # Fortsetzungszeile - füge zum Wert hinzu
+                local continuation="${line#\#               }"
                 value+=" $continuation"
             else
                 # Keine Fortsetzung mehr
