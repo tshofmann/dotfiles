@@ -611,13 +611,15 @@ Bestimmte Sektionen in `.alias`-Dateien werden automatisch in `tldr dotfiles` do
 
 | Datei | Sektion | Erscheint in |
 | ------- | ------- | ------- |
-| `brew.alias` | `# Update & Wartung` | Homebrew |
-| `brew.alias` | `# Versionsübersicht` | Homebrew |
+| `brew.alias` | *alle Sektionen dynamisch* | Homebrew |
 | `dotfiles.alias` | `# Dotfiles Wartung` | Dotfiles-Wartung |
 
-> **Wichtig:** Neue Aliase und Funktionen müssen **innerhalb** der entsprechenden Sektion stehen,
-> nicht am Dateiende. Der Generator `extract_section_items()` extrahiert nur Items zwischen
-> Sektionsheader und nächster Sektion.
+> **Wichtig:** `brew.alias`-Sektionen werden automatisch über `extract_section_names()` erkannt.
+> Neue Sektionen erscheinen ohne Code-Änderung in `dothelp`. Sektionen ohne öffentliche
+> Aliase/Funktionen (z.B. nur `_`-Prefix) werden automatisch übersprungen.
+>
+> `dotfiles.alias` bleibt hardcodiert, da die Sektion „tldr-abhängige Aliase" (`dothelp`/`dh`)
+> bereits im Header-Block der Page steht und eine dynamische Extraktion zu Duplikaten führen würde.
 
 ### Funktions-Syntax
 

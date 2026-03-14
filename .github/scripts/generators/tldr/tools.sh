@@ -9,6 +9,29 @@
 # Abhängigkeiten: common.sh, tldr/parsers.sh, tldr/alias-helpers.sh
 
 # ------------------------------------------------------------
+# Helper: Beschreibung+Name als dothelp-Item formatieren
+# ------------------------------------------------------------
+# Wandelt Parameter-Notation (param?) in tldr-Format {{param}} um
+# Parameter: $1=name, $2=beschreibung (aus extract_section_items)
+# Ausgabe: "- Beschreibung:\n\n`name {{param}}`\n\n"
+format_dothelp_item() {
+    local name="$1" desc="$2"
+    local param=""
+    if [[ "$desc" == *[a-zA-Z0-9]"("*")"* ]]; then
+        param="${desc#*\(}"
+        param="${param%%\)*}"
+        param="${param%%=*}"
+        param="${param%\?}"
+        desc="${desc%%\(*}"
+    fi
+    if [[ -n "$param" ]]; then
+        printf '%s' "- ${desc}:\n\n\`${name} {{${param}}}\`\n\n"
+    else
+        printf '%s' "- ${desc}:\n\n\`${name}\`\n\n"
+    fi
+}
+
+# ------------------------------------------------------------
 # Generator: dotfiles.page.md Schnellreferenz
 # ------------------------------------------------------------
 # Quellen (alle dynamisch extrahiert):
@@ -17,7 +40,7 @@
 #   - *.alias Header: Ersetzt-Feld für moderne Ersetzungen
 #   - *.alias Header: Aliase-Feld für Beispiele
 #   - *.alias Header: Kommandos-Feld für extern registrierte Befehle
-#   - brew.alias: Sektionen "Update & Wartung", "Versionsübersicht"
+#   - brew.alias: Alle Sektionen dynamisch (via extract_section_names)
 #   - dotfiles.alias: Sektion "Dotfiles Wartung"
 #   - pages/*.patch.md, *.page.md: Verfügbare Hilfeseiten
 generate_dotfiles_page() {
@@ -109,25 +132,21 @@ generate_dotfiles_page() {
         fi
     done
 
-    # Homebrew – dynamisch alle Items aus "Update & Wartung" und "Versionsübersicht"
+    # Homebrew – dynamisch alle Sektionen mit öffentlichen Items
     output+="# Homebrew\n\n"
     if [[ -f "$brew_alias" ]]; then
-        local item
-        # Update & Wartung Sektion
-        while IFS='|' read -r name desc; do
-            [[ -n "$name" && -n "$desc" ]] && output+="- ${desc}:\n\n\`${name}\`\n\n"
-        done < <(extract_section_items "$brew_alias" "Update & Wartung")
-        # Versionsübersicht Sektion
-        while IFS='|' read -r name desc; do
-            [[ -n "$name" && -n "$desc" ]] && output+="- ${desc}:\n\n\`${name}\`\n\n"
-        done < <(extract_section_items "$brew_alias" "Versionsübersicht")
+        while IFS= read -r section; do
+            while IFS='|' read -r name desc; do
+                [[ -n "$name" && -n "$desc" ]] && output+=$(format_dothelp_item "$name" "$desc")
+            done < <(extract_section_items "$brew_alias" "$section")
+        done < <(extract_section_names "$brew_alias")
     fi
 
     # Dotfiles-Wartung – dynamisch alle Items aus "Dotfiles Wartung"
     output+="# Dotfiles-Wartung\n\n"
     if [[ -f "$dotfiles_alias" ]]; then
         while IFS='|' read -r name desc; do
-            [[ -n "$name" && -n "$desc" ]] && output+="- ${desc}:\n\n\`${name}\`\n\n"
+            [[ -n "$name" && -n "$desc" ]] && output+=$(format_dothelp_item "$name" "$desc")
         done < <(extract_section_items "$dotfiles_alias" "Dotfiles Wartung")
     fi
 
