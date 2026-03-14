@@ -246,7 +246,10 @@ check_fzf_header_summary() {
         break
     done
 
-    [[ -z "$header_line" ]] && return 0
+    [[ -z "$header_line" ]] && {
+        warn "init.zsh: Keybinding-Header-Kommentar fehlt (erwartet: Ctrl+X Zusammenfassung)"
+        return 0
+    }
 
     # 2. Header parsen: "# ... Ctrl+X 1 = Desc, Ctrl+X 2 = Desc, ..."
     local trimmed="${header_line#\#}"
