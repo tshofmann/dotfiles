@@ -318,7 +318,7 @@ Alle Shell-Dateien (`.alias`, `.sh`, `.zsh*`) beginnen mit einem standardisierte
 | `Zweck` | ✅ | Was macht diese Datei? |
 | `Pfad` | ✅ | Wo liegt die Datei nach Stow? |
 | `Docs` | ✅ | Link zur offiziellen Dokumentation |
-| `Config` | ⚪ | Nur wenn Config-Datei keine Header unterstützt |
+| `Config` | ⚪ | Pflicht wenn lokale Config-Datei existiert (SSOT, siehe unten) |
 | `Generiert` | ⚪ | Welche Doku wird aus dieser Datei generiert? |
 | `Nutzt` | ✅ | Abhängigkeiten zu anderen Tools (`-` wenn keine) |
 | `Ersetzt` | ✅ | Welchen Befehl ersetzt das Tool? (`-` wenn keinen) |
