@@ -219,7 +219,7 @@ bewussten Unterschied:
 | 9 | Health-Check | ✓ | – | Prüft reale Installation (Symlinks, Homebrew, Fonts, Plattform-Abstraktionen) – nur lokal sinnvoll |
 | 10 | fzf header-wrap Tests | ✓ | ✓ | Dynamischer Header-Umbruch-Algorithmus |
 | 11 | Generator Unit Tests | ✓ | ✓ | Parser-Funktionen der Doku-Generatoren |
-| 12 | Keybinding-Sync | ✓ | ✓ | Beschreibungskommentar ↔ header-wrap |
+| 12 | Keybinding-Sync | ✓ | ✓ | Beschreibungskommentar ↔ header-wrap + Header ↔ Bindkey |
 
 ### Hook schlägt fehl?
 
@@ -453,6 +453,13 @@ Jede fzf-Funktion hat **zwei synchronisierte Keybinding-Quellen**:
 | -------- | -------- | ------- |
 | **Beschreibungskommentar** | `Key=Aktion, Key=Aktion` | Autorität — wird von Generatoren gelesen |
 | **header-wrap Argumente** | `'Key: Aktion' 'Key: Aktion'` | Dynamische fzf-Header (Zeilenumbruch bei schmalen Terminals) |
+
+Zusätzlich prüft `check-header-sync.sh` die **init.zsh Header-Zeile**:
+
+| Quelle | Format | Zweck |
+| -------- | -------- | ------- |
+| **Bindkey-Kommentare** | `# Ctrl+X N = Beschreibung` | Autorität — wird von Generatoren gelesen |
+| **Header-Einzeiler** | `Ctrl+X 1 = Desc, Ctrl+X 2 = Desc` | Zusammenfassung im Datei-Header |
 
 > **Warum nur zwei Quellen?**
 >

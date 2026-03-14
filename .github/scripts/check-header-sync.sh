@@ -1,10 +1,11 @@
 #!/usr/bin/env zsh
 # ============================================================
-# check-header-sync.sh – Keybinding-Sync: Kommentar ↔ header-wrap
+# check-header-sync.sh – Keybinding-Sync (Drift-Prävention)
 # ============================================================
-# Zweck       : Stellt sicher, dass Keybinding-Texte in
-#             : Beschreibungskommentaren und header-wrap-Argumenten
-#             : identisch sind (Drift-Prävention)
+# Zweck       : Stellt sicher, dass Keybinding-Texte in allen
+#             : Quellen synchron sind (Drift-Prävention):
+#             : 1) Beschreibungskommentar ↔ header-wrap-Argumente
+#             : 2) init.zsh Header-Kommentar ↔ Bindkey-Beschreibungen
 # Pfad        : .github/scripts/check-header-sync.sh
 # Docs        : CONTRIBUTING.md (Keybinding-Architektur)
 # ============================================================
@@ -221,7 +222,96 @@ check_header_sync() {
     return 0
 }
 
+# ── Header-Kommentar ↔ Bindkey-Detail-Sync ──────────────────
+# Prüft ob der zusammenfassende Header-Kommentar in init.zsh
+# mit den Beschreibungen an den einzelnen bindkey-Zeilen
+# übereinstimmt (SSOT = bindkey-Kommentare).
+
+check_fzf_header_summary() {
+    [[ -f "$FZF_INIT" ]] || return 0
+
+    local -a flines=("${(@f)$(< "$FZF_INIT")}")
+    local total=${#flines}
+
+    # 1. Header-Einzeiler finden (Kommentar mit Komma-getrennten Ctrl+X Paaren)
+    local header_line="" header_num=0
+    local i
+    for (( i = 1; i <= total; i++ )); do
+        local l="${flines[$i]}"
+        [[ "$l" == "#"* ]] || continue
+        [[ "$l" == *"Ctrl+X"*" = "* ]] || continue
+        [[ "$l" == *","* ]] || continue
+        header_line="$l"
+        header_num=$i
+        break
+    done
+
+    [[ -z "$header_line" ]] && return 0
+
+    # 2. Header parsen: "# ... Ctrl+X 1 = Desc, Ctrl+X 2 = Desc, ..."
+    local trimmed="${header_line#\#}"
+    trimmed="${trimmed#"${trimmed%%[![:space:]]*}"}"
+    local -A header_map=()
+    local -a pairs=("${(@s:, :)trimmed}")
+    local pair
+    for pair in "${pairs[@]}"; do
+        [[ -z "$pair" ]] && continue
+        [[ "$pair" != *" = "* ]] && continue
+        local key="${pair%% =*}"
+        local desc="${pair#*= }"
+        key="${key#"${key%%[![:space:]]*}"}"; key="${key%"${key##*[![:space:]]}"}"
+        desc="${desc#"${desc%%[![:space:]]*}"}"; desc="${desc%"${desc##*[![:space:]]}"}"
+        header_map[$key]="$desc"
+    done
+
+    # 3. Bindkey-Detail-Kommentare parsen
+    local -A detail_map=()
+    for (( i = 1; i <= total; i++ )); do
+        local l="${flines[$i]}"
+        [[ "$l" == "bindkey '^X"* ]] || continue
+        [[ "$l" == *"# Ctrl+X"* ]] || continue
+        local comment="${l#*\# }"
+        local key="${comment%% =*}"
+        local desc="${comment#*= }"
+        detail_map[$key]="$desc"
+    done
+
+    # 4. Bidirektionaler Vergleich
+    local errors=0
+
+    # Bindkey-Keys die im Header fehlen oder abweichen
+    local k
+    for k in "${(@ko)detail_map}"; do
+        if [[ -z "${header_map[$k]:-}" ]]; then
+            err "init.zsh:$header_num: Bindkey '$k' fehlt im Header-Kommentar"
+            (( errors++ )) || true
+        elif [[ "${header_map[$k]}" != "${detail_map[$k]}" ]]; then
+            err "init.zsh:$header_num: '$k' → Header='${header_map[$k]}' ≠ Bindkey='${detail_map[$k]}'"
+            (( errors++ )) || true
+        fi
+    done
+
+    # Header-Keys die in den Bindkeys fehlen
+    for k in "${(@ko)header_map}"; do
+        if [[ -z "${detail_map[$k]:-}" ]]; then
+            err "init.zsh:$header_num: Header-Key '$k' fehlt in Bindkey-Kommentaren"
+            (( errors++ )) || true
+        fi
+    done
+
+    if (( errors > 0 )); then
+        err "${errors} Header-Sync-Fehler in init.zsh"
+        return 1
+    fi
+    ok "fzf-Header-Sync OK (${#detail_map} Keybindings geprüft)"
+    return 0
+}
+
 # ── Hauptprogramm ───────────────────────────────────────────
 
+_total_errors=0
 log "Prüfe Keybinding-Sync..."
-check_header_sync
+check_header_sync || (( _total_errors++ )) || true
+check_fzf_header_summary || (( _total_errors++ )) || true
+(( _total_errors > 0 )) && exit 1
+exit 0

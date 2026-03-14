@@ -6,7 +6,7 @@
 # Docs        : https://github.com/junegunn/fzf#usage
 # ============================================================
 # Hinweis     : Wird via .zshrc geladen. Keybindings:
-#           Ctrl+X 1 = Befehlsverlauf durchsuchen, Ctrl+X 2 = Dateien suchen, Ctrl+X 3 = Verzeichnis wechseln
+#           Ctrl+X 1 = Befehlsverlauf durchsuchen, Ctrl+X 2 = Dateien im Verzeichnis suchen, Ctrl+X 3 = In Unterverzeichnis wechseln
 # ============================================================
 
 # Helper-Verzeichnis exportieren (wird von Alias-Funktionen genutzt)
