@@ -69,3 +69,16 @@
 - dotfiles: Verzeichnis wechseln mit eza-Vorschau:
 
 `<Ctrl x> 3`
+
+# dotfiles: Tools mit fzf-Integration
+
+- dotfiles: Siehe `tldr 7z` für `7za`, `7zx`, `7zl`, `7zt`, `unrar`, `7zf`
+- dotfiles: Siehe `tldr bat` für `cat`, `catn`, `catd`, `bat-theme`
+- dotfiles: Siehe `tldr brew` für `brew-up`, `brew-list`, `brew-add`, `brew-rm`, `maso`, `masu`, `mass`, `masi`, `masl`
+- dotfiles: Siehe `tldr dotfiles` für `dothelp`, `dh`, `dothealth`, `dotdocs`, `dotstow`, `dotedit`
+- dotfiles: Siehe `tldr fd` für `fdf`, `fdd`, `fdh`, `fda`, `fdsh`, `fdpy`, `fdjs`, `fdmd`, `fdjson`, `fdyaml`, `jump`, `pick`
+- dotfiles: Siehe `tldr gh` für `gh-open`, `gh-status`, `gh-pr`, `gh-issue`, `gh-run`, `gh-repo`, `gh-gist`
+- dotfiles: Siehe `tldr git` für `git-add`, `git-commit`, `git-cm`, `git-acm`, `git-amend`, `git-push`, `git-pull`, `git-co`, `git-status`, `git-diff`, `git-log`, `git-branch`, `git-stage`, `git-stash`
+- dotfiles: Siehe `tldr rg` für `rgc`, `rgi`, `rga`, `rgh`, `rgl`, `rgn`, `rgts`, `rgpy`, `rgmd`, `rgsh`, `rgrb`, `rggo`, `rg-live`
+- dotfiles: Siehe `tldr yazi` für `y`
+- dotfiles: Siehe `tldr zoxide` für `z`, `zi`, `zj`

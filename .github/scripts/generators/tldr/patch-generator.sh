@@ -94,18 +94,42 @@ generate_patch_for_alias() {
 }
 
 # ------------------------------------------------------------
-# Generator: Cross-Referenzen für fzf.patch.md
+# Generator: Cross-Referenzen für fzf.patch.md (SSOT)
 # ------------------------------------------------------------
+# Automatischer Reverse-Lookup: Scannt alle .alias-Dateien nach
+# "# Nutzt : ...fzf..." und generiert Rückverweise.
+# Neue Tools mit fzf im Nutzt-Feld erscheinen automatisch.
 generate_cross_references() {
-    local fzf_alias="$ALIAS_DIR/fzf.alias"
     local output=""
 
-    local refs=$(parse_cross_references "$fzf_alias")
+    for alias_file in "$ALIAS_DIR"/*.alias(N); do
+        local tool_name="${${alias_file:t}%.alias}"
 
-    while IFS='|' read -r tool funcs; do
-        [[ -z "$tool" ]] && continue
-        output+="- dotfiles: Siehe \`tldr ${tool}\` für \`${funcs//,/\`, \`}\`\n"
-    done <<< "$refs"
+        # Nicht auf sich selbst verweisen
+        [[ "$tool_name" == "fzf" ]] && continue
+
+        local nutzt=$(parse_header_field "$alias_file" "Nutzt")
+        # Prüfe ob fzf als Abhängigkeit gelistet ist
+        [[ "$nutzt" != *"fzf"* ]] && continue
+
+        # Aliase/Kommandos aus Header für konkrete Funktionsnamen
+        local aliase=$(parse_header_field "$alias_file" "Aliase")
+        local kommandos=$(parse_header_field "$alias_file" "Kommandos")
+
+        # Zusammenführen (Kommandos haben Vorrang)
+        local funcs=""
+        [[ -n "$kommandos" ]] && funcs="$kommandos"
+        if [[ -n "$aliase" ]]; then
+            [[ -n "$funcs" ]] && funcs+=", "
+            funcs+="$aliase"
+        fi
+
+        if [[ -n "$funcs" ]]; then
+            output+="- dotfiles: Siehe \`tldr ${tool_name}\` für \`${funcs//, /\`, \`}\`\n"
+        else
+            output+="- dotfiles: Siehe \`tldr ${tool_name}\`\n"
+        fi
+    done
 
     echo -e "$output"
 }
@@ -208,6 +232,14 @@ generate_complete_patch() {
         output+="# dotfiles: Shell-Wrapper\n\n"
     fi
 
+    if [[ "$tool_name" == "lazygit" ]]; then
+        # Config-Pfad aus Alias-Header ableiten (SSOT)
+        local lazygit_config="$DOTFILES_DIR/terminal${config#\~}"
+        local lazygit_entries
+        lazygit_entries=$(generate_lazygit_specific_entries "$lazygit_config")
+        [[ -n "$lazygit_entries" ]] && output+="${lazygit_entries}\n\n"
+    fi
+
     local alias_output=$(generate_patch_for_alias "$alias_file")
     [[ -n "$alias_output" ]] && output+="${alias_output}"
 
@@ -220,7 +252,7 @@ generate_complete_patch() {
         local cross_refs
         cross_refs=$(generate_cross_references)
         if [[ -n "${cross_refs//[[:space:]]/}" ]]; then
-            output+="\n\n# dotfiles: Tool-spezifische fzf-Funktionen\n\n"
+            output+="\n\n# dotfiles: Tools mit fzf-Integration\n\n"
             output+="$cross_refs"
         fi
     fi
@@ -276,6 +308,9 @@ generate_config_only_patch() {
         kitty)
             output+=$(generate_kitty_specific_entries "$config_file")
             ;;
+        starship)
+            output+=$(generate_starship_specific_entries "$config_file")
+            ;;
     esac
 
     echo -e "$output"
@@ -314,6 +349,126 @@ generate_kitty_specific_entries() {
 
     # Yazi-Previews (inhärentes Feature des Kitty-Image-Protokolls)
     output+="- dotfiles: Yazi-Previews funktionieren (Image-Protokoll)\n"
+
+    echo -e "$output"
+}
+
+# ------------------------------------------------------------
+# Generator: Starship-spezifische tldr-Einträge
+# ------------------------------------------------------------
+# Extrahiert aktive Module und Palette aus starship.toml
+generate_starship_specific_entries() {
+    local config_file="$1"
+    local output=""
+
+    # Palette-Name dynamisch aus Config
+    local palette_name
+    palette_name=$(grep -m1 "^palette = " "$config_file" 2>/dev/null | sed "s/palette = '//;s/'//")
+    if [[ -n "$palette_name" ]]; then
+        local display_name="${palette_name//_/ }"
+        display_name="${(C)display_name}"
+
+        # Layout-Stil aus Upstream-Feld ableiten (SSOT)
+        local upstream
+        upstream=$(parse_header_field "$config_file" "Upstream")
+        local layout_style=""
+        [[ "$upstream" == *"-powerline"* ]] && layout_style=" (Powerline-Layout)"
+        [[ "$upstream" == *"-plain"* ]] && layout_style=" (Plain-Layout)"
+
+        output+="- dotfiles: ${display_name} Farbpalette${layout_style}\n\n"
+    fi
+
+    # Module aus [section] Headern extrahieren (nur Top-Level, keine Sub-Sektionen)
+    # Ausschluss: palettes (Theme-Definition, kein Modul)
+    local -a modules=()
+    while IFS= read -r section; do
+        section="${section//[\[\]]/}"
+        modules+=("$section")
+    done < <(grep -E '^\[[a-z_]+\]$' "$config_file")
+
+    # Module gruppiert ausgeben
+    if (( ${#modules[@]} > 0 )); then
+        local -a prompt_modules=() lang_modules=() infra_modules=()
+        for mod in "${modules[@]}"; do
+            case "$mod" in
+                os|username|directory|git_branch|git_status|time|cmd_duration|line_break|character)
+                    prompt_modules+=("$mod") ;;
+                docker_context|conda)
+                    infra_modules+=("$mod") ;;
+                *)
+                    lang_modules+=("$mod") ;;
+            esac
+        done
+
+        output+="- dotfiles: Prompt-Module: \`${(j:, :)prompt_modules}\`\n\n"
+        (( ${#lang_modules[@]} > 0 )) && \
+            output+="- dotfiles: Sprach-Module: \`${(j:, :)lang_modules}\`\n\n"
+        (( ${#infra_modules[@]} > 0 )) && \
+            output+="- dotfiles: Infra-Module: \`${(j:, :)infra_modules}\`\n\n"
+    fi
+
+    # Performance-Analyse Hinweis
+    output+="- dotfiles: Prompt-Performance analysieren:\n\n\`starship timings\`\n\n"
+
+    # Config-Debug
+    output+="- dotfiles: Aktive Konfiguration prüfen:\n\n\`starship config\`\n"
+
+    echo -e "$output"
+}
+
+# ------------------------------------------------------------
+# Generator: Lazygit-spezifische tldr-Einträge
+# ------------------------------------------------------------
+# Extrahiert Theme- und UI-Features aus lazygit/config.yml
+generate_lazygit_specific_entries() {
+    local config_file="${1:-}"
+    local output=""
+
+    [[ ! -f "$config_file" ]] && return
+
+    # Theme-Name aus Zweck-Header extrahieren (SSOT)
+    local zweck
+    zweck=$(parse_header_field "$config_file" "Zweck")
+    local theme_label=""
+    # Erkennt "Catppuccin Mocha Theme", "Catppuccin Latte Theme", etc.
+    [[ "$zweck" =~ (Catppuccin\ [A-Za-z]+\ Theme) ]] && theme_label="${match[1]}"
+
+    # Akzentfarbe aus activeBorderColor Inline-Kommentar (SSOT)
+    local color_line
+    color_line=$(grep -m1 -A1 'activeBorderColor:' "$config_file" 2>/dev/null | grep -m1 "'#[a-f0-9]*'")
+    local color_name=""
+    [[ -n "$color_line" ]] && color_name=$(echo "$color_line" | sed 's/[[:space:]]*$//' | grep -o '# [A-Z][a-zA-Z0-9]*$' | sed 's/# //')
+
+    if [[ -n "$theme_label" && -n "$color_name" ]]; then
+        output+="- dotfiles: ${theme_label} (${color_name}-Akzent)\n\n"
+    elif [[ -n "$theme_label" ]]; then
+        output+="- dotfiles: ${theme_label}\n\n"
+    elif [[ -n "$color_name" ]]; then
+        output+="- dotfiles: Theme (${color_name}-Akzent)\n\n"
+    fi
+
+    # Nerd Font Version
+    local nerd_version
+    nerd_version=$(grep -m1 'nerdFontsVersion:' "$config_file" 2>/dev/null | grep -o '"[0-9]*"' | tr -d '"')
+    [[ -n "$nerd_version" ]] && \
+        output+="- dotfiles: Nerd Font v${nerd_version} Icons aktiv\n\n"
+
+    # UI-Features dynamisch sammeln
+    local -a ui_features=()
+    grep -q 'showFileTree: true' "$config_file" 2>/dev/null && ui_features+=("File Tree")
+    grep -q 'border: rounded' "$config_file" 2>/dev/null && ui_features+=("Rounded Border")
+    grep -q 'showGraph: always' "$config_file" 2>/dev/null && ui_features+=("Git Graph")
+    (( ${#ui_features[@]} > 0 )) && \
+        output+="- dotfiles: UI-Features: ${(j:, :)ui_features}\n\n"
+
+    # Verweis auf verwandte Git-Funktionen (nur wenn git.alias mit fzf existiert)
+    local git_alias="$ALIAS_DIR/git.alias"
+    if [[ -f "$git_alias" ]]; then
+        local git_nutzt
+        git_nutzt=$(parse_header_field "$git_alias" "Nutzt")
+        [[ "$git_nutzt" == *"fzf"* ]] && \
+            output+="- dotfiles: Siehe auch \`tldr git\` für fzf-basierte Git-Funktionen\n"
+    fi
 
     echo -e "$output"
 }
