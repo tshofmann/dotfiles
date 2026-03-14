@@ -57,7 +57,7 @@ Bestehende Konfigurationen werden automatisch gesichert. Wiederherstellung: `~/d
 
 Danach **Terminal neu starten**. Fertig!
 
-> 💡 **Tipp:** Gib `dothelp` ein – zeigt Keybindings, Aliase und Wartungsbefehle.
+> 💡 **Tipp:** Gib `dothelp` ein – zeigt alle Aliase, Shortcuts und Wartungsbefehle.
 >
 > ⚠️ **Probleme?** `dothealth` prüft die Installation.
 
@@ -78,7 +78,7 @@ Danach **Terminal neu starten**. Fertig!
 
 | Befehl | Was es zeigt |
 | ------ | ------------ |
-| `dothelp` | Schnellreferenz: Keybindings, Tool-Ersetzungen, Wartung |
+| `dothelp` | Schnellreferenz: Aliase, Shortcuts, Tool-Ersetzungen, Wartung |
 | `cmds` | Alle Aliase und Funktionen interaktiv durchsuchen |
 | `tldr <tool>` | Vollständige Tool-Doku mit dotfiles-Erweiterungen |
 

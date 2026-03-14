@@ -243,9 +243,10 @@ check_generator_tests() {
 }
 
 # ------------------------------------------------------------
-# 12. Keybinding-Sync: Beschreibungskommentar ↔ header-wrap
-# Prüft ob die Keybinding-Texte in beiden Quellen identisch
-# sind (Single Source of Truth = Beschreibungskommentar).
+# 12. Keybinding-Sync (Drift-Prävention)
+# Prüft ob die Keybinding-Texte in allen Quellen synchron sind:
+# a) Beschreibungskommentar ↔ header-wrap (SSOT = Kommentar)
+# b) init.zsh Header-Kommentar ↔ Bindkey-Beschreibungen (SSOT = Bindkey)
 # Läuft auch in CI (siehe .github/workflows/validate.yml)
 # ------------------------------------------------------------
 check_header_sync() {

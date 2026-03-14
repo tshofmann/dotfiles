@@ -261,7 +261,7 @@ main() {
     print -P "     ${C_DIM}Oder Terminal schließen und neu öffnen${C_RESET}"
 
     print -P ""
-    print -P "  ${C_GREEN}💡 Gib '${C_BOLD}dothelp${C_RESET}${C_GREEN}' ein – zeigt Keybindings, Aliase und Wartungsbefehle${C_RESET}"
+    print -P "  ${C_GREEN}💡 Gib '${C_BOLD}dothelp${C_RESET}${C_GREEN}' ein – zeigt alle Aliase, Shortcuts und Wartungsbefehle${C_RESET}"
     print -P ""
 }
 

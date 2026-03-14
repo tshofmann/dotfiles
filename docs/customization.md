@@ -251,9 +251,9 @@ Shell-Keybindings für fzf werden in `terminal/.config/fzf/init.zsh` definiert:
 
 ```zsh
 # Ctrl+X Prefix für dotfiles-Keybindings
-bindkey '^X1' fzf-history-widget         # Ctrl+X 1 = History
-bindkey '^X2' fzf-file-widget            # Ctrl+X 2 = Dateien
-bindkey '^X3' fzf-cd-widget              # Ctrl+X 3 = Verzeichnisse
+bindkey '^X1' fzf-history-widget         # Ctrl+X 1 = Befehlsverlauf durchsuchen
+bindkey '^X2' fzf-file-widget            # Ctrl+X 2 = Dateien im Verzeichnis suchen
+bindkey '^X3' fzf-cd-widget              # Ctrl+X 3 = In Unterverzeichnis wechseln
 ```
 
 ---
