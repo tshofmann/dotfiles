@@ -303,6 +303,7 @@ Alle Shell-Dateien (`.alias`, `.sh`, `.zsh*`) beginnen mit einem standardisierte
 # Zweck       : Ausführliche Beschreibung des Datei-Zwecks
 # Pfad        : ~/.config/alias/dateiname.alias
 # Docs        : https://github.com/tool/tool (offizielle Doku)
+# Config      : ~/.config/tool/config (wenn lokale Config existiert)
 # Nutzt       : fzf (Preview), bat (Syntax-Highlighting)
 # Ersetzt     : cat (mit Syntax-Highlighting)
 # Kommandos   : z, zi
@@ -317,15 +318,15 @@ Alle Shell-Dateien (`.alias`, `.sh`, `.zsh*`) beginnen mit einem standardisierte
 | `Zweck` | ✅ | Was macht diese Datei? |
 | `Pfad` | ✅ | Wo liegt die Datei nach Stow? |
 | `Docs` | ✅ | Link zur offiziellen Dokumentation |
+| `Config` | ⚪ | Pflicht wenn lokale Config-Datei existiert (SSOT, siehe unten) |
 | `Generiert` | ⚪ | Welche Doku wird aus dieser Datei generiert? |
-| `Nutzt` | ⚪ | Abhängigkeiten zu anderen Tools (fzf, bat, etc.) |
+| `Nutzt` | ✅ | Abhängigkeiten zu anderen Tools (`-` wenn keine) |
 | `Ersetzt` | ✅ | Welchen Befehl ersetzt das Tool? (`-` wenn keinen) |
 | `Kommandos` | ⚪ | Extern registrierte Befehle (z.B. via `tool init zsh`) |
 | `Aliase` | ⚪ | Liste der **in dieser Datei** definierten Aliase/Funktionen |
 | `Aufruf` | ⚪ | Für Skripte: Wie wird es aufgerufen? |
 | `Lizenz` | ⚪ | Lizenz für externe/upstream Dateien (z.B. MIT) |
 | `Hinweis` | ⚪ | Nur für **einzigartige** kontextuelle Info (siehe SSOT) |
-| `Config` | ⚪ | Nur wenn Config-Datei keine Header unterstützt |
 
 ### Config-Pfad Ermittlung (SSOT)
 

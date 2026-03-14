@@ -1,5 +1,3 @@
-- dotfiles: Nutzt `-`
-
 - dotfiles: Audio aus Video extrahieren:
 
 `v2mp3 {{video, output}}`

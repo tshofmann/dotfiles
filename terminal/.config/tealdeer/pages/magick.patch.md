@@ -1,7 +1,5 @@
 - dotfiles: Config `~/.config/ImageMagick/policy.xml (Sicherheit)`
 
-- dotfiles: Nutzt `-`
-
 - dotfiles: Bild skalieren:
 
 `imgresize {{bild, breite, output}}`

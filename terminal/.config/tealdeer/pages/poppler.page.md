@@ -3,8 +3,6 @@
 > Praktische Aliase für PDF-Operationen.
 > Mehr Informationen: <https://poppler.freedesktop.org/>
 
-- dotfiles: Nutzt `-`
-
 - dotfiles: PDF zu Text konvertieren (Layout beibehalten):
 
 `pdf2txt`

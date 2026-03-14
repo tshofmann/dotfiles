@@ -34,7 +34,7 @@ generate_dotfiles_page() {
 
     # Abhängigkeiten aus dotfiles.alias (Konsistenz mit anderen Pages)
     local nutzt=$(parse_header_field "$dotfiles_alias" "Nutzt")
-    [[ -n "$nutzt" ]] && output+="- dotfiles: Nutzt \`${nutzt}\`\n\n"
+    [[ -n "$nutzt" && "$nutzt" != "-" ]] && output+="- dotfiles: Nutzt \`${nutzt}\`\n\n"
 
     # Einstiegspunkte – prominenter Block
     output+="- Diese Hilfe (Schnellreferenz):\n\n\`dothelp\`\n\n"
@@ -472,9 +472,9 @@ generate_zsh_page() {
             local zoxide_desc=""
             zoxide_desc=$(grep -A1 'command -v zoxide' "$zshrc" | grep '^    # ' | head -1 | sed 's/^    # //')
             if [[ -n "$zoxide_desc" ]]; then
-                # Winkelklammern escapen, damit z <query> in Markdown sichtbar bleibt
-                local zoxide_desc_escaped="${zoxide_desc//</&lt;}"
-                zoxide_desc_escaped="${zoxide_desc_escaped//>/&gt;}"
+                # Winkelklammern in Backticks wrappen, damit <query> in tldr sichtbar bleibt
+                local zoxide_desc_escaped
+                zoxide_desc_escaped=$(printf '%s' "$zoxide_desc" | sed 's/<\([^>]*\)>/`<\1>`/g')
                 output+="- dotfiles: zoxide – ${zoxide_desc_escaped}\n\n"
             else
                 output+="- dotfiles: zoxide – Schnelle Verzeichniswechsel\n\n"

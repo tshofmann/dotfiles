@@ -5,6 +5,7 @@
 # Pfad        : ~/.config/alias/eza.alias
 # Docs        : https://eza.rocks
 # Config      : ~/.config/eza/theme.yml
+# Nutzt       : -
 # Ersetzt     : ls (mit Icons und Git-Status)
 # Aliase      : ls, ll, la, lt, lt3, lss, lst
 #
