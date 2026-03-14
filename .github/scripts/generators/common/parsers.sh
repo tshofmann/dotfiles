@@ -47,7 +47,7 @@ parse_header_field() {
         fi
     done < "$file"
 
-    echo "$value"
+    printf '%s\n' "$value"
 }
 
 # ------------------------------------------------------------
