@@ -2,8 +2,8 @@
 # ============================================================
 # test-tldr-parsers.sh - Tests für tldr/parsers.sh
 # ============================================================
-# Zweck       : Unit Tests für format_keybindings_for_tldr()
-#               und format_param_for_tldr()
+# Zweck       : Unit Tests für format_keybindings_for_tldr(),
+#               format_param_for_tldr() und parse_yazi_keymap()
 # Pfad        : .github/scripts/tests/test-tldr-parsers.sh
 # Aufruf      : ./.github/scripts/tests/test-tldr-parsers.sh
 # ============================================================
@@ -20,6 +20,10 @@ ALIAS_DIR="$DOTFILES_DIR/terminal/.config/alias"
 TEALDEER_DIR="$DOTFILES_DIR/terminal/.config/tealdeer/pages"
 
 source "$SCRIPT_DIR/../generators/tldr/parsers.sh"
+
+# Temp-Verzeichnis für Fixtures
+_TEST_TMPDIR=$(mktemp -d)
+trap 'rm -rf "$_TEST_TMPDIR"' EXIT
 
 # ============================================================
 # format_keybindings_for_tldr()
@@ -87,6 +91,50 @@ assert_equals "Mehrere Params" "{{query, dir, depth}}" "$result"
 # Leerer Input
 result=$(format_param_for_tldr "")
 assert_empty "Leerer Input" "$result"
+
+# ============================================================
+# parse_yazi_keymap()
+# ============================================================
+echo ""
+echo "=== parse_yazi_keymap ==="
+
+# Keymap mit Bookmarks und Quick Look
+cat > "$_TEST_TMPDIR/keymap.toml" << 'FIXTURE'
+# ------------------------------------------------------------
+# Bookmarks (g → Ziel)
+# ------------------------------------------------------------
+[[mgr.prepend_keymap]]
+on = ["g", "d"]
+run = "cd ~/Downloads"
+desc = "Downloads"
+
+[[mgr.prepend_keymap]]
+on = ["g", "D"]
+run = "cd ~/Desktop"
+desc = "Desktop"
+
+# ------------------------------------------------------------
+# Quick Look (macOS native Preview)
+# ------------------------------------------------------------
+[[mgr.prepend_keymap]]
+on = ["<C-p>"]
+run = "shell -- qlmanage -p %s &>/dev/null"
+desc = "Quick Look"
+FIXTURE
+
+result=$(parse_yazi_keymap "$_TEST_TMPDIR/keymap.toml")
+
+assert_contains "Bookmark g d" "g d" "$result"
+assert_contains "Bookmark Downloads" "Downloads" "$result"
+assert_contains "Bookmark g D" "g D" "$result"
+assert_contains "Bookmark Desktop" "Desktop" "$result"
+assert_contains "Ctrl+p konvertiert" "Ctrl+p" "$result"
+assert_contains "Quick Look" "Quick Look" "$result"
+assert_contains "Sektionsheader Bookmarks" "Bookmarks" "$result"
+
+# Leere/nichtexistente Datei
+result=$(parse_yazi_keymap "$_TEST_TMPDIR/nonexistent.toml")
+assert_empty "Nichtexistente Datei" "$result"
 
 # ============================================================
 # Zusammenfassung
