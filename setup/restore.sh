@@ -223,7 +223,7 @@ main() {
 
     echo ""
     echo "╔════════════════════════════════════════════════════════════╗"
-    echo "║            DOTFILES RESTORE - Wiederherstellung            ║"
+    echo "║          DOTFILES WIEDERHERSTELLUNG                        ║"
     echo "╚════════════════════════════════════════════════════════════╝"
     echo ""
 
@@ -348,7 +348,7 @@ main() {
     echo ""
     ok "Wiederherstellung abgeschlossen"
     echo "  Symlinks entfernt:  $removed"
-    echo "  Dateien restored:   $restored"
+    echo "  Wiederhergestellt:  $restored"
     echo "  Übersprungen:       $skipped"
     echo ""
 

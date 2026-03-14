@@ -33,8 +33,13 @@ source "$MODULES_DIR/_core.sh"
 # ------------------------------------------------------------
 # Trap-Handler für Abbruch/Fehler
 # ------------------------------------------------------------
+# ZERR fängt ERR_EXIT ab (set -e), da ZSH den EXIT-Trap dabei überspringt.
+# Guard verhindert doppelte Ausführung wenn ZERR vor EXIT feuert.
+_BOOTSTRAP_CLEANED_UP=0
 cleanup() {
     local exit_code=$?
+    (( _BOOTSTRAP_CLEANED_UP )) && return 0
+    _BOOTSTRAP_CLEANED_UP=1
     _release_bootstrap_lock
     if (( exit_code != 0 )); then
         print ""
@@ -45,7 +50,7 @@ cleanup() {
         log "Bereits installierte Komponenten werden übersprungen."
     fi
 }
-trap cleanup EXIT
+trap cleanup EXIT ZERR
 
 # ------------------------------------------------------------
 # Bootstrap-Lock (verhindert parallele Ausführung)
@@ -64,36 +69,39 @@ _acquire_bootstrap_lock() {
             err "Prüfe Schreibrechte auf $DOTFILES_DIR"
             return 1
         fi
-        if (( waited >= max_wait )); then
-            # Stale-Lock prüfen (Prozess nicht mehr aktiv?)
-            if [[ -f "$_BOOTSTRAP_LOCKDIR/pid" ]]; then
-                local lock_pid
-                lock_pid=$(<"$_BOOTSTRAP_LOCKDIR/pid")
-                if ! kill -0 "$lock_pid" 2>/dev/null; then
-                    # EPERM prüfen: kill -0 scheitert auch ohne Rechte
-                    if ps -p "$lock_pid" >/dev/null 2>&1; then
-                        err "Bootstrap-Lock von laufendem Prozess (PID $lock_pid) gehalten – keine Berechtigung"
-                        return 1
-                    fi
-                    warn "Stale Lock von PID $lock_pid erkannt, entferne..."
-                    if ! rm -rf "$_BOOTSTRAP_LOCKDIR"; then
-                        err "Konnte stale Lock-Verzeichnis nicht entfernen: $_BOOTSTRAP_LOCKDIR"
-                        err "Bitte Lock manuell löschen und erneut versuchen"
-                        return 1
-                    fi
-                    continue
+
+        # Stale/defekten Lock sofort prüfen (nicht erst nach Timeout)
+        if [[ -f "$_BOOTSTRAP_LOCKDIR/pid" ]]; then
+            local lock_pid
+            lock_pid=$(<"$_BOOTSTRAP_LOCKDIR/pid")
+            if ! kill -0 "$lock_pid" 2>/dev/null; then
+                # EPERM prüfen: kill -0 scheitert auch ohne Rechte
+                if ps -p "$lock_pid" >/dev/null 2>&1; then
+                    err "Bootstrap-Lock von laufendem Prozess (PID $lock_pid) gehalten – keine Berechtigung"
+                    return 1
                 fi
-            else
-                # Lock-Verzeichnis ohne PID-Datei = defekter Lock
-                warn "Defekter Lock ohne PID erkannt, entferne..."
+                warn "Stale Lock von PID $lock_pid erkannt, entferne..."
                 if ! rm -rf "$_BOOTSTRAP_LOCKDIR"; then
-                    err "Konnte defektes Lock-Verzeichnis nicht entfernen: $_BOOTSTRAP_LOCKDIR"
+                    err "Konnte stale Lock-Verzeichnis nicht entfernen: $_BOOTSTRAP_LOCKDIR"
                     err "Bitte Lock manuell löschen und erneut versuchen"
                     return 1
                 fi
                 continue
             fi
-            err "Bootstrap läuft bereits (Lock nach ${max_wait}s nicht erhalten)"
+        else
+            # Lock-Verzeichnis ohne PID-Datei = defekter Lock
+            warn "Defekter Lock ohne PID erkannt, entferne..."
+            if ! rm -rf "$_BOOTSTRAP_LOCKDIR"; then
+                err "Konnte defektes Lock-Verzeichnis nicht entfernen: $_BOOTSTRAP_LOCKDIR"
+                err "Bitte Lock manuell löschen und erneut versuchen"
+                return 1
+            fi
+            continue
+        fi
+
+        # Ab hier: Lock ist von einem aktiven Prozess gehalten
+        if (( waited >= max_wait )); then
+            err "Bootstrap läuft bereits (PID $lock_pid, Lock nach ${max_wait}s nicht erhalten)"
             return 1
         fi
         log "Bootstrap läuft bereits – warte... (${waited}s)"
@@ -225,8 +233,8 @@ main() {
 
     # Module in definierter Reihenfolge laden und ausführen
     for module in "${MODULES[@]}"; do
-        load_module "$module"
-        local rc=$?
+        local rc=0
+        load_module "$module" || rc=$?
 
         case $rc in
             0) ;;  # Erfolg, weiter
@@ -249,12 +257,8 @@ main() {
     print -P ""
     section "Nächster Schritt"
 
-    # OS-spezifisch: Terminal neu starten
-    if is_macos; then
-        print -P "  ${C_MAUVE}1.${C_RESET} Terminal.app neu starten für vollständige Übernahme aller Einstellungen"
-    elif is_linux; then
-        print -P "  ${C_MAUVE}1.${C_RESET} Terminal neu starten oder Shell neuladen: ${C_DIM}exec zsh${C_RESET}"
-    fi
+    print -P "  ${C_MAUVE}1.${C_RESET} Neue Shell-Sitzung starten: ${C_DIM}exec zsh${C_RESET}"
+    print -P "     ${C_DIM}Oder Terminal schließen und neu öffnen${C_RESET}"
 
     print -P ""
     print -P "  ${C_GREEN}💡 Gib '${C_BOLD}dothelp${C_RESET}${C_GREEN}' ein – zeigt Keybindings, Aliase und Wartungsbefehle${C_RESET}"

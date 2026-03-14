@@ -68,7 +68,8 @@ setup_bat() {
 }
 
 # Modul ausführen wenn direkt aufgerufen
-if [[ "${(%):-%N}" == "$0" ]]; then
+# ZSH_EVAL_CONTEXT endet auf :shfunc:file wenn per source aus load_module() geladen
+if [[ "$ZSH_EVAL_CONTEXT" == "toplevel:file" ]]; then
     source "${0:A:h}/_core.sh"
     setup_bat
 fi

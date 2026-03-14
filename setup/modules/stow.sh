@@ -50,8 +50,8 @@ _stash_uncommitted_changes() {
     fi
 
     # Änderungen gefunden - stashen
-    warn "Uncommitted Changes im Repository erkannt" >&2
-    log "Stashe Änderungen vor stow --adopt..." >&2
+    warn "Nicht committete Änderungen im Repository erkannt" >&2
+    log "Sichere Änderungen vor stow --adopt..." >&2
 
     # Stash mit -u (untracked files), PID im Message für Identifikation
     local stash_msg="auto: pre-stow $$-$(date +%Y%m%d-%H%M%S)"
@@ -77,7 +77,7 @@ _stash_uncommitted_changes() {
     fi
 
     print "$stash_sha"
-    ok "Changes gesichert (SHA: ${stash_sha:0:8})" >&2
+    ok "Änderungen gesichert (SHA: ${stash_sha:0:8})" >&2
 
     return 0
 }
@@ -90,7 +90,7 @@ _restore_stashed_changes() {
     local stash_sha="$1"
     [[ -n "$stash_sha" ]] || return 0
 
-    log "Stelle deine uncommitted Changes wieder her..."
+    log "Stelle deine nicht committeten Änderungen wieder her..."
 
     # SHA → stash@{N} auflösen (TOCTOU-sicher: unabhängig von Stash-Reihenfolge)
     local stash_ref=""
@@ -139,16 +139,14 @@ run_stow() {
         return 1
     fi
 
-    # Backup vor Stow erstellen (falls noch nicht vorhanden)
-    # backup.sh MUSS vorher geladen sein - ohne Backup kein --adopt!
-    if type backup_create_if_needed >/dev/null 2>&1; then
-        backup_create_if_needed || {
-            err "Backup fehlgeschlagen – Abbruch"
+    # Backup muss vor stow --adopt existieren (erstellt durch backup-Modul)
+    if type backup_exists >/dev/null 2>&1; then
+        if ! backup_exists; then
+            err "Kein Backup vorhanden – backup-Modul muss vor stow laufen"
             return 1
-        }
+        fi
     else
         err "backup.sh nicht geladen – Backup ist Pflicht für stow --adopt"
-        err "Bitte sicherstellen dass backup.sh vor stow.sh geladen wird"
         return 1
     fi
 
