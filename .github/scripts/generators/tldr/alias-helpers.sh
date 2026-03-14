@@ -88,6 +88,35 @@ extract_function_desc() {
 }
 
 # ------------------------------------------------------------
+# Helper: Extrahiere alle Sektionsnamen aus einer .alias-Datei
+# ------------------------------------------------------------
+# Erkennt Sektionen anhand des Musters: # ---- / # Name / # ----
+# Parameter:
+#   $1 = Datei
+# Ausgabe: Pro Zeile ein Sektionsname
+extract_section_names() {
+    local file="$1"
+    local prev_sep=false
+    local candidate=""
+
+    while IFS= read -r line; do
+        if [[ "$line" == "# ---"* ]]; then
+            if [[ -n "$candidate" ]]; then
+                echo "$candidate"
+            fi
+            candidate=""
+            prev_sep=true
+        elif [[ "$prev_sep" == true && "$line" == "# "* && "$line" != "# ==="* ]]; then
+            candidate="${line#\# }"
+            prev_sep=false
+        else
+            candidate=""
+            prev_sep=false
+        fi
+    done < "$file"
+}
+
+# ------------------------------------------------------------
 # Helper: Extrahiere alle Items (Aliase UND Funktionen) aus einer Sektion
 # ------------------------------------------------------------
 # Parameter:

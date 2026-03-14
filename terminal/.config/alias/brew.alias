@@ -40,7 +40,6 @@ brew-up() {
 # Voraussetzung: Anmeldung im App Store über App Store.app
 # Hinweis     : mas account/signin sind seit macOS 12+ nicht verfügbar
 # Docs        : https://github.com/mas-cli/mas
-# ------------------------------------------------------------
 # Guard   : Nur wenn mas installiert ist
 if command -v mas >/dev/null 2>&1; then
     # Zeige veraltete Mac App Store Apps
@@ -65,7 +64,6 @@ fi
 # Prüft im Hintergrund ob Homebrew-Pakete veraltet sind.
 # Zeigt einmalig eine Benachrichtigung – kein Auto-Upgrade.
 # State: ${XDG_STATE_HOME:-~/.local/state}/homebrew (maschinenlokal, nicht in Git)
-# ------------------------------------------------------------
 # Guard: precmd-Hooks nur registrieren wenn brew installiert ist
 if command -v brew >/dev/null 2>&1; then
     # Konfiguration laden

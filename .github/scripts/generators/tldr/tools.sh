@@ -17,7 +17,7 @@
 #   - *.alias Header: Ersetzt-Feld für moderne Ersetzungen
 #   - *.alias Header: Aliase-Feld für Beispiele
 #   - *.alias Header: Kommandos-Feld für extern registrierte Befehle
-#   - brew.alias: Sektionen "Update & Wartung", "Versionsübersicht"
+#   - brew.alias: Alle Sektionen dynamisch (via extract_section_names)
 #   - dotfiles.alias: Sektion "Dotfiles Wartung"
 #   - pages/*.patch.md, *.page.md: Verfügbare Hilfeseiten
 generate_dotfiles_page() {
@@ -109,18 +109,16 @@ generate_dotfiles_page() {
         fi
     done
 
-    # Homebrew – dynamisch alle Items aus "Update & Wartung" und "Versionsübersicht"
+    # Homebrew – dynamisch alle Sektionen mit öffentlichen Items
     output+="# Homebrew\n\n"
     if [[ -f "$brew_alias" ]]; then
-        local item
-        # Update & Wartung Sektion
-        while IFS='|' read -r name desc; do
-            [[ -n "$name" && -n "$desc" ]] && output+="- ${desc}:\n\n\`${name}\`\n\n"
-        done < <(extract_section_items "$brew_alias" "Update & Wartung")
-        # Versionsübersicht Sektion
-        while IFS='|' read -r name desc; do
-            [[ -n "$name" && -n "$desc" ]] && output+="- ${desc}:\n\n\`${name}\`\n\n"
-        done < <(extract_section_items "$brew_alias" "Versionsübersicht")
+        while IFS= read -r section; do
+            while IFS='|' read -r name desc; do
+                if [[ -n "$name" && -n "$desc" ]]; then
+                    output+="- ${desc}:\n\n\`${name}\`\n\n"
+                fi
+            done < <(extract_section_items "$brew_alias" "$section")
+        done < <(extract_section_names "$brew_alias")
     fi
 
     # Dotfiles-Wartung – dynamisch alle Items aus "Dotfiles Wartung"

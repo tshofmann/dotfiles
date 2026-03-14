@@ -77,9 +77,37 @@
 
 `brew-up`
 
+- Zeige veraltete Mac App Store Apps:
+
+`maso`
+
+- Alle Mac App Store Apps aktualisieren:
+
+`masu`
+
+- Im Mac App Store nach Apps suchen (gibt ID zurück):
+
+`mass`
+
+- App aus Mac App Store installieren (benötigt ID):
+
+`masi`
+
+- Alle installierten Mac App Store Apps auflisten:
+
+`masl`
+
 - Brewfile Wartungs-Dashboard(filter?):
 
 `brew-list`
+
+- Brew Install Browser(suche?):
+
+`brew-add`
+
+- Brew Remove Browser(suche?):
+
+`brew-rm`
 
 # Dotfiles-Wartung
 
