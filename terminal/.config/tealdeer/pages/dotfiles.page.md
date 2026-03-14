@@ -97,17 +97,17 @@
 
 `masl`
 
-- Brewfile Wartungs-Dashboard(filter?):
+- Brewfile Wartungs-Dashboard:
 
-`brew-list`
+`brew-list {{filter}}`
 
-- Brew Install Browser(suche?):
+- Brew Install Browser:
 
-`brew-add`
+`brew-add {{suche}}`
 
-- Brew Remove Browser(suche?):
+- Brew Remove Browser:
 
-`brew-rm`
+`brew-rm {{suche}}`
 
 # Dotfiles-Wartung
 
@@ -123,9 +123,9 @@
 
 `dotstow`
 
-- Config Browser(suche?):
+- Config Browser:
 
-`dotedit`
+`dotedit {{suche}}`
 
 # Vollständige Dokumentation
 

@@ -115,7 +115,20 @@ generate_dotfiles_page() {
         while IFS= read -r section; do
             while IFS='|' read -r name desc; do
                 if [[ -n "$name" && -n "$desc" ]]; then
-                    output+="- ${desc}:\n\n\`${name}\`\n\n"
+                    # Parameter-Notation (param?) in tldr-Format {{param}} umwandeln
+                    local param=""
+                    if [[ "$desc" == *[a-zA-Z0-9]"("*")"* ]]; then
+                        param="${desc#*\(}"
+                        param="${param%%\)*}"
+                        param="${param%%=*}"
+                        param="${param%\?}"
+                        desc="${desc%%\(*}"
+                    fi
+                    if [[ -n "$param" ]]; then
+                        output+="- ${desc}:\n\n\`${name} {{${param}}}\`\n\n"
+                    else
+                        output+="- ${desc}:\n\n\`${name}\`\n\n"
+                    fi
                 fi
             done < <(extract_section_items "$brew_alias" "$section")
         done < <(extract_section_names "$brew_alias")
@@ -125,7 +138,22 @@ generate_dotfiles_page() {
     output+="# Dotfiles-Wartung\n\n"
     if [[ -f "$dotfiles_alias" ]]; then
         while IFS='|' read -r name desc; do
-            [[ -n "$name" && -n "$desc" ]] && output+="- ${desc}:\n\n\`${name}\`\n\n"
+            if [[ -n "$name" && -n "$desc" ]]; then
+                # Parameter-Notation (param?) in tldr-Format {{param}} umwandeln
+                local param=""
+                if [[ "$desc" == *[a-zA-Z0-9]"("*")"* ]]; then
+                    param="${desc#*\(}"
+                    param="${param%%\)*}"
+                    param="${param%%=*}"
+                    param="${param%\?}"
+                    desc="${desc%%\(*}"
+                fi
+                if [[ -n "$param" ]]; then
+                    output+="- ${desc}:\n\n\`${name} {{${param}}}\`\n\n"
+                else
+                    output+="- ${desc}:\n\n\`${name}\`\n\n"
+                fi
+            fi
         done < <(extract_section_items "$dotfiles_alias" "Dotfiles Wartung")
     fi
 

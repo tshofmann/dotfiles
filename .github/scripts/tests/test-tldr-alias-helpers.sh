@@ -2,7 +2,7 @@
 # ============================================================
 # test-tldr-alias-helpers.sh - Tests für tldr/alias-helpers.sh
 # ============================================================
-# Zweck       : Unit Tests für extract_alias_header_info()
+# Zweck       : Unit Tests für extract_alias_header_info(), extract_section_names()
 # Pfad        : .github/scripts/tests/test-tldr-alias-helpers.sh
 # Aufruf      : ./.github/scripts/tests/test-tldr-alias-helpers.sh
 # ============================================================
@@ -91,6 +91,62 @@ FIXTURE
 
 result=$(extract_alias_header_info "$_TEST_TMPDIR/standalone.alias")
 assert_contains "Standalone: Nutzt = Strich" "|-|" "$result"
+
+# ============================================================
+# extract_section_names()
+# ============================================================
+echo ""
+echo "=== extract_section_names ==="
+
+# Fixture mit mehreren Sektionen
+cat > "$_TEST_TMPDIR/multi-section.alias" << 'FIXTURE'
+# ============================================================
+# multi.alias - Test
+# ============================================================
+# Zweck       : Test-Datei
+# ============================================================
+
+# ------------------------------------------------------------
+# Erste Sektion
+# ------------------------------------------------------------
+alias foo='bar'
+
+# ------------------------------------------------------------
+# Zweite Sektion
+# ------------------------------------------------------------
+alias baz='qux'
+FIXTURE
+
+result=$(extract_section_names "$_TEST_TMPDIR/multi-section.alias")
+assert_contains "Erste Sektion erkannt" "Erste Sektion" "$result"
+assert_contains "Zweite Sektion erkannt" "Zweite Sektion" "$result"
+
+# Reihenfolge prüfen
+first_line=$(echo "$result" | head -1)
+assert_equals "Reihenfolge: Erste zuerst" "Erste Sektion" "$first_line"
+
+# Kein falscher Treffer durch Datei-Header (# ===)
+result_lines=$(echo "$result" | wc -l | tr -d ' ')
+assert_equals "Nur 2 Sektionen (Header ignoriert)" "2" "$result_lines"
+
+# Fixture ohne Sektionen (nur Header)
+cat > "$_TEST_TMPDIR/no-section.alias" << 'FIXTURE'
+# ============================================================
+# nosect.alias - Keine Sektionen
+# ============================================================
+# Zweck       : Test
+# ============================================================
+
+alias foo='bar'
+FIXTURE
+
+result=$(extract_section_names "$_TEST_TMPDIR/no-section.alias")
+assert_empty "Keine Sektionen erkannt" "$result"
+
+# Integration: brew.alias hat 5 Sektionen
+result=$(extract_section_names "$ALIAS_DIR/brew.alias")
+count=$(echo "$result" | wc -l | tr -d ' ')
+assert_equals "brew.alias: 5 Sektionen" "5" "$count"
 
 # ============================================================
 # Zusammenfassung
