@@ -82,14 +82,17 @@ install_brewfile() {
         tmpfile_main=$(mktemp) || { err "Kann temporäre Datei nicht erstellen"; return 1; }
         tmpfile_mas=$(mktemp) || { rm -f "$tmpfile_main"; err "Kann temporäre Datei nicht erstellen"; return 1; }
 
-        grep -v '^mas ' "$BREWFILE" > "$tmpfile_main"
+        # || true: grep gibt Exit 1 bei 0 Matches → set -e würde abbrechen
+        { grep -v '^mas ' "$BREWFILE" || true; } > "$tmpfile_main"
         grep '^mas ' "$BREWFILE" > "$tmpfile_mas"
 
-        # Schritt 1: brew/cask/tap (kompakter Output)
-        if ! HOMEBREW_NO_AUTO_UPDATE=1 brew bundle --no-upgrade --file="$tmpfile_main"; then
-            rm -f "$tmpfile_main" "$tmpfile_mas"
-            err "Brew Bundle fehlgeschlagen – Setup wird abgebrochen"
-            return 1
+        # Schritt 1: brew/cask/tap (kompakter Output, leer wenn Brewfile nur mas hat)
+        if [[ -s "$tmpfile_main" ]]; then
+            if ! HOMEBREW_NO_AUTO_UPDATE=1 brew bundle --no-upgrade --file="$tmpfile_main"; then
+                rm -f "$tmpfile_main" "$tmpfile_mas"
+                err "Brew Bundle fehlgeschlagen – Setup wird abgebrochen"
+                return 1
+            fi
         fi
 
         # Schritt 2: mas-Apps (verbose → Fortschrittsbalken sichtbar)
