@@ -1,17 +1,17 @@
 - dotfiles: Config `- (kein XDG-Support, nutzt ~/.ExifTool_config)`
 
-- dotfiles: Metadaten anzeigen – kompakte Übersicht mit Gruppeninfo:
+- dotfiles: Metadaten anzeigen (kompakte Übersicht mit Gruppeninfo):
 
-`exifshow`
+`exifshow {{datei}}`
 
-- dotfiles: GPS-Koordinaten anzeigen – Standort aus Bildern extrahieren:
+- dotfiles: GPS-Koordinaten anzeigen (Standort aus Bildern extrahieren):
 
-`exifgps`
+`exifgps {{datei}}`
 
 - dotfiles: Alle Metadaten entfernen (Datenschutz/Privacy):
 
-`exifstrip {{datei...}}`
+`exifstrip {{datei}}`
 
 - dotfiles: Nach Aufnahmedatum umbenennen (Format: YYYY-MM-DD_HHmmss):
 
-`exifrename {{datei...}}`
+`exifrename {{datei}}`

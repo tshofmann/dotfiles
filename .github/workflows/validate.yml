@@ -6,7 +6,7 @@
 # Checks  : 11 von 14 Pre-Commit-Checks (siehe .github/hooks/pre-commit)
 # Diff    : Health-Check (#9), Screenshot-Drift (#13) und Bild-Metadaten (#14)
 #           fehlen – #9 prüft reale Installation (Symlinks, Homebrew, Fonts),
-#           #13+#14 betreffen lokale Assets die in CI nicht existieren.
+#           #13+#14 nutzen git diff --cached (Staging-Kontext, nur lokal).
 # ============================================================
 
 name: Dokumentation validieren
