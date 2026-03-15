@@ -240,7 +240,7 @@ Die fzf-Konfiguration liegt in `terminal/.config/fzf/config`:
 --color=prompt:bold
 
 # Layout (Auszug)
---height=~50%
+--height=~80%
 --layout=reverse
 --border=rounded
 ```

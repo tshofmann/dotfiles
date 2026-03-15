@@ -182,6 +182,24 @@ generate_readme_md() {
     local fzf_workflows=$(generate_fzf_workflows_table)
     local media_toolkit=$(generate_media_toolkit_table)
 
+    # Hero-Screenshot bedingt einbinden (nur wenn Datei existiert)
+    local hero_image=""
+    if [[ -f "$ASSETS_DIR/hero.png" ]]; then
+        hero_image=$'\n<p align="center">\n  <img src="docs/assets/hero.png" alt="dotfiles – cmds Workflow mit fzf und bat-Preview" width="800">\n  <br>\n  <em>cmds – alle Aliase und Funktionen durchsuchen (einer von 20+ fzf-Workflows)</em>\n</p>\n'
+    fi
+
+    # Theme-Screenshot bedingt einbinden
+    local theme_image=""
+    if [[ -f "$ASSETS_DIR/theme.png" ]]; then
+        theme_image=$'\n<p align="center">\n  <img src="docs/assets/theme.png" alt="eza Tree-View mit Nerd Font Icons und Catppuccin Mocha Farben" width="800">\n  <br>\n  <em>lt – eza Tree-View mit Nerd Font Icons und Catppuccin Mocha Farben</em>\n</p>\n'
+    fi
+
+    # Workflow-Screenshot bedingt einbinden
+    local workflow_image=""
+    if [[ -f "$ASSETS_DIR/workflow.png" ]]; then
+        workflow_image=$'\n<p align="center">\n  <img src="docs/assets/workflow.png" alt="git-log Workflow – fzf mit bat-Preview zeigt Commit-Diffs" width="800">\n  <br>\n  <em>git-log – Commit-Historie mit Diff-Preview (bat + Catppuccin Syntax-Highlighting)</em>\n</p>\n'
+    fi
+
     cat << EOF
 # 🍎 dotfiles
 
@@ -190,7 +208,7 @@ generate_readme_md() {
 [![macOS](https://img.shields.io/badge/macOS-${macos_min}%2B-black?logo=apple)](https://www.apple.com/macos/)
 [![Linux](https://img.shields.io/badge/Linux-vorbereitet-yellow?logo=linux)](https://kernel.org/)
 [![Shell: zsh](https://img.shields.io/badge/Shell-zsh-green?logo=gnubash)](https://www.zsh.org/)
-
+${hero_image}
 **Dotfiles mit modernen CLI-Tools, einheitlichem Theme und integrierter Hilfe.**
 
 > ⚠️ **Plattform-Status:** Auf **macOS** produktiv getestet. Linux-Bootstrap (Fedora, Debian, Arch) in Docker/Headless validiert – Desktop (Wayland) und echte Hardware noch ausstehend.
@@ -204,13 +222,13 @@ ${tool_replacements}
 Alle Workflows nutzen [fzf](https://github.com/junegunn/fzf) mit bat-Preview, Keybindings und Catppuccin-Theming:
 
 ${fzf_workflows}
-
+${workflow_image}
 ### Media-Toolkit
 
 ${media_toolkit}
 
 Dazu: **[Catppuccin Mocha](https://catppuccin.com/) Theme** überall, **Hilfe im Terminal** via \`dothelp\`, **fzf-Integration** für alles.
-
+${theme_image}
 Alle installierten Pakete: [\`setup/Brewfile\`](setup/Brewfile)
 
 ## 🚀 Installation

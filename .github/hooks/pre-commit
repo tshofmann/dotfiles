@@ -254,6 +254,134 @@ check_header_sync() {
 }
 
 # ------------------------------------------------------------
+# 13. Screenshot-Drift Warnung (nicht-blockierend)
+# Prüft ob staged Änderungen Screenshots in docs/assets/ betreffen.
+# Warnt bei: neuen/entfernten .alias-Dateien (→ cmds-Liste),
+# Dateistruktur-Änderungen in setup/ (→ Tree-View),
+# Theme/Layout-Änderungen (→ visuelle Darstellung).
+# ------------------------------------------------------------
+check_screenshot_drift() {
+    # Nur prüfen wenn Screenshots existieren
+    local assets_dir="$DOTFILES_DIR/docs/assets"
+    [[ -f "$assets_dir/hero.png" || -f "$assets_dir/workflow.png" || -f "$assets_dir/theme.png" ]] || return 0
+
+    local staged_files
+    staged_files=$(git diff --cached --name-only --diff-filter=ACDMR 2>/dev/null)
+    [[ -z "$staged_files" ]] && return 0
+
+    local -a reasons=()
+
+    # hero.png: Neue/entfernte .alias-Dateien → cmds-Liste ändert sich
+    if echo "$staged_files" | grep -qE '\.alias$' && \
+       git diff --cached --diff-filter=AD --name-only 2>/dev/null | grep -qE '\.alias$'; then
+        reasons+=("Alias-Datei hinzugefügt/entfernt → hero.png (cmds)")
+    fi
+
+    # hero.png: Aliase-Header geändert → sichtbare Befehle ändern sich
+    if echo "$staged_files" | grep -qE '\.alias$'; then
+        if git diff --cached -- '*.alias' 2>/dev/null | grep -qE '^[+-].*# Aliase'; then
+            reasons+=("Aliase-Header geändert → hero.png (cmds)")
+        fi
+    fi
+
+    # theme.png: Dateien in setup/ hinzugefügt/entfernt → Tree ändert sich
+    if git diff --cached --diff-filter=AD --name-only 2>/dev/null | grep -qE '^setup/'; then
+        reasons+=("Datei in setup/ hinzugefügt/entfernt → theme.png")
+    fi
+
+    # Alle: Theme-/Layout-Dateien geändert → visuelle Darstellung
+    local -a visual_files=(
+        "terminal/.config/theme-style"
+        "terminal/.config/fzf/config"
+        "terminal/.config/starship/starship.toml"
+        "terminal/.config/eza/theme.yml"
+    )
+    for vf in "${visual_files[@]}"; do
+        if echo "$staged_files" | grep -qF "$vf"; then
+            reasons+=("${vf##*/} geändert → Screenshots prüfen")
+        fi
+    done
+
+    if (( ${#reasons[@]} > 0 )); then
+        warn "Screenshots in docs/assets/ könnten veraltet sein:"
+        for reason in "${reasons[@]}"; do
+            print "  ${C_DIM}• $reason${C_RESET}"
+        done
+        print "  ${C_DIM}→ Screenshots neu erstellen falls sichtbare Änderungen${C_RESET}"
+    fi
+
+    # Nie blockierend – immer return 0
+    return 0
+}
+
+# ------------------------------------------------------------
+# 14. Bild-Metadaten strippen (blockierend)
+# Entfernt EXIF/XMP-Metadaten aus staged PNG-Dateien in docs/assets/.
+# Verhindert dass persönliche Daten (GPS, Benutzername, Software)
+# ins Repository gelangen. Nutzt exiftool (Perl, Cross-Platform).
+# ------------------------------------------------------------
+check_image_metadata() {
+    # Staged PNG-Dateien in docs/assets/ finden
+    local -a staged_pngs=()
+    local file
+    while IFS= read -r file; do
+        [[ -n "$file" ]] && staged_pngs+=("$file")
+    done < <(git diff --cached --name-only --diff-filter=ACM 2>/dev/null | grep -E '^docs/assets/.*\.png$')
+
+    # Nichts zu tun wenn keine PNGs staged sind
+    [[ ${#staged_pngs[@]} -eq 0 ]] && return 0
+
+    log "Prüfe Bild-Metadaten in docs/assets/..."
+
+    # exiftool verfügbar?
+    if ! command -v exiftool >/dev/null 2>&1; then
+        err "exiftool nicht gefunden – wird für Metadaten-Strip benötigt"
+        print ""
+        print "  ${C_DIM}Installieren mit:${C_RESET}"
+        if [[ "$(uname)" == "Darwin" ]]; then
+            print "    ${C_BOLD}brew install exiftool${C_RESET}"
+        else
+            print "    ${C_BOLD}sudo apt install libimage-exiftool-perl${C_RESET}  (Debian/Ubuntu)"
+            print "    ${C_BOLD}brew install exiftool${C_RESET}              (Homebrew/Linuxbrew)"
+        fi
+        return 1
+    fi
+
+    local stripped=0
+    for file in "${staged_pngs[@]}"; do
+        local full_path="$DOTFILES_DIR/$file"
+        [[ -f "$full_path" ]] || continue
+
+        # Hash vor Strip merken (git hash-object ist portabler als shasum/sha256sum)
+        local hash_before
+        hash_before=$(git hash-object "$full_path")
+
+        # Metadaten entfernen (idempotent – keine Änderung wenn bereits sauber)
+        if ! exiftool -all= -overwrite_original "$full_path" >/dev/null 2>&1; then
+            err "Metadaten-Strip fehlgeschlagen: $file"
+            return 1
+        fi
+
+        # Prüfe ob sich Datei geändert hat
+        local hash_after
+        hash_after=$(git hash-object "$full_path")
+
+        if [[ "$hash_before" != "$hash_after" ]]; then
+            git add -- "$file"
+            (( stripped++ )) || true
+        fi
+    done
+
+    if (( stripped > 0 )); then
+        ok "Metadaten aus $stripped Bild(ern) entfernt und staged"
+    else
+        ok "Bild-Metadaten OK (keine zu entfernen)"
+    fi
+
+    return 0
+}
+
+# ------------------------------------------------------------
 # Hauptprogramm
 # ------------------------------------------------------------
 print ""
@@ -276,6 +404,10 @@ check_health || { (( failed++ )) || true; }
 check_header_wrap || { (( failed++ )) || true; }
 check_generator_tests || { (( failed++ )) || true; }
 check_header_sync || { (( failed++ )) || true; }
+check_image_metadata || { (( failed++ )) || true; }
+
+# Nicht-blockierende Warnungen (nach allen harten Checks)
+check_screenshot_drift
 
 print ""
 print "${C_OVERLAY0}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"

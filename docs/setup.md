@@ -159,6 +159,7 @@ ff                                  # System-Info anzeigen
 | ----- | ------------ |
 | [`bat`](https://github.com/sharkdp/bat) | cat-Ersatz mit Syntax-Highlighting |
 | [`btop`](https://github.com/aristocratos/btop) | Ressourcen-Monitor |
+| [`exiftool`](https://exiftool.org) | EXIF/Bild-Metadaten lesen und entfernen |
 | [`eza`](https://github.com/eza-community/eza) | ls-Ersatz mit Git-Status und Icons |
 | [`fastfetch`](https://github.com/fastfetch-cli/fastfetch) | System-Info |
 | [`fd`](https://github.com/sharkdp/fd) | find-Ersatz, schnell und intuitiv |

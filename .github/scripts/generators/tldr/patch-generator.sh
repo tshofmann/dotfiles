@@ -208,7 +208,7 @@ generate_complete_patch() {
     fi
 
     # Abhängigkeiten anzeigen (für Pages und Patches)
-    if [[ -n "$nutzt" && "$nutzt" != "-" ]]; then
+    if [[ -n "$nutzt" ]]; then
         output+="- dotfiles: Nutzt \`${nutzt}\`\n\n"
     fi
 

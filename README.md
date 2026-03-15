@@ -6,6 +6,12 @@
 [![Linux](https://img.shields.io/badge/Linux-vorbereitet-yellow?logo=linux)](https://kernel.org/)
 [![Shell: zsh](https://img.shields.io/badge/Shell-zsh-green?logo=gnubash)](https://www.zsh.org/)
 
+<p align="center">
+  <img src="docs/assets/hero.png" alt="dotfiles – cmds Workflow mit fzf und bat-Preview" width="800">
+  <br>
+  <em>cmds – alle Aliase und Funktionen durchsuchen (einer von 20+ fzf-Workflows)</em>
+</p>
+
 **Dotfiles mit modernen CLI-Tools, einheitlichem Theme und integrierter Hilfe.**
 
 > ⚠️ **Plattform-Status:** Auf **macOS** produktiv getestet. Linux-Bootstrap (Fedora, Debian, Arch) in Docker/Headless validiert – Desktop (Wayland) und echte Hardware noch ausstehend.
@@ -34,6 +40,12 @@ Alle Workflows nutzen [fzf](https://github.com/junegunn/fzf) mit bat-Preview, Ke
 | Suche | `rg-live` |
 | Pakete | `brew-add`, `brew-rm` |
 
+<p align="center">
+  <img src="docs/assets/workflow.png" alt="git-log Workflow – fzf mit bat-Preview zeigt Commit-Diffs" width="800">
+  <br>
+  <em>git-log – Commit-Historie mit Diff-Preview (bat + Catppuccin Syntax-Highlighting)</em>
+</p>
+
 ### Media-Toolkit
 
 | Tool | Funktionen |
@@ -44,6 +56,12 @@ Alle Workflows nutzen [fzf](https://github.com/junegunn/fzf) mit bat-Preview, Ke
 | resvg | `svg2png`, `svgscale` |
 
 Dazu: **[Catppuccin Mocha](https://catppuccin.com/) Theme** überall, **Hilfe im Terminal** via `dothelp`, **fzf-Integration** für alles.
+
+<p align="center">
+  <img src="docs/assets/theme.png" alt="eza Tree-View mit Nerd Font Icons und Catppuccin Mocha Farben" width="800">
+  <br>
+  <em>lt – eza Tree-View mit Nerd Font Icons und Catppuccin Mocha Farben</em>
+</p>
 
 Alle installierten Pakete: [`setup/Brewfile`](setup/Brewfile)
 

@@ -220,6 +220,8 @@ bewussten Unterschied:
 | 10 | fzf header-wrap Tests | ✓ | ✓ | Dynamischer Header-Umbruch-Algorithmus |
 | 11 | Generator Unit Tests | ✓ | ✓ | Parser-Funktionen der Doku-Generatoren |
 | 12 | Keybinding-Sync | ✓ | ✓ | Beschreibungskommentar ↔ header-wrap + Header ↔ Bindkey |
+| 13 | Screenshot-Drift | ✓ | – | Nicht-blockierende Warnung bei Änderungen die Screenshots betreffen |
+| 14 | Bild-Metadaten | ✓ | – | Entfernt EXIF/XMP aus PNGs in `docs/assets/` via exiftool |
 
 ### Hook schlägt fehl?
 
@@ -801,6 +803,27 @@ fi
 1. Änderung im **Quellcode** vornehmen (`.alias`, `Brewfile`, Configs, oder `generators/*.sh`)
 2. `./.github/scripts/generate-docs.sh --generate` ausführen
 3. Generierte Änderungen prüfen und committen
+
+### Screenshots aktualisieren
+
+Screenshots liegen in `docs/assets/` und werden vom `readme.sh`-Generator bedingt eingebunden.
+
+| Datei | Inhalt | Befehl |
+| ----- | ------ | ------ |
+| `hero.png` | `cmds` mit fzf + bat-Preview | `cmds` |
+| `workflow.png` | `git-log` mit Diff-Preview | `git-log` |
+| `theme.png` | `lt setup/` Tree-View | `lt setup/` |
+
+**Vorgaben:**
+
+- **Terminal:** Kitty mit Catppuccin Mocha Theme
+- **Schrift:** MesloLGSDZ Nerd Font, Größe 13pt (siehe `kitty.conf`)
+- **Auflösung:** Retina/HiDPI (2x)
+- **Format:** PNG, < 1 MB pro Datei
+- **Branch:** `main` (Starship-Prompt zeigt Branch-Namen)
+- **Keine persönlichen Daten** sichtbar
+
+> 💡 **Metadaten:** Der Pre-Commit Hook entfernt automatisch EXIF/XMP-Daten aus PNGs via `exiftool`.
 
 ### Terminal-Profil ändern
 

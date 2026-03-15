@@ -241,6 +241,10 @@ extract_alias_header_info() {
         config=$(find_config_path "$tool_name")
     fi
 
+    # Strich-Marker normalisieren (z.B. "- (Kommentar)" → leer)
+    [[ "$nutzt" == -* ]] && nutzt=""
+    [[ "$config" == -* ]] && config=""
+
     echo "${tool_name}|${zweck}|${docs}|${nutzt}|${config}"
 }
 

@@ -19,6 +19,7 @@ fi
 ALIAS_DIR="$DOTFILES_DIR/terminal/.config/alias"
 FZF_DIR="$DOTFILES_DIR/terminal/.config/fzf"
 DOCS_DIR="$DOTFILES_DIR/docs"
+ASSETS_DIR="$DOCS_DIR/assets"
 FZF_CONFIG="$DOTFILES_DIR/terminal/.config/fzf/config"
 TEALDEER_DIR="$DOTFILES_DIR/terminal/.config/tealdeer/pages"
 BOOTSTRAP="$DOTFILES_DIR/setup/bootstrap.sh"
