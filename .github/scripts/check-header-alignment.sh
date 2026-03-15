@@ -11,6 +11,7 @@
 # ============================================================
 
 set -uo pipefail
+setopt extendedglob
 
 # Dotfiles-Verzeichnis ermitteln
 SCRIPT_DIR="${0:A:h}"
@@ -84,20 +85,46 @@ check_header_alignment() {
         "$DOTFILES_DIR"/.github/scripts/**/*.sh(N)
     )
 
+    # Korrekte Einrückungen als assoziatives Array (Feldname → volle Zeile)
+    local -A correct_alignment
+    for field in "${fields[@]}"; do
+        correct_alignment[${field%% *}]="$field"
+    done
+
     for file in "${files[@]}"; do
         [[ ! -f "$file" ]] && continue
         local relpath="${file#$DOTFILES_DIR/}"
+        local in_header=true
+        local header_sep_count=0
 
-        for field in "${fields[@]}"; do
-            local fieldname="${field%% *}"
-            # Prüfe ob Feld existiert aber falsch eingerückt ist
-            if grep -q "^# ${fieldname}[[:space:]]*:" "$file" 2>/dev/null; then
-                if ! grep -q "^# ${field}" "$file" 2>/dev/null; then
-                    err "$relpath: '# ${fieldname}' falsch eingerückt (Standard: '# ${field}')"
-                    (( errors++ )) || true
-                fi
+        # Datei einmal lesen – nur Header-Block prüfen
+        while IFS= read -r line; do
+            # Header-Ende erkennen: 3. "# ====" oder "# Guard"
+            if [[ "$line" == "# ===="* ]]; then
+                (( header_sep_count++ )) || true
+                (( header_sep_count >= 3 )) && break
+                continue
             fi
-        done
+            [[ "$line" == "# Guard"* ]] && break
+
+            # Nur Kommentarzeilen mit "# Feldname...:" matchen
+            [[ "$line" != "# "* ]] && continue
+            local content="${line#\# }"
+            # Feldname extrahieren (Buchstaben inkl. Umlaute)
+            local fieldname="${content%%[^a-zA-ZäöüÄÖÜ]*}"
+            # Ist dieser Feldname einer der bekannten?
+            [[ -z "${correct_alignment[$fieldname]:-}" ]] && continue
+            # Prüfe ob nach dem Feldnamen nur Whitespace und ":" folgt
+            # (schließt "# Kommandos (via ...)" aus – Klammer ist kein Whitespace)
+            local after_name="${content#"$fieldname"}"
+            [[ "$after_name" != [[:space:]]#:* ]] && continue
+            # Feld gefunden – korrekte Einrückung prüfen
+            local expected="# ${correct_alignment[$fieldname]}"
+            if [[ "$line" != "$expected"* ]]; then
+                err "$relpath: '# ${fieldname}' falsch eingerückt (Standard: '# ${correct_alignment[$fieldname]}')"
+                (( errors++ )) || true
+            fi
+        done < "$file"
     done
 
     if (( errors > 0 )); then
