@@ -203,12 +203,12 @@ generate_complete_patch() {
     fi
 
     # Konfigurationspfad anzeigen (für Pages und Patches)
-    if [[ -n "$config" && "$config" != -* ]]; then
+    if [[ -n "$config" ]]; then
         output+="- dotfiles: Config \`${config}\`\n\n"
     fi
 
     # Abhängigkeiten anzeigen (für Pages und Patches)
-    if [[ -n "$nutzt" && "$nutzt" != "-" ]]; then
+    if [[ -n "$nutzt" ]]; then
         output+="- dotfiles: Nutzt \`${nutzt}\`\n\n"
     fi
 

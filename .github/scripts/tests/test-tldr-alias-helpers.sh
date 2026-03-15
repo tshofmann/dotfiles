@@ -82,6 +82,7 @@ cat > "$_TEST_TMPDIR/standalone.alias" << 'FIXTURE'
 # ============================================================
 # Zweck       : Standalone ohne Abhängigkeiten
 # Docs        : https://example.com
+# Config      : - (kein XDG-Support)
 # Nutzt       : -
 # ============================================================
 
@@ -90,7 +91,7 @@ if ! command -v standalone >/dev/null 2>&1; then return 0; fi
 FIXTURE
 
 result=$(extract_alias_header_info "$_TEST_TMPDIR/standalone.alias")
-assert_contains "Standalone: Nutzt = Strich" "|-|" "$result"
+assert_contains "Standalone: Strich-Felder normalisiert" "|https://example.com||" "$result"
 
 # ============================================================
 # extract_section_names()
