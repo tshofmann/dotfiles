@@ -16,6 +16,7 @@
 # ------------------------------------------------------------
 brew "bat"                                  # cat-Ersatz mit Syntax-Highlighting | https://github.com/sharkdp/bat
 brew "btop"                                 # Ressourcen-Monitor | https://github.com/aristocratos/btop
+brew "exiftool"                             # EXIF/Bild-Metadaten lesen und entfernen | https://exiftool.org
 brew "eza"                                  # ls-Ersatz mit Git-Status und Icons | https://github.com/eza-community/eza
 brew "fastfetch"                            # System-Info | https://github.com/fastfetch-cli/fastfetch
 brew "fd"                                   # find-Ersatz, schnell und intuitiv | https://github.com/sharkdp/fd

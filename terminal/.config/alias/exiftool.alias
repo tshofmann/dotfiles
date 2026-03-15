@@ -1,0 +1,46 @@
+# ============================================================
+# exiftool.alias - Aliase für ExifTool
+# ============================================================
+# Zweck       : EXIF/Bild-Metadaten lesen, bearbeiten und entfernen
+# Pfad        : ~/.config/alias/exiftool.alias
+# Docs        : https://exiftool.org/
+# Config      : - (kein XDG-Support, nutzt ~/.ExifTool_config)
+# Nutzt       : -
+# Ersetzt     : -
+# Aliase      : exifshow, exifstrip, exifgps, exifrename
+# ============================================================
+
+# Guard   : Nur wenn ExifTool installiert ist
+if ! command -v exiftool >/dev/null 2>&1; then
+    return 0
+fi
+
+# ------------------------------------------------------------
+# Info
+# ------------------------------------------------------------
+# Metadaten anzeigen – kompakte Übersicht mit Gruppeninfo
+alias exifshow='exiftool -G1 -s'
+
+# GPS-Koordinaten anzeigen – Standort aus Bildern extrahieren
+alias exifgps='exiftool -G1 -s "-*gps*"'
+
+# ------------------------------------------------------------
+# Bearbeitung
+# ------------------------------------------------------------
+# Alle Metadaten entfernen(datei...) – Datenschutz/Privacy
+exifstrip() {
+    if [[ $# -eq 0 ]]; then
+        echo "Verwendung: exifstrip <datei> [datei2 ...]" >&2
+        return 1
+    fi
+    exiftool -all= -overwrite_original "$@"
+}
+
+# Nach Aufnahmedatum umbenennen(datei...) – Format: YYYY-MM-DD_HHmmss
+exifrename() {
+    if [[ $# -eq 0 ]]; then
+        echo "Verwendung: exifrename <datei> [datei2 ...]" >&2
+        return 1
+    fi
+    exiftool '-FileName<DateTimeOriginal' -d '%Y-%m-%d_%H%M%S.%%e' "$@"
+}

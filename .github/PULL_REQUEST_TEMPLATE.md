@@ -19,6 +19,7 @@
 - [ ] `./.github/scripts/health-check.sh` zeigt keine Fehler
 - [ ] Neue Aliase/Funktionen haben Beschreibungskommentare
 - [ ] Bei neuen Tools: Guard-Check vorhanden
+- [ ] Screenshots in `docs/assets/` noch aktuell (falls Aliase, setup-Struktur oder Theme betroffen)
 
 ### Bei Theme-/Config-Änderungen (`.config/*`)
 

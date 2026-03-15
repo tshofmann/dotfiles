@@ -53,6 +53,7 @@ typeset -A BREW_TO_ALT=(
     # apt-Pakete (Debian Trixie armhf)
     [bat]=apt:bat
     [btop]=apt:btop
+    [exiftool]=apt:libimage-exiftool-perl
     [eza]=apt:eza
     [fastfetch]=apt:fastfetch
     [fd]=apt:fd-find
