@@ -94,7 +94,6 @@ check_header_alignment() {
     for file in "${files[@]}"; do
         [[ ! -f "$file" ]] && continue
         local relpath="${file#$DOTFILES_DIR/}"
-        local in_header=true
         local header_sep_count=0
 
         # Datei einmal lesen – nur Header-Block prüfen
