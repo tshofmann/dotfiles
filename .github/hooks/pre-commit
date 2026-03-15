@@ -279,7 +279,7 @@ check_screenshot_drift() {
 
     # hero.png: Aliase-Header geändert → sichtbare Befehle ändern sich
     if echo "$staged_files" | grep -qE '\.alias$'; then
-        if git diff --cached -- '*.alias' 2>/dev/null | grep -qE '^\+.*# Aliase|^-.*# Aliase'; then
+        if git diff --cached -- '*.alias' 2>/dev/null | grep -qE '^[+-].*# Aliase'; then
             reasons+=("Aliase-Header geändert → hero.png (cmds)")
         fi
     fi
@@ -321,8 +321,6 @@ check_screenshot_drift() {
 # ins Repository gelangen. Nutzt exiftool (Perl, Cross-Platform).
 # ------------------------------------------------------------
 check_image_metadata() {
-    local assets_dir="$DOTFILES_DIR/docs/assets"
-
     # Staged PNG-Dateien in docs/assets/ finden
     local -a staged_pngs=()
     local file
@@ -340,7 +338,12 @@ check_image_metadata() {
         err "exiftool nicht gefunden – wird für Metadaten-Strip benötigt"
         print ""
         print "  ${C_DIM}Installieren mit:${C_RESET}"
-        print "    ${C_BOLD}brew install exiftool${C_RESET}"
+        if [[ "$(uname)" == "Darwin" ]]; then
+            print "    ${C_BOLD}brew install exiftool${C_RESET}"
+        else
+            print "    ${C_BOLD}sudo apt install libimage-exiftool-perl${C_RESET}  (Debian/Ubuntu)"
+            print "    ${C_BOLD}brew install exiftool${C_RESET}              (Homebrew/Linuxbrew)"
+        fi
         return 1
     fi
 
@@ -349,9 +352,9 @@ check_image_metadata() {
         local full_path="$DOTFILES_DIR/$file"
         [[ -f "$full_path" ]] || continue
 
-        # Checksum vor Strip merken
+        # Hash vor Strip merken (git hash-object ist portabler als shasum/sha256sum)
         local hash_before
-        hash_before=$(shasum -a 256 "$full_path" | awk '{print $1}')
+        hash_before=$(git hash-object "$full_path")
 
         # Metadaten entfernen (idempotent – keine Änderung wenn bereits sauber)
         if ! exiftool -all= -overwrite_original "$full_path" >/dev/null 2>&1; then
@@ -361,10 +364,10 @@ check_image_metadata() {
 
         # Prüfe ob sich Datei geändert hat
         local hash_after
-        hash_after=$(shasum -a 256 "$full_path" | awk '{print $1}')
+        hash_after=$(git hash-object "$full_path")
 
         if [[ "$hash_before" != "$hash_after" ]]; then
-            git add "$full_path"
+            git add -- "$file"
             (( stripped++ )) || true
         fi
     done
