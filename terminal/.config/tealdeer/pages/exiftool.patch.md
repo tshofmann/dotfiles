@@ -1,5 +1,3 @@
-- dotfiles: Config `- (kein XDG-Support, nutzt ~/.ExifTool_config)`
-
 - dotfiles: Metadaten anzeigen (kompakte Übersicht mit Gruppeninfo):
 
 `exifshow {{datei}}`

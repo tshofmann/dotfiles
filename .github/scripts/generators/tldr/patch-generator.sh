@@ -203,7 +203,7 @@ generate_complete_patch() {
     fi
 
     # Konfigurationspfad anzeigen (für Pages und Patches)
-    if [[ -n "$config" ]]; then
+    if [[ -n "$config" && "$config" != -* ]]; then
         output+="- dotfiles: Config \`${config}\`\n\n"
     fi
 
