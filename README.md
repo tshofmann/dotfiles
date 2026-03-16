@@ -6,15 +6,15 @@
 [![Linux](https://img.shields.io/badge/Linux-vorbereitet-yellow?logo=linux)](https://kernel.org/)
 [![Shell: zsh](https://img.shields.io/badge/Shell-zsh-green?logo=gnubash)](https://www.zsh.org/)
 
+**Dotfiles mit modernen CLI-Tools, einheitlichem Theme und integrierter Hilfe.**
+
+> ⚠️ **Plattform-Status:** Auf **macOS** produktiv getestet. Linux-Bootstrap (Fedora, Debian, Arch) in Docker/Headless validiert – Desktop (Wayland) und echte Hardware noch ausstehend.
+
 <p align="center">
   <img src="docs/assets/hero.png" alt="dotfiles – cmds Workflow mit fzf und bat-Preview" width="800">
   <br>
   <em>cmds – alle Aliase und Funktionen durchsuchen (einer von 20+ fzf-Workflows)</em>
 </p>
-
-**Dotfiles mit modernen CLI-Tools, einheitlichem Theme und integrierter Hilfe.**
-
-> ⚠️ **Plattform-Status:** Auf **macOS** produktiv getestet. Linux-Bootstrap (Fedora, Debian, Arch) in Docker/Headless validiert – Desktop (Wayland) und echte Hardware noch ausstehend.
 
 ## ✨ Was du bekommst
 

@@ -208,11 +208,11 @@ generate_readme_md() {
 [![macOS](https://img.shields.io/badge/macOS-${macos_min}%2B-black?logo=apple)](https://www.apple.com/macos/)
 [![Linux](https://img.shields.io/badge/Linux-vorbereitet-yellow?logo=linux)](https://kernel.org/)
 [![Shell: zsh](https://img.shields.io/badge/Shell-zsh-green?logo=gnubash)](https://www.zsh.org/)
-${hero_image}
+
 **Dotfiles mit modernen CLI-Tools, einheitlichem Theme und integrierter Hilfe.**
 
 > ⚠️ **Plattform-Status:** Auf **macOS** produktiv getestet. Linux-Bootstrap (Fedora, Debian, Arch) in Docker/Headless validiert – Desktop (Wayland) und echte Hardware noch ausstehend.
-
+${hero_image}
 ## ✨ Was du bekommst
 
 ${tool_replacements}
