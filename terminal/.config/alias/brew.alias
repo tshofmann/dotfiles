@@ -9,7 +9,7 @@
 # Ersetzt     : -
 # Aliase      : brew-up, brew-list, brew-add, brew-rm, maso, masu, mass, masi, masl
 # ============================================================
-# Hinweis     : Automatischer Outdated-Check alle 12h –
+# Hinweis     : Automatischer Outdated-Check (Standard: 12h) –
 #               zeigt einmalig pro Session eine Benachrichtigung
 #               wenn Updates verfügbar sind. Konfigurierbar
 #               via check.conf (Intervall, Kanal, Meldung).
@@ -23,7 +23,7 @@ brew-up() {
     brew update && brew upgrade
     command -v mas >/dev/null 2>&1 && mas upgrade
     brew autoremove && brew cleanup
-    # Timer zurücksetzen – nächster Check erst wieder in 12h
+    # Timer zurücksetzen – nächster Check erst wieder nach _BREW_CHECK_INTERVAL
     [[ -d "${_BREW_CHECK_STATE:-}" ]] && {
         touch "$_BREW_CHECK_STATE/last-check"
         rm -f "$_BREW_CHECK_STATE/last-check.result"

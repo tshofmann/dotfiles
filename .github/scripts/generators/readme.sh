@@ -239,7 +239,7 @@ generate_readme_md() {
     local brew_interval_hours="12"
     if [[ -f "$brew_check_conf" ]]; then
         local interval_secs
-        interval_secs=$(grep -m1 '^_BREW_CHECK_INTERVAL=' "$brew_check_conf" | cut -d= -f2)
+        interval_secs=$(grep -m1 '^_BREW_CHECK_INTERVAL=' "$brew_check_conf" | cut -d= -f2) || true
         [[ -n "$interval_secs" ]] && brew_interval_hours=$(( interval_secs / 3600 ))
     fi
 
