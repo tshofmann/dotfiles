@@ -7,21 +7,21 @@
 #             : 1) Beschreibungskommentar ↔ header-wrap-Argumente
 #             : 2) init.zsh Header-Kommentar ↔ Bindkey-Beschreibungen
 # Pfad        : .github/scripts/check-header-sync.sh
+# Aufruf      : ./.github/scripts/check-header-sync.sh
 # Docs        : CONTRIBUTING.md (Keybinding-Architektur)
+# Nutzt       : lib/log.sh (Logging + Farben)
+# Generiert   : Nichts (nur Validierung)
 # ============================================================
 
 set -uo pipefail
 setopt TYPESET_SILENT
 
+# Dotfiles-Verzeichnis ermitteln
 SCRIPT_DIR="${0:A:h}"
-DOTFILES_DIR="${SCRIPT_DIR:h:h}"
-SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-style"
-[[ -f "$SHELL_COLORS" ]] && source "$SHELL_COLORS"
+DOTFILES_DIR="${SCRIPT_DIR:h:h}"  # .github/scripts → dotfiles
 
-log()  { echo -e "${C_BLUE:-}→${C_RESET:-} $1"; }
-ok()   { echo -e "${C_GREEN:-}✔${C_RESET:-} $1"; }
-warn() { echo -e "${C_YELLOW:-}⚠${C_RESET:-} $1"; }
-err()  { echo -e "${C_RED:-}✖${C_RESET:-} $1" >&2; }
+# Logging + Farben (geteilte Library)
+source "${0:A:h}/lib/log.sh"
 
 ALIAS_DIR="$DOTFILES_DIR/terminal/.config/alias"
 FZF_INIT="$DOTFILES_DIR/terminal/.config/fzf/init.zsh"

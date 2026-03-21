@@ -561,11 +561,10 @@ manual          = Manuell basierend auf catppuccin.com/palette
 #!/usr/bin/env zsh
 set -euo pipefail
 
-# Logging-Helper verwenden (siehe common.sh)
-log()  { echo -e "${C_BLUE}→${C_RESET} $*"; }
-ok()   { echo -e "${C_GREEN}✔${C_RESET} $*"; }
-err()  { echo -e "${C_RED}✖${C_RESET} $*" >&2; }
-warn() { echo -e "${C_YELLOW}⚠${C_RESET} $*"; }
+# Logging-Helper verwenden (geteilte Library)
+source "${0:A:h}/lib/log.sh"
+# Stellt bereit: log(), ok(), warn(), err()
+# Siehe .github/scripts/lib/log.sh
 ```
 
 ### Alias-Dateien

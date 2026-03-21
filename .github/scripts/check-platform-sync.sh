@@ -6,7 +6,7 @@
 #               Distro-ID Case-Patterns verwenden
 # Pfad        : .github/scripts/check-platform-sync.sh
 # Aufruf      : ./.github/scripts/check-platform-sync.sh
-# Nutzt       : theme-style (Farben), grep, sed, sort
+# Nutzt       : lib/log.sh (Logging + Farben), grep, sed, sort
 # Generiert   : Nichts (nur Validierung)
 # ============================================================
 
@@ -16,14 +16,8 @@ set -uo pipefail
 SCRIPT_DIR="${0:A:h}"
 DOTFILES_DIR="${SCRIPT_DIR:h:h}"  # .github/scripts → dotfiles
 
-# Farben laden (optional – funktioniert auch ohne)
-SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-style"
-[[ -f "$SHELL_COLORS" ]] && source "$SHELL_COLORS"
-
-# Logging
-log()  { echo -e "${C_BLUE:-}→${C_RESET:-} $1"; }
-ok()   { echo -e "${C_GREEN:-}✔${C_RESET:-} $1"; }
-err()  { echo -e "${C_RED:-}✖${C_RESET:-} $1" >&2; }
+# Logging + Farben (geteilte Library)
+source "${0:A:h}/lib/log.sh"
 
 # ------------------------------------------------------------
 # Plattform-Sync prüfen

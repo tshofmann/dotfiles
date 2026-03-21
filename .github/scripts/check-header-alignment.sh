@@ -6,7 +6,7 @@
 #               gepaddet sind (Feldname + Spaces + ' :')
 # Pfad        : .github/scripts/check-header-alignment.sh
 # Aufruf      : ./.github/scripts/check-header-alignment.sh
-# Nutzt       : theme-style (Farben)
+# Nutzt       : lib/log.sh (Logging + Farben)
 # Generiert   : Nichts (nur Validierung)
 # ============================================================
 
@@ -17,14 +17,8 @@ setopt extendedglob
 SCRIPT_DIR="${0:A:h}"
 DOTFILES_DIR="${SCRIPT_DIR:h:h}"  # .github/scripts → dotfiles
 
-# Farben laden (optional – funktioniert auch ohne)
-SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-style"
-[[ -f "$SHELL_COLORS" ]] && source "$SHELL_COLORS"
-
-# Logging
-log()  { echo -e "${C_BLUE:-}→${C_RESET:-} $1"; }
-ok()   { echo -e "${C_GREEN:-}✔${C_RESET:-} $1"; }
-err()  { echo -e "${C_RED:-}✖${C_RESET:-} $1" >&2; }
+# Logging + Farben (geteilte Library)
+source "${0:A:h}/lib/log.sh"
 
 # ------------------------------------------------------------
 # Header-Einrückungen prüfen (Feldname auf 12 Zeichen gepaddet)

@@ -8,8 +8,8 @@
 # Ersetzt     : -
 # Aliase      : dothelp, dh, dothealth, dotdocs, dotstow, dotedit
 # ============================================================
-# Hinweis     : Kein globaler Guard – nur dothelp/dh benötigen tldr,
-#               dotedit benötigt fzf+fd
+# Hinweis     : Kein globaler Guard – dothelp/dh nur wenn tldr vorhanden.
+#               Alle anderen Funktionen prüfen Abhängigkeiten intern.
 # ============================================================
 
 # ------------------------------------------------------------
@@ -27,10 +27,24 @@ fi
 # Dotfiles Wartung
 # ------------------------------------------------------------
 # Health-Check – Prüft ob alle Komponenten korrekt installiert sind
-alias dothealth='"${DOTFILES_DIR:-$HOME/dotfiles}/.github/scripts/health-check.sh"'
+dothealth() {
+    local script="${DOTFILES_DIR:-$HOME/dotfiles}/.github/scripts/health-check.sh"
+    if [[ ! -f "$script" ]]; then
+        echo "health-check.sh nicht gefunden (nur im vollständigen Repository verfügbar)" >&2
+        return 1
+    fi
+    "$script" "$@"
+}
 
 # Dokumentation neu generieren
-alias dotdocs='"${DOTFILES_DIR:-$HOME/dotfiles}/.github/scripts/generate-docs.sh" --generate'
+dotdocs() {
+    local script="${DOTFILES_DIR:-$HOME/dotfiles}/.github/scripts/generate-docs.sh"
+    if [[ ! -f "$script" ]]; then
+        echo "generate-docs.sh nicht gefunden (nur im vollständigen Repository verfügbar)" >&2
+        return 1
+    fi
+    "$script" --generate "$@"
+}
 
 # Symlinks neu verlinken (nach Änderungen in Stow-Packages)
 dotstow() {
@@ -66,30 +80,35 @@ dotstow() {
     (cd "$dotdir" && stow -R "${pkgs[@]}")
 }
 
-# Guard: fzf+fd für interaktive Funktionen
-if command -v fzf >/dev/null 2>&1 && command -v fd >/dev/null 2>&1; then
-    # Config Browser(suche?) – Enter=Editieren, Ctrl+Y=Pfad kopieren
-    dotedit() {
-        local query="${1:-}"
-        local dotdir="${DOTFILES_DIR:-$HOME/dotfiles}"
+# Config Browser(suche?) – Enter=Editieren, Ctrl+Y=Pfad kopieren
+dotedit() {
+    if ! command -v fzf >/dev/null 2>&1 || ! command -v fd >/dev/null 2>&1; then
+        echo "dotedit benötigt fzf und fd (brew install fzf fd)" >&2
+        return 1
+    fi
 
-        { fd --type f --hidden --follow \
-            --exclude .git \
-            --exclude .DS_Store \
-            --exclude '*.tmTheme' \
-            --exclude '*.png' \
-            --exclude '*.xccolortheme' \
-            --exclude '*.terminal' \
-            --exclude 'LICENSE' \
-            . "$dotdir/terminal" "$dotdir/setup" "$dotdir/.github"
-            echo "${dotdir}/CONTRIBUTING.md"; } \
-            | sed "s|^${dotdir}/||" \
-            | sort \
-            | fzf --ansi --query="$query" \
-                --prompt='dotedit> ' \
-                --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Editieren' 'Ctrl+Y: Pfad kopieren'" \
-                --preview "zsh '$FZF_HELPER_DIR/preview' file '${dotdir}/'{}" \
-                --bind "enter:execute(${EDITOR:-vi} -- '${dotdir}/'{})+refresh-preview" \
-                --bind "ctrl-y:execute-silent('$FZF_HELPER_DIR/action' copy '${dotdir}/'{})"
-    }
-fi
+    local query="${1:-}"
+    local dotdir="${DOTFILES_DIR:-$HOME/dotfiles}"
+
+    local -a search_paths=("$dotdir/terminal" "$dotdir/setup")
+    [[ -d "$dotdir/.github" ]] && search_paths+=("$dotdir/.github")
+
+    { fd --type f --hidden --follow \
+        --exclude .git \
+        --exclude .DS_Store \
+        --exclude '*.tmTheme' \
+        --exclude '*.png' \
+        --exclude '*.xccolortheme' \
+        --exclude '*.terminal' \
+        --exclude 'LICENSE' \
+        . "${search_paths[@]}"
+        [[ -f "${dotdir}/CONTRIBUTING.md" ]] && echo "${dotdir}/CONTRIBUTING.md"; } \
+        | sed "s|^${dotdir}/||" \
+        | sort \
+        | fzf --ansi --query="$query" \
+            --prompt='dotedit> ' \
+            --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Editieren' 'Ctrl+Y: Pfad kopieren'" \
+            --preview "zsh '$FZF_HELPER_DIR/preview' file '${dotdir}/'{}" \
+            --bind "enter:execute(${EDITOR:-vi} -- '${dotdir}/'{})+refresh-preview" \
+            --bind "ctrl-y:execute-silent('$FZF_HELPER_DIR/action' copy '${dotdir}/'{})"
+}
