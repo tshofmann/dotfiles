@@ -5,21 +5,17 @@
 # Zweck       : Findet und führt alle test-*.sh Skripte aus
 # Pfad        : .github/scripts/tests/run-all.sh
 # Aufruf      : ./.github/scripts/tests/run-all.sh
-# Nutzt       : theme-style (Farben, optional)
+# Nutzt       : lib/log.sh (Logging + Farben)
 # ============================================================
 
 set -uo pipefail
 
+# Dotfiles-Verzeichnis ermitteln
 SCRIPT_DIR="${0:A:h}"
-DOTFILES_DIR="${SCRIPT_DIR:h:h:h}"
+DOTFILES_DIR="${SCRIPT_DIR:h:h:h}"  # .github/scripts/tests → dotfiles
 
-# Farben laden (optional)
-SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-style"
-[[ -f "$SHELL_COLORS" ]] && source "$SHELL_COLORS"
-
-log()  { echo -e "${C_BLUE:-}→${C_RESET:-} $1"; }
-ok()   { echo -e "${C_GREEN:-}✔${C_RESET:-} $1"; }
-err()  { echo -e "${C_RED:-}✖${C_RESET:-} $1" >&2; }
+# Logging + Farben (geteilte Library)
+source "${0:A:h}/../lib/log.sh"
 
 # ------------------------------------------------------------
 # Hauptprogramm

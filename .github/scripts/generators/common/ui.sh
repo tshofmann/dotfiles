@@ -6,17 +6,14 @@
 # Pfad        : .github/scripts/generators/common/ui.sh
 # ============================================================
 
-# Abhängigkeit: config.sh muss vorher geladen sein (für Farben)
+# Abhängigkeit: config.sh muss vorher geladen sein (für UI-Variablen)
 
 # ------------------------------------------------------------
-# Logging
+# Logging (geteilte Library)
 # ------------------------------------------------------------
-log()  { echo -e "${C_BLUE}→${C_RESET} $1"; }
-ok()   { echo -e "${C_GREEN}✔${C_RESET} $1"; }
-warn() { echo -e "${C_YELLOW}⚠${C_RESET} $1"; }
-err()  { echo -e "${C_RED}✖${C_RESET} $1" >&2; }
-dim()  { echo -e "${C_DIM}$1${C_RESET}"; }
-bold() { echo -e "${C_BOLD}$1${C_RESET}"; }
+source "${0:A:h}/../../lib/log.sh"
+dim()  { echo -e "${C_DIM:-}$1${C_RESET:-}"; }
+bold() { echo -e "${C_BOLD:-}$1${C_RESET:-}"; }
 
 # ------------------------------------------------------------
 # UI-Komponenten (konsistent für alle Skripte)

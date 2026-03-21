@@ -86,6 +86,11 @@ unset _THEME_STYLE
 # Logging-Helper
 # ------------------------------------------------------------
 # Format: Emoji + Nachricht (für konsistente Ausgabe)
+#
+# HINWEIS: Nutzt print -P (ZSH Prompt-Expansion) statt echo -e.
+# Das ist gewollt für section() (farbige Prompts), aber bedeutet:
+# Ausgaben die % enthalten MÜSSEN escaped werden: ${text//\%/%%}
+# Die Check-Skripte nutzen stattdessen .github/scripts/lib/log.sh (echo -e).
 log()  { print -P "${C_BLUE}→${C_RESET} $*"; }
 ok()   { print -P "${C_GREEN}✔${C_RESET} $*"; }
 err()  { print -P "${C_RED}✖${C_RESET} $*" >&2; }
