@@ -9,23 +9,21 @@
 # Ersetzt     : -
 # Aliase      : brew-up, brew-list, brew-add, brew-rm, maso, masu, mass, masi, masl
 # ============================================================
-# Hinweis     : Kein Guard – auf Systemen ohne Homebrew werden
-#               diese Funktionen einfach nicht genutzt.
-#               Outdated-Check: Zählung synchron (~1s, lokaler
-#               Index), Index-Update im Background. Ergebnis
-#               wird als System-Notification oder Terminal-Meldung
-#               (einmal pro Session) angezeigt.
+# Hinweis     : Automatischer Outdated-Check alle 12h –
+#               zeigt einmalig pro Session eine Benachrichtigung
+#               wenn Updates verfügbar sind. Konfigurierbar
+#               via check.conf (Intervall, Kanal, Meldung).
 # ============================================================
 
 # ------------------------------------------------------------
 # Update & Wartung
 # ------------------------------------------------------------
-# Homebrew Komplett-Update – update, upgrade, autoremove, cleanup, mas
+# Homebrew Komplett-Update – update, upgrade, autoremove, cleanup, mas (setzt Auto-Check-Timer zurück)
 brew-up() {
     brew update && brew upgrade
     command -v mas >/dev/null 2>&1 && mas upgrade
     brew autoremove && brew cleanup
-    # Timer zurücksetzen – nächster Check erst wieder in 24h
+    # Timer zurücksetzen – nächster Check erst wieder in 12h
     [[ -d "${_BREW_CHECK_STATE:-}" ]] && {
         touch "$_BREW_CHECK_STATE/last-check"
         rm -f "$_BREW_CHECK_STATE/last-check.result"
@@ -70,7 +68,7 @@ if command -v brew >/dev/null 2>&1; then
     _brew_conf="${XDG_CONFIG_HOME:-$HOME/.config}/homebrew/check.conf"
     [[ -f "$_brew_conf" ]] && source "$_brew_conf"
     unset _brew_conf
-    typeset -g _BREW_CHECK_INTERVAL="${_BREW_CHECK_INTERVAL:-86400}"
+    typeset -g _BREW_CHECK_INTERVAL="${_BREW_CHECK_INTERVAL:-43200}"
     typeset -g _BREW_CHECK_NOTIFY="${_BREW_CHECK_NOTIFY:-auto}"
     typeset -g _BREW_CHECK_TITLE="${_BREW_CHECK_TITLE:-🍺 Homebrew}"
     typeset -g _BREW_CHECK_MESSAGE=${_BREW_CHECK_MESSAGE:-'{count} Updates verfügbar – Zeit für brew-up'}
@@ -101,12 +99,18 @@ if command -v brew >/dev/null 2>&1; then
         local brew_count=0 mas_count=0
         local brew_out
         brew_out=$(HOMEBREW_NO_AUTO_UPDATE=1 brew outdated --quiet 2>/dev/null)
-        [[ -n "$brew_out" ]] && brew_count=${#${(f)brew_out}}
+        if [[ -n "$brew_out" ]]; then
+            local -a _brew_lines=(${(f)brew_out})
+            brew_count=${#_brew_lines}
+        fi
 
         if command -v mas >/dev/null 2>&1; then
             local mas_out
             mas_out=$(mas outdated 2>/dev/null)
-            [[ -n "$mas_out" ]] && mas_count=${#${(f)mas_out}}
+            if [[ -n "$mas_out" ]]; then
+                local -a _mas_lines=(${(f)mas_out})
+                mas_count=${#_mas_lines}
+            fi
         fi
 
         local total=$((brew_count + mas_count))

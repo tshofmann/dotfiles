@@ -16,7 +16,15 @@
 # Ausgabe: "- Beschreibung:\n\n`name {{param}}`\n\n"
 format_dothelp_item() {
     local name="$1" desc="$2"
-    local param=""
+    local param="" keybindings="" extra=""
+
+    # Keybindings/Extra-Kontext nach – extrahieren
+    if [[ "$desc" == *" – "* ]]; then
+        keybindings="${desc#* – }"
+        desc="${desc%% –*}"
+    fi
+
+    # Parameter aus Klammer extrahieren
     if [[ "$desc" == *[a-zA-Z0-9]"("*")"* ]]; then
         param="${desc#*\(}"
         param="${param%%\)*}"
@@ -24,11 +32,20 @@ format_dothelp_item() {
         param="${param%\?}"
         desc="${desc%%\(*}"
     fi
-    if [[ -n "$param" ]]; then
-        printf '%s' "- ${desc}:\n\n\`${name} {{${param}}}\`\n\n"
-    else
-        printf '%s' "- ${desc}:\n\n\`${name}\`\n\n"
+
+    # Keybindings formatieren (gleiche Logik wie patch-generator.sh)
+    local tldr_keys=""
+    if [[ -n "$keybindings" ]]; then
+        tldr_keys=$(format_keybindings_for_tldr "$keybindings") || true
+        # Fallback: Text als Zusatzkontext wenn keine Keybindings
+        [[ -z "$tldr_keys" ]] && extra=" (${keybindings})"
     fi
+
+    local cmd="\`${name}"
+    [[ -n "$param" ]] && cmd+=" {{${param}}}"
+    cmd+="\`"
+
+    printf '%s' "- ${desc}${tldr_keys:+ ${tldr_keys}}${extra}:\n\n${cmd}\n\n"
 }
 
 # ------------------------------------------------------------

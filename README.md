@@ -39,6 +39,8 @@ Alle Workflows nutzen [fzf](https://github.com/junegunn/fzf) mit bat-Preview, Ke
 | Navigation | `jump`, `pick`, `zj` |
 | Suche | `rg-live` |
 | Pakete | `brew-add`, `brew-rm` |
+| Archive | `7zf` |
+| Konfiguration | `bat-theme`, `dotedit` |
 
 <p align="center">
   <img src="docs/assets/workflow.png" alt="git-log Workflow – fzf mit bat-Preview zeigt Commit-Diffs" width="800">
@@ -50,10 +52,32 @@ Alle Workflows nutzen [fzf](https://github.com/junegunn/fzf) mit bat-Preview, Ke
 
 | Tool | Funktionen |
 | ---- | ---------- |
+| exiftool | `exifshow`, `exifgps`, `exifstrip`, `exifrename` |
 | ffmpeg | `v2mp3`, `vthumb`, `vcut`, `vcompress`, `v2gif`, `v2mp4`, `vinfo` |
 | magick | `imgresize`, `towebp`, `topng`, `tojpg`, `imgmeta`, `imgsize`, `imgcrop`, `imgstrip` |
 | poppler | `pdf2txt`, `pdf2img`, `pdfmeta`, `pdfpages`, `pdfsplit`, `pdfmerge` |
 | resvg | `svg2png`, `svgscale` |
+
+### Weitere Werkzeuge
+
+| Tool | Funktionen |
+| ---- | ---------- |
+| markdownlint | `mdl`, `mdla`, `mdlf`, `mdlaf` |
+
+### Shell-Erlebnis
+
+- **Autosuggestions** – Vorschläge aus der History: `→` übernehmen, `Alt+→` wortweise
+- **Auto-Outdated-Check** – prüft alle 12h auf Homebrew-Updates, einmalige Session-Benachrichtigung
+- **`brew-up`** – Update + Upgrade + Cleanup in einem Befehl
+- **`brew-list`** – Versions-Dashboard mit Brewfile-Drift-Erkennung
+
+**Shell-Keybindings** (macOS-optimiert – `Ctrl+X` statt `Alt+C`):
+
+| Keybinding | Funktion |
+| ---------- | -------- |
+| `Ctrl+X 1` | Befehlsverlauf durchsuchen |
+| `Ctrl+X 2` | Dateien im Verzeichnis suchen |
+| `Ctrl+X 3` | In Unterverzeichnis wechseln |
 
 Dazu: **[Catppuccin Mocha](https://catppuccin.com/) Theme** überall, **Hilfe im Terminal** via `dothelp`, **fzf-Integration** für alles.
 

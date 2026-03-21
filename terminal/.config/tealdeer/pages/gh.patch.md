@@ -1,5 +1,7 @@
 - dotfiles: Nutzt `fzf (Interactive), bat (Diff-Highlighting), fzf-Helper (gh)`
 
+- dotfiles: Erfordert gh auth login für Authentifizierung. Alle Funktionen nutzen fzf für interaktive Auswahl.
+
 - dotfiles: Repository im Browser öffnen:
 
 `gh-open`

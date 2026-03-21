@@ -2,7 +2,9 @@
 
 - dotfiles: Nutzt `fzf (Interactive), theme-style, jq, platform.zsh (notify)`
 
-- dotfiles: Homebrew Komplett-Update (update, upgrade, autoremove, cleanup, mas):
+- dotfiles: Automatischer Outdated-Check alle 12h – zeigt einmalig pro Session eine Benachrichtigung wenn Updates verfügbar sind. Konfigurierbar via check.conf (Intervall, Kanal, Meldung).
+
+- dotfiles: Homebrew Komplett-Update (update, upgrade, autoremove, cleanup, mas (setzt Auto-Check-Timer zurück)):
 
 `brew-up`
 

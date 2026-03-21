@@ -197,7 +197,7 @@ format_keybindings_for_tldr() {
         result+="\`<${key}>\` ${action}"
     done
 
-    [[ -n "$result" ]] && echo "($result)"
+    [[ -n "$result" ]] && echo "($result)" || true
 }
 
 # ------------------------------------------------------------

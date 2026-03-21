@@ -8,9 +8,6 @@
 # Ersetzt     : -
 # Aliase      : dothelp, dh, dothealth, dotdocs, dotstow, dotedit
 # ============================================================
-# Hinweis     : Kein globaler Guard – dothelp/dh nur wenn tldr vorhanden.
-#               Alle anderen Funktionen prüfen Abhängigkeiten intern.
-# ============================================================
 
 # ------------------------------------------------------------
 # tldr-abhängige Aliase (nur wenn tealdeer installiert)

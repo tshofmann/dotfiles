@@ -71,7 +71,7 @@
 
 # Homebrew (inkl. Mac App Store)
 
-- Homebrew Komplett-Update:
+- Homebrew Komplett-Update (update, upgrade, autoremove, cleanup, mas (setzt Auto-Check-Timer zurück)):
 
 `brew-up`
 
@@ -95,21 +95,21 @@
 
 `masl`
 
-- Brewfile Wartungs-Dashboard:
+- Brewfile Wartungs-Dashboard (Versionen, Updates, Drift):
 
 `brew-list {{filter}}`
 
-- Brew Install Browser:
+- Brew Install Browser (`<Enter>` Installieren, `<Tab>` Mehrfach):
 
 `brew-add {{suche}}`
 
-- Brew Remove Browser:
+- Brew Remove Browser (`<Enter>` Entfernen, `<Tab>` Mehrfach):
 
 `brew-rm {{suche}}`
 
 # Dotfiles-Wartung
 
-- Health-Check:
+- Health-Check (Prüft ob alle Komponenten korrekt installiert sind):
 
 `dothealth`
 
@@ -121,7 +121,7 @@
 
 `dotstow`
 
-- Config Browser:
+- Config Browser (`<Enter>` Editieren, `<Ctrl y>` Pfad kopieren):
 
 `dotedit {{suche}}`
 
