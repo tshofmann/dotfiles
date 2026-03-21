@@ -43,6 +43,16 @@ typeset pct_output
 pct_output="$(log '50% fertig' 2>/dev/null)"
 assert_contains "Prozentzeichen bleiben erhalten" "50% fertig" "$pct_output"
 
+# ── Test 5b: Backslash-Sequenzen werden NICHT interpretiert ─
+typeset bs_output
+bs_output="$(log 'C:\config\new' 2>/dev/null)"
+assert_contains "Backslashes bleiben erhalten" 'C:\config\new' "$bs_output"
+
+# ── Test 5c: Mehrere Argumente ($*) ────────────────────────
+typeset multi_output
+multi_output="$(log 'eins' 'zwei' 'drei' 2>/dev/null)"
+assert_contains "Mehrere Argumente werden zusammengefügt" "eins zwei drei" "$multi_output"
+
 # ── Test 6: Ohne theme-style (graceful degradation) ────────
 unset C_BLUE C_GREEN C_YELLOW C_RED C_RESET _LOG_SH_LOADED 2>/dev/null || true
 DOTFILES_DIR="/nonexistent"

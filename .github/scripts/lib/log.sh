@@ -16,9 +16,10 @@
 #   warn()  – Warnung (gelb ⚠)
 #   err()   – Fehler (rot ✖, stderr)
 #
-# HINWEIS: Nutzt echo -e statt print -P, um %-Expansion zu
+# HINWEIS: Nutzt print -r statt print -P oder echo, um sowohl
+#          %-Expansion als auch Backslash-Interpretation zu
 #          vermeiden. Sicher bei beliebigem Text (Dateinamen,
-#          URLs, Prozentwerte). Siehe Issue #365.
+#          URLs, Prozentwerte, Backslashes). Siehe Issue #365.
 # ============================================================
 
 # Guard: Nicht mehrfach laden
@@ -35,8 +36,8 @@ if [[ -z "${C_BLUE:-}" ]]; then
 fi
 
 # Logging-Funktionen
-# echo -e statt print -P: Vermeidet %-Expansion (sicherer bei beliebigem Input)
-log()  { echo -e "${C_BLUE:-}→${C_RESET:-} $*"; }
-ok()   { echo -e "${C_GREEN:-}✔${C_RESET:-} $*"; }
-warn() { echo -e "${C_YELLOW:-}⚠${C_RESET:-} $*"; }
-err()  { echo -e "${C_RED:-}✖${C_RESET:-} $*" >&2; }
+# print -r: Keine %-Expansion (vs print -P), keine \-Interpretation (vs echo)
+log()  { print -r -- "${C_BLUE:-}→${C_RESET:-} $*"; }
+ok()   { print -r -- "${C_GREEN:-}✔${C_RESET:-} $*"; }
+warn() { print -r -- "${C_YELLOW:-}⚠${C_RESET:-} $*"; }
+err()  { print -r -- "${C_RED:-}✖${C_RESET:-} $*" >&2; }

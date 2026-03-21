@@ -12,8 +12,8 @@
 # Logging (geteilte Library)
 # ------------------------------------------------------------
 source "${0:A:h}/../../lib/log.sh"
-dim()  { echo -e "${C_DIM:-}$1${C_RESET:-}"; }
-bold() { echo -e "${C_BOLD:-}$1${C_RESET:-}"; }
+dim()  { print -r -- "${C_DIM:-}$1${C_RESET:-}"; }
+bold() { print -r -- "${C_BOLD:-}$1${C_RESET:-}"; }
 
 # ------------------------------------------------------------
 # UI-Komponenten (konsistent für alle Skripte)
