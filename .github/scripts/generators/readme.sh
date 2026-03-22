@@ -190,7 +190,7 @@ generate_shell_keybindings_table() {
 # ------------------------------------------------------------
 # Helper: Utility-Werkzeuge als Tabelle
 # ------------------------------------------------------------
-# Listet Aliase aus Tool-Dateien die nicht in fzf-Workflows oder Media-Toolkit sind
+# Listet Aliase aus explizit gewählten Utility-Tool-Dateien (Whitelist)
 generate_utility_tools_table() {
     local -a utility_files=("markdownlint")
 
@@ -240,7 +240,9 @@ generate_readme_md() {
     if [[ -f "$brew_check_conf" ]]; then
         local interval_secs
         interval_secs=$(grep -m1 '^_BREW_CHECK_INTERVAL=' "$brew_check_conf" | cut -d= -f2) || true
-        [[ -n "$interval_secs" ]] && brew_interval_hours=$(( interval_secs / 3600 ))
+        if [[ -n "$interval_secs" ]] && (( interval_secs % 3600 == 0 )); then
+            brew_interval_hours=$(( interval_secs / 3600 ))
+        fi
     fi
 
     # Hero-Screenshot bedingt einbinden (nur wenn Datei existiert)
