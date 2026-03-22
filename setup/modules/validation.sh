@@ -30,7 +30,7 @@
 if is_macos; then
     # macOS-Versionen (Single Source of Truth für Generatoren)
     # Homebrew Tier 1: macOS 14+ (https://docs.brew.sh/Support-Tiers)
-    # Aktuell sind Minimum und „zuletzt getestet" identisch (Tahoe).
+    # Aktuell sind Minimum und „zuletzt getestet“ identisch (Tahoe).
     # MACOS_MIN_VERSION und MACOS_TESTED_VERSION werden bewusst getrennt
     # gepflegt und können künftig auseinanderlaufen (oder MIN gesenkt werden).
     # Kein konkretes API-Minimum – ältere Versionen könnten funktionieren,
