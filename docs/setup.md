@@ -270,7 +270,7 @@ Bei fehlenden oder falschen Icons prüfen:
 Falls du die dotfiles-Installation rückgängig machen möchtest:
 
 ```zsh
-./setup/restore.sh
+~/dotfiles/setup/restore.sh
 ```
 
 ### Was passiert?
@@ -301,4 +301,47 @@ Das Backup wird beim ersten Bootstrap automatisch erstellt:
 
 > **Wichtig:** Das erste Backup wird NIE überschrieben (Idempotenz). Selbst bei mehrfacher Bootstrap-Ausführung bleibt das ursprüngliche Backup erhalten.
 >
-> **💡 Tipp:** Nach erfolgreicher Wiederherstellung kann das Backup manuell gelöscht werden: `rm -rf .backup/`
+> **💡 Tipp:** Nach erfolgreicher Wiederherstellung kann das Backup manuell gelöscht werden: `rm -rf ~/dotfiles/.backup/`
+
+### Was bleibt bestehen?
+
+`restore.sh` entfernt nur Symlinks und stellt Backups wieder her. **Nicht entfernt** werden:
+
+- Über Homebrew installierte Pakete (Formulae, Casks, Mac App Store Apps)
+- Homebrew selbst
+- Das Repository `~/dotfiles`
+
+Das ist Absicht: Pakete könnten unabhängig von den dotfiles installiert worden sein oder von anderer Software benötigt werden.
+
+### Optional: Pakete & Repository entfernen
+
+Falls du auch die über das Brewfile installierten Pakete und das Repository entfernen möchtest, gehe **in dieser Reihenfolge** vor:
+
+> **Hinweis:** Homebrew selbst wird in diesen Schritten **nicht** deinstalliert. Falls gewünscht, folge der [offiziellen Anleitung](https://docs.brew.sh/FAQ#how-do-i-uninstall-homebrew).
+
+**Schritt 1 – Prüfen, was entfernt würde:**
+
+```zsh
+brew bundle list --file=~/dotfiles/setup/Brewfile --all
+```
+
+Zeigt alle Pakete aus dem Brewfile. Prüfe die Liste – behalte, was du unabhängig von den dotfiles brauchst (z.B. VS Code, Xcode).
+
+**Schritt 2 – Pakete entfernen** (nur was du nicht mehr brauchst):
+
+```zsh
+brew uninstall bat eza fd fzf ripgrep   # Beispiel: einzelne Formulae
+brew uninstall --cask kitty             # Beispiel: einzelne Casks
+```
+
+> ⚠️ **Vorsicht:** Entferne Pakete einzeln statt pauschal. Casks wie Visual Studio Code oder Kitty haben eigene Einstellungen und Daten, die bei der Deinstallation verloren gehen.
+>
+> **Mac App Store Apps** (Keynote, Xcode etc.) werden über den App Store oder `mas uninstall <id>` entfernt – in der Regel sind diese aber unabhängig von den dotfiles installiert.
+
+**Schritt 3 – Repository entfernen** (erst wenn alles geprüft ist):
+
+> ⚠️ Das Backup liegt in `~/dotfiles/.backup/`. Stelle **vorher** sicher, dass `restore.sh` alle Dateien korrekt wiederhergestellt hat.
+
+```zsh
+rm -rf ~/dotfiles
+```
