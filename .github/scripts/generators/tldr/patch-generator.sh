@@ -192,7 +192,9 @@ generate_complete_patch() {
     local docs="${rest%%|*}"
     rest="${rest#*|}"
     local nutzt="${rest%%|*}"
-    local config="${rest#*|}"
+    rest="${rest#*|}"
+    local config="${rest%%|*}"
+    local hinweis="${rest#*|}"
 
     # Für Pages: Header aus Alias-Datei generieren
     if [[ "$for_page" == "true" ]]; then
@@ -210,6 +212,11 @@ generate_complete_patch() {
     # Abhängigkeiten anzeigen (für Pages und Patches)
     if [[ -n "$nutzt" ]]; then
         output+="- dotfiles: Nutzt \`${nutzt}\`\n\n"
+    fi
+
+    # Hinweis anzeigen (für Pages und Patches)
+    if [[ -n "$hinweis" ]]; then
+        output+="- dotfiles: ${hinweis}\n\n"
     fi
 
     if [[ "$tool_name" == "fzf" ]]; then

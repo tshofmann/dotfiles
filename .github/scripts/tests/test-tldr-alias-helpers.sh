@@ -54,10 +54,10 @@ assert_contains "Docs erkannt" "https://github.com/sharkdp/bat" "$result"
 assert_contains "Nutzt erkannt" "fzf (Theme-Browser)" "$result"
 assert_contains "Config erkannt" "~/.config/bat/config" "$result"
 
-# Pipe-Trennung prüfen (5 Felder)
+# Pipe-Trennung prüfen (6 Felder: tool|zweck|docs|nutzt|config|hinweis)
 local field_count
 field_count=$(echo "$result" | tr '|' '\n' | wc -l)
-assert_equals "5 Pipe-getrennte Felder" "5" "${field_count##* }"
+assert_equals "6 Pipe-getrennte Felder" "6" "${field_count##* }"
 
 # Header ohne optionale Felder
 cat > "$_TEST_TMPDIR/minimal.alias" << 'FIXTURE'
@@ -92,6 +92,24 @@ FIXTURE
 
 result=$(extract_alias_header_info "$_TEST_TMPDIR/standalone.alias")
 assert_contains "Standalone: Strich-Felder normalisiert" "|https://example.com||" "$result"
+
+# Header mit Hinweis
+cat > "$_TEST_TMPDIR/hinweis.alias" << 'FIXTURE'
+# ============================================================
+# hinweis.alias - Tool mit Hinweis
+# ============================================================
+# Zweck       : Testet Hinweis-Extraktion
+# Hinweis     : Automatischer Check alle 12h – zeigt
+#               Benachrichtigung wenn Updates verfügbar sind.
+# ============================================================
+
+# Guard
+if ! command -v hinweis >/dev/null 2>&1; then return 0; fi
+FIXTURE
+
+result=$(extract_alias_header_info "$_TEST_TMPDIR/hinweis.alias")
+assert_contains "Hinweis erkannt" "Automatischer Check alle 12h" "$result"
+assert_contains "Hinweis mehrzeilig" "Benachrichtigung wenn Updates" "$result"
 
 # ============================================================
 # extract_section_names()

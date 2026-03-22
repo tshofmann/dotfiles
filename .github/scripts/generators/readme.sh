@@ -98,6 +98,8 @@ generate_fzf_workflows_table() {
         "Navigation|fd,zoxide"
         "Suche|rg"
         "Pakete|brew"
+        "Archive|7z"
+        "Konfiguration|bat,dotfiles"
     )
 
     echo "| Bereich | Funktionen |"
@@ -141,7 +143,7 @@ generate_fzf_workflows_table() {
 # ------------------------------------------------------------
 # Extrahiert Aliase/Funktionen aus Media-bezogenen .alias-Dateien
 generate_media_toolkit_table() {
-    local -a media_files=("ffmpeg" "magick" "poppler" "resvg")
+    local -a media_files=("exiftool" "ffmpeg" "magick" "poppler" "resvg")
 
     echo "| Tool | Funktionen |"
     echo "| ---- | ---------- |"
@@ -154,6 +156,54 @@ generate_media_toolkit_table() {
         [[ -z "$aliase" ]] && continue
 
         # Backtick-formatiert
+        local formatted=""
+        local -a names=("${(@s:, :)aliase}")
+        for name in "${names[@]}"; do
+            [[ -z "$name" ]] && continue
+            [[ -n "$formatted" ]] && formatted+=", "
+            formatted+="\`${name}\`"
+        done
+
+        echo "| ${fname} | ${formatted} |"
+    done
+}
+
+# ------------------------------------------------------------
+# Helper: Shell-Keybindings aus fzf/init.zsh extrahieren
+# ------------------------------------------------------------
+# Parst "bindkey '^Xn' widget  # Ctrl+X n = Beschreibung" Zeilen
+generate_shell_keybindings_table() {
+    local init_file="$FZF_DIR/init.zsh"
+    [[ -f "$init_file" ]] || return 0
+
+    echo "| Keybinding | Funktion |"
+    echo "| ---------- | -------- |"
+
+    grep -E "^bindkey '\\^X[0-9]'" "$init_file" | while IFS= read -r line; do
+        local comment="${line#*# }"
+        local keybinding="${comment%% =*}"
+        local description="${comment#*= }"
+        echo "| \`${keybinding}\` | ${description} |"
+    done || true
+}
+
+# ------------------------------------------------------------
+# Helper: Utility-Werkzeuge als Tabelle
+# ------------------------------------------------------------
+# Listet Aliase aus explizit gewählten Utility-Tool-Dateien (Whitelist)
+generate_utility_tools_table() {
+    local -a utility_files=("markdownlint")
+
+    echo "| Tool | Funktionen |"
+    echo "| ---- | ---------- |"
+
+    for fname in "${utility_files[@]}"; do
+        local alias_file="$ALIAS_DIR/${fname}.alias"
+        [[ -f "$alias_file" ]] || continue
+
+        local aliase=$(parse_header_field "$alias_file" "Aliase")
+        [[ -z "$aliase" ]] && continue
+
         local formatted=""
         local -a names=("${(@s:, :)aliase}")
         for name in "${names[@]}"; do
@@ -181,6 +231,19 @@ generate_readme_md() {
     local tool_replacements=$(generate_tool_replacements_table)
     local fzf_workflows=$(generate_fzf_workflows_table)
     local media_toolkit=$(generate_media_toolkit_table)
+    local shell_keybindings=$(generate_shell_keybindings_table)
+    local utility_tools=$(generate_utility_tools_table)
+
+    # Homebrew-Check-Intervall aus check.conf (SSOT)
+    local brew_check_conf="$DOTFILES_DIR/terminal/.config/homebrew/check.conf"
+    local brew_interval_hours="12"
+    if [[ -f "$brew_check_conf" ]]; then
+        local interval_secs
+        interval_secs=$(grep -m1 '^_BREW_CHECK_INTERVAL=' "$brew_check_conf" | cut -d= -f2) || true
+        if [[ -n "$interval_secs" ]] && (( interval_secs % 3600 == 0 )); then
+            brew_interval_hours=$(( interval_secs / 3600 ))
+        fi
+    fi
 
     # Hero-Screenshot bedingt einbinden (nur wenn Datei existiert)
     local hero_image=""
@@ -226,6 +289,21 @@ ${workflow_image}
 ### Media-Toolkit
 
 ${media_toolkit}
+
+### Weitere Werkzeuge
+
+${utility_tools}
+
+### Shell-Erlebnis
+
+- **Autosuggestions** – Vorschläge aus der History: \`→\` übernehmen, \`Alt+→\` wortweise
+- **Auto-Outdated-Check** – prüft alle ${brew_interval_hours}h auf Homebrew-Updates, einmalige Session-Benachrichtigung
+- **\`brew-up\`** – Update + Upgrade + Cleanup in einem Befehl
+- **\`brew-list\`** – Versions-Dashboard mit Brewfile-Drift-Erkennung
+
+**Shell-Keybindings** (macOS-optimiert – \`Ctrl+X\` statt \`Alt+C\`):
+
+${shell_keybindings}
 
 Dazu: **[Catppuccin Mocha](https://catppuccin.com/) Theme** überall, **Hilfe im Terminal** via \`dothelp\`, **fzf-Integration** für alles.
 ${theme_image}

@@ -185,7 +185,7 @@ extract_section_items() {
                     *)
                         # Prüfe ob nächste Zeile ein Sektionstrennlinie ist
                         # Wenn der Kommentar kein Metadaten-Keyword hat, ist es eine Beschreibung
-                        prev_comment="${content%% –*}"
+                        prev_comment="$content"
                         ;;
                 esac
             # Alias gefunden (auch eingerückt, z.B. innerhalb Guards)
@@ -216,23 +216,52 @@ extract_alias_header_info() {
     local docs=""
     local nutzt=""
     local config=""
+    local hinweis=""
     local tool_name=""
+    local in_hinweis=false
+    local header_ended=false
 
     while IFS= read -r line; do
         [[ "$line" == "# Guard"* ]] && break
+
+        # Header-Ende erkennen: letzte =====-Trennlinie nach Hinweis
+        if [[ "$line" == "# ==="* ]]; then
+            # Hinweis abgeschlossen → Header-Block verlassen
+            [[ -n "$hinweis" ]] && header_ended=true
+            in_hinweis=false
+            continue
+        fi
+
+        # Nach Header-Ende nur noch nach Guard suchen (Abbruch oben)
+        [[ "$header_ended" == true ]] && continue
 
         # Erste Zeile: "# tool.alias - Beschreibung" (muss " - " enthalten)
         if [[ "$line" == "# "*.alias" - "* ]]; then
             tool_name="${line#\# }"
             tool_name="${tool_name%%.alias*}"
+            in_hinweis=false
         elif [[ "$line" == "# Zweck"*":"* ]]; then
             zweck="${line#*: }"
+            in_hinweis=false
         elif [[ "$line" == "# Docs"*":"* ]]; then
             docs="${line#*: }"
+            in_hinweis=false
         elif [[ "$line" == "# Nutzt"*":"* ]]; then
             nutzt="${line#*: }"
+            in_hinweis=false
         elif [[ "$line" == "# Config"*":"* ]]; then
             config="${line#*: }"
+            in_hinweis=false
+        elif [[ "$line" == "# Hinweis"*":"* ]]; then
+            hinweis="${line#*: }"
+            in_hinweis=true
+        elif [[ "$in_hinweis" == true && "$line" == "#"[[:space:]]* && "$line" != "# ==="* && "$line" != "# ---"* ]]; then
+            # Mehrzeilige Continuation: "#               Text"
+            local cont="${line#\#}"
+            cont="${cont#"${cont%%[![:space:]]*}"}"
+            [[ -n "$cont" ]] && hinweis+=" ${cont}"
+        else
+            in_hinweis=false
         fi
     done < "$alias_file"
 
@@ -245,7 +274,7 @@ extract_alias_header_info() {
     [[ "$nutzt" == -* ]] && nutzt=""
     [[ "$config" == -* ]] && config=""
 
-    echo "${tool_name}|${zweck}|${docs}|${nutzt}|${config}"
+    echo "${tool_name}|${zweck}|${docs}|${nutzt}|${config}|${hinweis}"
 }
 
 # ------------------------------------------------------------
