@@ -10,7 +10,7 @@
 # Aliase      : brew-up, brew-list, brew-add, brew-rm, maso, masu, mass, masi, masl
 # ============================================================
 # Hinweis     : Automatischer Outdated-Check (Standard: 12h) –
-#               zeigt einmalig pro Session eine Benachrichtigung
+#               zeigt einmalig pro Session eine Benachrichtigung,
 #               wenn Updates verfügbar sind. Konfigurierbar
 #               via check.conf (Intervall, Kanal, Meldung).
 # ============================================================
