@@ -325,7 +325,7 @@ Danach **Terminal neu starten**. Fertig!
 ~/dotfiles/setup/restore.sh
 \`\`\`
 
-Entfernt alle Symlinks, stellt Original-Dateien wieder her und setzt das Terminal-Profil zurück. Über Homebrew installierte Pakete bleiben bestehen.
+Entfernt alle Symlinks, stellt Original-Dateien wieder her und setzt das Terminal-Profil (macOS) zurück. Über Homebrew installierte Pakete bleiben bestehen.
 
 Details: [Setup-Doku → Deinstallation](docs/setup.md#deinstallation--wiederherstellung)
 
