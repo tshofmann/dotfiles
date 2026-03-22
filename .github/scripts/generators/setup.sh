@@ -162,7 +162,7 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles.
 | **Apple Silicon oder Intel Mac** | arm64 (M1, M2, …) oder x86_64 |
 HEADER
     # Dynamische macOS-Zeile mit min und tested
-    echo "| **macOS ${macos_min}+** | ${macos_min_name} oder neuer – getestet auf ${macos_tested} (${macos_tested_name}) |"
+    echo "| **macOS ${macos_min_name} (${macos_min}+)** | Getestet auf ${macos_tested_name} (${macos_tested}) |"
     cat << 'PART2'
 | **Internetverbindung** | Für Homebrew-Installation und Download der Formulae/Casks |
 | **Admin-Rechte** | `sudo`-Passwort erforderlich (siehe unten) |
@@ -234,7 +234,7 @@ PART3
         generate_bootstrap_steps_table
     else
         # Fallback: Statische Tabelle für Legacy-Bootstrap
-        echo "| macOS-Version-Check | Prüft ob macOS ${macos_min}+ (${macos_min_name}) | ❌ Exit |"
+        echo "| macOS-Version-Check | Prüft ob macOS ${macos_min_name} (${macos_min}+) installiert ist | ❌ Exit |"
 
         # Font- und Profilname dynamisch aus Brewfile/Setup-Dateien
         local legacy_font legacy_profile

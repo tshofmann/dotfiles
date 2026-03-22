@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/tshofmann/dotfiles/actions/workflows/validate.yml/badge.svg)](https://github.com/tshofmann/dotfiles/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![macOS](https://img.shields.io/badge/macOS-26%2B-black?logo=apple)](https://www.apple.com/macos/)
+[![macOS](https://img.shields.io/badge/macOS-Tahoe%20%2826%2B%29-black?logo=apple)](https://www.apple.com/macos/)
 [![Linux](https://img.shields.io/badge/Linux-vorbereitet-yellow?logo=linux)](https://kernel.org/)
 [![Shell: zsh](https://img.shields.io/badge/Shell-zsh-green?logo=gnubash)](https://www.zsh.org/)
 
@@ -118,7 +118,7 @@ Details: [Setup-Doku → Deinstallation](docs/setup.md#deinstallation--wiederher
 #### macOS (getestet ✅)
 
 - **Apple Silicon oder Intel Mac** (arm64/x86_64)
-- **macOS 26+** (Tahoe)
+- **macOS Tahoe (26+)**
 - **Internetverbindung** & Admin-Rechte
 
 #### Linux (vorbereitet 🔧)

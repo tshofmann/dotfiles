@@ -30,9 +30,11 @@
 if is_macos; then
     # macOS-Versionen (Single Source of Truth für Generatoren)
     # Homebrew Tier 1: macOS 14+ (https://docs.brew.sh/Support-Tiers)
-    # Dotfiles-Minimum liegt höher, da wir aktuelle APIs/Features nutzen
-    MACOS_MIN_VERSION=26     # Unterstützt ab (ändert sich selten)
-    MACOS_TESTED_VERSION=26  # Zuletzt getestet auf (ändert sich bei Upgrade)
+    # Minimum = Getestet: Nur auf Tahoe erstellt und geprüft.
+    # Kein konkretes API-Minimum – ältere Versionen könnten funktionieren,
+    # wurden aber nie getestet. Bei Bedarf kann MIN gesenkt werden.
+    MACOS_MIN_VERSION=26     # Tahoe – unterstützt ab (ändert sich selten)
+    MACOS_TESTED_VERSION=26  # Tahoe – zuletzt getestet auf (ändert sich bei Upgrade)
     export MACOS_MIN_VERSION MACOS_TESTED_VERSION
     readonly MACOS_MIN_VERSION MACOS_TESTED_VERSION
 

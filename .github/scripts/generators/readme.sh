@@ -226,6 +226,8 @@ generate_readme_md() {
     macos_tested=$(extract_macos_tested_version_smart)
     macos_min_name=$(get_macos_codename "$macos_min")
     macos_tested_name=$(get_macos_codename "$macos_tested")
+    # URL-Encoding für Badge (Leerzeichen im Codenamen, z.B. "Big Sur")
+    local macos_min_name_url="${macos_min_name// /%20}"
 
     # Tool-Ersetzungen dynamisch generieren
     local tool_replacements=$(generate_tool_replacements_table)
@@ -268,7 +270,7 @@ generate_readme_md() {
 
 [![CI](https://github.com/${PROJECT_REPO}/actions/workflows/validate.yml/badge.svg)](https://github.com/${PROJECT_REPO}/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![macOS](https://img.shields.io/badge/macOS-${macos_min}%2B-black?logo=apple)](https://www.apple.com/macos/)
+[![macOS](https://img.shields.io/badge/macOS-${macos_min_name_url}%20%28${macos_min}%2B%29-black?logo=apple)](https://www.apple.com/macos/)
 [![Linux](https://img.shields.io/badge/Linux-vorbereitet-yellow?logo=linux)](https://kernel.org/)
 [![Shell: zsh](https://img.shields.io/badge/Shell-zsh-green?logo=gnubash)](https://www.zsh.org/)
 
@@ -338,7 +340,7 @@ Details: [Setup-Doku → Deinstallation](docs/setup.md#deinstallation--wiederher
 #### macOS (getestet ✅)
 
 - **Apple Silicon oder Intel Mac** (arm64/x86_64)
-- **macOS ${macos_min}+** (${macos_min_name})
+- **macOS ${macos_min_name} (${macos_min}+)**
 - **Internetverbindung** & Admin-Rechte
 
 #### Linux (vorbereitet 🔧)
