@@ -319,6 +319,10 @@ Bestehende Konfigurationen werden automatisch gesichert.
 
 Danach **Terminal neu starten**. Fertig!
 
+> 💡 **Tipp:** Gib \`dothelp\` ein – zeigt alle Aliase, Shortcuts und Wartungsbefehle.
+>
+> ⚠️ **Probleme?** \`dothealth\` prüft die Installation.
+
 ### Deinstallation
 
 \`\`\`bash
@@ -328,10 +332,6 @@ Danach **Terminal neu starten**. Fertig!
 Entfernt alle Symlinks, stellt Original-Dateien wieder her und setzt das Terminal-Profil (macOS) zurück. Über Homebrew installierte Pakete bleiben bestehen.
 
 Details: [Setup-Doku → Deinstallation](docs/setup.md#deinstallation--wiederherstellung)
-
-> 💡 **Tipp:** Gib \`dothelp\` ein – zeigt alle Aliase, Shortcuts und Wartungsbefehle.
->
-> ⚠️ **Probleme?** \`dothealth\` prüft die Installation.
 
 ### Voraussetzungen
 
