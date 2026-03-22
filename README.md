@@ -95,9 +95,19 @@ Alle installierten Pakete: [`setup/Brewfile`](setup/Brewfile)
 curl -fsSL https://github.com/tshofmann/dotfiles/archive/refs/heads/main.tar.gz | tar -xz -C ~ && mv ~/dotfiles-main ~/dotfiles && ~/dotfiles/setup/install.sh
 ```
 
-Bestehende Konfigurationen werden automatisch gesichert. Wiederherstellung: `~/dotfiles/setup/restore.sh`
+Bestehende Konfigurationen werden automatisch gesichert.
 
 Danach **Terminal neu starten**. Fertig!
+
+### Deinstallation
+
+```bash
+./setup/restore.sh
+```
+
+Entfernt alle Symlinks, stellt Original-Dateien wieder her und setzt das Terminal-Profil zurück. Über Homebrew installierte Pakete bleiben bestehen.
+
+Details: [Setup-Doku → Deinstallation](docs/setup.md#deinstallation--wiederherstellung)
 
 > 💡 **Tipp:** Gib `dothelp` ein – zeigt alle Aliase, Shortcuts und Wartungsbefehle.
 >

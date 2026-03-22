@@ -302,3 +302,42 @@ Das Backup wird beim ersten Bootstrap automatisch erstellt:
 > **Wichtig:** Das erste Backup wird NIE überschrieben (Idempotenz). Selbst bei mehrfacher Bootstrap-Ausführung bleibt das ursprüngliche Backup erhalten.
 >
 > **💡 Tipp:** Nach erfolgreicher Wiederherstellung kann das Backup manuell gelöscht werden: `rm -rf .backup/`
+
+### Was bleibt bestehen?
+
+`restore.sh` entfernt nur Symlinks und stellt Backups wieder her. **Nicht entfernt** werden:
+
+- Über Homebrew installierte Pakete (Formulae, Casks, Mac App Store Apps)
+- Homebrew selbst
+- Das Repository `~/dotfiles`
+
+Das ist Absicht: Pakete könnten unabhängig von den dotfiles installiert worden sein oder von anderer Software benötigt werden.
+
+### Optional: Vollständig aufräumen
+
+Falls du auch die installierten Pakete und das Repository entfernen möchtest, gehe **in dieser Reihenfolge** vor:
+
+**Schritt 1 – Prüfen, was entfernt würde:**
+
+```zsh
+brew bundle list --file=~/dotfiles/setup/Brewfile --all
+```
+
+Zeigt alle Pakete aus dem Brewfile. Prüfe die Liste – behalte, was du unabhängig von den dotfiles brauchst (z.B. VS Code, Xcode).
+
+**Schritt 2 – Pakete entfernen** (nur was du nicht mehr brauchst):
+
+```zsh
+brew remove bat eza fd fzf ripgrep   # Beispiel: einzelne Formulae
+brew remove --cask kitty             # Beispiel: einzelne Casks
+```
+
+> ⚠️ **Vorsicht:** Entferne Pakete einzeln statt pauschal. Casks wie Visual Studio Code oder Kitty haben eigene Einstellungen und Daten, die bei der Deinstallation verloren gehen.
+
+**Schritt 3 – Repository entfernen** (erst wenn alles geprüft ist):
+
+> ⚠️ Das Backup liegt in `~/dotfiles/.backup/`. Stelle **vorher** sicher, dass `restore.sh` alle Dateien korrekt wiederhergestellt hat.
+
+```zsh
+rm -rf ~/dotfiles
+```
