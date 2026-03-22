@@ -85,7 +85,7 @@ Das Backup wird beim ersten Bootstrap automatisch erstellt:
 
 > **Wichtig:** Das erste Backup wird NIE überschrieben (Idempotenz). Selbst bei mehrfacher Bootstrap-Ausführung bleibt das ursprüngliche Backup erhalten.
 >
-> **💡 Tipp:** Nach erfolgreicher Wiederherstellung kann das Backup manuell gelöscht werden: `rm -rf .backup/`
+> **💡 Tipp:** Nach erfolgreicher Wiederherstellung kann das Backup manuell gelöscht werden: `rm -rf ~/dotfiles/.backup/`
 
 ### Was bleibt bestehen?
 
@@ -114,8 +114,8 @@ Zeigt alle Pakete aus dem Brewfile. Prüfe die Liste – behalte, was du unabhä
 **Schritt 2 – Pakete entfernen** (nur was du nicht mehr brauchst):
 
 ```zsh
-brew remove bat eza fd fzf ripgrep   # Beispiel: einzelne Formulae
-brew remove --cask kitty             # Beispiel: einzelne Casks
+brew uninstall bat eza fd fzf ripgrep   # Beispiel: einzelne Formulae
+brew uninstall --cask kitty             # Beispiel: einzelne Casks
 ```
 
 > ⚠️ **Vorsicht:** Entferne Pakete einzeln statt pauschal. Casks wie Visual Studio Code oder Kitty haben eigene Einstellungen und Daten, die bei der Deinstallation verloren gehen.
