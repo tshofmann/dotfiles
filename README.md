@@ -102,7 +102,7 @@ Danach **Terminal neu starten**. Fertig!
 ### Deinstallation
 
 ```bash
-./setup/restore.sh
+~/dotfiles/setup/restore.sh
 ```
 
 Entfernt alle Symlinks, stellt Original-Dateien wieder her und setzt das Terminal-Profil zurück. Über Homebrew installierte Pakete bleiben bestehen.
