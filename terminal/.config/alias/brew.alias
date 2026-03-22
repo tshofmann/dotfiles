@@ -100,7 +100,7 @@ if command -v brew >/dev/null 2>&1; then
         local brew_out
         brew_out=$(HOMEBREW_NO_AUTO_UPDATE=1 brew outdated --quiet 2>/dev/null)
         if [[ -n "$brew_out" ]]; then
-            local -a _brew_lines=(${(f)brew_out})
+            local -a _brew_lines=("${(f)brew_out}")
             brew_count=${#_brew_lines}
         fi
 
@@ -108,7 +108,7 @@ if command -v brew >/dev/null 2>&1; then
             local mas_out
             mas_out=$(mas outdated 2>/dev/null)
             if [[ -n "$mas_out" ]]; then
-                local -a _mas_lines=(${(f)mas_out})
+                local -a _mas_lines=("${(f)mas_out}")
                 mas_count=${#_mas_lines}
             fi
         fi
