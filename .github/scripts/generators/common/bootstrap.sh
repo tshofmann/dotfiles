@@ -31,7 +31,7 @@ extract_module_step_metadata() {
         data="${data#:}"                          # Remove colon
         data="${data#"${data%%[^[:space:]]*}"}"  # Trim spaces after colon
         # Ersetze Platzhalter
-        data="${data//\$\{MACOS_MIN_VERSION\}/${macos_min}+ (${macos_min_name})}"
+        data="${data//\$\{MACOS_MIN_VERSION\}/${macos_min_name} (${macos_min}+)}"
         # Gib Name|Beschreibung|Fehlerverhalten aus
         echo "$data"
     done

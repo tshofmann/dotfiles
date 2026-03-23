@@ -38,6 +38,15 @@ assert_equals "Ohne Argument (Default)" "Sonoma" "$(get_macos_codename)"
 assert_equals "Version 0"  "macOS 0"  "$(get_macos_codename 0)"
 assert_equals "Lücke 16-25" "macOS 20" "$(get_macos_codename 20)"
 
+# Badge-URL-Encoding: Leerzeichen im Codenamen müssen %20-encodiert werden
+local name_with_space="$(get_macos_codename 11)"
+local encoded="${name_with_space// /%20}"
+assert_equals "URL-Encoding Leerzeichen" "Big%20Sur" "$encoded"
+
+local name_without_space="$(get_macos_codename 26)"
+local encoded_no_space="${name_without_space// /%20}"
+assert_equals "URL-Encoding ohne Leerzeichen" "Tahoe" "$encoded_no_space"
+
 # ============================================================
 # Zusammenfassung
 # ============================================================

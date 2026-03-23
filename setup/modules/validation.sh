@@ -30,11 +30,17 @@
 if is_macos; then
     # macOS-Versionen (Single Source of Truth für Generatoren)
     # Homebrew Tier 1: macOS 14+ (https://docs.brew.sh/Support-Tiers)
-    # Dotfiles-Minimum liegt höher, da wir aktuelle APIs/Features nutzen
-    MACOS_MIN_VERSION=26     # Unterstützt ab (ändert sich selten)
-    MACOS_TESTED_VERSION=26  # Zuletzt getestet auf (ändert sich bei Upgrade)
-    export MACOS_MIN_VERSION MACOS_TESTED_VERSION
-    readonly MACOS_MIN_VERSION MACOS_TESTED_VERSION
+    # Aktuell sind Minimum und „zuletzt getestet“ identisch (Tahoe).
+    # MACOS_MIN_VERSION und MACOS_TESTED_VERSION werden bewusst getrennt
+    # gepflegt und können künftig auseinanderlaufen (oder MIN gesenkt werden).
+    # Kein konkretes API-Minimum – ältere Versionen könnten funktionieren,
+    # wurden aber nie getestet.
+    MACOS_MIN_VERSION=26             # unterstützt ab (ändert sich selten)
+    MACOS_MIN_CODENAME="Tahoe"       # Marketingname zu MIN_VERSION
+    MACOS_TESTED_VERSION=26          # zuletzt getestet auf (ändert sich bei Upgrade)
+    MACOS_TESTED_CODENAME="Tahoe"    # Marketingname zu TESTED_VERSION
+    export MACOS_MIN_VERSION MACOS_MIN_CODENAME MACOS_TESTED_VERSION MACOS_TESTED_CODENAME
+    readonly MACOS_MIN_VERSION MACOS_MIN_CODENAME MACOS_TESTED_VERSION MACOS_TESTED_CODENAME
 
     # Homebrew-Prefix (architekturabhängig)
     if [[ "$PLATFORM_ARCH" == "arm64" ]]; then
@@ -150,8 +156,8 @@ validate_platform() {
 
         if (( macos_major < MACOS_MIN_VERSION )); then
             err "macOS $macos_version wird nicht unterstützt"
-            err "Unterstützt ab: macOS $MACOS_MIN_VERSION"
-            err "Getestet auf: macOS $MACOS_TESTED_VERSION"
+            err "Unterstützt ab: macOS $MACOS_MIN_CODENAME ($MACOS_MIN_VERSION+)"
+            err "Getestet auf: macOS $MACOS_TESTED_CODENAME ($MACOS_TESTED_VERSION)"
             return 1
         fi
         ok "macOS $macos_version unterstützt"

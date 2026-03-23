@@ -14,7 +14,7 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles.
 | Anforderung | Details |
 | ----------- | ------- |
 | **Apple Silicon oder Intel Mac** | arm64 (M1, M2, …) oder x86_64 |
-| **macOS 26+** | Tahoe oder neuer – getestet auf 26 (Tahoe) |
+| **macOS Tahoe (26+)** | Getestet auf Tahoe (26) |
 | **Internetverbindung** | Für Homebrew-Installation und Download der Formulae/Casks |
 | **Admin-Rechte** | `sudo`-Passwort erforderlich (siehe unten) |
 
@@ -73,7 +73,7 @@ Das Bootstrap-Skript führt dann folgende Aktionen in dieser Reihenfolge aus:
 | Aktion | Beschreibung | Bei Fehler |
 | ------ | ------------ | ---------- |
 | Architektur-Check | Prüft ob arm64 oder x86_64 | ❌ Exit |
-| macOS-Version-Check | Prüft ob macOS 26+ (Tahoe) installiert ist | ❌ Exit |
+| macOS-Version-Check | Prüft ob macOS Tahoe (26+) installiert ist | ❌ Exit |
 | Debian-Version-Check | Prüft ob Debian Trixie (13+) auf 32-bit ARM | ❌ Exit |
 | Netzwerk-Check | Prüft Internetverbindung | ❌ Exit |
 | Schreibrechte-Check | Prüft ob `$HOME` schreibbar ist | ❌ Exit |
