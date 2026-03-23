@@ -221,11 +221,9 @@ generate_utility_tools_table() {
 # ------------------------------------------------------------
 generate_readme_md() {
     # Dynamische macOS-Versionen (Smart: aus Modulen oder bootstrap.sh)
-    local macos_min macos_tested macos_min_name macos_tested_name
+    local macos_min macos_min_name
     macos_min=$(extract_macos_min_version_smart)
-    macos_tested=$(extract_macos_tested_version_smart)
     macos_min_name=$(get_macos_codename "$macos_min")
-    macos_tested_name=$(get_macos_codename "$macos_tested")
     # URL-Encoding für Badge (Leerzeichen im Codenamen, z.B. "Big Sur")
     local macos_min_name_url="${macos_min_name// /%20}"
 
