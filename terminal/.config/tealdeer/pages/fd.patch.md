@@ -1,6 +1,6 @@
 - dotfiles: Config `~/.config/fd/ignore`
 
-- dotfiles: Nutzt `fzf (Interactive), bat (Preview), eza (Verzeichnis-Preview)`
+- dotfiles: Nutzt `fzf (Interactive), bat (Preview), eza (Verzeichnis-Preview), zoxide (chpwd-Hook lernt mit)`
 
 - dotfiles: Nur Dateien suchen:
 

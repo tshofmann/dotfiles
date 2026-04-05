@@ -147,7 +147,10 @@ fi
 
 if command -v zoxide >/dev/null 2>&1; then
     # z <query> = schnell wechseln, zi = interaktiv mit fzf
-    if command -v eza >/dev/null 2>&1; then
+    # Preview-Dispatcher für zi (konsistent mit zj und allen anderen fzf-Funktionen)
+    if [[ -n "${FZF_HELPER_DIR:-}" ]]; then
+        export _ZO_FZF_OPTS="--preview '$FZF_HELPER_DIR/preview dir {2..} 2'"
+    elif command -v eza >/dev/null 2>&1; then
         export _ZO_FZF_OPTS="--preview 'eza -la --icons --color=always {2..}'"
     fi
     eval "$(zoxide init zsh)"
