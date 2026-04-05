@@ -250,26 +250,17 @@ typeset -a orphan_symlinks=()
 while IFS= read -r symlink; do
   [[ -z "$symlink" ]] && continue
 
-  # readlink (vermeidet Ausgabe bei Fehler)
+  # Ziel-Pfad normalisieren (funktioniert für abs. UND rel. Pfade, auch tote Symlinks)
+  # :a löst ../ auf ohne Dateisystem-Zugriff (im Gegensatz zu :A/realpath)
   typeset link_target=""
   link_target=$(readlink "$symlink" 2>/dev/null) || continue
-
-  # Nur Symlinks die auf dotfiles zeigen
-  [[ "$link_target" == *"dotfiles/"* ]] || continue
-
-  # Prüfe ob die Quelle tatsächlich im Repo existiert
-  # (absoluter Pfad zur Quelldatei rekonstruieren)
-  typeset source_file=""
-  if [[ "$link_target" == /* ]]; then
-    # Absoluter Pfad
-    source_file="$link_target"
-  else
-    # Relativer Pfad - von Symlink-Verzeichnis aus auflösen
-    source_file="$(cd "$(dirname "$symlink")" && cd "$(dirname "$link_target")" && pwd)/$(basename "$link_target")"
-  fi
+  typeset resolved_target="$link_target"
+  [[ "$link_target" != /* ]] && resolved_target="${symlink:h}/${link_target}"
+  resolved_target="${resolved_target:a}"
+  [[ "$resolved_target" == "${DOTFILES_DIR}/"* ]] || continue
 
   # Wenn Quelle existiert → kein Orphan
-  [[ -f "$source_file" ]] && continue
+  [[ -f "$resolved_target" ]] && continue
 
   # Orphan gefunden - Symlink zeigt auf dotfiles aber Quelle fehlt
   typeset display_path="${symlink/#$HOME/~}"
@@ -281,20 +272,16 @@ done < <(find "$HOME/.config" -maxdepth 3 -type l 2>/dev/null | sort)
 for dotfile in ~/.zshrc ~/.zshenv ~/.zprofile ~/.zlogin ~/.editorconfig; do
   [[ -L "$dotfile" ]] || continue
 
+  # Ziel-Pfad normalisieren (wie oben)
   typeset link_target2=""
   link_target2=$(readlink "$dotfile" 2>/dev/null) || continue
-  [[ "$link_target2" == *"dotfiles/"* ]] || continue
-
-  # Prüfe ob die Quelle tatsächlich existiert
-  typeset source_file=""
-  if [[ "$link_target2" == /* ]]; then
-    source_file="$link_target2"
-  else
-    source_file="$(cd "$(dirname "$dotfile")" && cd "$(dirname "$link_target2")" && pwd)/$(basename "$link_target2")"
-  fi
+  typeset resolved_dotfile="$link_target2"
+  [[ "$link_target2" != /* ]] && resolved_dotfile="${dotfile:h}/${link_target2}"
+  resolved_dotfile="${resolved_dotfile:a}"
+  [[ "$resolved_dotfile" == "${DOTFILES_DIR}/"* ]] || continue
 
   # Wenn Quelle existiert → kein Orphan
-  [[ -f "$source_file" ]] && continue
+  [[ -f "$resolved_dotfile" ]] && continue
 
   typeset display_path="${dotfile/#$HOME/~}"
   orphan_symlinks+=("$display_path")
