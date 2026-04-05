@@ -13,7 +13,7 @@
 # daher DOTFILES_DIR als Referenzpunkt nutzen
 if [[ -z "${DOTFILES_DIR:-}" ]]; then
     # Fallback: Aus Skriptpfad ableiten
-    DOTFILES_DIR="${0:A:h:h:h:h:h}"  # lib/config.sh → generators → scripts → .github → dotfiles
+    DOTFILES_DIR="${0:A:h:h:h:h:h}"  # common/config.sh → generators → scripts → .github → dotfiles
 fi
 
 ALIAS_DIR="$DOTFILES_DIR/terminal/.config/alias"

@@ -157,5 +157,5 @@ jobs:
           echo "Prüfe Markdown-Dateien..."
           # Config aus terminal/.config/ (wird lokal via Stow verlinkt)
           # markdownlint-cli2 via npx – Node.js auf ubuntu-latest vorinstalliert
-          npx --yes markdownlint-cli2@0.21.0 --config terminal/.config/markdownlint-cli2/.markdownlint-cli2.jsonc '**/*.md' '#node_modules'
+          npx --yes markdownlint-cli2@0.22.0 --config terminal/.config/markdownlint-cli2/.markdownlint-cli2.jsonc '**/*.md' '#node_modules'
           echo "✔ Markdown OK"
