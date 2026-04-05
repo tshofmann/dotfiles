@@ -25,8 +25,9 @@
 # ------------------------------------------------------------
 # Konfiguration (plattformspezifisch)
 # ------------------------------------------------------------
-# WICHTIG: Variablen müssen exportiert werden, da Module innerhalb
-# einer Funktion (load_module) gesourced werden!
+# WICHTIG: Variablen mit typeset -gr deklarieren (global + readonly),
+# da Module innerhalb von load_module() gesourced werden.
+# Bare readonly/export ist im Funktions-Scope wirkungslos (→ #377).
 if is_macos; then
     # macOS-Versionen (Single Source of Truth für Generatoren)
     # Homebrew Tier 1: macOS 14+ (https://docs.brew.sh/Support-Tiers)
@@ -35,42 +36,35 @@ if is_macos; then
     # gepflegt und können künftig auseinanderlaufen (oder MIN gesenkt werden).
     # Kein konkretes API-Minimum – ältere Versionen könnten funktionieren,
     # wurden aber nie getestet.
-    MACOS_MIN_VERSION=26             # unterstützt ab (ändert sich selten)
-    MACOS_MIN_CODENAME="Tahoe"       # Marketingname zu MIN_VERSION
-    MACOS_TESTED_VERSION=26          # zuletzt getestet auf (ändert sich bei Upgrade)
-    MACOS_TESTED_CODENAME="Tahoe"    # Marketingname zu TESTED_VERSION
-    export MACOS_MIN_VERSION MACOS_MIN_CODENAME MACOS_TESTED_VERSION MACOS_TESTED_CODENAME
-    readonly MACOS_MIN_VERSION MACOS_MIN_CODENAME MACOS_TESTED_VERSION MACOS_TESTED_CODENAME
+    typeset -gr MACOS_MIN_VERSION=26             # unterstützt ab (ändert sich selten)
+    typeset -gr MACOS_MIN_CODENAME="Tahoe"       # Marketingname zu MIN_VERSION
+    typeset -gr MACOS_TESTED_VERSION=26          # zuletzt getestet auf (ändert sich bei Upgrade)
+    typeset -gr MACOS_TESTED_CODENAME="Tahoe"    # Marketingname zu TESTED_VERSION
 
     # Homebrew-Prefix (architekturabhängig)
     if [[ "$PLATFORM_ARCH" == "arm64" ]]; then
-        BREW_PREFIX="/opt/homebrew"      # Apple Silicon
+        typeset -gr BREW_PREFIX="/opt/homebrew"      # Apple Silicon
     else
-        BREW_PREFIX="/usr/local"         # Intel
+        typeset -gr BREW_PREFIX="/usr/local"         # Intel
     fi
 elif is_linux; then
     # Linuxbrew-Prefix
-    BREW_PREFIX="/home/linuxbrew/.linuxbrew"
+    typeset -gr BREW_PREFIX="/home/linuxbrew/.linuxbrew"
 
     # Debian-Mindestversion für 32-bit ARM (Single Source of Truth)
     # apt-packages.sh setzt Trixie voraus – ältere Versionen haben
     # starship, eza, lazygit, fastfetch u.a. nicht in den offiziellen Repos.
     # Trixie ist seit Oktober 2025 das Standard-Raspberry Pi OS.
-    typeset -A DEBIAN_VERSION_MAP=(
+    typeset -grA DEBIAN_VERSION_MAP=(
         [buster]=10
         [bullseye]=11
         [bookworm]=12
         [trixie]=13
         [forky]=14
     )
-    readonly DEBIAN_VERSION_MAP
-    DEBIAN_MIN_CODENAME="trixie"
-    DEBIAN_MIN_VERSION=13
-    export DEBIAN_MIN_CODENAME DEBIAN_MIN_VERSION
-    readonly DEBIAN_MIN_CODENAME DEBIAN_MIN_VERSION
+    typeset -gr DEBIAN_MIN_CODENAME="trixie"
+    typeset -gr DEBIAN_MIN_VERSION=13
 fi
-export BREW_PREFIX
-readonly BREW_PREFIX
 
 # ------------------------------------------------------------
 # Debian-Versionsprüfung (intern, von validate_platform aufgerufen)

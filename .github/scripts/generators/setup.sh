@@ -4,13 +4,13 @@
 # ============================================================
 # Zweck       : Generiert Setup-Dokumentation aus bootstrap.sh/Modulen
 # Pfad        : .github/scripts/generators/setup.sh
-# Quelle  : setup/modules/*.sh (modulare Struktur) oder setup/bootstrap.sh (legacy)
+# Quelle  : setup/modules/*.sh, setup/bootstrap.sh, setup/Brewfile
 # ============================================================
 
 source "${0:A:h}/common.sh"
 
 # ------------------------------------------------------------
-# Bootstrap-Schritte extrahieren (Smart: Module oder Legacy)
+# Bootstrap-Schritte extrahieren
 # ------------------------------------------------------------
 # Parst CURRENT_STEP Zuweisungen aus Modulen oder bootstrap.sh
 extract_bootstrap_steps() {
@@ -157,10 +157,10 @@ UNINSTALL
 # Haupt-Generator für setup.md
 # ------------------------------------------------------------
 generate_setup_md() {
-    # Dynamische macOS-Versionen (Smart: aus Modulen oder bootstrap.sh)
+    # Dynamische macOS-Versionen aus setup/modules/validation.sh
     local macos_min macos_tested macos_min_name macos_tested_name
-    macos_min=$(extract_macos_min_version_smart)
-    macos_tested=$(extract_macos_tested_version_smart)
+    macos_min=$(extract_macos_min_version)
+    macos_tested=$(extract_macos_tested_version)
     macos_min_name=$(get_macos_codename "$macos_min")
     macos_tested_name=$(get_macos_codename "$macos_tested")
 

@@ -152,7 +152,7 @@ load_module() {
             fedora) is_fedora || { log "Überspringe $module (nicht Fedora)"; return 2; } ;;
             debian) is_debian || { log "Überspringe $module (nicht Debian)"; return 2; } ;;
             arch)   is_arch || { log "Überspringe $module (nicht Arch)"; return 2; } ;;
-            *)      warn "Unbekannter Plattform-Prefix: $platform_prefix" ;;
+            *)      warn "Unbekannter Plattform-Prefix: $platform_prefix"; return 2 ;;
         esac
     fi
 
