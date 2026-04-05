@@ -54,7 +54,7 @@ has_bootstrap_modules() {
 extract_macos_min_version_from_module() {
     local validation="$BOOTSTRAP_MODULES/validation.sh"
     [[ -f "$validation" ]] || { echo "26"; return; }
-    local version=$(grep "^[[:space:]]*MACOS_MIN_VERSION=" "$validation" | sed 's/.*=\([0-9]*\).*/\1/')
+    local version=$(grep 'MACOS_MIN_VERSION=' "$validation" | grep -v '^[[:space:]]*#' | head -1 | sed 's/.*=\([0-9]*\).*/\1/')
     [[ -z "$version" ]] && warn "MACOS_MIN_VERSION nicht in $validation gefunden – Fallback auf 26"
     echo "${version:-26}"
 }
@@ -63,7 +63,7 @@ extract_macos_min_version_from_module() {
 extract_macos_tested_version_from_module() {
     local validation="$BOOTSTRAP_MODULES/validation.sh"
     [[ -f "$validation" ]] || { echo "26"; return; }
-    local version=$(grep "^[[:space:]]*MACOS_TESTED_VERSION=" "$validation" | sed 's/.*=\([0-9]*\).*/\1/')
+    local version=$(grep 'MACOS_TESTED_VERSION=' "$validation" | grep -v '^[[:space:]]*#' | head -1 | sed 's/.*=\([0-9]*\).*/\1/')
     [[ -z "$version" ]] && warn "MACOS_TESTED_VERSION nicht in $validation gefunden – Fallback auf 26"
     echo "${version:-26}"
 }
