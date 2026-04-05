@@ -167,8 +167,8 @@ EOF
 # Main Dispatch
 # ------------------------------------------------------------
 case "${1:-}" in
-    file) shift; _preview_file "$@" ;;
-    dir)  shift; _preview_dir "$@" ;;
+    file) shift; [[ "${1:-}" == "--" && -n "${2:-}" ]] && shift; _preview_file "$@" ;;
+    dir)  shift; [[ "${1:-}" == "--" && -n "${2:-}" ]] && shift; _preview_dir "$@" ;;
     -h|--help) _preview_usage ;;
     "")   _preview_usage ;;
     *)
