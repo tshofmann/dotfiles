@@ -28,30 +28,16 @@ get_macos_codename() {
     esac
 }
 
-# Extrahiert MACOS_MIN_VERSION aus bootstrap.sh (unterstützt ab)
-extract_macos_min_version() {
-    [[ -f "$BOOTSTRAP" ]] || { echo "26"; return; }
-    local version=$(grep "^readonly MACOS_MIN_VERSION=" "$BOOTSTRAP" | sed 's/.*=\([0-9]*\).*/\1/')
-    echo "${version:-26}"
-}
-
-# Extrahiert MACOS_TESTED_VERSION aus bootstrap.sh (zuletzt getestet auf)
-extract_macos_tested_version() {
-    [[ -f "$BOOTSTRAP" ]] || { echo "26"; return; }
-    local version=$(grep "^readonly MACOS_TESTED_VERSION=" "$BOOTSTRAP" | sed 's/.*=\([0-9]*\).*/\1/')
-    echo "${version:-26}"
-}
-
 # ------------------------------------------------------------
-# Bootstrap-Modul Parser (Modulare Struktur)
+# Bootstrap-Modul Parser
 # ------------------------------------------------------------
 # Prüft ob modulare Bootstrap-Struktur existiert
 has_bootstrap_modules() {
     [[ -d "$BOOTSTRAP_MODULES" && -f "$BOOTSTRAP_MODULES/_core.sh" ]]
 }
 
-# Extrahiert MACOS_MIN_VERSION aus validation.sh (modulare Struktur)
-extract_macos_min_version_from_module() {
+# Extrahiert MACOS_MIN_VERSION aus validation.sh
+extract_macos_min_version_smart() {
     local validation="$BOOTSTRAP_MODULES/validation.sh"
     [[ -f "$validation" ]] || { echo "26"; return; }
     local version=$(grep 'MACOS_MIN_VERSION=' "$validation" | grep -v '^[[:space:]]*#' | head -1 | sed 's/.*=\([0-9]*\).*/\1/' || true)
@@ -59,28 +45,11 @@ extract_macos_min_version_from_module() {
     echo "${version:-26}"
 }
 
-# Extrahiert MACOS_TESTED_VERSION aus validation.sh (modulare Struktur)
-extract_macos_tested_version_from_module() {
+# Extrahiert MACOS_TESTED_VERSION aus validation.sh
+extract_macos_tested_version_smart() {
     local validation="$BOOTSTRAP_MODULES/validation.sh"
     [[ -f "$validation" ]] || { echo "26"; return; }
     local version=$(grep 'MACOS_TESTED_VERSION=' "$validation" | grep -v '^[[:space:]]*#' | head -1 | sed 's/.*=\([0-9]*\).*/\1/' || true)
     [[ -z "$version" ]] && warn "MACOS_TESTED_VERSION nicht in $validation gefunden – Fallback auf 26"
     echo "${version:-26}"
-}
-
-# Smart-Extraktor: Prüft zuerst Module, dann bootstrap.sh
-extract_macos_min_version_smart() {
-    if has_bootstrap_modules; then
-        extract_macos_min_version_from_module
-    else
-        extract_macos_min_version
-    fi
-}
-
-extract_macos_tested_version_smart() {
-    if has_bootstrap_modules; then
-        extract_macos_tested_version_from_module
-    else
-        extract_macos_tested_version
-    fi
 }
