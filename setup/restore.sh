@@ -4,7 +4,8 @@
 # ============================================================
 # Zweck       : Stellt Backup wieder her und entfernt Symlinks
 # Pfad        : setup/restore.sh
-# Benötigt    : Ein vorhandenes Backup unter .backup/, jq
+# Benötigt    : Backup unter .backup/ + jq (für Restore)
+#               Nur brew (für --cleanup ohne Restore)
 # Aufruf      : ./setup/restore.sh [--yes] [--cleanup [--dry-run]]
 # Optionen    : --yes      Keine Bestätigung erforderlich
 #               --cleanup   Erweiterte Deinstallation (Pakete + Repo)
@@ -53,6 +54,9 @@ else
     section() { echo "━━━ $* ━━━"; }
     dim()     { echo "$*"; }
 fi
+
+# Farb-Variablen: Defaults für Fallback-Pfad (theme-style nicht geladen)
+: "${C_YELLOW:=}" "${C_RESET:=}"
 
 # ------------------------------------------------------------
 # Prüfungen
@@ -427,9 +431,17 @@ cleanup_repository() {
     local dry_run="$2"
     local response
 
-    # Sicherheitscheck: DOTFILES_DIR muss gesetzt und nicht root sein
+    # Sicherheitscheck: DOTFILES_DIR muss gesetzt, unter $HOME und ein Git-Repo sein
     if [[ -z "$DOTFILES_DIR" || "$DOTFILES_DIR" == "/" ]]; then
         err "DOTFILES_DIR ist ungültig – Abbruch"
+        return 1
+    fi
+    if [[ "$DOTFILES_DIR" != "${HOME}"/* ]]; then
+        err "DOTFILES_DIR liegt nicht unter \$HOME – Abbruch: $DOTFILES_DIR"
+        return 1
+    fi
+    if [[ ! -d "${DOTFILES_DIR}/.git" || ! -f "${DOTFILES_DIR}/setup/restore.sh" ]]; then
+        err "DOTFILES_DIR scheint kein dotfiles-Repository zu sein – Abbruch: $DOTFILES_DIR"
         return 1
     fi
 

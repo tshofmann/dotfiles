@@ -65,3 +65,7 @@
 - Backup bleibt nach Restore erhalten (wird mit --cleanup + Repo-Löschung entfernt)
 
 - --dry-run nur zusammen mit --cleanup verwendbar
+
+- Backup nach normalem Restore manuell löschen:
+
+`rm -rf ~/dotfiles/.backup/`
