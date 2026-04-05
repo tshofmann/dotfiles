@@ -33,8 +33,9 @@ echo "=== extract_bootstrap_steps (Integration) ==="
 
 result=$(extract_bootstrap_steps)
 # Muss eine Zahl > 0 sein (echte Module vorhanden)
-assert_contains "Gibt Zahl zurück" "" "$result"
-[[ "$result" -gt 0 ]] 2>/dev/null
+[[ "$result" =~ ^[0-9]+$ ]]
+assert_equals "Gibt Zahl zurück" "0" "$?"
+[[ "$result" -gt 0 ]]
 assert_equals "Schrittanzahl > 0" "0" "$?"
 
 # ============================================================
