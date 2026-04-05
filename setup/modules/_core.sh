@@ -87,26 +87,26 @@ unset _THEME_STYLE
 # ------------------------------------------------------------
 # Format: Emoji + Nachricht (für konsistente Ausgabe)
 #
-# HINWEIS: Nutzt print -P (ZSH Prompt-Expansion) statt echo -e.
-# Das ist gewollt für section() (farbige Prompts), aber bedeutet:
-# Ausgaben die % enthalten MÜSSEN escaped werden: ${text//\%/%%}
-# Die Check-Skripte nutzen stattdessen .github/scripts/lib/log.sh (print -r).
-log()  { print -P "${C_BLUE}→${C_RESET} $*"; }
-ok()   { print -P "${C_GREEN}✔${C_RESET} $*"; }
-err()  { print -P "${C_RED}✖${C_RESET} $*" >&2; }
-warn() { print -P "${C_YELLOW}⚠${C_RESET} $*"; }
-skip() { print -P "${C_OVERLAY0}⏭${C_RESET} $*"; }
+# Nutzt print -r (raw output): Keine %-Expansion, keine \-Interpretation.
+# Sicher bei beliebigem Text (Dateinamen, URLs, Prozentwerte).
+# Die Check-Skripte nutzen identisch .github/scripts/lib/log.sh (print -r).
+log()  { print -r -- "${C_BLUE}→${C_RESET} $*"; }
+ok()   { print -r -- "${C_GREEN}✔${C_RESET} $*"; }
+err()  { print -r -- "${C_RED}✖${C_RESET} $*" >&2; }
+warn() { print -r -- "${C_YELLOW}⚠${C_RESET} $*"; }
+skip() { print -r -- "${C_OVERLAY0}⏭${C_RESET} $*"; }
 
 # Sektions-Header (wie brew-list)
 # Verwendung  : section "Titel"
 section() {
-    print -P "\n${C_MAUVE}━━━ ${C_BOLD}$1${C_RESET}${C_MAUVE} ━━━${C_RESET}"
+    print -r -- ""
+    print -r -- "${C_MAUVE}━━━ ${C_BOLD}$1${C_RESET}${C_MAUVE} ━━━${C_RESET}"
 }
 
 # Sektions-Abschluss mit Status
 # Verwendung  : section_end "3 Pakete installiert"
 section_end() {
-    print -P "${C_OVERLAY0}    └─ $*${C_RESET}"
+    print -r -- "${C_OVERLAY0}    └─ $*${C_RESET}"
 }
 
 # ------------------------------------------------------------

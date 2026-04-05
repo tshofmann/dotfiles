@@ -226,10 +226,10 @@ main() {
     fi
 
     # Banner (minimalistisch wie brew-list)
-    print -P ""
-    print -P "${C_MAUVE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
-    print -P "${C_MAUVE}  ${C_BOLD}Dotfiles Bootstrap${C_RESET}  ${C_DIM}$os_version${C_RESET}"
-    print -P "${C_MAUVE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
+    print -r -- ""
+    print -r -- "${C_MAUVE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
+    print -r -- "${C_MAUVE}  ${C_BOLD}Dotfiles Bootstrap${C_RESET}  ${C_DIM}$os_version${C_RESET}"
+    print -r -- "${C_MAUVE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
 
     # Module in definierter Reihenfolge laden und ausführen
     for module in "${MODULES[@]}"; do
@@ -250,19 +250,19 @@ main() {
     CURRENT_STEP=""
 
     # Abschluss-Meldung
-    print -P ""
-    print -P "${C_GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
-    print -P "${C_GREEN}  ✔ Setup abgeschlossen${C_RESET}"
-    print -P "${C_GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
-    print -P ""
+    print -r -- ""
+    print -r -- "${C_GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
+    print -r -- "${C_GREEN}  ✔ Setup abgeschlossen${C_RESET}"
+    print -r -- "${C_GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
+    print -r -- ""
     section "Nächster Schritt"
 
-    print -P "  ${C_MAUVE}1.${C_RESET} Neue Shell-Sitzung starten: ${C_DIM}exec zsh${C_RESET}"
-    print -P "     ${C_DIM}Oder Terminal schließen und neu öffnen${C_RESET}"
+    print -r -- "  ${C_MAUVE}1.${C_RESET} Neue Shell-Sitzung starten: ${C_DIM}exec zsh${C_RESET}"
+    print -r -- "     ${C_DIM}Oder Terminal schließen und neu öffnen${C_RESET}"
 
-    print -P ""
-    print -P "  ${C_GREEN}💡 Gib '${C_BOLD}dothelp${C_RESET}${C_GREEN}' ein – zeigt alle Aliase, Shortcuts und Wartungsbefehle${C_RESET}"
-    print -P ""
+    print -r -- ""
+    print -r -- "  ${C_GREEN}💡 Gib '${C_BOLD}dothelp${C_RESET}${C_GREEN}' ein – zeigt alle Aliase, Shortcuts und Wartungsbefehle${C_RESET}"
+    print -r -- ""
 }
 
 main "$@"
