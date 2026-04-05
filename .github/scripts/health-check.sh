@@ -463,7 +463,11 @@ fi
 if [[ "$_hc_os" == "macos" ]]; then
 section "Terminal.app Profil"
 
-profile_name="catppuccin-mocha"
+# Profilname dynamisch aus .terminal-Datei ableiten
+typeset terminal_file profile_name default_profile startup_profile
+terminal_file=$(find "$DOTFILES_DIR/setup" -maxdepth 1 -name "*.terminal" | sort | head -1)
+profile_name="${${terminal_file:t}%.terminal}"
+[[ -z "$profile_name" ]] && profile_name="catppuccin-mocha"
 default_profile=$(defaults read com.apple.Terminal "Default Window Settings" 2>/dev/null || echo "")
 startup_profile=$(defaults read com.apple.Terminal "Startup Window Settings" 2>/dev/null || echo "")
 
@@ -546,8 +550,8 @@ check_theme_registry() {
     case "$file" in
       */bat/themes/*|*/bat/config)     tool="bat" ;;
       */zsh/*syntax*)                  tool="zsh-syntax" ;;
-      *catppuccin-mocha.terminal)      tool="Terminal.app" ;;
-      *Catppuccin\ Mocha.xccolortheme) tool="Xcode" ;;
+      *.terminal)                      tool="Terminal.app" ;;
+      *.xccolortheme)                  tool="Xcode" ;;
       */theme-style)                  tool="theme-style" ;;
       */docs/*|*/tests/*|*.page.md|*.sh|*.alias) continue ;;
       */.config/*/*)
