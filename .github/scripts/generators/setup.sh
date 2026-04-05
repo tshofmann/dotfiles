@@ -70,6 +70,8 @@ Falls du die dotfiles-Installation rückgängig machen möchtest:
 | Option | Beschreibung |
 | ------ | ------------ |
 | `--yes`, `-y` | Keine Bestätigung erforderlich |
+| `--cleanup`, `-c` | Erweiterte Deinstallation: Pakete + Repository entfernen |
+| `--dry-run`, `-n` | Zeigt was `--cleanup` tun würde (keine Aktion) |
 | `--help`, `-h` | Hilfe anzeigen |
 
 ### Backup-Speicherort
@@ -77,7 +79,7 @@ Falls du die dotfiles-Installation rückgängig machen möchtest:
 Das Backup wird beim ersten Bootstrap automatisch erstellt:
 
 ```text
-.backup/
+~/dotfiles/.backup/
 ├── manifest.json    # Metadaten aller gesicherten Dateien
 ├── backup.log       # Protokoll der Backup-Operationen
 └── home/            # Gesicherte Originaldateien (Struktur von ~)
@@ -99,17 +101,38 @@ Das ist Absicht: Pakete könnten unabhängig von den dotfiles installiert worden
 
 ### Optional: Pakete & Repository entfernen
 
-Falls du auch die über das Brewfile installierten Pakete und das Repository entfernen möchtest, gehe **in dieser Reihenfolge** vor:
+Falls du auch die über das Brewfile installierten Pakete und das Repository entfernen möchtest, nutze den integrierten Cleanup-Befehl:
 
-> **Hinweis:** Homebrew selbst wird in diesen Schritten **nicht** deinstalliert. Falls gewünscht, folge der [offiziellen Anleitung](https://docs.brew.sh/FAQ#how-do-i-uninstall-homebrew).
+```zsh
+~/dotfiles/setup/restore.sh --cleanup
+```
+
+Dieser führt nach der Wiederherstellung interaktiv durch:
+
+1. **Formulae** – CLI-Tools (z.B. bat, eza, fzf, ripgrep)
+2. **Casks** – GUI-Anwendungen (z.B. VS Code, Kitty)
+3. **Mac App Store Apps** – Falls `mas` installiert ist
+4. **Taps** – Homebrew-Repositories
+5. **Repository** – Löscht `~/dotfiles` nach Bestätigung
+
+Jede Kategorie wird einzeln abgefragt – du entscheidest, was entfernt wird.
+
+> **💡 Tipp:** Mit `--dry-run` siehst du vorab, was entfernt würde:
+>
+> ```zsh
+> ~/dotfiles/setup/restore.sh --cleanup --dry-run
+> ```
+>
+> **Hinweis:** Homebrew selbst wird **nicht** deinstalliert. Falls gewünscht, folge der [offiziellen Anleitung](https://docs.brew.sh/FAQ#how-do-i-uninstall-homebrew).
+
+<details>
+<summary>Alternative: Manuell entfernen</summary>
 
 **Schritt 1 – Prüfen, was entfernt würde:**
 
 ```zsh
 brew bundle list --file=~/dotfiles/setup/Brewfile --all
 ```
-
-Zeigt alle Pakete aus dem Brewfile. Prüfe die Liste – behalte, was du unabhängig von den dotfiles brauchst (z.B. VS Code, Xcode).
 
 **Schritt 2 – Pakete entfernen** (nur was du nicht mehr brauchst):
 
@@ -119,16 +142,14 @@ brew uninstall --cask kitty             # Beispiel: einzelne Casks
 ```
 
 > ⚠️ **Vorsicht:** Entferne Pakete einzeln statt pauschal. Casks wie Visual Studio Code oder Kitty haben eigene Einstellungen und Daten, die bei der Deinstallation verloren gehen.
->
-> **Mac App Store Apps** (Keynote, Xcode etc.) werden über den App Store oder `mas uninstall <id>` entfernt – in der Regel sind diese aber unabhängig von den dotfiles installiert.
 
 **Schritt 3 – Repository entfernen** (erst wenn alles geprüft ist):
-
-> ⚠️ Das Backup liegt in `~/dotfiles/.backup/`. Stelle **vorher** sicher, dass `restore.sh` alle Dateien korrekt wiederhergestellt hat.
 
 ```zsh
 rm -rf ~/dotfiles
 ```
+
+</details>
 UNINSTALL
 }
 

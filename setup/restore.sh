@@ -4,9 +4,12 @@
 # ============================================================
 # Zweck       : Stellt Backup wieder her und entfernt Symlinks
 # Pfad        : setup/restore.sh
-# Benötigt    : Ein vorhandenes Backup unter .backup/, jq
-# Aufruf      : ./setup/restore.sh [--yes]
-# Optionen    : --yes  Keine Bestätigung erforderlich
+# Benötigt    : Backup unter .backup/ + jq (für Restore)
+#               Nur brew (für --cleanup ohne Restore)
+# Aufruf      : ./setup/restore.sh [--yes] [--cleanup [--dry-run]]
+# Optionen    : --yes      Keine Bestätigung erforderlich
+#               --cleanup   Erweiterte Deinstallation (Pakete + Repo)
+#               --dry-run   Zeigt was --cleanup tun würde (keine Aktion)
 #
 # DOCS-SECTION: Deinstallation
 # DOCS-TITLE  : Dotfiles entfernen / Wiederherstellung
@@ -16,6 +19,9 @@
 # 1. Entfernt alle Symlinks die auf dotfiles zeigen
 # 2. Stellt gesicherte Originaldateien wieder her
 # 3. Setzt Terminal-Profil auf "Basic" zurück
+# Mit --cleanup zusätzlich:
+# 4. Entfernt Homebrew-Pakete aus dem Brewfile (interaktiv)
+# 5. Entfernt das Repository ~/dotfiles
 # ============================================================
 
 set -euo pipefail
@@ -41,11 +47,16 @@ if [[ -f "${SCRIPT_DIR}/lib/logging.sh" ]]; then
     source "${SCRIPT_DIR}/lib/logging.sh"
 else
     # Minimaler Fallback (sollte nie auftreten)
-    log()  { echo "→ $*"; }
-    ok()   { echo "✔ $*"; }
-    err()  { echo "✖ $*" >&2; }
-    warn() { echo "⚠ $*"; }
+    log()     { echo "→ $*"; }
+    ok()      { echo "✔ $*"; }
+    err()     { echo "✖ $*" >&2; }
+    warn()    { echo "⚠ $*"; }
+    section() { echo "━━━ $* ━━━"; }
+    dim()     { echo "$*"; }
 fi
+
+# Farb-Variablen: Defaults für Fallback-Pfad (theme-style nicht geladen)
+: "${C_YELLOW:=}" "${C_RESET:=}"
 
 # ------------------------------------------------------------
 # Prüfungen
@@ -192,10 +203,287 @@ reset_terminal_profile() {
 }
 
 # ------------------------------------------------------------
+# Brewfile-Pakete interaktiv entfernen
+# ------------------------------------------------------------
+cleanup_brew_packages() {
+    local skip_confirm="$1"
+    local dry_run="$2"
+    local brewfile="${DOTFILES_DIR}/setup/Brewfile"
+    local response
+
+    if ! command -v brew >/dev/null 2>&1; then
+        warn "Homebrew nicht gefunden – Paketentfernung übersprungen"
+        return 0
+    fi
+
+    if [[ ! -f "$brewfile" ]]; then
+        warn "Brewfile nicht gefunden: $brewfile"
+        return 0
+    fi
+
+    section "Homebrew-Pakete"
+    echo ""
+
+    # --- Formulae ---
+    local brews
+    brews=$(brew bundle list --brews --file="$brewfile" 2>/dev/null) || true
+    if [[ -n "$brews" ]]; then
+        # Nur tatsächlich installierte Formulae anzeigen
+        local installed_brews
+        installed_brews=$(brew list --formula 2>/dev/null) || true
+        local to_remove=()
+        while IFS= read -r pkg; do
+            [[ -z "$pkg" ]] && continue
+            if echo "$installed_brews" | grep -qxF "$pkg" 2>/dev/null; then
+                to_remove+=("$pkg")
+            fi
+        done <<< "$brews"
+
+        if (( ${#to_remove[@]} > 0 )); then
+            echo "Formulae aus Brewfile (${#to_remove[@]} installiert):"
+            for pkg in "${to_remove[@]}"; do
+                echo "  • $pkg"
+            done
+            echo ""
+
+            if [[ "$dry_run" == "true" ]]; then
+                dim "[Dry-Run] Würde ${#to_remove[@]} Formulae entfernen"
+            else
+                local do_remove=true
+                if [[ "$skip_confirm" != "true" ]]; then
+                    echo -n "Diese ${#to_remove[@]} Formulae entfernen? [y/N] "
+                    read -r response
+                    [[ ! "$response" =~ ^[Yy]$ ]] && do_remove=false
+                fi
+                if [[ "$do_remove" == "true" ]]; then
+                    for pkg in "${to_remove[@]}"; do
+                        if brew uninstall "$pkg" 2>/dev/null; then
+                            ok "Entfernt: $pkg"
+                        else
+                            warn "Konnte nicht entfernen (Abhängigkeit?): $pkg"
+                        fi
+                    done
+                else
+                    dim "Formulae-Entfernung übersprungen"
+                fi
+            fi
+            echo ""
+        fi
+    fi
+
+    # --- Casks ---
+    local casks
+    casks=$(brew bundle list --casks --file="$brewfile" 2>/dev/null) || true
+    if [[ -n "$casks" ]]; then
+        local installed_casks
+        installed_casks=$(brew list --cask 2>/dev/null) || true
+        local to_remove_casks=()
+        while IFS= read -r pkg; do
+            [[ -z "$pkg" ]] && continue
+            if echo "$installed_casks" | grep -qxF "$pkg" 2>/dev/null; then
+                to_remove_casks+=("$pkg")
+            fi
+        done <<< "$casks"
+
+        if (( ${#to_remove_casks[@]} > 0 )); then
+            echo "Casks aus Brewfile (${#to_remove_casks[@]} installiert):"
+            for pkg in "${to_remove_casks[@]}"; do
+                echo "  • $pkg"
+            done
+            echo ""
+            echo "${C_YELLOW}Hinweis:${C_RESET} Casks wie VS Code oder Kitty haben eigene Einstellungen,"
+            echo "die bei der Deinstallation verloren gehen können."
+            echo ""
+
+            if [[ "$dry_run" == "true" ]]; then
+                dim "[Dry-Run] Würde ${#to_remove_casks[@]} Casks entfernen"
+            else
+                local do_remove=true
+                if [[ "$skip_confirm" != "true" ]]; then
+                    echo -n "Diese ${#to_remove_casks[@]} Casks entfernen? [y/N] "
+                    read -r response
+                    [[ ! "$response" =~ ^[Yy]$ ]] && do_remove=false
+                fi
+                if [[ "$do_remove" == "true" ]]; then
+                    for pkg in "${to_remove_casks[@]}"; do
+                        if brew uninstall --cask "$pkg" 2>/dev/null; then
+                            ok "Entfernt: $pkg"
+                        else
+                            warn "Konnte nicht entfernen: $pkg"
+                        fi
+                    done
+                else
+                    dim "Cask-Entfernung übersprungen"
+                fi
+            fi
+            echo ""
+        fi
+    fi
+
+    # --- Mac App Store ---
+    if command -v mas >/dev/null 2>&1; then
+        local mas_apps
+        mas_apps=$(brew bundle list --mas --file="$brewfile" 2>/dev/null) || true
+        if [[ -n "$mas_apps" ]]; then
+            local installed_mas
+            installed_mas=$(mas list 2>/dev/null) || true
+            local to_remove_mas=()
+            local to_remove_mas_ids=()
+            local app_name_entry app_id
+            while IFS= read -r app_name_entry; do
+                [[ -z "$app_name_entry" ]] && continue
+                # mas list Format: " 409183694  Keynote         (14.5)"
+                # Exakter Name-Vergleich: ID extrahieren, Name zwischen ID und Version-Klammer
+                app_id=$(echo "$installed_mas" | awk -v name="$app_name_entry" '{
+                    gsub(/^[[:space:]]+/, "")
+                    id = $1
+                    line = $0
+                    sub(/^[0-9]+[[:space:]]+/, "", line)
+                    sub(/[[:space:]]+\([^)]*\)[[:space:]]*$/, "", line)
+                    if (line == name) { print id; exit }
+                }') || true
+                if [[ -n "$app_id" ]]; then
+                    to_remove_mas+=("$app_name_entry (ID: $app_id)")
+                    to_remove_mas_ids+=("$app_id")
+                fi
+            done <<< "$mas_apps"
+
+            if (( ${#to_remove_mas[@]} > 0 )); then
+                echo "Mac App Store Apps aus Brewfile (${#to_remove_mas[@]} installiert):"
+                for app in "${to_remove_mas[@]}"; do
+                    echo "  • $app"
+                done
+                echo ""
+                echo "${C_YELLOW}Hinweis:${C_RESET} MAS-Apps sind in der Regel unabhängig von den dotfiles."
+                echo ""
+
+                if [[ "$dry_run" == "true" ]]; then
+                    dim "[Dry-Run] Würde ${#to_remove_mas[@]} MAS-Apps entfernen"
+                else
+                    local do_remove=true
+                    if [[ "$skip_confirm" != "true" ]]; then
+                        echo -n "Diese ${#to_remove_mas[@]} MAS-Apps entfernen? [y/N] "
+                        read -r response
+                        [[ ! "$response" =~ ^[Yy]$ ]] && do_remove=false
+                    fi
+                    if [[ "$do_remove" == "true" ]]; then
+                        for app_id in "${to_remove_mas_ids[@]}"; do
+                            if mas uninstall "$app_id" 2>/dev/null; then
+                                ok "Entfernt: App ID $app_id"
+                            else
+                                warn "Konnte nicht entfernen: App ID $app_id"
+                            fi
+                        done
+                    else
+                        dim "MAS-Entfernung übersprungen"
+                    fi
+                fi
+                echo ""
+            fi
+        fi
+    fi
+
+    # --- Taps ---
+    local taps
+    taps=$(brew bundle list --taps --file="$brewfile" 2>/dev/null) || true
+    if [[ -n "$taps" ]]; then
+        local installed_taps
+        installed_taps=$(brew tap 2>/dev/null) || true
+        local to_remove_taps=()
+        while IFS= read -r tap; do
+            [[ -z "$tap" ]] && continue
+            if echo "$installed_taps" | grep -qxF "$tap" 2>/dev/null; then
+                to_remove_taps+=("$tap")
+            fi
+        done <<< "$taps"
+
+        if (( ${#to_remove_taps[@]} > 0 )); then
+            echo "Taps aus Brewfile (${#to_remove_taps[@]} installiert):"
+            for tap in "${to_remove_taps[@]}"; do
+                echo "  • $tap"
+            done
+            echo ""
+
+            if [[ "$dry_run" == "true" ]]; then
+                dim "[Dry-Run] Würde ${#to_remove_taps[@]} Taps entfernen"
+            else
+                local do_remove=true
+                if [[ "$skip_confirm" != "true" ]]; then
+                    echo -n "Diese ${#to_remove_taps[@]} Taps entfernen? [y/N] "
+                    read -r response
+                    [[ ! "$response" =~ ^[Yy]$ ]] && do_remove=false
+                fi
+                if [[ "$do_remove" == "true" ]]; then
+                    for tap in "${to_remove_taps[@]}"; do
+                        if brew untap "$tap" 2>/dev/null; then
+                            ok "Entfernt: $tap"
+                        else
+                            warn "Konnte nicht entfernen: $tap"
+                        fi
+                    done
+                else
+                    dim "Tap-Entfernung übersprungen"
+                fi
+            fi
+            echo ""
+        fi
+    fi
+}
+
+# ------------------------------------------------------------
+# Repository entfernen (letzte Aktion)
+# ------------------------------------------------------------
+cleanup_repository() {
+    local skip_confirm="$1"
+    local dry_run="$2"
+    local response
+
+    # Sicherheitscheck: DOTFILES_DIR muss gesetzt, unter $HOME und ein Git-Repo sein
+    if [[ -z "$DOTFILES_DIR" || "$DOTFILES_DIR" == "/" ]]; then
+        err "DOTFILES_DIR ist ungültig – Abbruch"
+        return 1
+    fi
+    if [[ "$DOTFILES_DIR" != "${HOME}"/* ]]; then
+        err "DOTFILES_DIR liegt nicht unter \$HOME – Abbruch: $DOTFILES_DIR"
+        return 1
+    fi
+    if [[ ! -d "${DOTFILES_DIR}/.git" || ! -f "${DOTFILES_DIR}/setup/restore.sh" ]]; then
+        err "DOTFILES_DIR scheint kein dotfiles-Repository zu sein – Abbruch: $DOTFILES_DIR"
+        return 1
+    fi
+
+    section "Repository entfernen"
+    echo ""
+    echo "Verzeichnis: $DOTFILES_DIR"
+    echo ""
+
+    if [[ "$dry_run" == "true" ]]; then
+        dim "[Dry-Run] Würde $DOTFILES_DIR entfernen"
+        return 0
+    fi
+
+    if [[ "$skip_confirm" != "true" ]]; then
+        echo "${C_YELLOW}WARNUNG:${C_RESET} Dies löscht das gesamte dotfiles-Repository unwiderruflich!"
+        echo -n "Repository entfernen? [y/N] "
+        read -r response
+        if [[ ! "$response" =~ ^[Yy]$ ]]; then
+            dim "Repository-Entfernung übersprungen"
+            return 0
+        fi
+    fi
+
+    /bin/rm -rf "$DOTFILES_DIR"
+    ok "Repository entfernt: $DOTFILES_DIR"
+}
+
+# ------------------------------------------------------------
 # Hauptfunktion
 # ------------------------------------------------------------
 main() {
     local skip_confirm=false
+    local do_cleanup=false
+    local dry_run=false
+    local response
 
     # Argumente parsen
     while [[ $# -gt 0 ]]; do
@@ -204,14 +492,28 @@ main() {
                 skip_confirm=true
                 shift
                 ;;
+            --cleanup|-c)
+                do_cleanup=true
+                shift
+                ;;
+            --dry-run|-n)
+                dry_run=true
+                shift
+                ;;
             --help|-h)
-                echo "Verwendung: ./setup/restore.sh [--yes]"
+                echo "Verwendung: ./setup/restore.sh [Optionen]"
                 echo ""
                 echo "Stellt den Zustand vor der dotfiles-Installation wieder her."
                 echo ""
                 echo "Optionen:"
-                echo "  --yes, -y    Keine Bestätigung erforderlich"
-                echo "  --help, -h   Diese Hilfe anzeigen"
+                echo "  --yes, -y      Keine Bestätigung erforderlich"
+                echo "  --cleanup, -c  Erweiterte Deinstallation:"
+                echo "                   1. Wiederherstellung (Symlinks + Backup)"
+                echo "                   2. Homebrew-Pakete entfernen (interaktiv)"
+                echo "                   3. Repository entfernen"
+                echo "  --dry-run, -n  Zeigt was --cleanup tun würde (keine Aktion)"
+                echo "                 Nur zusammen mit --cleanup verwendbar"
+                echo "  --help, -h     Diese Hilfe anzeigen"
                 return 0
                 ;;
             *)
@@ -221,16 +523,43 @@ main() {
         esac
     done
 
-    echo ""
-    echo "╔════════════════════════════════════════════════════════════╗"
-    echo "║          DOTFILES WIEDERHERSTELLUNG                        ║"
-    echo "╚════════════════════════════════════════════════════════════╝"
-    echo ""
-
-    # Prüfen ob Backup existiert (vor jq-Guard, da kein jq benötigt)
-    if ! check_backup_exists; then
+    # --dry-run nur mit --cleanup gültig
+    if [[ "$dry_run" == "true" && "$do_cleanup" != "true" ]]; then
+        err "--dry-run ist nur zusammen mit --cleanup verwendbar"
+        echo "Verwendung: ./setup/restore.sh --cleanup --dry-run"
         return 1
     fi
+
+    echo ""
+    if [[ "$do_cleanup" == "true" ]]; then
+        echo "╔════════════════════════════════════════════════════════════╗"
+        echo "║          DOTFILES VOLLSTÄNDIGE DEINSTALLATION              ║"
+        echo "╚════════════════════════════════════════════════════════════╝"
+    else
+        echo "╔════════════════════════════════════════════════════════════╗"
+        echo "║          DOTFILES WIEDERHERSTELLUNG                        ║"
+        echo "╚════════════════════════════════════════════════════════════╝"
+    fi
+    echo ""
+
+    if [[ "$dry_run" == "true" ]]; then
+        echo "${C_YELLOW}[DRY-RUN]${C_RESET} Keine Aktionen – nur Vorschau"
+        echo ""
+    fi
+
+    # Prüfen ob Backup existiert (vor jq-Guard, da kein jq benötigt)
+    local has_backup=true
+    if ! check_backup_exists; then
+        if [[ "$do_cleanup" == "true" ]]; then
+            warn "Kein Backup vorhanden – Wiederherstellung übersprungen"
+            echo ""
+            has_backup=false
+        else
+            return 1
+        fi
+    fi
+
+    if [[ "$has_backup" == "true" ]]; then
 
     # jq-Abhängigkeit prüfen (nach --help und check_backup_exists)
     if ! command -v jq >/dev/null 2>&1; then
@@ -255,6 +584,12 @@ main() {
     echo "  Erstellt:  $created"
     echo "  Einträge:  $count"
     echo ""
+
+    # Dry-Run: Nur Übersicht, keine Aktion
+    if [[ "$dry_run" == "true" ]]; then
+        dim "[Dry-Run] Würde $count Einträge wiederherstellen"
+        echo ""
+    else
 
     # Bestätigung
     if [[ "$skip_confirm" != "true" ]]; then
@@ -287,12 +622,12 @@ main() {
     fi
 
     local current_target current_backup current_type current_symlink current_permissions
+    local fields
 
     while IFS= read -r entry; do
         [[ -z "$entry" ]] && continue
 
         # Alle Felder in einem jq-Aufruf extrahieren (Tab-separiert)
-        local fields
         if ! fields=$(jq -r '[.target, (.backup // "null"), .type, (.symlinkTarget // "null"), (.permissions // "null")] | @tsv' <<< "$entry" 2>/dev/null); then
             warn "Überspringe fehlerhaften Manifest-Eintrag"
             (( skipped++ )) || true
@@ -358,8 +693,19 @@ main() {
     echo ""
     echo "Fertig! Die dotfiles wurden deinstalliert."
     echo ""
-    echo "Das Backup bleibt erhalten unter: ${BACKUP_DIR#${DOTFILES_DIR}/}"
+    echo "Das Backup bleibt erhalten unter: $BACKUP_DIR"
     echo "Um es zu löschen: rm -rf \"$BACKUP_DIR\""
+
+    fi  # dry_run else
+
+    fi  # has_backup
+
+    # Cleanup-Phase (nur mit --cleanup)
+    if [[ "$do_cleanup" == "true" ]]; then
+        echo ""
+        cleanup_brew_packages "$skip_confirm" "$dry_run"
+        cleanup_repository "$skip_confirm" "$dry_run"
+    fi
 }
 
 # Skript ausführen
