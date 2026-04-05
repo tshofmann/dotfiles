@@ -137,7 +137,13 @@ BOOTSTRAP_MODULES="$_TEST_TMPDIR/modules-empty"
 mkdir -p "$BOOTSTRAP_MODULES"
 echo "# Nur ein Kommentar" > "$BOOTSTRAP_MODULES/validation.sh"
 
-result=$(extract_macos_min_version 2>/dev/null | tail -1)
+local output
+output=$(extract_macos_min_version 2>/dev/null)
+# warn() schreibt nach stdout: Zeile 1 = Warnung, Zeile 2 = Wert
+result=$(echo "$output" | tail -1)
+local warn_line
+warn_line=$(echo "$output" | head -1)
+assert_contains "Warnung bei fehlendem Pattern" "MACOS_MIN_VERSION nicht" "$warn_line"
 assert_equals "Fallback ohne Variable" "26" "$result"
 
 BOOTSTRAP_MODULES="$_ORIG_BOOTSTRAP_MODULES"
