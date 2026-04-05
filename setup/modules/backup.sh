@@ -124,6 +124,7 @@ _is_dotfiles_symlink() {
 
     # Relativer Pfad: vom Symlink-Verzeichnis aus normalisieren
     # :a löst ../ auf ohne Dateisystem-Zugriff → funktioniert auch für tote Symlinks
+    [[ "$target" != /* ]] || return 1
     resolved_target="${filepath:h}/${target}"
     [[ "${resolved_target:a}" == "${DOTFILES_DIR}/"* ]] && return 0
 
