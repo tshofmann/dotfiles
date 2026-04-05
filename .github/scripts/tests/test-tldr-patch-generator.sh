@@ -455,7 +455,7 @@ cat > "$_TEST_TMPDIR/lazygit-ws.yml" << FIXTURE
 gui:
   theme:
     activeBorderColor:
-      - '#cba6f7' # Mauve   
+      - '#cba6f7' # Mauve
       - bold
 FIXTURE
 
