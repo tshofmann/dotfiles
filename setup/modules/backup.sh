@@ -119,13 +119,16 @@ _is_dotfiles_symlink() {
     local target resolved_target
     target=$(/usr/bin/readlink "$filepath" 2>/dev/null) || return 1
 
-    # Absoluter Pfad direkt ins dotfiles-Repo
+    # Absoluter Pfad direkt ins dotfiles-Repo (Schnellprüfung)
     [[ "$target" == "${DOTFILES_DIR}/"* ]] && return 0
 
-    # Relativer Pfad: vom Symlink-Verzeichnis aus normalisieren
+    # Pfad normalisieren: relative vom Symlink-Verzeichnis aus, absolute direkt
     # :a löst ../ auf ohne Dateisystem-Zugriff → funktioniert auch für tote Symlinks
-    [[ "$target" != /* ]] || return 1
-    resolved_target="${filepath:h}/${target}"
+    if [[ "$target" != /* ]]; then
+        resolved_target="${filepath:h}/${target}"
+    else
+        resolved_target="$target"
+    fi
     [[ "${resolved_target:a}" == "${DOTFILES_DIR}/"* ]] && return 0
 
     return 1
