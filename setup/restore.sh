@@ -333,8 +333,15 @@ cleanup_brew_packages() {
             while IFS= read -r app_name_entry; do
                 [[ -z "$app_name_entry" ]] && continue
                 # mas list Format: " 409183694  Keynote         (14.5)"
-                # Suche App-Name in mas list und extrahiere ID
-                app_id=$(echo "$installed_mas" | awk -v name="$app_name_entry" 'index($0, name) {gsub(/^[[:space:]]+/, ""); print $1; exit}') || true
+                # Exakter Name-Vergleich: ID extrahieren, Name zwischen ID und Version-Klammer
+                app_id=$(echo "$installed_mas" | awk -v name="$app_name_entry" '{
+                    gsub(/^[[:space:]]+/, "")
+                    id = $1
+                    line = $0
+                    sub(/^[0-9]+[[:space:]]+/, "", line)
+                    sub(/[[:space:]]+\([^)]*\)[[:space:]]*$/, "", line)
+                    if (line == name) { print id; exit }
+                }') || true
                 if [[ -n "$app_id" ]]; then
                     to_remove_mas+=("$app_name_entry (ID: $app_id)")
                     to_remove_mas_ids+=("$app_id")
@@ -686,7 +693,7 @@ main() {
     echo ""
     echo "Fertig! Die dotfiles wurden deinstalliert."
     echo ""
-    echo "Das Backup bleibt erhalten unter: ${BACKUP_DIR#${DOTFILES_DIR}/}"
+    echo "Das Backup bleibt erhalten unter: $BACKUP_DIR"
     echo "Um es zu löschen: rm -rf \"$BACKUP_DIR\""
 
     fi  # dry_run else
