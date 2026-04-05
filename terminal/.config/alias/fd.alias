@@ -5,7 +5,7 @@
 # Pfad        : ~/.config/alias/fd.alias
 # Docs        : https://github.com/sharkdp/fd
 # Config      : ~/.config/fd/ignore
-# Nutzt       : fzf (Interactive), bat (Preview), eza (Verzeichnis-Preview)
+# Nutzt       : fzf (Interactive), bat (Preview), eza (Verzeichnis-Preview), zoxide (chpwd-Hook lernt mit)
 # Ersetzt     : find (schneller, intuitive Syntax)
 # Aliase      : fdf, fdd, fdh, fda, fdsh, fdpy, fdjs, fdmd, fdjson, fdyaml, jump, pick
 # ============================================================

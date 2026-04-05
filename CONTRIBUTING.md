@@ -111,6 +111,16 @@ readonly -a MODULES=(
 - Linux-Clipboard: Nur Wayland (kein X11) – bewusste Design-Entscheidung
 - Headless-Systeme: Clipboard/Open-Funktionen sind stille No-Ops
 
+### Verzeichniswechsel und zoxide
+
+`zoxide init zsh` registriert einen `chpwd`-Hook (`__zoxide_hook`) der bei **jedem**
+Verzeichniswechsel (`cd`, `pushd`, `z`, etc.) den Pfad in die Frecency-Datenbank
+schreibt. Das bedeutet: Navigations-Funktionen wie `jump()`, `zj()` und `y()`
+trainieren die zoxide-DB automatisch mit – ohne expliziten `zoxide add`-Aufruf.
+
+Betrifft: `jump()` (fd.alias), `zj()` (zoxide.alias), `y()` (yazi.alias) und
+alle zukünftigen Funktionen die Verzeichnisse wechseln.
+
 ### Guard-System
 
 Alle `.alias`-Dateien prüfen ob das jeweilige Tool installiert ist:

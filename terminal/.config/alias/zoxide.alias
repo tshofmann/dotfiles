@@ -17,6 +17,13 @@
 #   z -          Vorheriges Verzeichnis
 #   zi           Interaktive Auswahl (eingebaut)
 #
+# Architektur:
+#   zoxide registriert einen chpwd-Hook (__zoxide_hook) der bei
+#   JEDEM Verzeichniswechsel (cd, pushd, z, jump, etc.) den Pfad
+#   in die Frecency-Datenbank schreibt. Daher trainieren alle
+#   Navigations-Funktionen (jump, zj, y, etc.) die zoxide-DB
+#   automatisch mit – ohne expliziten zoxide-Aufruf.
+#
 # Umgebungsvariablen (vor init setzen):
 #   _ZO_FZF_OPTS     fzf-Optionen für zi (in .zshrc gesetzt)
 #   _ZO_EXCLUDE_DIRS Ausgeschlossene Pfade (Standard: $HOME)
