@@ -2,7 +2,7 @@
 # ============================================================
 # macos.sh - macOS Version Helper
 # ============================================================
-# Zweck       : macOS-Versionen und Codenamen aus Bootstrap extrahieren
+# Zweck       : macOS-Versionen und Codenamen aus setup/modules/validation.sh extrahieren
 # Pfad        : .github/scripts/generators/common/macos.sh
 # Hinweis     : macOS-spezifische Funktionen – plattformunabhängige
 #           Funktionen gehören in separate Module (z.B. starship.sh)
@@ -37,7 +37,7 @@ has_bootstrap_modules() {
 }
 
 # Extrahiert MACOS_MIN_VERSION aus validation.sh
-extract_macos_min_version_smart() {
+extract_macos_min_version() {
     local validation="$BOOTSTRAP_MODULES/validation.sh"
     [[ -f "$validation" ]] || { echo "26"; return; }
     local version=$(grep 'MACOS_MIN_VERSION=' "$validation" | grep -v '^[[:space:]]*#' | head -1 | sed 's/.*=\([0-9]*\).*/\1/' || true)
@@ -46,7 +46,7 @@ extract_macos_min_version_smart() {
 }
 
 # Extrahiert MACOS_TESTED_VERSION aus validation.sh
-extract_macos_tested_version_smart() {
+extract_macos_tested_version() {
     local validation="$BOOTSTRAP_MODULES/validation.sh"
     [[ -f "$validation" ]] || { echo "26"; return; }
     local version=$(grep 'MACOS_TESTED_VERSION=' "$validation" | grep -v '^[[:space:]]*#' | head -1 | sed 's/.*=\([0-9]*\).*/\1/' || true)

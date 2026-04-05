@@ -57,8 +57,8 @@ source "$COMMON_DIR/dothelp.sh"
 #
 # Aus macos.sh:
 #   - get_macos_codename()
-#   - extract_macos_min_version_smart()
-#   - extract_macos_tested_version_smart()
+#   - extract_macos_min_version()
+#   - extract_macos_tested_version()
 #   - has_bootstrap_modules()
 #
 # Aus bootstrap.sh:

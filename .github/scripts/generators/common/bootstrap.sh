@@ -21,7 +21,7 @@ extract_module_step_metadata() {
 
     # macOS-Version für Platzhalter-Ersetzung holen
     local macos_min macos_min_name
-    macos_min=$(extract_macos_min_version_smart)
+    macos_min=$(extract_macos_min_version)
     macos_min_name=$(get_macos_codename "$macos_min")
 
     grep "^# STEP[[:space:]]*:" "$module_file" 2>/dev/null | while read -r line; do

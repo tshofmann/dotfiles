@@ -4,7 +4,7 @@
 # ============================================================
 # Zweck       : Generiert Haupt-README aus Template + dynamischen Daten
 # Pfad        : .github/scripts/generators/readme.sh
-# Quelle  : setup/modules/*.sh (modulare Struktur) oder setup/bootstrap.sh (legacy)
+# Quelle  : setup/modules/*.sh, setup/Brewfile
 # ============================================================
 
 source "${0:A:h}/common.sh"
@@ -220,9 +220,9 @@ generate_utility_tools_table() {
 # Haupt-Generator für README.md
 # ------------------------------------------------------------
 generate_readme_md() {
-    # Dynamische macOS-Versionen (Smart: aus Modulen oder bootstrap.sh)
+    # Dynamische macOS-Versionen aus setup/modules/validation.sh
     local macos_min macos_min_name
-    macos_min=$(extract_macos_min_version_smart)
+    macos_min=$(extract_macos_min_version)
     macos_min_name=$(get_macos_codename "$macos_min")
     # URL-Encoding für Badge (Leerzeichen im Codenamen, z.B. "Big Sur")
     local macos_min_name_url="${macos_min_name// /%20}"
