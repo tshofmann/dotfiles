@@ -2,7 +2,9 @@
 # ============================================================
 # test-generator-custom.sh - Tests für generators/customization.sh
 # ============================================================
-# Zweck       : Unit Tests für collect_theme_configs()
+# Zweck       : Unit Tests für collect_theme_configs(),
+#               generate_color_palette_table(), extract_fzf_colors(),
+#               extract_fzf_keybindings()
 # Pfad        : .github/scripts/tests/test-generator-custom.sh
 # Aufruf      : ./.github/scripts/tests/test-generator-custom.sh
 # ============================================================
@@ -81,6 +83,81 @@ assert_equals "Fixture: theme-style übersprungen" "0" "$theme_style_lines"
 
 # DOTFILES_DIR zurücksetzen
 DOTFILES_DIR="$_ORIG_DOTFILES_DIR"
+
+# ============================================================
+# generate_color_palette_table() – Integration
+# ============================================================
+echo ""
+echo "=== generate_color_palette_table (Integration) ==="
+
+result=$(generate_color_palette_table)
+
+# Tabellen-Header
+assert_contains "Tabellen-Header Farbe" "| Farbe" "$result"
+assert_contains "Tabellen-Header Hex" "| Hex" "$result"
+assert_contains "Tabellen-Header Variable" "| Variable" "$result"
+
+# Mindestens Catppuccin Mocha Base-Farben vorhanden
+assert_contains "Rosewater vorhanden" "Rosewater" "$result"
+assert_contains "Mauve vorhanden" "Mauve" "$result"
+assert_contains "Blue vorhanden" "Blue" "$result"
+
+# Hex-Format prüfen (#XXXXXX)
+assert_contains "Hex-Format" '`#' "$result"
+
+# Variable-Format prüfen (C_NAME)
+assert_contains "Variable-Format" '`C_' "$result"
+
+# ============================================================
+# generate_color_palette_table() – Fixture
+# ============================================================
+echo ""
+echo "=== generate_color_palette_table (Fixture) ==="
+
+_ORIG_DOTFILES_DIR2="$DOTFILES_DIR"
+DOTFILES_DIR="$_TEST_TMPDIR/dotfiles-color"
+mkdir -p "$DOTFILES_DIR/terminal/.config"
+
+cat > "$DOTFILES_DIR/terminal/.config/theme-style" << 'FIXTURE'
+#!/usr/bin/env zsh
+# Catppuccin Mocha Test
+typeset -gx C_RED=$'\033[38;2;243;139;168m'
+typeset -gx C_GREEN=$'\033[38;2;166;227;161m'
+typeset -gx C_BLUE=$'\033[38;2;137;180;250m'
+FIXTURE
+
+result=$(generate_color_palette_table)
+assert_contains "Fixture: Red erkannt" "Red" "$result"
+assert_contains "Fixture: Green erkannt" "Green" "$result"
+assert_contains "Fixture: Blue erkannt" "Blue" "$result"
+assert_contains "Fixture: Hex für Red" "#F38BA8" "$result"
+assert_contains "Fixture: Hex für Green" "#A6E3A1" "$result"
+assert_contains "Fixture: Variable C_RED" "C_RED" "$result"
+
+DOTFILES_DIR="$_ORIG_DOTFILES_DIR2"
+
+# ============================================================
+# extract_fzf_colors() – Integration
+# ============================================================
+echo ""
+echo "=== extract_fzf_colors (Integration) ==="
+
+result=$(extract_fzf_colors)
+assert_contains "Code-Block Start" '```zsh' "$result"
+assert_contains "Catppuccin Kommentar" "Catppuccin" "$result"
+assert_contains "--color= vorhanden" "--color=" "$result"
+assert_contains "Layout-Auszug" "Layout" "$result"
+
+# ============================================================
+# extract_fzf_keybindings() – Integration
+# ============================================================
+echo ""
+echo "=== extract_fzf_keybindings (Integration) ==="
+
+result=$(extract_fzf_keybindings)
+assert_contains "Code-Block Start" '```zsh' "$result"
+assert_contains "Ctrl+X Prefix" "Ctrl+X" "$result"
+assert_contains "bindkey vorhanden" "bindkey" "$result"
 
 # ============================================================
 # Zusammenfassung
