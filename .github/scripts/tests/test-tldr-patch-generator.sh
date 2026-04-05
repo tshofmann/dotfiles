@@ -2,8 +2,12 @@
 # ============================================================
 # test-tldr-patch-generator.sh - Tests für tldr/patch-generator.sh
 # ============================================================
-# Zweck       : Unit Tests für Starship-, Lazygit-Generatoren
-#               und Cross-Reference Reverse-Lookup
+# Zweck       : Unit Tests für generate_patch_for_alias(),
+#               generate_fzf_helper_descriptions(),
+#               generate_kitty_specific_entries(),
+#               generate_starship_specific_entries(),
+#               generate_lazygit_specific_entries(),
+#               generate_cross_references()
 # Pfad        : .github/scripts/tests/test-tldr-patch-generator.sh
 # Aufruf      : ./.github/scripts/tests/test-tldr-patch-generator.sh
 # Hinweis     : Fixtures als Inline-Heredocs (konsistent mit
@@ -28,6 +32,165 @@ source "$SCRIPT_DIR/../generators/tldr.sh"
 # Originale Pfade sichern für spätere Wiederherstellung
 _ORIG_ALIAS_DIR="$ALIAS_DIR"
 _ORIG_DOTFILES_DIR="$DOTFILES_DIR"
+_ORIG_FZF_DIR="${FZF_DIR:-}"
+
+# ============================================================
+# generate_patch_for_alias() – Fixture-Tests
+# ============================================================
+echo "=== generate_patch_for_alias (Fixture) ==="
+
+# Alias-Datei mit Funktionen und Aliase
+cat > "$_TEST_TMPDIR/testtool.alias" << 'FIXTURE'
+# ============================================================
+# testtool.alias - Testtool
+# ============================================================
+# Zweck       : Tests
+# Pfad        : ~/.config/alias/testtool.alias
+# ============================================================
+
+# Guard
+if ! command -v testtool >/dev/null 2>&1; then return 0; fi
+
+# ------------------------------------------------------------
+# Suchfunktionen
+# ------------------------------------------------------------
+# Dateien suchen – Enter=Öffnen, Ctrl+Y=Kopieren
+search() {
+    echo "search"
+}
+
+# Zeigt die Top-10 – Tab=Auswählen
+top10() {
+    echo "top10"
+}
+
+# cat mit Syntax-Highlighting – Standard-Ersatz
+alias cat='bat'
+FIXTURE
+
+result=$(generate_patch_for_alias "$_TEST_TMPDIR/testtool.alias")
+
+# Funktions-Einträge
+assert_contains "Funktion search erkannt" "dotfiles: Dateien suchen" "$result"
+assert_contains "search Keybindings" '<Enter>' "$result"
+assert_contains "search Keybindings Ctrl+Y" '<Ctrl y>' "$result"
+assert_contains "Funktion top10 erkannt" "dotfiles: Zeigt die Top-10" "$result"
+
+# Backtick-Format für Funktionsnamen
+assert_contains "search Backtick-Format" '`search`' "$result"
+assert_contains "top10 Backtick-Format" '`top10`' "$result"
+
+# Alias-Einträge
+assert_contains "Alias cat erkannt" '`cat`' "$result"
+assert_contains "Alias Beschreibung" "cat mit Syntax-Highlighting" "$result"
+
+# Private Funktionen (_prefix) ausgeschlossen
+cat > "$_TEST_TMPDIR/private.alias" << 'FIXTURE'
+# Private Helper
+_helper() {
+    echo "hidden"
+}
+
+# Öffentliche Funktion – sichtbar
+public() {
+    echo "visible"
+}
+FIXTURE
+
+result=$(generate_patch_for_alias "$_TEST_TMPDIR/private.alias")
+local helper_count
+helper_count=$(echo "$result" | grep -c "_helper" || true)
+assert_equals "Private Funktion ausgeschlossen" "0" "$helper_count"
+assert_contains "Öffentliche Funktion enthalten" '`public`' "$result"
+
+# ============================================================
+# generate_fzf_helper_descriptions() – Fixture-Tests
+# ============================================================
+echo ""
+echo "=== generate_fzf_helper_descriptions (Fixture) ==="
+
+FZF_DIR="$_TEST_TMPDIR/fzf"
+mkdir -p "$FZF_DIR"
+
+# Helper mit Zweck
+cat > "$FZF_DIR/fzf-preview" << 'FIXTURE'
+#!/usr/bin/env zsh
+# ============================================================
+# fzf-preview - Preview Helper
+# ============================================================
+# Zweck       : Datei-Preview mit Syntax-Highlighting
+# ============================================================
+FIXTURE
+
+# Helper ohne Zweck → sollte ignoriert werden
+cat > "$FZF_DIR/fzf-nozweck" << 'FIXTURE'
+#!/usr/bin/env zsh
+# Ein Helper ohne Zweck-Feld
+echo "no purpose"
+FIXTURE
+
+# fzf-lib → sollte übersprungen werden
+cat > "$FZF_DIR/fzf-lib" << 'FIXTURE'
+#!/usr/bin/env zsh
+# Zweck       : Shared Library
+FIXTURE
+
+result=$(generate_fzf_helper_descriptions)
+assert_contains "Helper fzf-preview erkannt" 'fzf-preview' "$result"
+assert_contains "Zweck extrahiert" "Datei-Preview mit Syntax-Highlighting" "$result"
+
+local nozweck_count fzflib_count
+nozweck_count=$(echo "$result" | grep -c "fzf-nozweck" || true)
+assert_equals "Helper ohne Zweck ignoriert" "0" "$nozweck_count"
+fzflib_count=$(echo "$result" | grep -c "fzf-lib" || true)
+assert_equals "fzf-lib übersprungen" "0" "$fzflib_count"
+
+FZF_DIR="${_ORIG_FZF_DIR}"
+
+# ============================================================
+# generate_kitty_specific_entries() – Fixture-Tests
+# ============================================================
+echo ""
+echo "=== generate_kitty_specific_entries (Fixture) ==="
+
+cat > "$_TEST_TMPDIR/kitty.conf" << 'FIXTURE'
+# ============================================================
+# kitty.conf - Kitty Terminal
+# ============================================================
+# Pfad        : ~/.config/kitty/kitty.conf
+# Zweck       : Kitty Terminal Konfiguration
+# ============================================================
+
+include current-theme.conf
+shell_integration enabled
+macos_option_as_alt left
+macos_titlebar_color #1E1E2E
+font_size 12
+FIXTURE
+
+result=$(generate_kitty_specific_entries "$_TEST_TMPDIR/kitty.conf")
+assert_contains "SSH Terminfo" "kitten ssh" "$result"
+assert_contains "Theme include" "current-theme.conf" "$result"
+assert_contains "Shell-Integration" "Shell-Integration" "$result"
+assert_contains "macOS Option als Alt" "Option als Alt" "$result"
+assert_contains "macOS Titlebar" "Titlebar-Farbe" "$result"
+assert_contains "Yazi-Previews" "Yazi-Previews" "$result"
+
+# Minimal-Config (ohne Shell-Integration, ohne macOS)
+echo ""
+echo "=== generate_kitty_specific_entries (Minimal) ==="
+
+cat > "$_TEST_TMPDIR/kitty-minimal.conf" << 'FIXTURE'
+font_size 12
+FIXTURE
+
+result=$(generate_kitty_specific_entries "$_TEST_TMPDIR/kitty-minimal.conf")
+assert_contains "Minimal: SSH immer vorhanden" "kitten ssh" "$result"
+assert_contains "Minimal: Yazi immer vorhanden" "Yazi-Previews" "$result"
+
+local shell_int_count
+shell_int_count=$(echo "$result" | grep -c "Shell-Integration" || true)
+assert_equals "Minimal: keine Shell-Integration" "0" "$shell_int_count"
 
 # ============================================================
 # generate_starship_specific_entries() – Fixture-Tests
@@ -292,7 +455,7 @@ cat > "$_TEST_TMPDIR/lazygit-ws.yml" << FIXTURE
 gui:
   theme:
     activeBorderColor:
-      - '#cba6f7' # Mauve   
+      - '#cba6f7' # Mauve
       - bold
 FIXTURE
 
