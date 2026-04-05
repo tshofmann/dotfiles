@@ -111,6 +111,8 @@ Danach **Terminal neu starten**. Fertig!
 
 Entfernt alle Symlinks, stellt Original-Dateien wieder her und setzt das Terminal-Profil (macOS) zurück. Über Homebrew installierte Pakete bleiben bestehen.
 
+Für eine vollständige Deinstallation (inkl. Pakete und Repository): `restore.sh --cleanup`
+
 Details: [Setup-Doku → Deinstallation](docs/setup.md#deinstallation--wiederherstellung)
 
 ### Voraussetzungen
