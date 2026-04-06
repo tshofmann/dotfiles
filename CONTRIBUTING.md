@@ -752,6 +752,8 @@ gh pr create
 
 Nach PR-Erstellung das passende Label hinzufügen:
 
+**Typ-Labels:**
+
 | Label | Verwendung |
 | ------- | ------------ |
 | `bug` | Fehler, etwas funktioniert nicht |
@@ -762,14 +764,55 @@ Nach PR-Erstellung das passende Label hinzufügen:
 | `configuration` | Config-Änderungen |
 | `theming` | Catppuccin, visuelle Anpassungen |
 | `setup` | Installation, Bootstrap |
+| `testing` | Tests hinzufügen oder anpassen |
+| `security` | Sicherheitsrelevante Änderungen |
+| `performance` | Performance-Verbesserungen |
 
-**Zusatz-Labels bei Bedarf:**
+**Status-Labels:**
 
-- `breaking-change` – Ändert bestehendes Verhalten
-- `needs-review` – Bereit für Review
-- `blocked` – Wartet auf externe Abhängigkeit
+| Label | Verwendung |
+| ------- | ------------ |
+| `needs-review` | Bereit für Review |
+| `blocked` | Wartet auf externe Abhängigkeit |
+| `breaking-change` | Ändert bestehendes Verhalten |
+
+**Prioritäts-Labels:**
+
+| Label | Verwendung |
+| ------- | ------------ |
+| `high-priority` | Dringend, zeitkritisch |
+| `medium-priority` | Wichtig, sollte bald bearbeitet werden |
+| `low-priority` | Kann warten, Nice-to-have |
+
+**Automatisch gesetzte Labels:**
+
+| Label | Gesetzt durch |
+| ------- | --------------- |
+| `bug` | Bug Report Issue-Template |
+| `enhancement` | Feature Request Issue-Template |
+| `dependencies` | Dependabot (Paket-Updates) |
+| `github-actions` | Dependabot (Action-Updates) |
+
+**Weitere Labels (für Issues):**
+
+| Label | Verwendung |
+| ------- | ------------ |
+| `proposal` | Vorschlag zur Diskussion |
+| `backup` | Backup-bezogene Themen |
+| `duplicate` | Duplikat eines bestehenden Issues/PRs |
+| `invalid` | Ungültig oder nicht reproduzierbar |
+| `question` | Rückfrage, weitere Informationen nötig |
+| `wontfix` | Wird nicht umgesetzt |
+| `good first issue` | Guter Einstieg für neue Contributors |
+| `help wanted` | Hilfe erwünscht |
 
 > 💡 **Tipp:** Bei Issues werden Labels automatisch durch Templates gesetzt.
+> Closing-Keywords müssen englisch sein: `Closes #123`, `Fixes #456`
+
+### 7. PR-Checkliste ausfüllen
+
+Items mit **(falls zutreffend)** gelten nur, wenn die Änderung den genannten Bereich betrifft.
+Ist ein solches Item nicht anwendbar, einfach abhaken `[x]` — es bestätigt, dass es geprüft und als nicht relevant eingestuft wurde.
 
 ---
 

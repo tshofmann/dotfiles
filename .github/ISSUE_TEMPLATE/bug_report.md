@@ -24,7 +24,7 @@ assignees: ''
 
 <!-- Führe `./.github/scripts/health-check.sh` aus und füge relevante Zeilen ein -->
 
-- **macOS-Version:** <!-- z.B. 15.2 (Sequoia) -->
+- **macOS-Version:** <!-- z.B. 26.0 (Tahoe) -->
 - **Chip:** <!-- z.B. Apple M2 -->
 - **Terminal:** <!-- Terminal.app / iTerm2 / andere -->
 
