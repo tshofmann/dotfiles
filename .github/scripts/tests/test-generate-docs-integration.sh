@@ -18,7 +18,13 @@ DOTFILES_DIR="${SCRIPT_DIR:h:h:h}"
 
 # Temp-Verzeichnis für Backups
 _TEST_TMPDIR=$(mktemp -d)
-trap 'rm -rf "$_TEST_TMPDIR"' EXIT
+
+# Cleanup: Mutierte Dateien wiederherstellen (Ctrl+C, Fehler, normales Ende)
+cleanup() {
+    git -C "$DOTFILES_DIR" checkout -- README.md docs/ terminal/.config/tealdeer/pages/ 2>/dev/null
+    rm -rf "$_TEST_TMPDIR"
+}
+trap cleanup EXIT INT TERM
 
 # ============================================================
 # --check im sauberen Zustand
@@ -44,8 +50,8 @@ gen_exit=$?
 assert_equals "--generate erfolgreich (Exit 0)" "0" "$gen_exit"
 assert_contains "--generate: Unverändert-Meldungen" "Unverändert" "$output"
 
-# Nach --generate: Working Tree darf nicht dirty sein
-dirty=$(git -C "$DOTFILES_DIR" diff --name-only -- README.md docs/)
+# Nach --generate: Working Tree darf nicht dirty sein (alle generierten Pfade)
+dirty=$(git -C "$DOTFILES_DIR" diff --name-only -- README.md docs/ terminal/.config/tealdeer/pages/)
 assert_empty "--generate ändert nichts im sauberen Zustand" "$dirty"
 
 # ============================================================
