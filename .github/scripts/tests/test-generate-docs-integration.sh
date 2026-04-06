@@ -16,17 +16,11 @@ source "$SCRIPT_DIR/lib/assertions.sh"
 GENERATE_DOCS="$SCRIPT_DIR/../generate-docs.sh"
 DOTFILES_DIR="${SCRIPT_DIR:h:h:h}"
 
-# Temp-Verzeichnis für Backups
-_TEST_TMPDIR=$(mktemp -d)
-
 # Pfade die der Test mutiert (alles generierte Dateien)
 _MUTATED_PATHS=(README.md docs/ terminal/.config/tealdeer/pages/)
 
-# Guard: Keine lokalen Änderungen in Test-Pfaden überschreiben
-if ! git -C "$DOTFILES_DIR" diff --quiet -- "${_MUTATED_PATHS[@]}"; then
-    echo "Abbruch: Lokale Änderungen in generierten Dateien. Bitte erst committen oder verwerfen." >&2
-    exit 1
-fi
+# Temp-Verzeichnis für Backups
+_TEST_TMPDIR=$(mktemp -d)
 
 # Cleanup: Mutierte Dateien wiederherstellen (Ctrl+C, Fehler, normales Ende)
 cleanup() {
@@ -34,6 +28,13 @@ cleanup() {
     rm -rf "$_TEST_TMPDIR"
 }
 trap cleanup EXIT INT TERM
+
+# Guard: Keine lokalen Änderungen in Test-Pfaden überschreiben
+if ! git -C "$DOTFILES_DIR" diff --quiet -- "${_MUTATED_PATHS[@]}" \
+  || ! git -C "$DOTFILES_DIR" diff --cached --quiet -- "${_MUTATED_PATHS[@]}"; then
+    echo "Abbruch: Lokale Änderungen in generierten Dateien. Bitte erst committen oder verwerfen." >&2
+    exit 1
+fi
 
 # ============================================================
 # --check im sauberen Zustand
