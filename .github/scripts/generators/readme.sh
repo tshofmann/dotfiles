@@ -353,6 +353,7 @@ Details: [Setup-Doku → Deinstallation](docs/setup.md#deinstallation--wiederher
 | Befehl | Was es zeigt |
 | ------ | ------------ |
 | \`dothelp\` | Schnellreferenz: Aliase, Shortcuts, Tool-Ersetzungen, Wartung |
+| \`dothealth\` | Installations-Check: fehlende Tools, defekte Symlinks, Config-Probleme |
 | \`cmds\` | Alle Aliase und Funktionen interaktiv durchsuchen |
 | \`tldr <tool>\` | Vollständige Tool-Doku mit dotfiles-Erweiterungen |
 
