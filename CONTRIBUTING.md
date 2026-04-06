@@ -752,7 +752,7 @@ gh pr create
 
 Nach PR-Erstellung das passende Label hinzufügen:
 
-**Typ-Labels (eins pro PR):**
+**Typ-Labels:**
 
 | Label | Verwendung |
 | ------- | ------------ |
@@ -781,7 +781,7 @@ Nach PR-Erstellung das passende Label hinzufügen:
 | Label | Verwendung |
 | ------- | ------------ |
 | `high-priority` | Dringend, zeitkritisch |
-| `medium-priority` | Normal, zeitnah umsetzen |
+| `medium-priority` | Wichtig, sollte bald bearbeitet werden |
 | `low-priority` | Kann warten, Nice-to-have |
 
 **Automatisch gesetzte Labels:**

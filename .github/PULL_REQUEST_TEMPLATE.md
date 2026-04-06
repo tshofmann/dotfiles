@@ -10,10 +10,12 @@
 - [ ] ✨ Neues Feature
 - [ ] 📝 Dokumentation
 - [ ] ♻️ Refactoring
-- [ ] 🔧 Konfiguration/Maintenance
+- [ ] 🔧 Konfiguration
+- [ ] 🛠️ Maintenance/Chore
 - [ ] 🏗️ Setup/Bootstrap
 - [ ] 🎨 Theming
 - [ ] 🧪 Testing
+- [ ] 🔒 Security
 - [ ] 🚀 Performance
 
 ## Checkliste
@@ -25,7 +27,7 @@
 - [ ] Bei neuen Tools: Guard-Check vorhanden (falls zutreffend)
 - [ ] Screenshots in `docs/assets/` noch aktuell (falls zutreffend)
 
-### Bei Theme-/Config-Änderungen (falls zutreffend)
+### Bei Theme-/Config-Änderungen in `.config/*` (falls zutreffend)
 
 - [ ] Theme-Quellen-Tabelle in `theme-style` geprüft (Zeile 13-42)
 - [ ] Status aktualisiert falls Upstream-Abweichung (`upstream+X`)
