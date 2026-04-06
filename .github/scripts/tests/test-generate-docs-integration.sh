@@ -60,7 +60,7 @@ assert_equals "--generate erfolgreich (Exit 0)" "0" "$gen_exit"
 assert_contains "--generate: Unverändert-Meldungen" "Unverändert" "$output"
 
 # Nach --generate: Working Tree darf nicht dirty sein (alle generierten Pfade)
-dirty=$(git -C "$DOTFILES_DIR" diff --name-only -- README.md docs/ terminal/.config/tealdeer/pages/)
+dirty=$(git -C "$DOTFILES_DIR" diff --name-only -- "${_MUTATED_PATHS[@]}")
 assert_empty "--generate ändert nichts im sauberen Zustand" "$dirty"
 
 # ============================================================
@@ -119,6 +119,15 @@ for doc_file in README.md docs/setup.md docs/customization.md; do
     [[ "$size" -gt 100 ]]
     assert_equals "$doc_file > 100 Bytes" "0" "$?"
 done
+
+# tldr-Dateien: Mindestens eine muss existieren und substantiell sein
+local tldr_dir="$DOTFILES_DIR/terminal/.config/tealdeer/pages"
+local tldr_count=$(find "$tldr_dir" -name '*.md' 2>/dev/null | wc -l)
+[[ "$tldr_count" -gt 0 ]]
+assert_equals "tldr-Pages existieren (>0)" "0" "$?"
+local sample_size=$(wc -c < "$tldr_dir/fzf.patch.md" 2>/dev/null || echo 0)
+[[ "$sample_size" -gt 50 ]]
+assert_equals "tldr-Stichprobe: fzf.patch.md > 50 Bytes" "0" "$?"
 
 # ============================================================
 # Fehlerbehandlung: Ungültige Option

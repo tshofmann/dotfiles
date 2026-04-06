@@ -39,6 +39,23 @@ jobs:
       - name: ZSH installieren
         run: sudo apt-get update && sudo apt-get install -y zsh
 
+      - name: tealdeer installieren
+        run: |
+          echo "Installiere tealdeer v1.8.1..."
+          curl -fsSL "https://github.com/tealdeer-rs/tealdeer/releases/download/v1.8.1/tealdeer-linux-x86_64-musl" \
+            -o /tmp/tldr
+          # SHA256-Verifizierung (offizielle Checksum von GitHub Releases)
+          echo "6f2fad4435e0110484d3f25cdc4bf20129dae03238f32d06ebdd00bdc50ae2ed  /tmp/tldr" | sha256sum -c
+          sudo install -m 755 /tmp/tldr /usr/local/bin/tldr
+          tldr --version
+          echo "✔ tealdeer installiert"
+
+      - name: tealdeer Cache initialisieren
+        run: |
+          echo "Initialisiere tealdeer Cache für tldr-Patch/Page-Erkennung..."
+          tldr --update
+          echo "✔ tealdeer Cache bereit"
+
       - name: ZSH-Syntax prüfen
         shell: zsh {0}
         run: |
@@ -108,23 +125,6 @@ jobs:
       - name: Brewfile-Mapping prüfen
         shell: zsh {0}
         run: ./.github/scripts/check-brewfile-mapping.sh
-
-      - name: tealdeer installieren
-        run: |
-          echo "Installiere tealdeer v1.8.1..."
-          curl -fsSL "https://github.com/tealdeer-rs/tealdeer/releases/download/v1.8.1/tealdeer-linux-x86_64-musl" \
-            -o /tmp/tldr
-          # SHA256-Verifizierung (offizielle Checksum von GitHub Releases)
-          echo "6f2fad4435e0110484d3f25cdc4bf20129dae03238f32d06ebdd00bdc50ae2ed  /tmp/tldr" | sha256sum -c
-          sudo install -m 755 /tmp/tldr /usr/local/bin/tldr
-          tldr --version
-          echo "✔ tealdeer installiert"
-
-      - name: tealdeer Cache initialisieren
-        run: |
-          echo "Initialisiere tealdeer Cache für tldr-Patch/Page-Erkennung..."
-          tldr --update
-          echo "✔ tealdeer Cache bereit"
 
       - name: Dokumentation prüfen
         run: |
