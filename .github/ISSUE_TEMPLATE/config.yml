@@ -3,3 +3,6 @@ contact_links:
   - name: 📖 Dokumentation
     url: https://github.com/tshofmann/dotfiles/tree/main/docs
     about: Lies die Dokumentation bevor du ein Issue erstellst
+  - name: 🔒 Sicherheitsproblem melden
+    url: https://github.com/tshofmann/dotfiles/blob/main/.github/SECURITY.md
+    about: Sicherheitsprobleme bitte vertraulich melden
