@@ -23,6 +23,10 @@ stow --adopt -R terminal editor && git reset --hard HEAD
 
 Nach Schritt 3 wird bei jedem Commit automatisch geprüft, ob Dokumentation und Code synchron sind.
 
+> **`install.sh` vs. `bootstrap.sh`:** `install.sh` ist der Einstiegspunkt für Erstinstallation
+> (stellt zsh sicher, setzt auf Linux ggf. die Default-Shell, startet dann `bootstrap.sh`).
+> Für Entwickler mit bestehender zsh-Installation reicht `bootstrap.sh` direkt.
+>
 > **Hinweis:** Bei erneuter Ausführung von `bootstrap.sh` werden uncommitted Changes
 > automatisch gestasht und nach Abschluss wiederhergestellt. Du verlierst keine Arbeit.
 
@@ -62,6 +66,7 @@ Nach Schritt 3 wird bei jedem Commit automatisch geprüft, ob Dokumentation und 
 | ------- | --------- |
 | **Isolation** | Jedes Tool hat eigene Config in `~/.config/tool/` |
 | **Unabhängigkeit** | Guard-System erlaubt Teilinstallation |
+| **Symlinks** | Stow mit `--no-folding` (via `.stowrc`) — nur Datei-Symlinks, `~/.config/` bleibt ein echtes Verzeichnis |
 | **Erweiterbarkeit** | Neue Tools durch Hinzufügen einer `.alias`-Datei |
 | **Austauschbarkeit** | Aliase abstrahieren Tool-spezifische Syntax |
 
@@ -567,15 +572,24 @@ manual          = Manuell basierend auf catppuccin.com/palette
 
 ### Shell-Scripts
 
+Das Repository nutzt drei separate Logging-Systeme — je nach Shell und Kontext:
+
+#### `.github/scripts/` (ZSH)
+
 ```zsh
 #!/usr/bin/env zsh
 set -euo pipefail
 
-# Logging-Helper verwenden (geteilte Library)
 source "${0:A:h}/lib/log.sh"
 # Stellt bereit: log(), ok(), warn(), err()
 # Siehe .github/scripts/lib/log.sh
 ```
+
+#### `setup/` Skripte
+
+- **`install.sh`:** POSIX sh → `. "$SCRIPT_DIR/lib/logging.sh"`
+- **`restore.sh`:** ZSH → `source "${SCRIPT_DIR}/lib/logging.sh"`
+- **`setup/modules/*.sh`:** Werden von `bootstrap.sh` (ZSH) geladen — Logging via `_core.sh` bereitgestellt
 
 ### Alias-Dateien
 
@@ -756,8 +770,8 @@ Nach PR-Erstellung das passende Label hinzufügen:
 
 | Label | Verwendung |
 | ------- | ------------ |
-| `bug` | Fehler, etwas funktioniert nicht |
-| `enhancement` | Neues Feature oder Verbesserung |
+| `bug` | Fehler, etwas funktioniert nicht (bei Issues via Template automatisch gesetzt) |
+| `enhancement` | Neues Feature oder Verbesserung (bei Issues via Template automatisch gesetzt) |
 | `documentation` | Nur Doku-Änderungen |
 | `refactoring` | Code-Verbesserung ohne Funktionsänderung |
 | `chore` | Routineaufgaben, Wartung |
