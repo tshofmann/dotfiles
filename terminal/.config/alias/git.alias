@@ -122,7 +122,7 @@ if command -v fzf >/dev/null 2>&1; then
                 --delimiter ':' \
                 --preview 'git stash show -p {1} | { bat --style=numbers --color=always -l diff 2>/dev/null || cat; }' \
                 --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Apply' 'Ctrl+P: Pop | Ctrl+D: Drop' 'Ctrl+Y: Ref kopieren'" \
-                --bind 'ctrl-d:execute(git stash drop {1})+reload(git stash list)' \
+                --bind 'ctrl-d:execute(read -q "REPLY?Stash {1} verwerfen? [y/N] " && git stash drop {1}; echo)+reload(git stash list)' \
                 --bind 'ctrl-p:execute(git stash pop {1})+abort' \
                 --bind "ctrl-y:execute-silent($FZF_HELPER_DIR/action copy {1})" | \
             cut -d: -f1)
