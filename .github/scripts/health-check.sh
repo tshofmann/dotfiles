@@ -218,11 +218,15 @@ for stow_dir in "$TERMINAL_DIR" "$EDITOR_DIR"; do
     (( symlink_count++ )) || true
 
     if [[ -L "$target_path" ]]; then
-      # readlink direkt in Vergleich verwenden (vermeidet typeset output)
-      if [[ "$(readlink "$target_path")" == *"dotfiles/$dir_name/$rel_path" ]]; then
+      # Symlink-Ziel normalisieren und gegen erwartete Quelldatei vergleichen
+      typeset link_target=""
+      link_target=$(readlink "$target_path" 2>/dev/null)
+      typeset resolved_link="$link_target"
+      [[ "$link_target" != /* ]] && resolved_link="${target_path:h}/${link_target}"
+      if [[ "${resolved_link:a}" == "$source_file" ]]; then
         pass "$display_path"
       else
-        fail "$display_path → falsches Ziel: $(readlink "$target_path")"
+        fail "$display_path → falsches Ziel: $link_target"
       fi
     elif [[ -e "$target_path" ]]; then
       fail "$display_path → existiert, ist aber kein Symlink"
