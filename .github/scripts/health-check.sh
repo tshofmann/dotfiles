@@ -98,9 +98,12 @@ check_symlink() {
       fail "$display_name → toter Symlink (Target existiert nicht)"
       return 1
     fi
-    local actual_target
+    # Symlink-Ziel normalisieren und gegen erwartete Quelldatei vergleichen
+    local actual_target resolved
     actual_target=$(readlink "$link")
-    if [[ "$actual_target" == *"$expected_target" ]]; then
+    resolved="$actual_target"
+    [[ "$actual_target" != /* ]] && resolved="${link:h}/${actual_target}"
+    if [[ "${resolved:a}" == "${DOTFILES_DIR}/${expected_target}" ]]; then
       pass "$display_name → korrekt verlinkt"
     else
       fail "$display_name → falsches Ziel: $actual_target"
@@ -218,11 +221,15 @@ for stow_dir in "$TERMINAL_DIR" "$EDITOR_DIR"; do
     (( symlink_count++ )) || true
 
     if [[ -L "$target_path" ]]; then
-      # readlink direkt in Vergleich verwenden (vermeidet typeset output)
-      if [[ "$(readlink "$target_path")" == *"dotfiles/$dir_name/$rel_path" ]]; then
+      # Symlink-Ziel normalisieren und gegen erwartete Quelldatei vergleichen
+      typeset link_target=""
+      link_target=$(readlink "$target_path" 2>/dev/null)
+      typeset resolved_link="$link_target"
+      [[ "$link_target" != /* ]] && resolved_link="${target_path:h}/${link_target}"
+      if [[ "${resolved_link:a}" == "$source_file" ]]; then
         pass "$display_path"
       else
-        fail "$display_path → falsches Ziel: $(readlink "$target_path")"
+        fail "$display_path → falsches Ziel: $link_target"
       fi
     elif [[ -e "$target_path" ]]; then
       fail "$display_path → existiert, ist aber kein Symlink"
@@ -250,26 +257,17 @@ typeset -a orphan_symlinks=()
 while IFS= read -r symlink; do
   [[ -z "$symlink" ]] && continue
 
-  # readlink (vermeidet Ausgabe bei Fehler)
+  # Ziel-Pfad normalisieren (funktioniert für abs. UND rel. Pfade, auch tote Symlinks)
+  # :a löst ../ auf ohne Dateisystem-Zugriff (im Gegensatz zu :A/realpath)
   typeset link_target=""
   link_target=$(readlink "$symlink" 2>/dev/null) || continue
-
-  # Nur Symlinks die auf dotfiles zeigen
-  [[ "$link_target" == *"dotfiles/"* ]] || continue
-
-  # Prüfe ob die Quelle tatsächlich im Repo existiert
-  # (absoluter Pfad zur Quelldatei rekonstruieren)
-  typeset source_file=""
-  if [[ "$link_target" == /* ]]; then
-    # Absoluter Pfad
-    source_file="$link_target"
-  else
-    # Relativer Pfad - von Symlink-Verzeichnis aus auflösen
-    source_file="$(cd "$(dirname "$symlink")" && cd "$(dirname "$link_target")" && pwd)/$(basename "$link_target")"
-  fi
+  typeset resolved_target="$link_target"
+  [[ "$link_target" != /* ]] && resolved_target="${symlink:h}/${link_target}"
+  resolved_target="${resolved_target:a}"
+  [[ "$resolved_target" == "${DOTFILES_DIR}/"* ]] || continue
 
   # Wenn Quelle existiert → kein Orphan
-  [[ -f "$source_file" ]] && continue
+  [[ -f "$resolved_target" ]] && continue
 
   # Orphan gefunden - Symlink zeigt auf dotfiles aber Quelle fehlt
   typeset display_path="${symlink/#$HOME/~}"
@@ -281,20 +279,16 @@ done < <(find "$HOME/.config" -maxdepth 3 -type l 2>/dev/null | sort)
 for dotfile in ~/.zshrc ~/.zshenv ~/.zprofile ~/.zlogin ~/.editorconfig; do
   [[ -L "$dotfile" ]] || continue
 
+  # Ziel-Pfad normalisieren (wie oben)
   typeset link_target2=""
   link_target2=$(readlink "$dotfile" 2>/dev/null) || continue
-  [[ "$link_target2" == *"dotfiles/"* ]] || continue
-
-  # Prüfe ob die Quelle tatsächlich existiert
-  typeset source_file=""
-  if [[ "$link_target2" == /* ]]; then
-    source_file="$link_target2"
-  else
-    source_file="$(cd "$(dirname "$dotfile")" && cd "$(dirname "$link_target2")" && pwd)/$(basename "$link_target2")"
-  fi
+  typeset resolved_dotfile="$link_target2"
+  [[ "$link_target2" != /* ]] && resolved_dotfile="${dotfile:h}/${link_target2}"
+  resolved_dotfile="${resolved_dotfile:a}"
+  [[ "$resolved_dotfile" == "${DOTFILES_DIR}/"* ]] || continue
 
   # Wenn Quelle existiert → kein Orphan
-  [[ -f "$source_file" ]] && continue
+  [[ -f "$resolved_dotfile" ]] && continue
 
   typeset display_path="${dotfile/#$HOME/~}"
   orphan_symlinks+=("$display_path")
