@@ -98,9 +98,12 @@ check_symlink() {
       fail "$display_name → toter Symlink (Target existiert nicht)"
       return 1
     fi
-    local actual_target
+    # Symlink-Ziel normalisieren und gegen erwartete Quelldatei vergleichen
+    local actual_target resolved
     actual_target=$(readlink "$link")
-    if [[ "$actual_target" == *"$expected_target" ]]; then
+    resolved="$actual_target"
+    [[ "$actual_target" != /* ]] && resolved="${link:h}/${actual_target}"
+    if [[ "${resolved:a}" == "${DOTFILES_DIR}/${expected_target}" ]]; then
       pass "$display_name → korrekt verlinkt"
     else
       fail "$display_name → falsches Ziel: $actual_target"
