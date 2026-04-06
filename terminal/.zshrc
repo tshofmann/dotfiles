@@ -83,6 +83,14 @@ zstyle ':completion:*:approximate:*' max-errors 1 numeric
 # RGB-Werte für LS_COLORS ($RGB_SAPPHIRE, $RGB_MAUVE, etc.)
 [[ -f "$HOME/.config/theme-style" ]] && source "$HOME/.config/theme-style"
 
+# Fallback: leere Defaults wenn theme-style fehlt (schützt Aliase unter set -u)
+# typeset -gx statt ${:=} damit Variablen auch in Child-Prozessen
+# verfügbar sind (z.B. fzf --preview). Matcht theme-style Semantik.
+typeset -gx \
+  C_RESET="${C_RESET-}" C_BOLD="${C_BOLD-}" C_DIM="${C_DIM-}" \
+  C_RED="${C_RED-}" C_GREEN="${C_GREEN-}" C_YELLOW="${C_YELLOW-}" \
+  C_BLUE="${C_BLUE-}" C_MAUVE="${C_MAUVE-}" C_TEXT="${C_TEXT-}"
+
 # LS_COLORS für Completion und Directory-Listings (True-Color 24-bit)
 # Verwendet von: zsh list-colors, eza, ls (GNU/Linux), grep
 # RGB-Werte + LSCOLORS (macOS/BSD) kommen aus theme-style
