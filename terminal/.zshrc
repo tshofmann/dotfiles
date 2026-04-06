@@ -84,9 +84,12 @@ zstyle ':completion:*:approximate:*' max-errors 1 numeric
 [[ -f "$HOME/.config/theme-style" ]] && source "$HOME/.config/theme-style"
 
 # Fallback: leere Defaults wenn theme-style fehlt (schützt Aliase unter set -u)
-: "${C_RESET:=}" "${C_BOLD:=}" "${C_DIM:=}" \
-  "${C_RED:=}" "${C_GREEN:=}" "${C_YELLOW:=}" "${C_BLUE:=}" "${C_MAUVE:=}" \
-  "${C_TEXT:=}"
+# typeset -gx statt ${:=} damit Variablen auch in Child-Prozessen
+# verfügbar sind (z.B. fzf --preview). Matcht theme-style Semantik.
+typeset -gx \
+  C_RESET="${C_RESET-}" C_BOLD="${C_BOLD-}" C_DIM="${C_DIM-}" \
+  C_RED="${C_RED-}" C_GREEN="${C_GREEN-}" C_YELLOW="${C_YELLOW-}" \
+  C_BLUE="${C_BLUE-}" C_MAUVE="${C_MAUVE-}" C_TEXT="${C_TEXT-}"
 
 # LS_COLORS für Completion und Directory-Listings (True-Color 24-bit)
 # Verwendet von: zsh list-colors, eza, ls (GNU/Linux), grep
