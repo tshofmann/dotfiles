@@ -29,10 +29,10 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-# Guard: Keine lokalen Änderungen in Test-Pfaden überschreiben
-if ! git -C "$DOTFILES_DIR" diff --quiet -- "${_MUTATED_PATHS[@]}" \
-  || ! git -C "$DOTFILES_DIR" diff --cached --quiet -- "${_MUTATED_PATHS[@]}"; then
-    echo "Abbruch: Lokale Änderungen in generierten Dateien. Bitte erst committen oder verwerfen." >&2
+# Guard: Keine UNSTAGED Änderungen in Test-Pfaden überschreiben
+# Staged Changes (--cached) sind OK: cleanup nutzt git checkout (stellt aus Index wieder her)
+if ! git -C "$DOTFILES_DIR" diff --quiet -- "${_MUTATED_PATHS[@]}"; then
+    echo "Abbruch: Unstaged Änderungen in generierten Dateien. Bitte erst stagen oder verwerfen." >&2
     exit 1
 fi
 
