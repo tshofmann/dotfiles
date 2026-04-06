@@ -66,8 +66,11 @@ case "${1:-}" in
         git diff --color=always -- "$1" | bat --style=numbers --color=always -l diff 2>/dev/null || git diff --color=always -- "$1"
         ;;
     git-restore)
-        # Git restore für Datei(en)
+        # Git restore für Datei(en) – Bestätigung weil destruktiv
         shift
+        printf 'Änderungen verwerfen für %d Datei(en)? [y/N] ' "$#"
+        read -q || { echo; exit 0; }
+        echo
         for file in "$@"; do
             git restore -- "$file"
         done
@@ -94,7 +97,7 @@ Commands:
   copy-env <fzf-line>    Umgebungsvariable aus vars()-Zeile kopieren
   edit <file> [line]     Datei im Editor öffnen
   git-diff <file>        Git diff für Datei anzeigen
-  git-restore <files...> Git restore für Datei(en)
+  git-restore <files...> Git restore für Datei(en) (mit Bestätigung)
   git-add <files...>     Git add für Datei(en)
   zoxide-remove <path>   Zoxide Eintrag entfernen
 
