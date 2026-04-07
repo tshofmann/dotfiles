@@ -197,7 +197,7 @@ run_stow() {
         done <<< "$stow_output"
         # Stash trotzdem wiederherstellen bei Fehler
         if ! _restore_stashed_changes "$stash_sha"; then
-            warn "Bootstrap fortgesetzt – Stash manuell wiederherstellen"
+            warn "Bootstrap abgebrochen – Stash manuell wiederherstellen"
         fi
         popd >/dev/null
         return 1
