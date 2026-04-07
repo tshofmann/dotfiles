@@ -200,7 +200,7 @@ run_stow() {
             warn "Bootstrap fortgesetzt – Stash manuell wiederherstellen"
         fi
         popd >/dev/null
-        return 0
+        return 1
     fi
 
     # Adoptierte Dateien auf Repository-Zustand zurücksetzen
