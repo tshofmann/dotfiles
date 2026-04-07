@@ -36,7 +36,8 @@ SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-style"
 # Projekt-Metadaten (Single Source of Truth)
 # ------------------------------------------------------------
 # Repository-Identifikation (für Badge-URLs, Install-Befehle, tldr-Links)
-readonly PROJECT_REPO="tshofmann/dotfiles"
+# Git-Remote bevorzugen (funktioniert auch in Forks/CI), Fallback auf Standardwert
+readonly PROJECT_REPO="${$(git -C "$DOTFILES_DIR" remote get-url origin 2>/dev/null | sed 's|.*github.com[:/]||;s|\.git$||'):-tshofmann/dotfiles}"
 # Kurzbeschreibung für README, tldr, GitHub Repo Description
 readonly PROJECT_TAGLINE="Dotfiles mit Catppuccin-Theme und modernen CLI-Tools."
 # Erweiterte Beschreibung für README
