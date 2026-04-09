@@ -224,14 +224,14 @@ generate_utility_tools_table() {
 # 1. Kleinschreibung
 # 2. Nicht-erlaubte Zeichen entfernen (behält Buchstaben, Ziffern, Leerzeichen, Bindestriche)
 # 3. Leerzeichen → Bindestriche
-# LC_ALL=C.UTF-8 stellt sicher, dass tr/sed Unicode-Buchstaben (ä, ü, ö)
-# korrekt als [:alnum:] erkennen – unabhängig von der System-Locale (CI: Ubuntu).
-# LC_ALL hat Vorrang vor LC_CTYPE, daher muss LC_ALL gesetzt werden.
+# Subshell mit LC_ALL=C.UTF-8: GNU tr (Ubuntu) konvertiert Unicode-Case nicht,
+# daher ZSH-eigene ${(L)} Expansion für Lowercase + sed für Zeichenfilterung.
 heading_to_anchor() {
-    local heading="$1"
-    printf '%s' "$heading" \
-        | LC_ALL=C.UTF-8 tr '[:upper:]' '[:lower:]' \
-        | LC_ALL=C.UTF-8 sed 's/[^[:alnum:] -]//g; s/ /-/g'
+    (
+        LC_ALL=C.UTF-8
+        local heading="$1"
+        printf '%s' "${(L)heading}" | sed 's/[^[:alnum:] -]//g; s/ /-/g'
+    )
 }
 
 # ------------------------------------------------------------
