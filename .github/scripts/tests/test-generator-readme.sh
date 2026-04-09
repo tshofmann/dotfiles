@@ -364,8 +364,9 @@ assert_equals "Klammern entfernt" "interaktive-workflows-fzf" "$(heading_to_anch
 assert_equals "Bindestrich erhalten" "media-toolkit" "$(heading_to_anchor 'Media-Toolkit')"
 
 # Umlaute bleiben erhalten (GitHub behält Unicode-Buchstaben)
-assert_equals "Umlaute erhalten" "weitere-werkzeuge" "$(heading_to_anchor 'Weitere Werkzeuge')"
-assert_equals "Voraussetzungen" "voraussetzungen" "$(heading_to_anchor 'Voraussetzungen')"
+assert_equals "Umlaute erhalten (ü)" "überblick" "$(heading_to_anchor 'Überblick')"
+assert_equals "Umlaute erhalten (ä)" "änderungen" "$(heading_to_anchor 'Änderungen')"
+assert_equals "Umlaute erhalten (ö)" "größe" "$(heading_to_anchor 'Größe')"
 
 # ============================================================
 # generate_toc() – Unit Tests
@@ -442,17 +443,28 @@ result=$(generate_readme_md)
 # ToC-Sektion ist vorhanden
 assert_contains "ToC: Inhalt-Überschrift" "## Inhalt" "$result"
 
-# Jede ## und ### Überschrift (außer Inhalt) muss im ToC vorkommen
+# Überschriften aus Body extrahieren (ohne ToC-Block selbst)
+# Robuster Ansatz: nur die Sektionen nach "## Inhalt" und den
+# ToC-Einträgen zählen, nicht über den gesamten Output scannen
 local heading_count=0 toc_count=0
+local in_toc=0 past_toc=0
 while IFS= read -r line; do
-    if [[ "$line" == '## '* || "$line" == '### '* ]]; then
-        # "Inhalt" selbst überspringen
-        [[ "$line" == '## Inhalt' ]] && continue
-        (( heading_count++ )) || true
+    # ToC-Block erkennen (zwischen "## Inhalt" und nächster H2)
+    if [[ "$line" == '## Inhalt' ]]; then
+        in_toc=1
+        continue
     fi
-    # ToC-Einträge zählen (beginnen mit "- [" oder "  - [")
-    if [[ "$line" == '- ['* || "$line" == '  - ['* ]]; then
-        (( toc_count++ )) || true
+    if (( in_toc )); then
+        if [[ "$line" == '## '* ]]; then
+            in_toc=0
+            past_toc=1
+        elif [[ "$line" == '- ['* || "$line" == '  - ['* ]]; then
+            (( toc_count++ )) || true
+        fi
+    fi
+    # Überschriften nach dem ToC zählen
+    if (( past_toc )) && [[ "$line" == '## '* || "$line" == '### '* ]]; then
+        (( heading_count++ )) || true
     fi
 done <<< "$result"
 
