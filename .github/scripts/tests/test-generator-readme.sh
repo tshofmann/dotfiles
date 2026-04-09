@@ -413,6 +413,22 @@ local toc_lines
 toc_lines=$(echo "$result" | wc -l)
 assert_equals "ToC: 2 Einträge (H2+H3, kein H4)" "2" "${toc_lines##* }"
 
+# Doppelte Überschriften werden dedupliziert (GitHub-kompatibel: -1, -2, …)
+_toc_dup_input="## Titel
+
+### Untertitel
+
+## Titel
+
+### Untertitel"
+
+result=$(generate_toc "$_toc_dup_input")
+
+assert_contains "ToC: Erstes H2" "- [Titel](#titel)" "$result"
+assert_contains "ToC: Zweites H2 dedupliziert" "- [Titel](#titel-1)" "$result"
+assert_contains "ToC: Erstes H3" "  - [Untertitel](#untertitel)" "$result"
+assert_contains "ToC: Zweites H3 dedupliziert" "  - [Untertitel](#untertitel-1)" "$result"
+
 # ============================================================
 # Credits-Sektion – Integrations-Test
 # ============================================================

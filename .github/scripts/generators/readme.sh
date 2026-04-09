@@ -224,32 +224,48 @@ generate_utility_tools_table() {
 # 1. Kleinschreibung
 # 2. Nicht-erlaubte Zeichen entfernen (behält Buchstaben, Ziffern, Leerzeichen, Bindestriche)
 # 3. Leerzeichen → Bindestriche
+# LC_ALL=C.UTF-8 stellt sicher, dass tr/sed Unicode-Buchstaben (ä, ü, ö)
+# korrekt als [:alnum:] erkennen – unabhängig von der System-Locale (CI: Ubuntu).
+# LC_ALL hat Vorrang vor LC_CTYPE, daher muss LC_ALL gesetzt werden.
 heading_to_anchor() {
     local heading="$1"
     printf '%s' "$heading" \
-        | tr '[:upper:]' '[:lower:]' \
-        | sed 's/[^[:lower:][:digit:] -]//g; s/ /-/g'
+        | LC_ALL=C.UTF-8 tr '[:upper:]' '[:lower:]' \
+        | LC_ALL=C.UTF-8 sed 's/[^[:alnum:] -]//g; s/ /-/g'
 }
 
 # ------------------------------------------------------------
 # Helper: Inhaltsverzeichnis aus generiertem Inhalt ableiten
 # ------------------------------------------------------------
-# Parst ## und ### Überschriften, generiert Markdown-Links mit Ankern
+# Parst ## und ### Überschriften, generiert Markdown-Links mit Ankern.
+# Dedupliziert Anker bei mehrfach vorkommenden Überschriften
+# (GitHub hängt -1, -2, … an) mittels Slug-Usage-Map.
 generate_toc() {
     local content="$1"
     local toc=""
-    local title anchor
+    local title anchor base_anchor prefix
+    typeset -A slug_count
 
     while IFS= read -r line; do
         if [[ "$line" == '## '* ]]; then
             title="${line#\#\# }"
-            anchor=$(heading_to_anchor "$title")
-            toc+="- [${title}](#${anchor})"$'\n'
+            prefix="- "
         elif [[ "$line" == '### '* ]]; then
             title="${line#\#\#\# }"
-            anchor=$(heading_to_anchor "$title")
-            toc+="  - [${title}](#${anchor})"$'\n'
+            prefix="  - "
+        else
+            continue
         fi
+
+        base_anchor=$(heading_to_anchor "$title")
+        if (( ${slug_count[$base_anchor]:-0} > 0 )); then
+            anchor="${base_anchor}-${slug_count[$base_anchor]}"
+        else
+            anchor="$base_anchor"
+        fi
+        (( slug_count[$base_anchor]++ )) || true
+
+        toc+="${prefix}[${title}](#${anchor})"$'\n'
     done <<< "$content"
 
     # Abschließenden Zeilenumbruch entfernen
