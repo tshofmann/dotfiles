@@ -6,7 +6,8 @@
 #               extract_fzf_functions(), generate_fzf_workflows_table(),
 #               generate_media_toolkit_table(),
 #               generate_shell_keybindings_table(),
-#               generate_utility_tools_table()
+#               generate_utility_tools_table(),
+#               heading_to_anchor(), generate_toc()
 # Pfad        : .github/scripts/tests/test-generator-readme.sh
 # Aufruf      : ./.github/scripts/tests/test-generator-readme.sh
 # ============================================================
@@ -339,6 +340,123 @@ line_count=$(echo "$result" | wc -l)
 assert_equals "Utility: nur Header (2 Zeilen)" "2" "${line_count##* }"
 
 ALIAS_DIR="$_ORIG_ALIAS_DIR4"
+
+# ============================================================
+# heading_to_anchor() – Unit Tests
+# ============================================================
+echo ""
+echo "=== heading_to_anchor (Unit) ==="
+
+# Emoji-Entfernung + Kleinschreibung + Leerzeichen → Bindestrich
+assert_equals "Emoji-Anker (✨)" "-was-du-bekommst" "$(heading_to_anchor '✨ Was du bekommst')"
+assert_equals "Emoji-Anker (🚀)" "-installation" "$(heading_to_anchor '🚀 Installation')"
+assert_equals "Emoji-Anker (📖)" "-dokumentation" "$(heading_to_anchor '📖 Dokumentation')"
+assert_equals "Emoji-Anker (🙏)" "-credits" "$(heading_to_anchor '🙏 Credits')"
+
+# Ohne Emoji
+assert_equals "Ohne Emoji" "deinstallation" "$(heading_to_anchor 'Deinstallation')"
+assert_equals "Ohne Emoji (Lizenz)" "lizenz" "$(heading_to_anchor 'Lizenz')"
+
+# Klammern und Sonderzeichen werden entfernt
+assert_equals "Klammern entfernt" "interaktive-workflows-fzf" "$(heading_to_anchor 'Interaktive Workflows (fzf)')"
+
+# Bindestrich bleibt erhalten
+assert_equals "Bindestrich erhalten" "media-toolkit" "$(heading_to_anchor 'Media-Toolkit')"
+
+# Umlaute bleiben erhalten (GitHub behält Unicode-Buchstaben)
+assert_equals "Umlaute erhalten" "weitere-werkzeuge" "$(heading_to_anchor 'Weitere Werkzeuge')"
+assert_equals "Voraussetzungen" "voraussetzungen" "$(heading_to_anchor 'Voraussetzungen')"
+
+# ============================================================
+# generate_toc() – Unit Tests
+# ============================================================
+echo ""
+echo "=== generate_toc (Unit) ==="
+
+# Einfacher Test mit bekannten Überschriften
+_toc_input="## ✨ Erster Abschnitt
+
+Normaler Text hier.
+
+### Unter-Abschnitt
+
+Mehr Text.
+
+## 🚀 Zweiter Abschnitt
+
+### Noch ein Unter-Abschnitt
+
+## Dritter"
+
+result=$(generate_toc "$_toc_input")
+
+assert_contains "ToC: H2 mit Emoji" "- [✨ Erster Abschnitt](#-erster-abschnitt)" "$result"
+assert_contains "ToC: H3 eingerückt" "  - [Unter-Abschnitt](#unter-abschnitt)" "$result"
+assert_contains "ToC: Zweiter H2" "- [🚀 Zweiter Abschnitt](#-zweiter-abschnitt)" "$result"
+assert_contains "ToC: Zweiter H3" "  - [Noch ein Unter-Abschnitt](#noch-ein-unter-abschnitt)" "$result"
+assert_contains "ToC: H2 ohne Emoji" "- [Dritter](#dritter)" "$result"
+
+# H4 wird ignoriert
+_toc_h4_input="## Hauptabschnitt
+
+### Unter
+
+#### Detail-Ebene"
+
+result=$(generate_toc "$_toc_h4_input")
+[[ "$result" != *"Detail-Ebene"* ]]
+assert_equals "ToC: H4 ignoriert" "0" "$?"
+
+# Anzahl der Einträge prüfen
+local toc_lines
+toc_lines=$(echo "$result" | wc -l)
+assert_equals "ToC: 2 Einträge (H2+H3, kein H4)" "2" "${toc_lines##* }"
+
+# ============================================================
+# Credits-Sektion – Integrations-Test
+# ============================================================
+echo ""
+echo "=== Credits-Sektion (Integration) ==="
+
+result=$(generate_readme_md)
+assert_contains "Credits: Sektion vorhanden" "## 🙏 Credits" "$result"
+assert_contains "Credits: Catppuccin" "Catppuccin Mocha" "$result"
+assert_contains "Credits: Brewfile-Link" "setup/Brewfile" "$result"
+
+# Credits steht zwischen Dokumentation und Lizenz
+local credits_pos doku_pos lizenz_pos
+credits_pos=$(echo "$result" | grep -n '## 🙏 Credits' | head -1 | cut -d: -f1)
+doku_pos=$(echo "$result" | grep -n '## 📖 Dokumentation' | head -1 | cut -d: -f1)
+lizenz_pos=$(echo "$result" | grep -n '## Lizenz' | head -1 | cut -d: -f1)
+[[ "$doku_pos" -lt "$credits_pos" && "$credits_pos" -lt "$lizenz_pos" ]]
+assert_equals "Credits: nach Doku, vor Lizenz" "0" "$?"
+
+# ============================================================
+# ToC-Konsistenz – Integrations-Test
+# ============================================================
+echo ""
+echo "=== ToC-Konsistenz (Integration) ==="
+
+result=$(generate_readme_md)
+
+# ToC-Sektion ist vorhanden
+assert_contains "ToC: Inhalt-Überschrift" "## Inhalt" "$result"
+
+# Jede ## und ### Überschrift (außer Inhalt) muss im ToC vorkommen
+local heading_count=0 toc_count=0
+while IFS= read -r line; do
+    if [[ "$line" == '## '* || "$line" == '### '* ]]; then
+        # "Inhalt" selbst überspringen
+        [[ "$line" == '## Inhalt' ]] && continue
+        (( heading_count++ )) || true
+    fi
+    # ToC-Einträge zählen (beginnen mit "- [" oder "  - [")
+    if [[ "$line" == '- ['* || "$line" == '  - ['* ]]; then
+        (( toc_count++ )) || true
+    fi
+done <<< "$result"
+
+assert_equals "ToC-Vollständigkeit: Einträge == Überschriften" "$heading_count" "$toc_count"
 
 # ============================================================
 # Zusammenfassung
