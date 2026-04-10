@@ -2,6 +2,31 @@
 
 Diese Anleitung erklärt, wie du die dotfiles an deine Bedürfnisse anpassen kannst.
 
+## Inhalt
+
+- [Catppuccin Mocha Theme](#catppuccin-mocha-theme)
+  - [Konfigurierte Tools](#konfigurierte-tools)
+  - [Xcode Theme aktivieren](#xcode-theme-aktivieren)
+  - [Farbpalette (Catppuccin Mocha)](#farbpalette-catppuccin-mocha)
+- [Starship-Prompt](#starship-prompt)
+  - [Konfiguration](#konfiguration)
+  - [Anpassungen](#anpassungen)
+  - [Preset wechseln](#preset-wechseln)
+- [Schriftart wechseln](#schriftart-wechseln)
+  - [Voraussetzung](#voraussetzung)
+  - [Schritt 1: Neuen Nerd Font installieren](#schritt-1-neuen-nerd-font-installieren)
+  - [Schritt 2: Terminal.app Profil anpassen](#schritt-2-terminalapp-profil-anpassen)
+  - [Schritt 3: Exportiertes Profil ins Repository](#schritt-3-exportiertes-profil-ins-repository)
+- [Aliase anpassen](#aliase-anpassen)
+  - [Wie Aliase geladen werden](#wie-aliase-geladen-werden)
+  - [Eigene Aliase hinzufügen](#eigene-aliase-hinzufügen)
+  - [Bestehende Aliase überschreiben](#bestehende-aliase-überschreiben)
+- [fzf anpassen](#fzf-anpassen)
+  - [Globale Optionen](#globale-optionen)
+  - [Keybindings ändern](#keybindings-ändern)
+- [Weitere Anpassungen](#weitere-anpassungen)
+- [ZSH-Ladereihenfolge](#zsh-ladereihenfolge)
+
 ---
 
 ## Catppuccin Mocha Theme

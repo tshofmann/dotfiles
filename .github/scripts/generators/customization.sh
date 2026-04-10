@@ -153,7 +153,8 @@ collect_theme_configs() {
 # ------------------------------------------------------------
 # Haupt-Generator für customization.md
 # ------------------------------------------------------------
-generate_customization_md() {
+# Interner Content-Generator: erzeugt den vollständigen Inhalt ohne ToC
+_generate_customization_content() {
     cat << 'HEADER'
 # ⚙️ Konfiguration
 
@@ -467,6 +468,11 @@ FZF_KEYBINDINGS
 | `.zlogin` | Nach Login | Background-Tasks nach `.zshrc` |
 
 FOOTER
+}
+
+# Öffentliche API: inject_toc() aus common/toc.sh fügt ToC ein
+generate_customization_md() {
+    inject_toc "$(_generate_customization_content)"
 }
 
 # Nur ausführen wenn direkt aufgerufen (nicht gesourct)

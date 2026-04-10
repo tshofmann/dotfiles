@@ -106,6 +106,43 @@ assert_equals "Ohne restore.sh: leere Ausgabe" "" "$result"
 DOTFILES_DIR="$_ORIG_DOTFILES_DIR2"
 
 # ============================================================
+# ToC-Konsistenz (Integration) – setup.md
+# ============================================================
+echo ""
+echo "=== ToC-Konsistenz (Integration) ==="
+
+result=$(generate_setup_md)
+
+# ToC-Überschrift vorhanden
+assert_contains "ToC: Inhalt-Überschrift" "## Inhalt" "$result"
+
+# ToC-Vollständigkeit: Zähle ToC-Einträge vs. ## Überschriften im Body
+# State-Machine: in_toc / past_toc
+local toc_count=0 heading_count=0 in_toc=false past_toc=false
+while IFS= read -r _line; do
+    if [[ "$_line" == "## Inhalt" ]]; then
+        in_toc=true
+        continue
+    fi
+    if $in_toc && ! $past_toc; then
+        if [[ "$_line" == '- ['* || "$_line" == '  - ['* ]]; then
+            (( toc_count++ )) || true
+        elif [[ "$_line" == '## '* || "$_line" == "---" ]]; then
+            past_toc=true
+            [[ "$_line" == '## '* ]] && (( heading_count++ )) || true
+        fi
+    elif $past_toc; then
+        [[ "$_line" == '## '* || "$_line" == '### '* ]] && (( heading_count++ )) || true
+    fi
+done <<< "$result"
+assert_equals "ToC-Vollständigkeit: Einträge == Überschriften" "$heading_count" "$toc_count"
+
+# Bekannte Überschriften im ToC
+assert_contains "ToC: Voraussetzungen" "[Voraussetzungen]" "$result"
+assert_contains "ToC: Installierte Pakete" "[Installierte Pakete]" "$result"
+assert_contains "ToC: Deinstallation" "[Deinstallation" "$result"
+
+# ============================================================
 # Zusammenfassung
 # ============================================================
 test_summary

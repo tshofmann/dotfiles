@@ -160,6 +160,43 @@ assert_contains "Ctrl+X Prefix" "Ctrl+X" "$result"
 assert_contains "bindkey vorhanden" "bindkey" "$result"
 
 # ============================================================
+# ToC-Konsistenz (Integration) – customization.md
+# ============================================================
+echo ""
+echo "=== ToC-Konsistenz (Integration) ==="
+
+result=$(generate_customization_md)
+
+# ToC-Überschrift vorhanden
+assert_contains "ToC: Inhalt-Überschrift" "## Inhalt" "$result"
+
+# ToC-Vollständigkeit: Zähle ToC-Einträge vs. ## Überschriften im Body
+# State-Machine: in_toc / past_toc
+local toc_count=0 heading_count=0 in_toc=false past_toc=false
+while IFS= read -r _line; do
+    if [[ "$_line" == "## Inhalt" ]]; then
+        in_toc=true
+        continue
+    fi
+    if $in_toc && ! $past_toc; then
+        if [[ "$_line" == '- ['* || "$_line" == '  - ['* ]]; then
+            (( toc_count++ )) || true
+        elif [[ "$_line" == '## '* || "$_line" == "---" ]]; then
+            past_toc=true
+            [[ "$_line" == '## '* ]] && (( heading_count++ )) || true
+        fi
+    elif $past_toc; then
+        [[ "$_line" == '## '* || "$_line" == '### '* ]] && (( heading_count++ )) || true
+    fi
+done <<< "$result"
+assert_equals "ToC-Vollständigkeit: Einträge == Überschriften" "$heading_count" "$toc_count"
+
+# Bekannte Überschriften im ToC
+assert_contains "ToC: Catppuccin Mocha Theme" "[Catppuccin Mocha Theme]" "$result"
+assert_contains "ToC: Starship-Prompt" "[Starship-Prompt]" "$result"
+assert_contains "ToC: ZSH-Ladereihenfolge" "[ZSH-Ladereihenfolge]" "$result"
+
+# ============================================================
 # Zusammenfassung
 # ============================================================
 test_summary
