@@ -460,31 +460,7 @@ result=$(generate_readme_md)
 assert_contains "ToC: Inhalt-Überschrift" "## Inhalt" "$result"
 
 # Überschriften aus Body extrahieren (ohne ToC-Block selbst)
-# Robuster Ansatz: nur die Sektionen nach "## Inhalt" und den
-# ToC-Einträgen zählen, nicht über den gesamten Output scannen
-local heading_count=0 toc_count=0
-local in_toc=0 past_toc=0
-while IFS= read -r line; do
-    # ToC-Block erkennen (zwischen "## Inhalt" und nächster H2)
-    if [[ "$line" == '## Inhalt' ]]; then
-        in_toc=1
-        continue
-    fi
-    if (( in_toc )); then
-        if [[ "$line" == '## '* ]]; then
-            in_toc=0
-            past_toc=1
-        elif [[ "$line" == '- ['* || "$line" == '  - ['* ]]; then
-            (( toc_count++ )) || true
-        fi
-    fi
-    # Überschriften nach dem ToC zählen
-    if (( past_toc )) && [[ "$line" == '## '* || "$line" == '### '* ]]; then
-        (( heading_count++ )) || true
-    fi
-done <<< "$result"
-
-assert_equals "ToC-Vollständigkeit: Einträge == Überschriften" "$heading_count" "$toc_count"
+assert_toc_consistency "$result"
 
 # ============================================================
 # Zusammenfassung
