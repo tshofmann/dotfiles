@@ -73,6 +73,36 @@ assert_empty() {
 }
 
 # ------------------------------------------------------------
+# assert_toc_consistency(markdown_output)
+# ------------------------------------------------------------
+# Prüft ob die Anzahl der ToC-Einträge (- [...]) mit der Anzahl
+# der Überschriften (## / ###) im Body übereinstimmt.
+# State-Machine: in_toc → past_toc → Body-Überschriften zählen
+assert_toc_consistency() {
+    local content="$1"
+    local toc_count=0 heading_count=0 in_toc=false past_toc=false
+
+    while IFS= read -r _line; do
+        if [[ "$_line" == "## Inhalt" ]]; then
+            in_toc=true
+            continue
+        fi
+        if $in_toc && ! $past_toc; then
+            if [[ "$_line" == '- ['* || "$_line" == '  - ['* ]]; then
+                (( toc_count++ )) || true
+            elif [[ "$_line" == '## '* || "$_line" == "---" ]]; then
+                past_toc=true
+                [[ "$_line" == '## '* ]] && (( heading_count++ )) || true
+            fi
+        elif $past_toc; then
+            [[ "$_line" == '## '* || "$_line" == '### '* ]] && (( heading_count++ )) || true
+        fi
+    done <<< "$content"
+
+    assert_equals "ToC-Vollständigkeit: Einträge == Überschriften" "$heading_count" "$toc_count"
+}
+
+# ------------------------------------------------------------
 # test_summary() – Gibt Zusammenfassung aus, return = Fehleranzahl
 # ------------------------------------------------------------
 test_summary() {

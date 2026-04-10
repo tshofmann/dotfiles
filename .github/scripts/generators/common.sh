@@ -41,6 +41,9 @@ source "$COMMON_DIR/brewfile.sh"
 # 7. dothelp-Kategorien
 source "$COMMON_DIR/dothelp.sh"
 
+# 8. Inhaltsverzeichnis (ToC)
+source "$COMMON_DIR/toc.sh"
+
 # ------------------------------------------------------------
 # API-Kompatibilität
 # ------------------------------------------------------------

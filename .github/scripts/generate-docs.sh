@@ -82,6 +82,15 @@ check_all() {
         ok "docs/customization.md ist aktuell"
     fi
 
+    # CONTRIBUTING.md (manuell gepflegt, nur ToC wird generiert)
+    generated=$(run_generator "contributing.sh" "generate_contributing_md")
+    if ! compare_content "$DOTFILES_DIR/CONTRIBUTING.md" "$generated"; then
+        err "CONTRIBUTING.md ist veraltet"
+        (( errors++ )) || true
+    else
+        ok "CONTRIBUTING.md ist aktuell"
+    fi
+
     # tldr-Patches
     local tldr_ok=true
     (
@@ -123,6 +132,10 @@ generate_all() {
     generated=$(run_generator "customization.sh" "generate_customization_md")
     write_if_changed "$DOCS_DIR/customization.md" "$generated"
 
+    # CONTRIBUTING.md (manuell gepflegt, nur ToC wird generiert)
+    generated=$(run_generator "contributing.sh" "generate_contributing_md")
+    write_if_changed "$DOTFILES_DIR/CONTRIBUTING.md" "$generated"
+
     # tldr-Patches
     (
         export _SOURCED_BY_GENERATOR=1
@@ -157,6 +170,7 @@ main() {
             echo "  README.md"
             echo "  docs/setup.md"
             echo "  docs/customization.md"
+            echo "  CONTRIBUTING.md (nur ToC)"
             echo "  terminal/.config/tealdeer/pages/*.patch.md"
             ;;
         *)

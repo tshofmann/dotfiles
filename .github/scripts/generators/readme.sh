@@ -217,64 +217,9 @@ generate_utility_tools_table() {
 }
 
 # ------------------------------------------------------------
-# Helper: GitHub-Anker aus Überschrift generieren
-# ------------------------------------------------------------
-# Konvertiert eine Markdown-Überschrift in einen GitHub-kompatiblen Anker.
-# Bildet das Verhalten von github-slugger (v2) nach:
-# 1. Kleinschreibung
-# 2. Nicht-erlaubte Zeichen entfernen (behält Buchstaben, Ziffern, Leerzeichen, Bindestriche)
-# 3. Leerzeichen → Bindestriche
-# Subshell mit LC_ALL=C.UTF-8: GNU tr (Ubuntu) konvertiert Unicode-Case nicht,
-# daher ZSH-eigene ${(L)} Expansion für Lowercase + sed für Zeichenfilterung.
-heading_to_anchor() {
-    (
-        LC_ALL=C.UTF-8
-        local heading="$1"
-        printf '%s' "${(L)heading}" | sed 's/[^[:alnum:] -]//g; s/ /-/g'
-    )
-}
-
-# ------------------------------------------------------------
-# Helper: Inhaltsverzeichnis aus generiertem Inhalt ableiten
-# ------------------------------------------------------------
-# Parst ## und ### Überschriften, generiert Markdown-Links mit Ankern.
-# Dedupliziert Anker bei mehrfach vorkommenden Überschriften
-# (GitHub hängt -1, -2, … an) mittels Slug-Usage-Map.
-generate_toc() {
-    local content="$1"
-    local toc=""
-    local title anchor base_anchor prefix
-    typeset -A slug_count
-
-    while IFS= read -r line; do
-        if [[ "$line" == '## '* ]]; then
-            title="${line#\#\# }"
-            prefix="- "
-        elif [[ "$line" == '### '* ]]; then
-            title="${line#\#\#\# }"
-            prefix="  - "
-        else
-            continue
-        fi
-
-        base_anchor=$(heading_to_anchor "$title")
-        if (( ${slug_count[$base_anchor]:-0} > 0 )); then
-            anchor="${base_anchor}-${slug_count[$base_anchor]}"
-        else
-            anchor="$base_anchor"
-        fi
-        (( slug_count[$base_anchor]++ )) || true
-
-        toc+="${prefix}[${title}](#${anchor})"$'\n'
-    done <<< "$content"
-
-    # Abschließenden Zeilenumbruch entfernen
-    printf '%s' "${toc%$'\n'}"
-}
-
-# ------------------------------------------------------------
 # Haupt-Generator für README.md
 # ------------------------------------------------------------
+# heading_to_anchor() und generate_toc() kommen aus common/toc.sh
 generate_readme_md() {
     # Dynamische macOS-Versionen aus setup/modules/validation.sh
     local macos_min macos_min_name

@@ -156,7 +156,8 @@ UNINSTALL
 # ------------------------------------------------------------
 # Haupt-Generator für setup.md
 # ------------------------------------------------------------
-generate_setup_md() {
+# Interner Content-Generator: erzeugt den vollständigen Inhalt ohne ToC
+_generate_setup_content() {
     # Dynamische macOS-Versionen aus setup/modules/validation.sh
     local macos_min macos_tested macos_min_name macos_tested_name
     macos_min=$(extract_macos_min_version)
@@ -343,6 +344,11 @@ REST
 
     # Deinstallations-Abschnitt generieren (aus restore.sh)
     generate_uninstall_section
+}
+
+# Öffentliche API: inject_toc() aus common/toc.sh fügt ToC ein
+generate_setup_md() {
+    inject_toc "$(_generate_setup_content)"
 }
 
 # Nur ausführen wenn direkt aufgerufen (nicht gesourct)

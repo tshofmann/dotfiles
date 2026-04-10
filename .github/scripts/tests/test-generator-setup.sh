@@ -106,6 +106,24 @@ assert_equals "Ohne restore.sh: leere Ausgabe" "" "$result"
 DOTFILES_DIR="$_ORIG_DOTFILES_DIR2"
 
 # ============================================================
+# ToC-Konsistenz (Integration) – setup.md
+# ============================================================
+echo ""
+echo "=== ToC-Konsistenz (Integration) ==="
+
+result=$(generate_setup_md)
+
+# ToC-Überschrift vorhanden
+assert_contains "ToC: Inhalt-Überschrift" "## Inhalt" "$result"
+
+assert_toc_consistency "$result"
+
+# Bekannte Überschriften im ToC
+assert_contains "ToC: Voraussetzungen" "[Voraussetzungen]" "$result"
+assert_contains "ToC: Installierte Pakete" "[Installierte Pakete]" "$result"
+assert_contains "ToC: Deinstallation" "[Deinstallation" "$result"
+
+# ============================================================
 # Zusammenfassung
 # ============================================================
 test_summary

@@ -160,6 +160,24 @@ assert_contains "Ctrl+X Prefix" "Ctrl+X" "$result"
 assert_contains "bindkey vorhanden" "bindkey" "$result"
 
 # ============================================================
+# ToC-Konsistenz (Integration) – customization.md
+# ============================================================
+echo ""
+echo "=== ToC-Konsistenz (Integration) ==="
+
+result=$(generate_customization_md)
+
+# ToC-Überschrift vorhanden
+assert_contains "ToC: Inhalt-Überschrift" "## Inhalt" "$result"
+
+assert_toc_consistency "$result"
+
+# Bekannte Überschriften im ToC
+assert_contains "ToC: Catppuccin Mocha Theme" "[Catppuccin Mocha Theme]" "$result"
+assert_contains "ToC: Starship-Prompt" "[Starship-Prompt]" "$result"
+assert_contains "ToC: ZSH-Ladereihenfolge" "[ZSH-Ladereihenfolge]" "$result"
+
+# ============================================================
 # Zusammenfassung
 # ============================================================
 test_summary

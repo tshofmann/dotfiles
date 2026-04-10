@@ -7,6 +7,33 @@ Diese Anleitung führt dich durch die vollständige Installation der dotfiles.
 >
 > ⚠️ **Plattform-Status:** Auf **macOS** produktiv getestet. Linux-Bootstrap (Fedora, Debian, Arch) in Docker/Headless validiert – Desktop (Wayland) und echte Hardware noch ausstehend.
 
+## Inhalt
+
+- [Voraussetzungen](#voraussetzungen)
+  - [macOS (getestet ✅)](#macos-getestet-)
+  - [Linux (vorbereitet 🔧)](#linux-vorbereitet-)
+  - [Wann wird `sudo` benötigt?](#wann-wird-sudo-benötigt)
+- [Schritt 1: Install-Skript ausführen](#schritt-1-install-skript-ausführen)
+  - [Was das Skript macht](#was-das-skript-macht)
+- [Schritt 2: Terminal neu starten](#schritt-2-terminal-neu-starten)
+- [Schritt 3: Verifizierung](#schritt-3-verifizierung)
+- [Installierte Pakete](#installierte-pakete)
+  - [Homebrew Formulae](#homebrew-formulae)
+  - [Homebrew Casks](#homebrew-casks)
+  - [Mac App Store](#mac-app-store)
+- [Technische Details](#technische-details)
+  - [XDG Base Directory Specification](#xdg-base-directory-specification)
+  - [Symlink-Strategie](#symlink-strategie)
+  - [Setup-Datei-Erkennung](#setup-datei-erkennung)
+- [Troubleshooting](#troubleshooting)
+  - [Icon-Probleme (□ oder ?)](#icon-probleme--oder-)
+- [Deinstallation / Wiederherstellung](#deinstallation--wiederherstellung)
+  - [Was passiert?](#was-passiert)
+  - [Optionen](#optionen)
+  - [Backup-Speicherort](#backup-speicherort)
+  - [Was bleibt bestehen?](#was-bleibt-bestehen)
+  - [Optional: Pakete & Repository entfernen](#optional-pakete--repository-entfernen)
+
 ## Voraussetzungen
 
 ### macOS (getestet ✅)
