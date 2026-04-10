@@ -76,6 +76,10 @@ generate_toc() {
 # Teilt den Inhalt in Header (vor erster ## Überschrift oder ---) und Body
 # (ab erster ## Überschrift oder ---), generiert ToC aus Body, und setzt
 # Header + "## Inhalt" + ToC + Body zusammen.
+# VORBEDINGUNG: content darf kein "## Inhalt" enthalten – die Funktion
+# prüft/entfernt kein bestehendes ToC. Für Dateien mit vorhandenem ToC
+# (z.B. CONTRIBUTING.md) stattdessen eine eigene State-Machine nutzen
+# (siehe contributing.sh).
 # Nutzung: printf '%s\n' "$(inject_toc "$full_content")"
 inject_toc() {
     local content="$1"

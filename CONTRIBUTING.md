@@ -333,6 +333,7 @@ Die Dokumentation wird automatisch aus dem Code generiert (Single Source of Trut
 | `setup/modules/*.sh` | docs/setup.md (Bootstrap-Schritte via STEP-Metadaten) |
 | `theme-style` | docs/customization.md (Farbpalette), terminal/.config/tealdeer/pages/catppuccin.page.md |
 | Config-Dateien | docs/customization.md |
+| `CONTRIBUTING.md` | CONTRIBUTING.md (Inhaltsverzeichnis) |
 
 ### Bei Fehlern
 
