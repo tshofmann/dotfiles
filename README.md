@@ -16,6 +16,20 @@
   <em>cmds – alle Aliase und Funktionen durchsuchen (einer von 20+ fzf-Workflows)</em>
 </p>
 
+## Inhalt
+
+- [✨ Was du bekommst](#-was-du-bekommst)
+  - [Interaktive Workflows (fzf)](#interaktive-workflows-fzf)
+  - [Media-Toolkit](#media-toolkit)
+  - [Weitere Werkzeuge](#weitere-werkzeuge)
+  - [Shell-Erlebnis](#shell-erlebnis)
+- [🚀 Installation](#-installation)
+  - [Deinstallation](#deinstallation)
+  - [Voraussetzungen](#voraussetzungen)
+- [📖 Dokumentation](#-dokumentation)
+- [🙏 Credits](#-credits)
+- [Lizenz](#lizenz)
+
 ## ✨ Was du bekommst
 
 | Vorher | Nachher | Vorteil |
@@ -138,6 +152,12 @@ Details: [Setup-Doku → Deinstallation](docs/setup.md#deinstallation--wiederher
 | `tldr <tool>` | Vollständige Tool-Doku mit dotfiles-Erweiterungen |
 
 Mehr: [Setup](docs/setup.md) · [Anpassung](docs/customization.md) · [Contributing](CONTRIBUTING.md)
+
+## 🙏 Credits
+
+Dieses Projekt nutzt [Catppuccin Mocha](https://catppuccin.com/) als einheitliches Theme.
+
+Alle installierten Tools und Abhängigkeiten: [`setup/Brewfile`](setup/Brewfile)
 
 ## Lizenz
 

@@ -4,7 +4,7 @@
 # ============================================================
 # Zweck       : Generiert Haupt-README aus Template + dynamischen Daten
 # Pfad        : .github/scripts/generators/readme.sh
-# Quelle  : setup/modules/*.sh, setup/Brewfile
+# Quelle      : setup/modules/*.sh, setup/Brewfile
 # ============================================================
 
 source "${0:A:h}/common.sh"
@@ -217,6 +217,62 @@ generate_utility_tools_table() {
 }
 
 # ------------------------------------------------------------
+# Helper: GitHub-Anker aus Überschrift generieren
+# ------------------------------------------------------------
+# Konvertiert eine Markdown-Überschrift in einen GitHub-kompatiblen Anker.
+# Bildet das Verhalten von github-slugger (v2) nach:
+# 1. Kleinschreibung
+# 2. Nicht-erlaubte Zeichen entfernen (behält Buchstaben, Ziffern, Leerzeichen, Bindestriche)
+# 3. Leerzeichen → Bindestriche
+# Subshell mit LC_ALL=C.UTF-8: GNU tr (Ubuntu) konvertiert Unicode-Case nicht,
+# daher ZSH-eigene ${(L)} Expansion für Lowercase + sed für Zeichenfilterung.
+heading_to_anchor() {
+    (
+        LC_ALL=C.UTF-8
+        local heading="$1"
+        printf '%s' "${(L)heading}" | sed 's/[^[:alnum:] -]//g; s/ /-/g'
+    )
+}
+
+# ------------------------------------------------------------
+# Helper: Inhaltsverzeichnis aus generiertem Inhalt ableiten
+# ------------------------------------------------------------
+# Parst ## und ### Überschriften, generiert Markdown-Links mit Ankern.
+# Dedupliziert Anker bei mehrfach vorkommenden Überschriften
+# (GitHub hängt -1, -2, … an) mittels Slug-Usage-Map.
+generate_toc() {
+    local content="$1"
+    local toc=""
+    local title anchor base_anchor prefix
+    typeset -A slug_count
+
+    while IFS= read -r line; do
+        if [[ "$line" == '## '* ]]; then
+            title="${line#\#\# }"
+            prefix="- "
+        elif [[ "$line" == '### '* ]]; then
+            title="${line#\#\#\# }"
+            prefix="  - "
+        else
+            continue
+        fi
+
+        base_anchor=$(heading_to_anchor "$title")
+        if (( ${slug_count[$base_anchor]:-0} > 0 )); then
+            anchor="${base_anchor}-${slug_count[$base_anchor]}"
+        else
+            anchor="$base_anchor"
+        fi
+        (( slug_count[$base_anchor]++ )) || true
+
+        toc+="${prefix}[${title}](#${anchor})"$'\n'
+    done <<< "$content"
+
+    # Abschließenden Zeilenumbruch entfernen
+    printf '%s' "${toc%$'\n'}"
+}
+
+# ------------------------------------------------------------
 # Haupt-Generator für README.md
 # ------------------------------------------------------------
 generate_readme_md() {
@@ -263,19 +319,9 @@ generate_readme_md() {
         workflow_image=$'\n<p align="center">\n  <img src="docs/assets/workflow.png" alt="git-log Workflow – fzf mit bat-Preview zeigt Commit-Diffs" width="800">\n  <br>\n  <em>git-log – Commit-Historie mit Diff-Preview (bat + Catppuccin Syntax-Highlighting)</em>\n</p>\n'
     fi
 
-    cat << EOF
-# 🍎 dotfiles
-
-[![CI](https://github.com/${PROJECT_REPO}/actions/workflows/validate.yml/badge.svg)](https://github.com/${PROJECT_REPO}/actions/workflows/validate.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![macOS](https://img.shields.io/badge/macOS-${macos_min_name_url}%20%28${macos_min}%2B%29-black?logo=apple)](https://www.apple.com/macos/)
-[![Linux](https://img.shields.io/badge/Linux-vorbereitet-yellow?logo=linux)](https://kernel.org/)
-[![Shell: zsh](https://img.shields.io/badge/Shell-zsh-green?logo=gnubash)](https://www.zsh.org/)
-
-**Dotfiles mit modernen CLI-Tools, einheitlichem Theme und integrierter Hilfe.**
-
-> ⚠️ **Plattform-Status:** Auf **macOS** produktiv getestet. Linux-Bootstrap (Fedora, Debian, Arch) in Docker/Headless validiert – Desktop (Wayland) und echte Hardware noch ausstehend.
-${hero_image}
+    # 1. Body generieren (alles ab "## ✨ Was du bekommst")
+    local body
+    body=$(cat << EOF
 ## ✨ Was du bekommst
 
 ${tool_replacements}
@@ -359,9 +405,41 @@ Details: [Setup-Doku → Deinstallation](docs/setup.md#deinstallation--wiederher
 
 Mehr: [Setup](docs/setup.md) · [Anpassung](docs/customization.md) · [Contributing](CONTRIBUTING.md)
 
+## 🙏 Credits
+
+Dieses Projekt nutzt [Catppuccin Mocha](https://catppuccin.com/) als einheitliches Theme.
+
+Alle installierten Tools und Abhängigkeiten: [\`setup/Brewfile\`](setup/Brewfile)
+
 ## Lizenz
 
 [MIT](LICENSE)
+EOF
+)
+
+    # 2. ToC dynamisch aus Body ableiten
+    local toc
+    toc=$(generate_toc "$body")
+
+    # 3. Alles zusammensetzen: Header + ToC + Body
+    cat << EOF
+# 🍎 dotfiles
+
+[![CI](https://github.com/${PROJECT_REPO}/actions/workflows/validate.yml/badge.svg)](https://github.com/${PROJECT_REPO}/actions/workflows/validate.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![macOS](https://img.shields.io/badge/macOS-${macos_min_name_url}%20%28${macos_min}%2B%29-black?logo=apple)](https://www.apple.com/macos/)
+[![Linux](https://img.shields.io/badge/Linux-vorbereitet-yellow?logo=linux)](https://kernel.org/)
+[![Shell: zsh](https://img.shields.io/badge/Shell-zsh-green?logo=gnubash)](https://www.zsh.org/)
+
+**Dotfiles mit modernen CLI-Tools, einheitlichem Theme und integrierter Hilfe.**
+
+> ⚠️ **Plattform-Status:** Auf **macOS** produktiv getestet. Linux-Bootstrap (Fedora, Debian, Arch) in Docker/Headless validiert – Desktop (Wayland) und echte Hardware noch ausstehend.
+${hero_image}
+## Inhalt
+
+${toc}
+
+${body}
 EOF
 }
 
