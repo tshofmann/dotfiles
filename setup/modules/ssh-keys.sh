@@ -127,6 +127,8 @@ _ensure_ssh_config_defaults() {
     # Verzeichnis sicherstellen
     if [[ ! -d "$_SSH_DIR" ]]; then
         mkdir -m 700 "$_SSH_DIR"
+    else
+        chmod 700 "$_SSH_DIR" 2>/dev/null
     fi
 
     # Config existiert und hat bereits Host * Block
