@@ -260,7 +260,8 @@ Interaktive Module (z.B. `ssh-keys.sh`) mit User-Eingaben **müssen** Input vali
 
 - Keine Wildcards/Sonderzeichen in SSH-Aliase erlauben (`*`, `?`, `!`, `[]`, Leerzeichen)
 - Port-Nummern auf 1–65535 begrenzen (ZSH `<->` allein reicht nicht)
-- Validierung über Helper-Funktionen in `_core.sh`: `validate_ssh_alias()`, `validate_port()`
+- SSH-Config-Werte auf Whitespace, `#` und Steuerzeichen prüfen (brechen die gesamte Config)
+- Validierung über Helper-Funktionen in `_core.sh`: `validate_ssh_alias()`, `validate_port()`, `validate_ssh_value()`
 
 ```zsh
 # Beispiel: Alias-Validierung
