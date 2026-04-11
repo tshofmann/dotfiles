@@ -13,6 +13,7 @@ Anleitung für die Entwicklung an diesem dotfiles-Repository.
   - [Cross-Platform Abstraktionen](#cross-platform-abstraktionen)
   - [Verzeichniswechsel und zoxide](#verzeichniswechsel-und-zoxide)
   - [Guard-System](#guard-system)
+  - [Input-Validierung](#input-validierung)
   - [Pfad-Pattern](#pfad-pattern)
   - [fzf Helper-Skripte](#fzf-helper-skripte)
   - [fzf Placeholder-Regeln](#fzf-placeholder-regeln)
@@ -183,6 +184,8 @@ alle zukünftigen Funktionen die Verzeichnisse wechseln.
 
 ### Guard-System
 
+#### Alias-Guards
+
 Alle `.alias`-Dateien prüfen ob das jeweilige Tool installiert ist:
 
 ```zsh
@@ -193,6 +196,93 @@ fi
 ```
 
 So bleiben Original-Befehle (`ls`, `cat`) erhalten wenn ein Tool fehlt.
+
+#### Bootstrap-Guards
+
+Alle Module in `setup/modules/` prüfen ob `_core.sh` geladen ist:
+
+```zsh
+# Guard am Anfang jedes Moduls
+[[ -z "${_BOOTSTRAP_CORE_LOADED:-}" ]] && {
+    echo "FEHLER: _core.sh muss vor <modul>.sh geladen werden" >&2
+    return 1
+}
+```
+
+Module mit Standalone-Fähigkeit nutzen zusätzlich `ZSH_EVAL_CONTEXT`.
+Der Standalone-Check **muss vor** dem Core-Guard stehen, damit `zsh modul.sh`
+zuerst `_core.sh` laden kann, bevor der Guard greift:
+
+```zsh
+# VOR dem Guard: Standalone erkennen und Core laden
+if [[ "${ZSH_EVAL_CONTEXT}" == "toplevel" ]]; then
+    source "${0:A:h}/_core.sh" || { echo "FEHLER: _core.sh nicht gefunden" >&2; exit 1; }
+fi
+
+# Guard: fängt `source modul.sh` ohne Core ab
+[[ -z "${_BOOTSTRAP_CORE_LOADED:-}" ]] && {
+    echo "FEHLER: _core.sh muss vor <modul>.sh geladen werden" >&2
+    return 1
+}
+
+# ... Funktionsdefinitionen ...
+
+# Am Ende: Standalone-Ausführung
+if [[ "${ZSH_EVAL_CONTEXT}" == "toplevel" ]]; then
+    setup_modul
+fi
+```
+
+> **Wichtig:** `_BOOTSTRAP_CORE_LOADED` prüft **Abhängigkeiten** (Logging, Farben, Pfade).
+> `ZSH_EVAL_CONTEXT` prüft den **Ausführungskontext** (direkt vs. source). Beides hat unterschiedliche Aufgaben.
+
+#### Source-Schutz in bootstrap.sh
+
+`source` unter `set -e` bricht bei fehlender oder fehlerhafter Datei sofort ab.
+Alle `source`-Aufrufe müssen geschützt sein:
+
+```zsh
+# Reguläre Module: load_module() enthält Existenz-Check + || { err; return 1 }
+
+# Spezialfälle außerhalb load_module():
+if [[ -f "$MODULES_DIR/modul.sh" ]]; then
+    if source "$MODULES_DIR/modul.sh"; then
+        # Funktion nur aufrufen wenn source erfolgreich war
+        if (( $+functions[setup_modul] )); then
+            setup_modul || true
+        fi
+    else
+        warn "Modul konnte nicht geladen werden"
+    fi
+fi
+```
+
+**Wichtig:** `source || { warn }` ohne `return` fällt durch – ZSH registriert
+Funktionen während des Parsens, auch wenn `source` am Ende fehlschlägt.
+`$+functions` ist daher kein zuverlässiger Guard nach fehlgeschlagenem `source`.
+
+### Input-Validierung
+
+Interaktive Module (z.B. `ssh-keys.sh`) mit User-Eingaben **müssen** Input validieren.
+
+**Grundregeln:**
+
+- Keine Wildcards/Sonderzeichen in SSH-Aliase erlauben (`*`, `?`, `!`, `[]`, Leerzeichen)
+- Port-Nummern auf 1–65535 begrenzen (ZSH `<->` allein reicht nicht)
+- SSH-Config-Werte auf Whitespace, `#` und Steuerzeichen prüfen (brechen die gesamte Config)
+- Validierung über Helper-Funktionen in `_core.sh`: `validate_ssh_alias()`, `validate_port()`, `validate_ssh_value()`
+
+```zsh
+# Beispiel: Alias-Validierung
+alias_name=$(_ask_input "Host-Alias:")
+[[ -z "$alias_name" ]] && break
+if ! validate_ssh_alias "$alias_name"; then
+    continue
+fi
+```
+
+> **Warum?** SSH interpretiert `*`, `?`, `!` als Pattern in Host-Aliase.
+> Ein Alias wie `*evil*` matched ungewollt andere Hosts.
 
 ### Pfad-Pattern
 

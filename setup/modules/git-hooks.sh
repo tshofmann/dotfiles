@@ -10,7 +10,12 @@
 # Hooks       : .github/hooks/pre-commit
 # ============================================================
 
-# Guard: Core muss geladen sein
+# Standalone: Core laden bevor Guard greift
+if [[ "${ZSH_EVAL_CONTEXT}" == "toplevel" ]]; then
+    source "${0:A:h}/_core.sh" || { echo "FEHLER: _core.sh nicht gefunden" >&2; exit 1; }
+fi
+
+# Guard: Core muss geladen sein (fängt source ohne Core ab)
 [[ -z "${_BOOTSTRAP_CORE_LOADED:-}" ]] && {
     echo "FEHLER: _core.sh muss vor git-hooks.sh geladen werden" >&2
     return 1
@@ -93,9 +98,7 @@ setup_git_hooks() {
     configure_git_hooks
 }
 
-# Modul ausführen wenn direkt aufgerufen
-# ZSH_EVAL_CONTEXT endet auf :shfunc:file wenn per source aus load_module() geladen
-if [[ "$ZSH_EVAL_CONTEXT" == "toplevel:file" ]]; then
-    source "${0:A:h}/_core.sh"
+# Standalone: Hauptfunktion aufrufen (Core wurde oben bereits geladen)
+if [[ "${ZSH_EVAL_CONTEXT}" == "toplevel" ]]; then
     setup_git_hooks
 fi

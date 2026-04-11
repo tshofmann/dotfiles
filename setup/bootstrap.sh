@@ -6,6 +6,7 @@
 # Aufruf      : ./bootstrap.sh
 # Docs        : https://github.com/tshofmann/dotfiles#readme
 # Module      : setup/modules/ (validation, homebrew, backup, stow, git-hooks, font, terminal-profile, bat, tealdeer, xcode-theme, zsh-sessions)
+# Optional    : ssh-keys (interaktiv, nach Abschluss-Banner)
 # Generiert   : README.md (macOS-Versionen), docs/setup.md (Bootstrap-Schritte)
 # ============================================================
 
@@ -255,6 +256,23 @@ main() {
     print -r -- "${C_GREEN}  ✔ Setup abgeschlossen${C_RESET}"
     print -r -- "${C_GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"
     print -r -- ""
+
+    # SSH-Key Assistent (optional, interaktiv)
+    # Wird bewusst NACH dem Abschluss-Banner und AUSSERHALB des Modul-Loops
+    # aufgerufen: System ist komplett, gh installiert, alle Tools verfügbar.
+    # Fehler im Assistenten brechen das Bootstrap nicht ab (|| true).
+    CURRENT_STEP="SSH-Keys (optional)"
+    if [[ -f "$MODULES_DIR/ssh-keys.sh" ]]; then
+        if source "$MODULES_DIR/ssh-keys.sh"; then
+            if (( $+functions[setup_ssh_keys] )); then
+                setup_ssh_keys || true
+            fi
+        else
+            warn "SSH-Key Modul konnte nicht geladen werden"
+        fi
+    fi
+    CURRENT_STEP=""
+
     section "Nächster Schritt"
 
     print -r -- "  ${C_MAUVE}1.${C_RESET} Neue Shell-Sitzung starten: ${C_DIM}exec zsh${C_RESET}"

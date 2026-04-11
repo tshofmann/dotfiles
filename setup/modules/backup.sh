@@ -215,14 +215,17 @@ _backup_single_file() {
             backup_path="${BACKUP_HOME}/${relative}"
 
             # Verzeichnis erstellen
-            mkdir -p "$(dirname "$backup_path")"
-
-            # Datei kopieren (mit Permissions)
-            if cp -p "$target" "$backup_path" 2>/dev/null; then
-                _backup_log "BACKUP: $target -> $backup_path"
-            else
-                _backup_log "ERROR: Konnte $target nicht sichern"
+            if ! ensure_dir_writable "$(dirname "$backup_path")" "Backup-Unterverzeichnis"; then
+                _backup_log "ERROR: Konnte Verzeichnis für $target nicht erstellen"
                 backup_path=""
+            else
+                # Datei kopieren (mit Permissions)
+                if cp -p "$target" "$backup_path" 2>/dev/null; then
+                    _backup_log "BACKUP: $target -> $backup_path"
+                else
+                    _backup_log "ERROR: Konnte $target nicht sichern"
+                    backup_path=""
+                fi
             fi
             ;;
 
@@ -233,13 +236,16 @@ _backup_single_file() {
             backup_path="${BACKUP_HOME}/${relative}"
 
             # Parent-Verzeichnis für Backup anlegen
-            mkdir -p "$(dirname "$backup_path")"
-
-            if cp -Rp "$target" "$(dirname "$backup_path")/" 2>/dev/null; then
-                _backup_log "BACKUP: $target (Verzeichnis) -> $backup_path"
-            else
-                _backup_log "ERROR: Konnte Verzeichnis $target nicht sichern"
+            if ! ensure_dir_writable "$(dirname "$backup_path")" "Backup-Unterverzeichnis"; then
+                _backup_log "ERROR: Konnte Verzeichnis für $target nicht erstellen"
                 backup_path=""
+            else
+                if cp -Rp "$target" "$(dirname "$backup_path")/" 2>/dev/null; then
+                    _backup_log "BACKUP: $target (Verzeichnis) -> $backup_path"
+                else
+                    _backup_log "ERROR: Konnte Verzeichnis $target nicht sichern"
+                    backup_path=""
+                fi
             fi
             ;;
     esac

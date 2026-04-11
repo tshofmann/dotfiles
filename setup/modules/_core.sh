@@ -119,6 +119,8 @@ CURRENT_STEP="Initialisierung"
 # Defensive Helper für Dateioperationen
 # ------------------------------------------------------------
 # Prüft ob ein Verzeichnis erstellt werden kann (oder bereits existiert und schreibbar ist)
+# mkdir -p erstellt fehlende Elternverzeichnisse automatisch,
+# daher kein manueller Parent-Check nötig.
 # Rückgabe: 0 = OK, 1 = Fehler
 ensure_dir_writable() {
     local dir="$1"
@@ -134,14 +136,7 @@ ensure_dir_writable() {
         fi
     fi
 
-    # Verzeichnis existiert nicht, prüfe ob Elternverzeichnis schreibbar ist
-    local parent="${dir:h}"
-    if [[ ! -w "$parent" ]]; then
-        err "Kann $description nicht erstellen, Elternverzeichnis nicht schreibbar: $parent"
-        return 1
-    fi
-
-    # Versuche Verzeichnis zu erstellen
+    # Versuche Verzeichnis (inkl. Elternverzeichnisse) zu erstellen
     if ! mkdir -p "$dir" 2>/dev/null; then
         err "Konnte $description nicht erstellen: $dir"
         return 1
@@ -165,6 +160,78 @@ ensure_file_writable() {
     # Falls Datei existiert, prüfe ob überschreibbar
     if [[ -e "$file" && ! -w "$file" ]]; then
         err "$description existiert aber ist nicht schreibbar: $file"
+        return 1
+    fi
+
+    return 0
+}
+
+# ------------------------------------------------------------
+# Input-Validierung für interaktive Module
+# ------------------------------------------------------------
+# Prüft ob ein SSH-Host-Alias gültig ist (keine Wildcards, keine Leerzeichen)
+# SSH interpretiert *, ?, !, [] als Pattern – diese MÜSSEN abgelehnt werden.
+# Erlaubt: Beginnt mit Buchstabe, dann alphanumerisch + Punkt/Unterstrich/Bindestrich
+# Rückgabe: 0 = gültig, 1 = ungültig (Fehlermeldung via warn)
+validate_ssh_alias() {
+    local alias_name="$1"
+
+    if [[ -z "$alias_name" ]]; then
+        warn "Host-Alias darf nicht leer sein"
+        return 1
+    fi
+
+    if [[ ! "$alias_name" =~ ^[a-zA-Z][a-zA-Z0-9._-]*$ ]]; then
+        warn "Ungültiger Host-Alias '$alias_name' – erlaubt: Buchstaben, Zahlen, Punkt, Unterstrich, Bindestrich (muss mit Buchstabe beginnen)"
+        return 1
+    fi
+
+    return 0
+}
+
+# Prüft ob ein Port im gültigen Bereich liegt (1–65535)
+# Rückgabe: 0 = gültig, 1 = ungültig (Fehlermeldung via warn)
+validate_port() {
+    local port="$1"
+
+    if [[ "$port" != <-> ]]; then
+        warn "Ungültiger Port '$port' – muss eine Zahl sein"
+        return 1
+    fi
+
+    if (( port < 1 || port > 65535 )); then
+        warn "Port '$port' außerhalb des gültigen Bereichs (1–65535)"
+        return 1
+    fi
+
+    return 0
+}
+
+# Prüft ob ein SSH-Config-Wert sicher ist (keine Whitespace, #, Steuerzeichen)
+# SSH interpretiert Leerzeichen als Token-Trenner und # als Kommentar.
+# Ungültige Werte in HostName/User brechen die GESAMTE SSH-Config.
+# Rückgabe: 0 = gültig, 1 = ungültig (Fehlermeldung via warn)
+validate_ssh_value() {
+    local value="$1"
+    local label="${2:-Wert}"
+
+    if [[ -z "$value" ]]; then
+        warn "$label darf nicht leer sein"
+        return 1
+    fi
+
+    if [[ "$value" =~ [[:space:]] ]]; then
+        warn "Ungültiger $label '$value' – Leerzeichen/Tabs nicht erlaubt"
+        return 1
+    fi
+
+    if [[ "$value" == *'#'* ]]; then
+        warn "Ungültiger $label '$value' – '#' wird von SSH als Kommentar interpretiert"
+        return 1
+    fi
+
+    if [[ "$value" =~ [[:cntrl:]] ]]; then
+        warn "Ungültiger $label '$value' – Steuerzeichen nicht erlaubt"
         return 1
     fi
 
