@@ -5,7 +5,8 @@
 # Zweck       : Lädt und führt Bootstrap-Module in definierter Reihenfolge aus
 # Aufruf      : ./bootstrap.sh
 # Docs        : https://github.com/tshofmann/dotfiles#readme
-# Module      : setup/modules/ (validation, homebrew, backup, stow, git-hooks, font, terminal-profile, bat, tealdeer, xcode-theme, zsh-sessions, ssh-keys)
+# Module      : setup/modules/ (validation, homebrew, backup, stow, git-hooks, font, terminal-profile, bat, tealdeer, xcode-theme, zsh-sessions)
+# Optional    : ssh-keys (interaktiv, nach Abschluss-Banner)
 # Generiert   : README.md (macOS-Versionen), docs/setup.md (Bootstrap-Schritte)
 # ============================================================
 
@@ -261,8 +262,12 @@ main() {
     # aufgerufen: System ist komplett, gh installiert, alle Tools verfügbar.
     # Fehler im Assistenten brechen das Bootstrap nicht ab (|| true).
     CURRENT_STEP="SSH-Keys (optional)"
-    source "$MODULES_DIR/ssh-keys.sh"
-    setup_ssh_keys || true
+    if [[ -f "$MODULES_DIR/ssh-keys.sh" ]]; then
+        source "$MODULES_DIR/ssh-keys.sh" || {
+            warn "SSH-Key Modul konnte nicht geladen werden"
+        }
+        setup_ssh_keys || true
+    fi
     CURRENT_STEP=""
 
     section "Nächster Schritt"

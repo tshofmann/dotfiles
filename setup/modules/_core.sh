@@ -172,6 +172,47 @@ ensure_file_writable() {
 }
 
 # ------------------------------------------------------------
+# Input-Validierung für interaktive Module
+# ------------------------------------------------------------
+# Prüft ob ein SSH-Host-Alias gültig ist (keine Wildcards, keine Leerzeichen)
+# SSH interpretiert *, ?, !, [] als Pattern – diese MÜSSEN abgelehnt werden.
+# Erlaubt: Beginnt mit Buchstabe, dann alphanumerisch + Punkt/Unterstrich/Bindestrich
+# Rückgabe: 0 = gültig, 1 = ungültig (Fehlermeldung via warn)
+validate_ssh_alias() {
+    local alias_name="$1"
+
+    if [[ -z "$alias_name" ]]; then
+        warn "Host-Alias darf nicht leer sein"
+        return 1
+    fi
+
+    if [[ ! "$alias_name" =~ ^[a-zA-Z][a-zA-Z0-9._-]*$ ]]; then
+        warn "Ungültiger Host-Alias '$alias_name' – erlaubt: Buchstaben, Zahlen, Punkt, Unterstrich, Bindestrich (muss mit Buchstabe beginnen)"
+        return 1
+    fi
+
+    return 0
+}
+
+# Prüft ob ein Port im gültigen Bereich liegt (1–65535)
+# Rückgabe: 0 = gültig, 1 = ungültig (Fehlermeldung via warn)
+validate_port() {
+    local port="$1"
+
+    if [[ "$port" != <-> ]]; then
+        warn "Ungültiger Port '$port' – muss eine Zahl sein"
+        return 1
+    fi
+
+    if (( port < 1 || port > 65535 )); then
+        warn "Port '$port' außerhalb des gültigen Bereichs (1–65535)"
+        return 1
+    fi
+
+    return 0
+}
+
+# ------------------------------------------------------------
 # Konfiguration (Pfade für Module)
 # ------------------------------------------------------------
 # Diese Variablen werden von allen Modulen verwendet

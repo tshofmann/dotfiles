@@ -297,15 +297,19 @@ _configure_ssh_hosts() {
         alias_name=$(_ask_input "Host-Alias (z.B. homeserver):")
         [[ -z "$alias_name" ]] && break
 
+        # Alias-Validierung: SSH interpretiert *, ?, !, [] als Pattern
+        if ! validate_ssh_alias "$alias_name"; then
+            continue
+        fi
+
         host_addr=$(_ask_input "IP-Adresse oder Hostname:")
         [[ -z "$host_addr" ]] && { warn "Keine Adresse – Host übersprungen"; continue; }
 
         host_user=$(_ask_input "Benutzername:" "$(whoami)")
         host_port=$(_ask_input "Port:" "22")
 
-        # Port-Validierung
-        if [[ "$host_port" != <-> ]]; then
-            warn "Ungültiger Port '$host_port' – Host übersprungen"
+        # Port-Validierung (1–65535)
+        if ! validate_port "$host_port"; then
             continue
         fi
 
@@ -344,7 +348,8 @@ _configure_ssh_hosts() {
 # Hauptfunktion
 # ------------------------------------------------------------
 setup_ssh_keys() {
-    # TTY-Guard: Überspringt lautlos in CI/Pipes/Headless
+    # TTY-Guard: Ohne interaktives Terminal wird der Assistent übersprungen
+    # (CI, Pipes, Headless – gibt eine Info-Meldung aus)
     if [[ ! -t 0 ]]; then
         log "Kein interaktives Terminal – SSH-Assistent übersprungen"
         return 0

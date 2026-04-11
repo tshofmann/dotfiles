@@ -13,6 +13,7 @@ Anleitung für die Entwicklung an diesem dotfiles-Repository.
   - [Cross-Platform Abstraktionen](#cross-platform-abstraktionen)
   - [Verzeichniswechsel und zoxide](#verzeichniswechsel-und-zoxide)
   - [Guard-System](#guard-system)
+  - [Input-Validierung](#input-validierung)
   - [Pfad-Pattern](#pfad-pattern)
   - [fzf Helper-Skripte](#fzf-helper-skripte)
   - [fzf Placeholder-Regeln](#fzf-placeholder-regeln)
@@ -183,6 +184,8 @@ alle zukünftigen Funktionen die Verzeichnisse wechseln.
 
 ### Guard-System
 
+#### Alias-Guards
+
 Alle `.alias`-Dateien prüfen ob das jeweilige Tool installiert ist:
 
 ```zsh
@@ -193,6 +196,72 @@ fi
 ```
 
 So bleiben Original-Befehle (`ls`, `cat`) erhalten wenn ein Tool fehlt.
+
+#### Bootstrap-Guards
+
+Alle Module in `setup/modules/` prüfen ob `_core.sh` geladen ist:
+
+```zsh
+# Guard am Anfang jedes Moduls
+[[ -z "${_BOOTSTRAP_CORE_LOADED:-}" ]] && {
+    echo "FEHLER: _core.sh muss vor <modul>.sh geladen werden" >&2
+    return 1
+}
+```
+
+Module mit Standalone-Fähigkeit nutzen zusätzlich `ZSH_EVAL_CONTEXT`:
+
+```zsh
+# Am Ende des Moduls: Standalone-Ausführung erkennen
+# ZSH_EVAL_CONTEXT ist "toplevel" bei `zsh modul.sh`,
+# aber "toplevel:file" bei `source modul.sh` und
+# "toplevel:shfunc:file" bei source aus load_module().
+if [[ "$ZSH_EVAL_CONTEXT" == "toplevel" ]]; then
+    source "${0:A:h}/_core.sh"
+    setup_modul
+fi
+```
+
+> **Wichtig:** `_BOOTSTRAP_CORE_LOADED` prüft **Abhängigkeiten** (Logging, Farben, Pfade).
+> `ZSH_EVAL_CONTEXT` prüft den **Ausführungskontext** (direkt vs. source). Beides hat unterschiedliche Aufgaben.
+
+#### Source-Schutz in bootstrap.sh
+
+`source` unter `set -e` bricht bei fehlender oder fehlerhafter Datei sofort ab.
+Alle `source`-Aufrufe müssen geschützt sein:
+
+```zsh
+# Reguläre Module: load_module() enthält Existenz-Check + || { err; return 1 }
+
+# Spezialfälle außerhalb load_module():
+if [[ -f "$MODULES_DIR/modul.sh" ]]; then
+    source "$MODULES_DIR/modul.sh" || {
+        warn "Modul konnte nicht geladen werden"
+    }
+fi
+```
+
+### Input-Validierung
+
+Interaktive Module (z.B. `ssh-keys.sh`) mit User-Eingaben **müssen** Input validieren.
+
+**Grundregeln:**
+
+- Keine Wildcards/Sonderzeichen in SSH-Aliase erlauben (`*`, `?`, `!`, `[]`, Leerzeichen)
+- Port-Nummern auf 1–65535 begrenzen (ZSH `<->` allein reicht nicht)
+- Validierung über Helper-Funktionen in `_core.sh`: `validate_ssh_alias()`, `validate_port()`
+
+```zsh
+# Beispiel: Alias-Validierung
+alias_name=$(_ask_input "Host-Alias:")
+[[ -z "$alias_name" ]] && break
+if ! validate_ssh_alias "$alias_name"; then
+    continue
+fi
+```
+
+> **Warum?** SSH interpretiert `*`, `?`, `!` als Pattern in Host-Aliase.
+> Ein Alias wie `*evil*` matched ungewollt andere Hosts.
 
 ### Pfad-Pattern
 
