@@ -298,7 +298,7 @@ ${shell_keybindings}
 
 Dazu: **[Catppuccin Mocha](https://catppuccin.com/) Theme** überall, **Hilfe im Terminal** via \`dothelp\`, **fzf-Integration** für alles.
 ${theme_image}
-Alle installierten Pakete: [\`setup/Brewfile\`](setup/Brewfile)
+Alle installierten Pakete: [Vollständige Paketliste](docs/setup.md#installierte-pakete)
 
 ## 🚀 Installation
 
@@ -354,7 +354,7 @@ Mehr: [Setup](docs/setup.md) · [Anpassung](docs/customization.md) · [Contribut
 
 Dieses Projekt nutzt [Catppuccin Mocha](https://catppuccin.com/) als einheitliches Theme.
 
-Alle installierten Tools und Abhängigkeiten: [\`setup/Brewfile\`](setup/Brewfile)
+Alle Tools und deren Projekt-Homepages: [Installierte Pakete](docs/setup.md#installierte-pakete)
 
 ## Lizenz
 

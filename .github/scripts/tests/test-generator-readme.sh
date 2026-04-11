@@ -438,7 +438,7 @@ echo "=== Credits-Sektion (Integration) ==="
 result=$(generate_readme_md)
 assert_contains "Credits: Sektion vorhanden" "## 🙏 Credits" "$result"
 assert_contains "Credits: Catppuccin" "Catppuccin Mocha" "$result"
-assert_contains "Credits: Brewfile-Link" "setup/Brewfile" "$result"
+assert_contains "Credits: Paketliste-Link" "docs/setup.md#installierte-pakete" "$result"
 
 # Credits steht zwischen Dokumentation und Lizenz
 local credits_pos doku_pos lizenz_pos
