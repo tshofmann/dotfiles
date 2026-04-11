@@ -263,11 +263,12 @@ main() {
     # Fehler im Assistenten brechen das Bootstrap nicht ab (|| true).
     CURRENT_STEP="SSH-Keys (optional)"
     if [[ -f "$MODULES_DIR/ssh-keys.sh" ]]; then
-        source "$MODULES_DIR/ssh-keys.sh" || {
+        if source "$MODULES_DIR/ssh-keys.sh"; then
+            if (( $+functions[setup_ssh_keys] )); then
+                setup_ssh_keys || true
+            fi
+        else
             warn "SSH-Key Modul konnte nicht geladen werden"
-        }
-        if (( $+functions[setup_ssh_keys] )); then
-            setup_ssh_keys || true
         fi
     fi
     CURRENT_STEP=""

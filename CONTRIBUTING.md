@@ -246,11 +246,20 @@ Alle `source`-Aufrufe müssen geschützt sein:
 
 # Spezialfälle außerhalb load_module():
 if [[ -f "$MODULES_DIR/modul.sh" ]]; then
-    source "$MODULES_DIR/modul.sh" || {
+    if source "$MODULES_DIR/modul.sh"; then
+        # Funktion nur aufrufen wenn source erfolgreich war
+        if (( $+functions[setup_modul] )); then
+            setup_modul || true
+        fi
+    else
         warn "Modul konnte nicht geladen werden"
-    }
+    fi
 fi
 ```
+
+**Wichtig:** `source || { warn }` ohne `return` fällt durch – ZSH registriert
+Funktionen während des Parsens, auch wenn `source` am Ende fehlschlägt.
+`$+functions` ist daher kein zuverlässiger Guard nach fehlgeschlagenem `source`.
 
 ### Input-Validierung
 
