@@ -209,15 +209,26 @@ Alle Module in `setup/modules/` prüfen ob `_core.sh` geladen ist:
 }
 ```
 
-Module mit Standalone-Fähigkeit nutzen zusätzlich `ZSH_EVAL_CONTEXT`:
+Module mit Standalone-Fähigkeit nutzen zusätzlich `ZSH_EVAL_CONTEXT`.
+Der Standalone-Check **muss vor** dem Core-Guard stehen, damit `zsh modul.sh`
+zuerst `_core.sh` laden kann, bevor der Guard greift:
 
 ```zsh
-# Am Ende des Moduls: Standalone-Ausführung erkennen
-# ZSH_EVAL_CONTEXT ist "toplevel" bei `zsh modul.sh`,
-# aber "toplevel:file" bei `source modul.sh` und
-# "toplevel:shfunc:file" bei source aus load_module().
-if [[ "$ZSH_EVAL_CONTEXT" == "toplevel" ]]; then
-    source "${0:A:h}/_core.sh"
+# VOR dem Guard: Standalone erkennen und Core laden
+if [[ "${ZSH_EVAL_CONTEXT}" == "toplevel" ]]; then
+    source "${0:A:h}/_core.sh" || { echo "FEHLER: _core.sh nicht gefunden" >&2; exit 1; }
+fi
+
+# Guard: fängt `source modul.sh` ohne Core ab
+[[ -z "${_BOOTSTRAP_CORE_LOADED:-}" ]] && {
+    echo "FEHLER: _core.sh muss vor <modul>.sh geladen werden" >&2
+    return 1
+}
+
+# ... Funktionsdefinitionen ...
+
+# Am Ende: Standalone-Ausführung
+if [[ "${ZSH_EVAL_CONTEXT}" == "toplevel" ]]; then
     setup_modul
 fi
 ```

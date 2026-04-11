@@ -12,7 +12,12 @@
 #               Gesamter Ablauf ist optional und interaktiv.
 # ============================================================
 
-# Guard: Core muss geladen sein
+# Standalone: Core laden bevor Guard greift
+if [[ "${ZSH_EVAL_CONTEXT}" == "toplevel" ]]; then
+    source "${0:A:h}/_core.sh" || { echo "FEHLER: _core.sh nicht gefunden" >&2; exit 1; }
+fi
+
+# Guard: Core muss geladen sein (fängt source ohne Core ab)
 [[ -z "${_BOOTSTRAP_CORE_LOADED:-}" ]] && {
     echo "FEHLER: _core.sh muss vor ssh-keys.sh geladen werden" >&2
     return 1
@@ -36,7 +41,11 @@ _ask_yes_no() {
     local prompt="$1"
     local answer
     print -rn -- "${C_MAUVE}?${C_RESET} ${prompt} [j/N] "
-    read -r answer
+    if ! read -r answer; then
+        # EOF (Ctrl-D) → wie "Nein" behandeln
+        print -r -- ""
+        return 1
+    fi
     [[ "$answer" == [jJ] ]]
 }
 
@@ -54,7 +63,12 @@ _ask_input() {
     else
         print -rn -- "${C_MAUVE}?${C_RESET} ${prompt} " >/dev/tty
     fi
-    read -r answer
+    if ! read -r answer; then
+        # EOF (Ctrl-D) → Default zurückgeben
+        print -r -- "" >/dev/tty
+        print -r -- "$default"
+        return 0
+    fi
     print -r -- "${answer:-$default}"
 }
 
@@ -403,11 +417,7 @@ setup_ssh_keys() {
     return 0
 }
 
-# Modul ausführen wenn direkt aufgerufen
-# ZSH_EVAL_CONTEXT ist "toplevel" bei `zsh ssh-keys.sh`,
-# aber "toplevel:file" bei `source ssh-keys.sh` und
-# "toplevel:shfunc:file" bei source aus load_module().
-if [[ "$ZSH_EVAL_CONTEXT" == "toplevel" ]]; then
-    source "${0:A:h}/_core.sh"
+# Standalone: Hauptfunktion aufrufen (Core wurde oben bereits geladen)
+if [[ "${ZSH_EVAL_CONTEXT}" == "toplevel" ]]; then
     setup_ssh_keys
 fi

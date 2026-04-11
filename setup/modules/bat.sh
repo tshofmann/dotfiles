@@ -10,7 +10,12 @@
 # Theme       : ~/.config/bat/themes/Catppuccin Mocha.tmTheme
 # ============================================================
 
-# Guard: Core muss geladen sein
+# Standalone: Core laden bevor Guard greift
+if [[ "${ZSH_EVAL_CONTEXT}" == "toplevel" ]]; then
+    source "${0:A:h}/_core.sh" || { echo "FEHLER: _core.sh nicht gefunden" >&2; exit 1; }
+fi
+
+# Guard: Core muss geladen sein (fängt source ohne Core ab)
 [[ -z "${_BOOTSTRAP_CORE_LOADED:-}" ]] && {
     echo "FEHLER: _core.sh muss vor bat.sh geladen werden" >&2
     return 1
@@ -67,11 +72,7 @@ setup_bat() {
     build_bat_cache
 }
 
-# Modul ausführen wenn direkt aufgerufen
-# ZSH_EVAL_CONTEXT ist "toplevel" bei `zsh bat.sh`,
-# aber "toplevel:file" bei `source bat.sh` und
-# "toplevel:shfunc:file" bei source aus load_module().
-if [[ "$ZSH_EVAL_CONTEXT" == "toplevel" ]]; then
-    source "${0:A:h}/_core.sh"
+# Standalone: Hauptfunktion aufrufen (Core wurde oben bereits geladen)
+if [[ "${ZSH_EVAL_CONTEXT}" == "toplevel" ]]; then
     setup_bat
 fi

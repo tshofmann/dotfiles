@@ -119,6 +119,8 @@ CURRENT_STEP="Initialisierung"
 # Defensive Helper für Dateioperationen
 # ------------------------------------------------------------
 # Prüft ob ein Verzeichnis erstellt werden kann (oder bereits existiert und schreibbar ist)
+# mkdir -p erstellt fehlende Elternverzeichnisse automatisch,
+# daher kein manueller Parent-Check nötig.
 # Rückgabe: 0 = OK, 1 = Fehler
 ensure_dir_writable() {
     local dir="$1"
@@ -134,14 +136,7 @@ ensure_dir_writable() {
         fi
     fi
 
-    # Verzeichnis existiert nicht, prüfe ob Elternverzeichnis schreibbar ist
-    local parent="${dir:h}"
-    if [[ ! -w "$parent" ]]; then
-        err "Kann $description nicht erstellen, Elternverzeichnis nicht schreibbar: $parent"
-        return 1
-    fi
-
-    # Versuche Verzeichnis zu erstellen
+    # Versuche Verzeichnis (inkl. Elternverzeichnisse) zu erstellen
     if ! mkdir -p "$dir" 2>/dev/null; then
         err "Konnte $description nicht erstellen: $dir"
         return 1
