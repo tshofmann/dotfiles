@@ -40,10 +40,11 @@ typeset -g _ALLOWED_SIGNERS="$_SSH_DIR/allowed_signers"
 _ask_yes_no() {
     local prompt="$1"
     local answer
-    print -rn -- "${C_MAUVE}?${C_RESET} ${prompt} [j/N] "
+    # Prompt auf /dev/tty statt stdout – sonst ist er bei Umleitung unsichtbar
+    print -rn -- "${C_MAUVE}?${C_RESET} ${prompt} [j/N] " >/dev/tty
     if ! read -r answer; then
         # EOF (Ctrl-D) → wie "Nein" behandeln
-        print -r -- ""
+        print -r -- "" >/dev/tty
         return 1
     fi
     [[ "$answer" == [jJ] ]]
@@ -132,7 +133,7 @@ _ensure_ssh_config_defaults() {
     fi
 
     # Config existiert und hat bereits Host * Block
-    if [[ -f "$_SSH_CONFIG" ]] && grep -q "^Host \*" "$_SSH_CONFIG" 2>/dev/null; then
+    if [[ -f "$_SSH_CONFIG" ]] && grep -Eq '^[[:space:]]*Host[[:space:]]+\*$' "$_SSH_CONFIG" 2>/dev/null; then
         chmod 600 "$_SSH_CONFIG" 2>/dev/null
         ok "SSH-Config Defaults bereits vorhanden"
         return 0
@@ -379,6 +380,8 @@ setup_ssh_keys() {
 
     # Restriktive umask: SSH-Dateien direkt mit 600/700 erstellen
     # statt nachträglich chmod (Race Condition: CWE-362)
+    local old_umask
+    old_umask=$(umask)
     umask 077
 
     section "SSH-Key Assistent"
@@ -391,11 +394,13 @@ setup_ssh_keys() {
 
     if ! _ask_yes_no "SSH-Key Assistenten starten?"; then
         log "SSH-Assistent übersprungen"
+        umask "$old_umask"
         return 0
     fi
 
     # 1. SSH-Key generieren (oder bestehenden verwenden)
     if ! _generate_ssh_key; then
+        umask "$old_umask"
         return 0
     fi
 
@@ -423,6 +428,9 @@ setup_ssh_keys() {
         log "Key: ${C_DIM}$_SSH_KEY${C_RESET}"
         log "Fingerprint: ${C_DIM}$(ssh-keygen -l -f "$_SSH_KEY" 2>/dev/null || echo "–")${C_RESET}"
     fi
+
+    # umask wiederherstellen – sonst bleiben restriktive Permissions aktiv
+    umask "$old_umask"
 
     return 0
 }
