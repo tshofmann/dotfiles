@@ -131,7 +131,7 @@ _ensure_ssh_config_defaults() {
             print -r -- "Host *"
             print -r -- "    AddKeysToAgent yes"
             is_macos && print -r -- "    UseKeychain yes"
-            print -r -- "    IdentityFile $_SSH_KEY"
+            print -r -- "    IdentityFile \"$_SSH_KEY\""
             print -r -- ""
             print -r -- "$existing"
         } > "$_SSH_CONFIG"
@@ -140,7 +140,7 @@ _ensure_ssh_config_defaults() {
             print -r -- "Host *"
             print -r -- "    AddKeysToAgent yes"
             is_macos && print -r -- "    UseKeychain yes"
-            print -r -- "    IdentityFile $_SSH_KEY"
+            print -r -- "    IdentityFile \"$_SSH_KEY\""
         } > "$_SSH_CONFIG"
     fi
 
@@ -326,7 +326,7 @@ _configure_ssh_hosts() {
             print -r -- "    HostName $host_addr"
             print -r -- "    User $host_user"
             [[ "$host_port" != "22" ]] && print -r -- "    Port $host_port"
-            print -r -- "    IdentityFile $_SSH_KEY"
+            print -r -- "    IdentityFile \"$_SSH_KEY\""
         } >> "$_SSH_CONFIG"
 
         ok "Host hinzugefügt: $alias_name → $host_user@$host_addr"

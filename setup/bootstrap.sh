@@ -266,7 +266,9 @@ main() {
         source "$MODULES_DIR/ssh-keys.sh" || {
             warn "SSH-Key Modul konnte nicht geladen werden"
         }
-        setup_ssh_keys || true
+        if (( $+functions[setup_ssh_keys] )); then
+            setup_ssh_keys || true
+        fi
     fi
     CURRENT_STEP=""
 
