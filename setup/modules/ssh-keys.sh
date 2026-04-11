@@ -131,6 +131,7 @@ _ensure_ssh_config_defaults() {
 
     # Config existiert und hat bereits Host * Block
     if [[ -f "$_SSH_CONFIG" ]] && grep -q "^Host \*" "$_SSH_CONFIG" 2>/dev/null; then
+        chmod 600 "$_SSH_CONFIG" 2>/dev/null
         ok "SSH-Config Defaults bereits vorhanden"
         return 0
     fi
@@ -278,6 +279,7 @@ _configure_git_signing() {
     pub_key=$(<"$_SSH_KEY_PUB")
 
     if [[ -f "$_ALLOWED_SIGNERS" ]] && awk -v e="$email" '$1 == e { found=1 } END { exit !found }' "$_ALLOWED_SIGNERS" 2>/dev/null; then
+        chmod 600 "$_ALLOWED_SIGNERS" 2>/dev/null
         ok "allowed_signers bereits konfiguriert"
     else
         print -r -- "$email $pub_key" >> "$_ALLOWED_SIGNERS"
@@ -303,6 +305,7 @@ _configure_ssh_hosts() {
 
     local added=0
     local alias_name host_addr host_user host_port
+    local last_alias
 
     while true; do
         print -r -- ""
@@ -344,6 +347,7 @@ _configure_ssh_hosts() {
         } >> "$_SSH_CONFIG"
 
         ok "Host hinzugefügt: $alias_name → $host_user@$host_addr"
+        last_alias="$alias_name"
         (( added++ )) || true
 
         _ask_yes_no "Weiteren Host hinzufügen?" || break
@@ -352,7 +356,7 @@ _configure_ssh_hosts() {
     if (( added > 0 )); then
         section_end "$added Host(s) konfiguriert"
         print -r -- ""
-        log "Verbindung testen: ${C_DIM}ssh $alias_name${C_RESET}"
+        log "Verbindung testen: ${C_DIM}ssh $last_alias${C_RESET}"
     fi
 
     return 0
