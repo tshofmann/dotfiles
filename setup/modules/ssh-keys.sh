@@ -26,11 +26,11 @@ fi
 # ------------------------------------------------------------
 # Konfiguration
 # ------------------------------------------------------------
-typeset -g _SSH_DIR="$HOME/.ssh"
-typeset -g _SSH_KEY="$_SSH_DIR/id_ed25519"
-typeset -g _SSH_KEY_PUB="$_SSH_DIR/id_ed25519.pub"
-typeset -g _SSH_CONFIG="$_SSH_DIR/config"
-typeset -g _ALLOWED_SIGNERS="$_SSH_DIR/allowed_signers"
+typeset -gr _SSH_DIR="$HOME/.ssh"
+typeset -gr _SSH_KEY="$_SSH_DIR/id_ed25519"
+typeset -gr _SSH_KEY_PUB="$_SSH_DIR/id_ed25519.pub"
+typeset -gr _SSH_CONFIG="$_SSH_DIR/config"
+typeset -gr _ALLOWED_SIGNERS="$_SSH_DIR/allowed_signers"
 
 # ------------------------------------------------------------
 # Helper: Ja/Nein-Abfrage (set -e sicher)
@@ -267,6 +267,11 @@ _configure_git_signing() {
 
     if [[ -z "$email" ]]; then
         warn "Keine E-Mail angegeben – Git-Signatur übersprungen"
+        return 0
+    fi
+
+    # E-Mail validieren (Leerzeichen/# brechen allowed_signers Format)
+    if ! validate_ssh_value "$email" "E-Mail"; then
         return 0
     fi
 
