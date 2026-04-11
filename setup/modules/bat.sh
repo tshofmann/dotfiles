@@ -68,8 +68,10 @@ setup_bat() {
 }
 
 # Modul ausführen wenn direkt aufgerufen
-# ZSH_EVAL_CONTEXT endet auf :shfunc:file wenn per source aus load_module() geladen
-if [[ "$ZSH_EVAL_CONTEXT" == "toplevel:file" ]]; then
+# ZSH_EVAL_CONTEXT ist "toplevel" bei `zsh bat.sh`,
+# aber "toplevel:file" bei `source bat.sh` und
+# "toplevel:shfunc:file" bei source aus load_module().
+if [[ "$ZSH_EVAL_CONTEXT" == "toplevel" ]]; then
     source "${0:A:h}/_core.sh"
     setup_bat
 fi

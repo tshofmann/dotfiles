@@ -94,8 +94,10 @@ setup_git_hooks() {
 }
 
 # Modul ausführen wenn direkt aufgerufen
-# ZSH_EVAL_CONTEXT endet auf :shfunc:file wenn per source aus load_module() geladen
-if [[ "$ZSH_EVAL_CONTEXT" == "toplevel:file" ]]; then
+# ZSH_EVAL_CONTEXT ist "toplevel" bei `zsh git-hooks.sh`,
+# aber "toplevel:file" bei `source git-hooks.sh` und
+# "toplevel:shfunc:file" bei source aus load_module().
+if [[ "$ZSH_EVAL_CONTEXT" == "toplevel" ]]; then
     source "${0:A:h}/_core.sh"
     setup_git_hooks
 fi

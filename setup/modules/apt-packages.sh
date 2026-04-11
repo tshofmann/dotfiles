@@ -315,7 +315,9 @@ _create_binary_symlinks() {
     CURRENT_STEP="Binary-Symlinks"
 
     local bin_dir="$HOME/.local/bin"
-    mkdir -p "$bin_dir"
+    if ! ensure_dir_writable "$bin_dir" "Binary-Verzeichnis"; then
+        return 1
+    fi
 
     for debian_binary expected_name in "${(@kv)BINARY_SYMLINKS}"; do
         if command -v "$debian_binary" >/dev/null 2>&1 && ! command -v "$expected_name" >/dev/null 2>&1; then

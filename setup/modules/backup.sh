@@ -215,7 +215,11 @@ _backup_single_file() {
             backup_path="${BACKUP_HOME}/${relative}"
 
             # Verzeichnis erstellen
-            mkdir -p "$(dirname "$backup_path")"
+            if ! ensure_dir_writable "$(dirname "$backup_path")" "Backup-Unterverzeichnis"; then
+                _backup_log "ERROR: Konnte Verzeichnis für $target nicht erstellen"
+                backup_path=""
+                break
+            fi
 
             # Datei kopieren (mit Permissions)
             if cp -p "$target" "$backup_path" 2>/dev/null; then
@@ -233,7 +237,11 @@ _backup_single_file() {
             backup_path="${BACKUP_HOME}/${relative}"
 
             # Parent-Verzeichnis für Backup anlegen
-            mkdir -p "$(dirname "$backup_path")"
+            if ! ensure_dir_writable "$(dirname "$backup_path")" "Backup-Unterverzeichnis"; then
+                _backup_log "ERROR: Konnte Verzeichnis für $target nicht erstellen"
+                backup_path=""
+                break
+            fi
 
             if cp -Rp "$target" "$(dirname "$backup_path")/" 2>/dev/null; then
                 _backup_log "BACKUP: $target (Verzeichnis) -> $backup_path"
