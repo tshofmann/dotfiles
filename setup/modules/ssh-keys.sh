@@ -285,7 +285,9 @@ _configure_git_signing() {
     local pub_key
     pub_key=$(<"$_SSH_KEY_PUB")
 
-    if [[ -f "$_ALLOWED_SIGNERS" ]] && awk -v e="$email" '$1 == e { found=1 } END { exit !found }' "$_ALLOWED_SIGNERS" 2>/dev/null; then
+    # Prüfe E-Mail+Key Kombination (nicht nur E-Mail), damit bei
+    # Key-Regeneration der neue Key hinzugefügt wird (Key-Rotation)
+    if [[ -f "$_ALLOWED_SIGNERS" ]] && grep -qF "$email $pub_key" "$_ALLOWED_SIGNERS" 2>/dev/null; then
         chmod 600 "$_ALLOWED_SIGNERS" 2>/dev/null
         ok "allowed_signers bereits konfiguriert"
     else
