@@ -377,6 +377,10 @@ setup_ssh_keys() {
 
     CURRENT_STEP="SSH-Keys (optional)"
 
+    # Restriktive umask: SSH-Dateien direkt mit 600/700 erstellen
+    # statt nachträglich chmod (Race Condition: CWE-362)
+    umask 077
+
     section "SSH-Key Assistent"
     log "Dieser Assistent hilft dir bei der Einrichtung von:"
     log "  • SSH-Key Generierung (Ed25519)"
