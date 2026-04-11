@@ -438,7 +438,12 @@ echo "=== Credits-Sektion (Integration) ==="
 result=$(generate_readme_md)
 assert_contains "Credits: Sektion vorhanden" "## 🙏 Credits" "$result"
 assert_contains "Credits: Catppuccin" "Catppuccin Mocha" "$result"
-assert_contains "Credits: Brewfile-Link" "setup/Brewfile" "$result"
+assert_contains "Credits: Paketliste-Link" "[Installierte Pakete](docs/setup.md#installierte-pakete)" "$result"
+assert_contains "Shell-Erlebnis: Paketliste-Link" "[Vollständige Paketliste](docs/setup.md#installierte-pakete)" "$result"
+
+# Link-Target-Validierung: Anker muss in docs/setup.md existieren
+grep -q '^## Installierte Pakete' "$DOCS_DIR/setup.md"
+assert_equals "Link-Target: Anker #installierte-pakete existiert in setup.md" "0" "$?"
 
 # Credits steht zwischen Dokumentation und Lizenz
 local credits_pos doku_pos lizenz_pos
