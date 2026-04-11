@@ -102,6 +102,10 @@ _generate_ssh_key() {
 
     # Verzeichnis sicherstellen
     if [[ ! -d "$_SSH_DIR" ]]; then
+        if [[ -e "$_SSH_DIR" ]]; then
+            err "Pfad existiert bereits, ist aber kein Verzeichnis: $_SSH_DIR"
+            return 1
+        fi
         mkdir -m 700 "$_SSH_DIR"
         ok "Verzeichnis erstellt: $_SSH_DIR"
     fi
@@ -324,8 +328,15 @@ _configure_ssh_hosts() {
 
         host_addr=$(_ask_input "IP-Adresse oder Hostname:")
         [[ -z "$host_addr" ]] && { warn "Keine Adresse – Host übersprungen"; continue; }
+        if ! validate_ssh_value "$host_addr" "Hostname/IP"; then
+            continue
+        fi
 
         host_user=$(_ask_input "Benutzername:" "$(whoami)")
+        if ! validate_ssh_value "$host_user" "Benutzername"; then
+            continue
+        fi
+
         host_port=$(_ask_input "Port:" "22")
 
         # Port-Validierung (1–65535)

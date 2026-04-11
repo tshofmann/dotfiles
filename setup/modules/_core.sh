@@ -207,6 +207,37 @@ validate_port() {
     return 0
 }
 
+# Prüft ob ein SSH-Config-Wert sicher ist (keine Whitespace, #, Steuerzeichen)
+# SSH interpretiert Leerzeichen als Token-Trenner und # als Kommentar.
+# Ungültige Werte in HostName/User brechen die GESAMTE SSH-Config.
+# Rückgabe: 0 = gültig, 1 = ungültig (Fehlermeldung via warn)
+validate_ssh_value() {
+    local value="$1"
+    local label="${2:-Wert}"
+
+    if [[ -z "$value" ]]; then
+        warn "$label darf nicht leer sein"
+        return 1
+    fi
+
+    if [[ "$value" =~ [[:space:]] ]]; then
+        warn "Ungültiger $label '$value' – Leerzeichen/Tabs nicht erlaubt"
+        return 1
+    fi
+
+    if [[ "$value" == *'#'* ]]; then
+        warn "Ungültiger $label '$value' – '#' wird von SSH als Kommentar interpretiert"
+        return 1
+    fi
+
+    if [[ "$value" =~ [[:cntrl:]] ]]; then
+        warn "Ungültiger $label '$value' – Steuerzeichen nicht erlaubt"
+        return 1
+    fi
+
+    return 0
+}
+
 # ------------------------------------------------------------
 # Konfiguration (Pfade für Module)
 # ------------------------------------------------------------
