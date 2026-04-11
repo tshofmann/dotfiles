@@ -238,7 +238,7 @@ _configure_git_signing() {
     # user.email abfragen (Vorschlag: Kommentar aus SSH-Key)
     local current_email key_email
     current_email=$(git config --global user.email 2>/dev/null || echo "")
-    key_email=$(ssh-keygen -l -f "$_SSH_KEY_PUB" 2>/dev/null | sed -n 's/.* \(.*\)/\1/p' || echo "")
+    key_email=$(ssh-keygen -l -f "$_SSH_KEY_PUB" 2>/dev/null | awk '{print $3}' || echo "")
     local email_default="${current_email:-$key_email}"
     local email
     email=$(_ask_input "Git user.email:" "$email_default")
@@ -263,7 +263,7 @@ _configure_git_signing() {
     local pub_key
     pub_key=$(<"$_SSH_KEY_PUB")
 
-    if [[ -f "$_ALLOWED_SIGNERS" ]] && grep -q "$email" "$_ALLOWED_SIGNERS" 2>/dev/null; then
+    if [[ -f "$_ALLOWED_SIGNERS" ]] && awk -v e="$email" '$1 == e { found=1 } END { exit !found }' "$_ALLOWED_SIGNERS" 2>/dev/null; then
         ok "allowed_signers bereits konfiguriert"
     else
         print -r -- "$email $pub_key" >> "$_ALLOWED_SIGNERS"
@@ -310,7 +310,7 @@ _configure_ssh_hosts() {
         fi
 
         # Prüfe ob Host bereits in Config existiert
-        if [[ -f "$_SSH_CONFIG" ]] && grep -q "^Host $alias_name$" "$_SSH_CONFIG" 2>/dev/null; then
+        if [[ -f "$_SSH_CONFIG" ]] && grep -qxF "Host $alias_name" "$_SSH_CONFIG" 2>/dev/null; then
             warn "Host '$alias_name' bereits in SSH-Config vorhanden – übersprungen"
             continue
         fi
@@ -399,7 +399,10 @@ setup_ssh_keys() {
 }
 
 # Modul ausführen wenn direkt aufgerufen
-if [[ "$ZSH_EVAL_CONTEXT" == "toplevel:file" ]]; then
+# ZSH_EVAL_CONTEXT ist "toplevel" bei `zsh ssh-keys.sh`,
+# aber "toplevel:file" bei `source ssh-keys.sh` und
+# "toplevel:shfunc:file" bei source aus load_module().
+if [[ "$ZSH_EVAL_CONTEXT" == "toplevel" ]]; then
     source "${0:A:h}/_core.sh"
     setup_ssh_keys
 fi
