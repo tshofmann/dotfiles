@@ -216,7 +216,7 @@ ff                                  # System-Info anzeigen
 
 | Paket | Beschreibung |
 | ----- | ------------ |
-| [`claude-code`](https://docs.anthropic.com/en/docs/claude-code) | Agentic Coding |
+| [`copilot-cli`](https://docs.github.com/en/copilot/concepts/agents/about-copilot-cli) | Agentic Coding |
 | [`github`](https://desktop.github.com/) | GitHub Desktop GUI |
 | [`kitty`](https://sw.kovidgoyal.net/kitty/) | GPU-Terminal mit Image-Support |
 | [`visual-studio-code`](https://code.visualstudio.com/) | Editor |
