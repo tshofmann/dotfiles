@@ -193,6 +193,7 @@ ff                                  # System-Info anzeigen
 | [`ffmpeg`](https://ffmpeg.org/) | Video/Audio-Codec |
 | [`fzf`](https://github.com/junegunn/fzf) | Fuzzy Finder |
 | [`gh`](https://cli.github.com/) | GitHub CLI |
+| [`git-filter-repo`](https://github.com/newren/git-filter-repo) | Git-History umschreiben |
 | [`imagemagick`](https://imagemagick.org/) | Bild-Manipulation |
 | [`jq`](https://jqlang.org/) | JSON-Prozessor |
 | [`lazygit`](https://github.com/jesseduffield/lazygit) | Git-TUI |
