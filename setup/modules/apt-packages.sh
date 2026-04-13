@@ -60,6 +60,7 @@ typeset -A BREW_TO_ALT=(
     [ffmpeg]=apt:ffmpeg
     [fzf]=apt:fzf
     [gh]=apt:gh               # Erst ab Debian Trixie in offiziellen Repos
+    [git-filter-repo]=apt:git-filter-repo
     [imagemagick]=apt:imagemagick
     [jq]=apt:jq
     [lazygit]=apt:lazygit

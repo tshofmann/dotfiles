@@ -23,6 +23,7 @@ brew "fd"                                   # find-Ersatz, schnell und intuitiv 
 brew "ffmpeg"                               # Video/Audio-Codec | https://ffmpeg.org/
 brew "fzf"                                  # Fuzzy Finder | https://github.com/junegunn/fzf
 brew "gh"                                   # GitHub CLI | https://cli.github.com/
+brew "git-filter-repo"                      # Git-History umschreiben | https://github.com/newren/git-filter-repo
 brew "imagemagick"                          # Bild-Manipulation | https://imagemagick.org/
 brew "jq"                                   # JSON-Prozessor | https://jqlang.org/
 brew "lazygit"                              # Git-TUI | https://github.com/jesseduffield/lazygit
