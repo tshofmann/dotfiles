@@ -62,8 +62,10 @@ profile_exists() {
     [[ -z "$settings" ]] && return 1
     # Fixed-String-Suche nach Dictionary-Key im plist-Format
     # Keys erscheinen als '    "name" =' oder '    name ='
-    print -r -- "$settings" | grep -qF "\"${profile_name}\" =" ||
-        print -r -- "$settings" | grep -qF " ${profile_name} ="
+    # -e schützt vor Interpretation als Option falls Name mit "-" beginnt
+    print -r -- "$settings" | grep -qF \
+        -e "\"${profile_name}\" =" \
+        -e " ${profile_name} ="
 }
 
 # ------------------------------------------------------------
