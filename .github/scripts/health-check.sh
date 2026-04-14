@@ -369,10 +369,10 @@ section "Nerd Font"
 typeset -a font_casks=($(grep -E '^cask "font-' "$BREWFILE" 2>/dev/null | sed 's/cask "\([^"]*\)".*/\1/'))
 
 if (( ${#font_casks[@]} > 0 )); then
+  typeset font_pattern
   for font_cask in "${font_casks[@]}"; do
     # Konvertiere cask-name zu Font-Dateiname-Pattern
     # z.B. font-meslo-lg-nerd-font → MesloLG*NerdFont*
-    typeset font_pattern
     case "$font_cask" in
       font-meslo-lg-nerd-font)
         font_pattern="MesloLG*NerdFont*"
