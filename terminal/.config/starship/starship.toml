@@ -27,6 +27,7 @@ $java\
 $kotlin\
 $haskell\
 $python\
+$swift\
 [](fg:green bg:sapphire)\
 $docker_context\
 $conda\
@@ -137,6 +138,11 @@ format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
 symbol = ""
 style = "bg:green"
 format = '[[ $symbol( $version)(\(#$virtualenv\)) ](fg:crust bg:green)]($style)'
+
+[swift]
+symbol = ""
+style = "bg:green"
+format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
 
 [docker_context]
 symbol = ""
