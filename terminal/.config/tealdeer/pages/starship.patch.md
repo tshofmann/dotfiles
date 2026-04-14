@@ -4,7 +4,7 @@
 
 - dotfiles: Prompt-Module: `os, username, directory, git_branch, git_status, time, line_break, character, cmd_duration`
 
-- dotfiles: Sprach-Module: `nodejs, c, rust, golang, php, java, kotlin, haskell, python`
+- dotfiles: Sprach-Module: `nodejs, c, rust, golang, php, java, kotlin, haskell, python, swift`
 
 - dotfiles: Infra-Module: `docker_context, conda`
 
