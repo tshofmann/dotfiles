@@ -54,8 +54,8 @@ detect_platform() {
             _distro_id_like=""
             if [ -n "$_osrelease" ]; then
                 # grep-basiert statt source – Defense-in-Depth (keine Code-Ausführung)
-                _distro_id=$(grep -m1 '^ID=' "$_osrelease" | cut -d= -f2- | tr -d "\"'")
-                _distro_id_like=$(grep -m1 '^ID_LIKE=' "$_osrelease" | cut -d= -f2- | tr -d "\"'")
+                _distro_id=$(grep -m1 '^ID=' "$_osrelease" 2>/dev/null | cut -d= -f2- | tr -d "\"'")
+                _distro_id_like=$(grep -m1 '^ID_LIKE=' "$_osrelease" 2>/dev/null | cut -d= -f2- | tr -d "\"'")
             fi
 
             case "$_distro_id" in
