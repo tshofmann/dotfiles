@@ -56,12 +56,16 @@ detect_profile_file() {
 # ------------------------------------------------------------
 profile_exists() {
     local profile_name="$1"
-    local profile_grep_pattern="(^[[:space:]]+\"$profile_name\"|^[[:space:]]+$profile_name)[[:space:]]+="
 
     local settings
     settings=$(defaults read com.apple.Terminal "Window Settings" 2>/dev/null || true)
     [[ -z "$settings" ]] && return 1
-    print -r -- "$settings" | grep -qE "$profile_grep_pattern"
+    # Fixed-String-Suche nach Dictionary-Key im plist-Format
+    # Keys erscheinen als '    "name" =' oder '    name ='
+    # -e schützt vor Interpretation als Option falls Name mit "-" beginnt
+    print -r -- "$settings" | grep -qF \
+        -e "\"${profile_name}\" =" \
+        -e " ${profile_name} ="
 }
 
 # ------------------------------------------------------------
@@ -112,24 +116,27 @@ import_profile() {
 set_profile_as_default() {
     local profile_name="$1"
 
-    osascript <<EOF
-tell application "Terminal"
-    set targetProfile to null
-    repeat with s in settings sets
-        if name of s is "$profile_name" then
-            set targetProfile to s
-            exit repeat
-        end if
-    end repeat
+    osascript - "$profile_name" <<'EOF'
+on run argv
+    set profileName to item 1 of argv
+    tell application "Terminal"
+        set targetProfile to null
+        repeat with s in settings sets
+            if name of s is profileName then
+                set targetProfile to s
+                exit repeat
+            end if
+        end repeat
 
-    if targetProfile is not null then
-        set default settings to targetProfile
-        set startup settings to targetProfile
-        return "success"
-    else
-        return "profile not found"
-    end if
-end tell
+        if targetProfile is not null then
+            set default settings to targetProfile
+            set startup settings to targetProfile
+            return "success"
+        else
+            return "profile not found"
+        end if
+    end tell
+end run
 EOF
 }
 
