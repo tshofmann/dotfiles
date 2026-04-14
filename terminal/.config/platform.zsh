@@ -65,11 +65,10 @@ if [[ -z "${_PLATFORM_DISTRO+x}" ]]; then
             [[ -z "$_osrelease" && -f /usr/lib/os-release ]] && _osrelease="/usr/lib/os-release"
 
             if [[ -n "$_osrelease" ]]; then
-                local _distro_id _distro_id_like _distro_info
-                # Einmal sourcen, beide Werte in einer Subshell lesen
-                _distro_info=$(. "$_osrelease" 2>/dev/null && printf '%s\n%s' "$ID" "${ID_LIKE:-}")
-                _distro_id="${_distro_info%%$'\n'*}"
-                _distro_id_like="${_distro_info#*$'\n'}"
+                local _distro_id _distro_id_like
+                # grep-basiert statt source – Defense-in-Depth (keine Code-Ausführung)
+                _distro_id=$(grep -m1 '^ID=' "$_osrelease" 2>/dev/null | cut -d= -f2- | tr -d "\"'")
+                _distro_id_like=$(grep -m1 '^ID_LIKE=' "$_osrelease" 2>/dev/null | cut -d= -f2- | tr -d "\"'")
                 case "$_distro_id" in
                     fedora)                  _PLATFORM_DISTRO="fedora" ;;
                     debian|ubuntu|raspbian)  _PLATFORM_DISTRO="debian" ;;

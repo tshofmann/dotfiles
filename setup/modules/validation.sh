@@ -80,7 +80,9 @@ _validate_debian_version() {
     [[ -z "$osrelease" && -f /usr/lib/os-release ]] && osrelease="/usr/lib/os-release"
 
     if [[ -n "$osrelease" ]]; then
-        codename=$(. "$osrelease" 2>/dev/null && printf '%s' "${VERSION_CODENAME:-}")
+        # grep-basiert statt source – Defense-in-Depth (keine Code-Ausführung)
+        # { grep || true; } verhindert Abbruch unter pipefail bei fehlendem Key
+        codename=$({ grep -m1 '^VERSION_CODENAME=' "$osrelease" 2>/dev/null || true; } | cut -d= -f2- | tr -d "\"'")
     fi
 
     if [[ -z "$codename" ]]; then

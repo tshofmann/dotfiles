@@ -43,7 +43,6 @@ detect_platform() {
             # Bei Änderung der ID-Cases hier auch platform.zsh anpassen.
             # Sync wird via CI validiert (validate.yml → Plattform-Sync prüfen)
             # IDs: fedora | debian|ubuntu|raspbian | arch|manjaro
-            # Empfohlenes Pattern: einmal sourcen (systemd os-release Dokumentation)
             _osrelease=""
             if [ -f /etc/os-release ]; then
                 _osrelease="/etc/os-release"
@@ -54,11 +53,9 @@ detect_platform() {
             _distro_id=""
             _distro_id_like=""
             if [ -n "$_osrelease" ]; then
-                # Einmal sourcen, beide Werte per Separator ausgeben
-                # ID/ID_LIKE enthalten per freedesktop-Spec nur [a-z0-9._- ]
-                _distro_info=$(. "$_osrelease" && printf '%s:%s' "$ID" "${ID_LIKE:-}")
-                _distro_id="${_distro_info%%:*}"
-                _distro_id_like="${_distro_info#*:}"
+                # grep-basiert statt source – Defense-in-Depth (keine Code-Ausführung)
+                _distro_id=$(grep -m1 '^ID=' "$_osrelease" 2>/dev/null | cut -d= -f2- | tr -d "\"'")
+                _distro_id_like=$(grep -m1 '^ID_LIKE=' "$_osrelease" 2>/dev/null | cut -d= -f2- | tr -d "\"'")
             fi
 
             case "$_distro_id" in
