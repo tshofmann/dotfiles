@@ -79,6 +79,9 @@ check_exit=$?
 assert_equals "--check erkennt veraltete README.md (Exit 1)" "1" "$check_exit"
 assert_contains "--check meldet README.md veraltet" "README.md" "$output"
 assert_contains "--check meldet veraltet" "veraltet" "$output"
+assert_contains "--check zeigt Diff-Header (---)" "---" "$output"
+assert_contains "--check zeigt Diff-Header (+++)" "+++" "$output"
+assert_contains "--check zeigt Diff mit Label" "aktuell" "$output"
 
 # Original wiederherstellen
 cp "$_TEST_TMPDIR/README.md.bak" "$DOTFILES_DIR/README.md"

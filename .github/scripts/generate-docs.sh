@@ -57,9 +57,9 @@ check_all() {
 
     # README.md
     local generated=$(run_generator "readme.sh" "generate_readme_md")
-    if ! compare_content "$DOTFILES_DIR/README.md" "$generated"; then
+    if ! diff -q "$DOTFILES_DIR/README.md" <(printf '%s\n' "$generated") >/dev/null 2>&1; then
         err "README.md ist veraltet"
-        diff -u "$DOTFILES_DIR/README.md" <(printf '%s\n' "$generated") | head -30 || true
+        diff -u --label "README.md (aktuell)" --label "README.md (generiert)" "$DOTFILES_DIR/README.md" <(printf '%s\n' "$generated") | head -30 || true
         (( errors++ )) || true
     else
         ok "README.md ist aktuell"
@@ -67,9 +67,9 @@ check_all() {
 
     # docs/setup.md
     generated=$(run_generator "setup.sh" "generate_setup_md")
-    if ! compare_content "$DOCS_DIR/setup.md" "$generated"; then
+    if ! diff -q "$DOCS_DIR/setup.md" <(printf '%s\n' "$generated") >/dev/null 2>&1; then
         err "docs/setup.md ist veraltet"
-        diff -u "$DOCS_DIR/setup.md" <(printf '%s\n' "$generated") | head -30 || true
+        diff -u --label "docs/setup.md (aktuell)" --label "docs/setup.md (generiert)" "$DOCS_DIR/setup.md" <(printf '%s\n' "$generated") | head -30 || true
         (( errors++ )) || true
     else
         ok "docs/setup.md ist aktuell"
@@ -77,9 +77,9 @@ check_all() {
 
     # docs/customization.md
     generated=$(run_generator "customization.sh" "generate_customization_md")
-    if ! compare_content "$DOCS_DIR/customization.md" "$generated"; then
+    if ! diff -q "$DOCS_DIR/customization.md" <(printf '%s\n' "$generated") >/dev/null 2>&1; then
         err "docs/customization.md ist veraltet"
-        diff -u "$DOCS_DIR/customization.md" <(printf '%s\n' "$generated") | head -30 || true
+        diff -u --label "docs/customization.md (aktuell)" --label "docs/customization.md (generiert)" "$DOCS_DIR/customization.md" <(printf '%s\n' "$generated") | head -30 || true
         (( errors++ )) || true
     else
         ok "docs/customization.md ist aktuell"
@@ -87,9 +87,9 @@ check_all() {
 
     # CONTRIBUTING.md (manuell gepflegt, nur ToC wird generiert)
     generated=$(run_generator "contributing.sh" "generate_contributing_md")
-    if ! compare_content "$DOTFILES_DIR/CONTRIBUTING.md" "$generated"; then
+    if ! diff -q "$DOTFILES_DIR/CONTRIBUTING.md" <(printf '%s\n' "$generated") >/dev/null 2>&1; then
         err "CONTRIBUTING.md ist veraltet"
-        diff -u "$DOTFILES_DIR/CONTRIBUTING.md" <(printf '%s\n' "$generated") | head -30 || true
+        diff -u --label "CONTRIBUTING.md (aktuell)" --label "CONTRIBUTING.md (generiert)" "$DOTFILES_DIR/CONTRIBUTING.md" <(printf '%s\n' "$generated") | head -30 || true
         (( errors++ )) || true
     else
         ok "CONTRIBUTING.md ist aktuell"
