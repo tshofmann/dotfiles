@@ -119,6 +119,8 @@ parse_config_file_header() {
     local config_file="$1"
     local -A header_fields=()
 
+    [[ -f "$config_file" ]] || return 0
+
     # Header-Felder extrahieren (bis Guard oder leere Zeile nach Header)
     local in_header=false
     local header_ended=false
