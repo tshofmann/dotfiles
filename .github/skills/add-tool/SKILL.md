@@ -20,7 +20,9 @@ brew "toolname"   # Beschreibung | https://docs-url
 
 ## Schritt 2: Linux-Mapping (BREW_TO_ALT)
 
-Erweitere das `BREW_TO_ALT`-Array in `setup/modules/apt-packages.sh` mit einer Installationsmethode:
+Auf **Arch, Fedora und Debian x86_64** reicht das Brewfile — Homebrew/Linuxbrew übernimmt die Installation direkt.
+
+Das `BREW_TO_ALT`-Mapping in `setup/modules/apt-packages.sh` ist ein **Fallback für Debian ARM** (armv6/armv7), wo Homebrew nicht verfügbar ist. Erweitere es trotzdem bei jeder neuen Formula:
 
 ```zsh
 [toolname]="apt:toolname"        # Standard: Debian/Ubuntu-Paket
@@ -143,7 +145,7 @@ Dies generiert automatisch tldr-Patches und aktualisiert README + docs.
 ## Checkliste
 
 - [ ] Brewfile-Eintrag mit Beschreibung + URL
-- [ ] BREW_TO_ALT Mapping für Linux
+- [ ] BREW_TO_ALT Mapping für Debian ARM (apt-packages.sh)
 - [ ] `.alias`-Datei mit korrektem Header-Format
 - [ ] Guard-Check am Anfang der `.alias`-Datei
 - [ ] Shell-Init in `.zshrc` (falls nötig)

@@ -75,4 +75,6 @@ setup_modulname() {
 
 ## Linux-Mapping (BREW_TO_ALT)
 
-`setup/modules/apt-packages.sh` enthält das `BREW_TO_ALT`-Mapping (Formula → Installationsmethode). Einträge nutzen Method-Prefixe wie `apt:<pkg>`, `cargo:<crate>`, `npm:<pkg>` oder `skip`. Bei neuen Tools in `setup/Brewfile` muss dieses Mapping erweitert werden.
+Auf **Arch, Fedora und Debian x86_64** installiert Homebrew/Linuxbrew direkt aus dem Brewfile — kein zusätzliches Mapping nötig.
+
+`setup/modules/apt-packages.sh` enthält das `BREW_TO_ALT`-Mapping als **Fallback für Debian ARM** (armv6/armv7, wo Homebrew nicht verfügbar ist). Einträge nutzen Method-Prefixe wie `apt:<pkg>`, `cargo:<crate>`, `npm:<pkg>` oder `skip`. Bei neuen Tools in `setup/Brewfile` sollte dieses Mapping erweitert werden, damit der ARM-Fallback vollständig bleibt.
