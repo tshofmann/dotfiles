@@ -224,7 +224,9 @@ assert_equals "4 Header-Felder" "4" "$field_count"
 
 # Nichtexistente Datei
 result=$(parse_config_file_header "$_TEST_TMPDIR/nonexistent.conf" 2>&1)
+local exit_code=$?
 assert_empty "Nichtexistente Config-Datei" "$result"
+assert_equals "Nichtexistente Config-Datei Exit-Code" "0" "$exit_code"
 
 # ============================================================
 # parse_fzf_config_keybindings()

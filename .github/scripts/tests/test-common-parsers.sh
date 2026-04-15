@@ -138,7 +138,9 @@ assert_empty "Nichtexistentes Feld" "$result"
 
 # Nichtexistente Datei
 result=$(parse_header_field "$_TEST_TMPDIR/nonexistent.alias" "Zweck" 2>&1)
+local exit_code=$?
 assert_empty "Nichtexistente Datei" "$result"
+assert_equals "Nichtexistente Datei Exit-Code" "0" "$exit_code"
 
 # Mehrzeilige Fortsetzung (Einrückung nach Feldname)
 cat > "$_TEST_TMPDIR/multi.alias" << 'FIXTURE'
@@ -217,7 +219,9 @@ assert_empty "Leere Datei liefert leeren Codeblock" "$result"
 
 # Nichtexistente Datei
 result=$(extract_usage_codeblock "$_TEST_TMPDIR/nonexistent.alias" 2>&1)
+local exit_code=$?
 assert_empty "Nichtexistente Datei liefert leeren Codeblock" "$result"
+assert_equals "Nichtexistente Datei Codeblock Exit-Code" "0" "$exit_code"
 
 # ============================================================
 # Zusammenfassung
