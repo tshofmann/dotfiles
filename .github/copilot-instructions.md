@@ -34,6 +34,7 @@
 | **Niemals Annahmen** | Erst recherchieren, dann handeln |
 | **Niemals nackte Linter** | Immer Projekt-Config verwenden, nie `npx tool datei` ohne `--config` |
 | **Niemals `/Users/<name>`** | Öffentlich sichtbar → `~` oder `$HOME` |
+| **Keine Offensichtlichkeits-Kommentare** | Header-Block und Beschreibungskommentare sind Pflicht (Generator-Input) — aber `# Setze Variable` über einer Zuweisung ist Rauschen |
 | **ZSH ist die Ziel-Shell** | POSIX sh nur in `setup/install.sh` und `setup/lib/logging.sh` (weil zsh auf frischen Linux-Systemen fehlen kann) |
 
 ---
@@ -55,6 +56,8 @@
 **Einstiegspunkt:** `dothelp` zeigt alle verfügbaren tldr-Seiten mit dotfiles-Erweiterungen.
 
 > **Bereichsspezifische Konventionen** sind in [`.github/instructions/`](instructions/) als `.instructions.md`-Dateien hinterlegt und werden automatisch geladen wenn passende Dateien bearbeitet werden.
+>
+> **Bei Aufgaben ohne offene Datei** (z.B. „prüfe die fzf-Aliase"): Zuerst die relevante Instructions-Datei aus der Verweise-Tabelle lesen, bevor du loslegst.
 
 ---
 

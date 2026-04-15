@@ -40,6 +40,11 @@ gh api repos/{owner}/{repo}/pulls/<nr>/reviews
 | Alle Kommentare prüfen | `get_review_comments` nicht nur `get_reviews` |
 | Outdated ≠ Resolved | Auch veraltete Threads explizit auflösen |
 
+```zsh
+# Review-Threads auflösen via gh CLI:
+gh api graphql -f query='mutation { resolveReviewThread(input: {threadId: "PRRT_..."}) { thread { isResolved } } }'
+```
+
 ### Templates
 
 - **Issues:** Templates aus `.github/ISSUE_TEMPLATE/` verwenden (`bug_report.md`, `feature_request.md`)
