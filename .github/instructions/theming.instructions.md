@@ -27,7 +27,7 @@ applyTo: '**/theme-style'
 
 1. **Prüfe** ob ein offizielles Catppuccin-Theme existiert auf [github.com/catppuccin](https://github.com/catppuccin)
 2. **Nutze semantische Farben** konsistent (Tabelle oben)
-3. **Aktualisiere Status** in der Theme-Quellen-Tabelle in `theme-style` (Zeile 13-42)
+3. **Aktualisiere Status** in der Theme-Quellen-Tabelle (Abschnitt „Theme-Quellen“) in `theme-style`
 4. **Bevorzuge Upstream-Themes** – nur manuell wenn kein offizielles existiert
 
 ## Status-Dokumentation

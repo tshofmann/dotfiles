@@ -18,7 +18,7 @@ Die Funktion gehört in die `.alias`-Datei des Tools, das sie **primär** reprä
 | `bat-theme()` | `bat.alias` | bat-spezifisch |
 | `procs()` | `fzf.alias` | generische Funktion ohne Tool-Bindung |
 
-**Faustregel:** Frage „Ohne welches Tool wäre diese Funktion sinnlos?" → Dort gehört sie hin.
+**Faustregel:** Frage „Ohne welches Tool wäre diese Funktion sinnlos?“ → Dort gehört sie hin.
 
 ## Schritt 2: Beschreibungskommentar schreiben
 

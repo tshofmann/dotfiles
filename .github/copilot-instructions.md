@@ -54,7 +54,7 @@
 
 **Einstiegspunkt:** `dothelp` zeigt alle verfügbaren tldr-Seiten mit dotfiles-Erweiterungen.
 
-> **Bereichsspezifische Konventionen** sind in [`.github/instructions/`](.github/instructions/) als `.instructions.md`-Dateien hinterlegt und werden automatisch geladen wenn passende Dateien bearbeitet werden.
+> **Bereichsspezifische Konventionen** sind in [`.github/instructions/`](instructions/) als `.instructions.md`-Dateien hinterlegt und werden automatisch geladen wenn passende Dateien bearbeitet werden.
 
 ---
 

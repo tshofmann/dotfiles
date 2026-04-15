@@ -17,6 +17,7 @@ Module in `setup/modules/*.sh` können plattformspezifisch sein:
 | `linux:` | Alle Linux-Distros |
 | `fedora:` | Nur Fedora |
 | `debian:` | Nur Debian/Ubuntu |
+| `arch:` | Nur Arch Linux |
 
 ## Core Guard
 
@@ -74,4 +75,4 @@ setup_modulname() {
 
 ## Linux-Mapping (BREW_TO_ALT)
 
-`setup/modules/apt-packages.sh` enthält das `BREW_TO_ALT`-Mapping (Homebrew-Tool → Linux-Paket). Bei neuen Tools in `setup/Brewfile` muss dieses Mapping erweitert werden.
+`setup/modules/apt-packages.sh` enthält das `BREW_TO_ALT`-Mapping (Formula → Installationsmethode). Einträge nutzen Method-Prefixe wie `apt:<pkg>`, `cargo:<crate>`, `npm:<pkg>` oder `skip`. Bei neuen Tools in `setup/Brewfile` muss dieses Mapping erweitert werden.

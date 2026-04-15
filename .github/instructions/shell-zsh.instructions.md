@@ -1,7 +1,7 @@
 ---
 name: 'ZSH Shell-Konventionen'
 description: 'ZSH-Fallen, Variablen-Quoting, Shell-Syntax und Konventionen für Shell-Skripte'
-applyTo: '**/*.{sh,zsh}'
+applyTo: '{**/*.sh,**/*.zsh,**/.zshrc,**/.zshenv,**/.zprofile,**/.zlogin}'
 ---
 
 # ZSH Shell-Konventionen

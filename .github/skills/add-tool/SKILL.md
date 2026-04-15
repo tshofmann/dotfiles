@@ -20,10 +20,13 @@ brew "toolname"   # Beschreibung | https://docs-url
 
 ## Schritt 2: Linux-Mapping (BREW_TO_ALT)
 
-Erweitere das `BREW_TO_ALT`-Array in `setup/modules/apt-packages.sh` mit dem Linux-Paketnamen:
+Erweitere das `BREW_TO_ALT`-Array in `setup/modules/apt-packages.sh` mit einer Installationsmethode:
 
 ```zsh
-[toolname]="toolname"  # oder abweichender Paketname
+[toolname]="apt:toolname"        # Standard: Debian/Ubuntu-Paket
+[othertool]="cargo:othertool"    # Falls Installation via cargo erfolgt
+[nodetool]="npm:nodetool"        # Falls Installation via npm erfolgt
+[macos-only-tool]="skip"         # Wenn es unter Linux bewusst übersprungen wird
 ```
 
 ## Schritt 3: Alias-Datei erstellen

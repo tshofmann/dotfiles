@@ -28,8 +28,10 @@ Ein Alias/Funktion gehört in die `.alias`-Datei des Tools, das er **primär** r
 # Aliase      : cmd1, cmd2
 # ============================================================
 
-# Guard
-if ! command -v tool >/dev/null 2>&1; then return 0; fi
+# Guard   : Nur wenn tool installiert ist
+if ! command -v tool >/dev/null 2>&1; then
+    return 0
+fi
 
 # Beschreibung für cmds/tldr
 alias x='command'
@@ -44,7 +46,7 @@ func() {
 
 - Funktionen als `name() {` schreiben – **nicht** `function name` oder `function name()`
 - Private Funktionen mit `_` Präfix (werden von Validatoren ignoriert)
-- Guard-Check am Anfang: `if ! command -v tool >/dev/null 2>&1; then return 0; fi`
+- Guard-Check am Anfang: Mehrzeilig mit `# Guard :` Kommentar (siehe Template oben)
 - **Jede Funktion und jeder Alias** braucht einen Beschreibungskommentar direkt darüber
 - `# Config :` ist Pflicht wenn das Tool eine lokale Config hat
 - Header-Felder auf 12 Zeichen padden, dann Leerzeichen + `:`
