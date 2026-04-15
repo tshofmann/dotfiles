@@ -56,6 +56,8 @@ extract_fzf_functions() {
 
     for name in "${names[@]}"; do
         [[ -z "$name" ]] && continue
+        # Alias-Namen: nur Alphanumerisch, Unterstriche, Bindestriche (CONTRIBUTING.md)
+        [[ "$name" =~ ^[a-zA-Z0-9_-]+$ ]] || continue
         # Nur Funktionen mit () { im Code
         if grep -q "^[[:space:]]*${name}() {" "$alias_file" 2>/dev/null; then
             if [[ "$is_fzf_file" == "1" ]]; then
