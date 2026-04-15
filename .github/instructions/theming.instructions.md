@@ -36,7 +36,9 @@ applyTo: '**/theme-style'
 upstream        = Unverändert aus offiziellem Repo
 upstream+X      = Mit Anpassung (X = was geändert)
 upstream-X      = Mit Entfernung (X = was entfernt)
+builtin         = In Tool eingebaut (kein externes Theme nötig)
 manual          = Manuell basierend auf catppuccin.com/palette
+semantics       = Nur semantische Farbzuordnung, kein vollständiges Upstream-Theme
 ```
 
 ## In Skripten nutzen

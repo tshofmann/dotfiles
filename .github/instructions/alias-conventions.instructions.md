@@ -46,9 +46,9 @@ func() {
 
 - Funktionen als `name() {` schreiben – **nicht** `function name` oder `function name()`
 - Private Funktionen mit `_` Präfix (werden von Validatoren ignoriert)
-- Guard-Check am Anfang: Mehrzeilig mit `# Guard :` Kommentar (siehe Template oben)
+- Guard-Check am Anfang: Mehrzeilig mit `# Guard   :` Kommentar (siehe Template oben)
 - **Jede Funktion und jeder Alias** braucht einen Beschreibungskommentar direkt darüber
-- `# Config :` ist Pflicht wenn das Tool eine lokale Config hat
+- `# Config      :` ist Pflicht wenn das Tool eine lokale Config hat
 - Header-Felder auf 12 Zeichen padden, dann Leerzeichen + `:`
 
 ## Namenskonvention

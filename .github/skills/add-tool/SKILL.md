@@ -118,7 +118,7 @@ In `terminal/.config/theme-style` die Tabelle um einen Eintrag erweitern:
 #   toolname     | ~/.config/tool/theme-file          | github.com/catppuccin/toolname                | upstream+anpassung
 ```
 
-Status-Suffixe: `upstream` (unverändert), `+X` (Anpassung), `-X` (Entfernung), `manual` (kein Upstream).
+Status-Werte: `upstream` (unverändert), `upstream+X` (Anpassung), `upstream-X` (Entfernung), `builtin` (in Tool eingebaut), `manual` (kein Upstream), `semantics` (nur semantische Farbzuordnung).
 
 ### 5d: Post-Install prüfen
 
