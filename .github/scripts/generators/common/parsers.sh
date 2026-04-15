@@ -23,6 +23,8 @@ parse_header_field() {
     local value=""
     local in_field=false
 
+    [[ -f "$file" ]] || return 0
+
     while IFS= read -r line; do
         # Header endet bei Guard oder ====== Abschluss nach gefundenem Feld
         [[ "$line" == "# Guard"* ]] && break
@@ -195,6 +197,8 @@ extract_usage_codeblock() {
     local current_section=""
     local in_header=true
     local first_section=true
+
+    [[ -f "$file" ]] || return 0
 
     while IFS= read -r line; do
         local trimmed="${line#"${line%%[![:space:]]*}"}"
