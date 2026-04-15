@@ -31,9 +31,45 @@ Alle Module setzen voraus, dass `_core.sh` geladen ist (gemeinsame stdlib). Logg
 # ============================================================
 # Zweck       : Was macht dieses Modul
 # Pfad        : setup/modules/modulname.sh
+# Benötigt    : _core.sh, stow.sh (wenn Configs verlinkt sein müssen)
+#
+# STEP        : Name | Beschreibung | ✓ Schnell / ⚠️ Netzwerk
 # ============================================================
 
-# Guard: _core.sh muss geladen sein
+# Standalone: Core laden bevor Guard greift
+if [[ "${ZSH_EVAL_CONTEXT}" == "toplevel" ]]; then
+    source "${0:A:h}/_core.sh" || { echo "FEHLER: _core.sh nicht gefunden" >&2; exit 1; }
+fi
+
+# Guard: Core muss geladen sein (fängt source ohne Core ab)
+[[ -z "${_BOOTSTRAP_CORE_LOADED:-}" ]] && {
+    echo "FEHLER: _core.sh muss vor modulname.sh geladen werden" >&2
+    return 1
+}
+```
+
+**Reihenfolge ist kritisch:** Standalone-Check **vor** Guard — sonst bricht der Guard den Standalone-Modus.
+
+## Header-Felder
+
+| Feld | Pflicht | Beschreibung |
+| ---- | ------- | ------------ |
+| `Benötigt` | Ja | Abhängigkeiten (`_core.sh` + weitere Module) |
+| `STEP` | Ja | Name, Beschreibung, Geschwindigkeit — wird vom Generator für `docs/setup.md` gelesen |
+
+## Modul-Registrierung
+
+Neue Module müssen im `MODULES`-Array in `setup/bootstrap.sh` registriert werden. Position beachten — Abhängigkeiten müssen vorher laufen (z.B. `stow` vor `bat`).
+
+## Setup-Funktion
+
+Jedes Modul definiert eine `setup_<name>()`-Funktion und setzt `CURRENT_STEP` für den Error-Handler:
+
+```zsh
+setup_modulname() {
+    CURRENT_STEP="Modulname Setup"
+    # Implementation
+}
 ```
 
 ## Linux-Mapping (BREW_TO_ALT)

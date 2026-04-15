@@ -84,9 +84,40 @@ fi
 
 Falls das Tool eine Config mit Farben hat:
 
-1. Prüfe ob ein Catppuccin-Theme existiert auf [github.com/catppuccin](https://github.com/catppuccin)
-2. Nutze semantische Farben aus `terminal/.config/theme-style`
-3. Aktualisiere die Theme-Quellen-Tabelle in `theme-style`
+### 5a: Upstream-Theme suchen
+
+Prüfe ob ein offizielles Theme existiert auf `github.com/catppuccin/<toolname>`. Falls ja:
+
+1. Theme-Datei herunterladen und unter `terminal/.config/<tool>/` ablegen
+2. Header-Block hinzufügen (Zweck, Pfad, Quelle)
+3. Prüfe ob `bg:#1E1E2E` entfernt werden sollte (für transparenten Terminal-Hintergrund)
+4. Akzentfarbe auf **Mauve** (`#CBA6F7`) setzen falls konfigurierbar
+
+### 5b: Semantische Farben anwenden
+
+Falls Anpassungen nötig sind, nutze die Zuweisungen aus `terminal/.config/theme-style`:
+
+| Verwendung | Farbe | Hex |
+| ---------- | ----- | --- |
+| Selection | Surface1 | `#45475A` |
+| Accent | Mauve | `#CBA6F7` |
+| Marker | Lavender | `#B4BEFE` |
+| Success | Green | `#A6E3A1` |
+| Error | Red | `#F38BA8` |
+
+### 5c: Theme-Quellen-Tabelle aktualisieren
+
+In `terminal/.config/theme-style` die Tabelle um einen Eintrag erweitern:
+
+```text
+#   toolname     | ~/.config/tool/theme-file          | github.com/catppuccin/toolname                | upstream+anpassung
+```
+
+Status-Suffixe: `upstream` (unverändert), `+X` (Anpassung), `-X` (Entfernung), `manual` (kein Upstream).
+
+### 5d: Post-Install prüfen
+
+Manche Tools brauchen Cache-Rebuilds nach Theme-Änderungen (z.B. `bat cache --build`). Falls nötig, gehört das in ein Setup-Modul unter `setup/modules/`.
 
 ## Schritt 6: Doku generieren
 
