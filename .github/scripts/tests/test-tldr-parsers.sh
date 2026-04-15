@@ -222,6 +222,10 @@ local field_count
 field_count=$(echo "$result" | grep -c "|" || true)
 assert_equals "4 Header-Felder" "4" "$field_count"
 
+# Nichtexistente Datei
+result=$(parse_config_file_header "$_TEST_TMPDIR/nonexistent.conf" 2>&1)
+assert_empty "Nichtexistente Config-Datei" "$result"
+
 # ============================================================
 # parse_fzf_config_keybindings()
 # ============================================================

@@ -136,6 +136,10 @@ assert_equals "Strich als Wert" "-" "$result"
 result=$(parse_header_field "$_TEST_TMPDIR/basic.alias" "Gibtsnet")
 assert_empty "Nichtexistentes Feld" "$result"
 
+# Nichtexistente Datei
+result=$(parse_header_field "$_TEST_TMPDIR/nonexistent.alias" "Zweck" 2>&1)
+assert_empty "Nichtexistente Datei" "$result"
+
 # Mehrzeilige Fortsetzung (Einrückung nach Feldname)
 cat > "$_TEST_TMPDIR/multi.alias" << 'FIXTURE'
 # ============================================================
@@ -210,6 +214,10 @@ FIXTURE
 
 result=$(extract_usage_codeblock "$_TEST_TMPDIR/empty.alias")
 assert_empty "Leere Datei liefert leeren Codeblock" "$result"
+
+# Nichtexistente Datei
+result=$(extract_usage_codeblock "$_TEST_TMPDIR/nonexistent.alias" 2>&1)
+assert_empty "Nichtexistente Datei liefert leeren Codeblock" "$result"
 
 # ============================================================
 # Zusammenfassung
