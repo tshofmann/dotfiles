@@ -57,7 +57,7 @@
 
 > **Bereichsspezifische Konventionen** sind in [`.github/instructions/`](instructions/) als `.instructions.md`-Dateien hinterlegt und werden automatisch geladen wenn passende Dateien bearbeitet werden.
 >
-> **Bei Aufgaben ohne offene Datei** (z.B. „prüfe die fzf-Aliase"): Zuerst die relevante Instructions-Datei aus der Verweise-Tabelle lesen, bevor du loslegst.
+> **Bei Aufgaben ohne offene Datei** (z.B. „prüfe die fzf-Aliase“): Zuerst die relevante Instructions-Datei aus der Verweise-Tabelle lesen, bevor du loslegst.
 
 ---
 
