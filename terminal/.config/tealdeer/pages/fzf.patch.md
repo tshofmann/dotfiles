@@ -56,20 +56,6 @@
 
 `vars {{suche}}`
 
-# dotfiles: Shell-Keybindings (Ctrl+X Prefix)
-
-- dotfiles: History durchsuchen mit Vorschau:
-
-`<Ctrl x> 1`
-
-- dotfiles: Datei suchen mit bat-Vorschau, Pfad einfügen:
-
-`<Ctrl x> 2`
-
-- dotfiles: Verzeichnis wechseln mit eza-Vorschau:
-
-`<Ctrl x> 3`
-
 # dotfiles: Tools mit fzf-Integration
 
 - dotfiles: Siehe `tldr 7z` für `7za`, `7zx`, `7zl`, `7zt`, `unrar`, `7zf`

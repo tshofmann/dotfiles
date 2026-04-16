@@ -21,13 +21,7 @@ GENERATORS_DIR="$SCRIPT_DIR/generators"
 DOTFILES_DIR="${SCRIPT_DIR:h:h}"  # .github/scripts → dotfiles
 DOCS_DIR="$DOTFILES_DIR/docs"
 
-# Laden der gemeinsamen Bibliothek
 source "$GENERATORS_DIR/common.sh"
-
-# ------------------------------------------------------------
-# Generator-Funktionen direkt einbinden (nicht source!)
-# ------------------------------------------------------------
-# Die Generator-Module definieren Funktionen die wir aufrufen können
 
 # Hilfsfunktion: Generiere Inhalt mittels Subshell um globalen State zu vermeiden
 run_generator() {

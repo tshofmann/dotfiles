@@ -16,11 +16,9 @@
 set -uo pipefail
 setopt TYPESET_SILENT
 
-# Dotfiles-Verzeichnis ermitteln
 SCRIPT_DIR="${0:A:h}"
-DOTFILES_DIR="${SCRIPT_DIR:h:h}"  # .github/scripts → dotfiles
+DOTFILES_DIR="${SCRIPT_DIR:h:h}"
 
-# Logging + Farben (geteilte Library)
 source "${0:A:h}/lib/log.sh"
 
 ALIAS_DIR="$DOTFILES_DIR/terminal/.config/alias"

@@ -22,11 +22,9 @@
 
 set -uo pipefail
 
-# Dotfiles-Verzeichnis ermitteln
 SCRIPT_DIR="${0:A:h}"
-DOTFILES_DIR="${SCRIPT_DIR:h:h}"  # .github/scripts → dotfiles
+DOTFILES_DIR="${SCRIPT_DIR:h:h}"
 
-# Logging + Farben (geteilte Library)
 source "${0:A:h}/lib/log.sh"
 
 # ------------------------------------------------------------
@@ -37,7 +35,6 @@ check_brewfile_mapping() {
     local apt_packages="$DOTFILES_DIR/setup/modules/apt-packages.sh"
     local errors=0
 
-    # Datei-Existenz prüfen
     if [[ ! -f "$brewfile" ]]; then
         err "Brewfile nicht gefunden: ${brewfile#$DOTFILES_DIR/}"
         return 1
@@ -76,7 +73,6 @@ check_brewfile_mapping() {
         fi
     done < "$apt_packages"
 
-    # Plausibilitäts-Check: Wurden überhaupt Daten gefunden?
     if (( ${#brew_formulae[@]} == 0 )); then
         err "Keine Formulae im Brewfile gefunden – Parser-Fehler?"
         return 1

@@ -77,8 +77,6 @@ if command -v brew >/dev/null 2>&1; then
 
     _brew_outdated_check() {
         local stamp="$_BREW_CHECK_STATE/last-check"
-
-        # Verzeichnis sicherstellen (einmalig)
         [[ -d "$_BREW_CHECK_STATE" ]] || mkdir -p "$_BREW_CHECK_STATE" || return
 
         # Timestamp frisch genug? → ZSH Glob Qualifier: ms+N = älter als N Sekunden
@@ -124,7 +122,6 @@ if command -v brew >/dev/null 2>&1; then
     }
 
     _brew_outdated_notify() {
-        # Deaktiviert per Config
         [[ "$_BREW_CHECK_NOTIFY" == off ]] && return
         # Einmal pro Session anzeigen (Datei bleibt für neue Sessions)
         (( _BREW_NOTIFIED )) && return

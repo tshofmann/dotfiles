@@ -251,10 +251,12 @@ generate_complete_patch() {
     [[ -n "$alias_output" ]] && output+="${alias_output}"
 
     if [[ "$tool_name" == "fzf" ]]; then
-        output+="\n\n# dotfiles: Shell-Keybindings (Ctrl+X Prefix)\n\n"
         local shell_keys
         shell_keys=$(parse_shell_keybindings "$alias_file")
-        output+="$shell_keys"
+        if [[ -n "${shell_keys//[[:space:]]/}" ]]; then
+            output+="\n\n# dotfiles: Shell-Keybindings (Ctrl+X Prefix)\n\n"
+            output+="$shell_keys"
+        fi
         # Cross-References nur ausgeben wenn vorhanden
         local cross_refs
         cross_refs=$(generate_cross_references)

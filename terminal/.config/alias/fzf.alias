@@ -28,13 +28,6 @@ if ! command -v fzf >/dev/null 2>&1; then
 fi
 
 # ------------------------------------------------------------
-# Shell-Keybindings (in init.zsh konfiguriert, Ctrl+X Prefix)
-# ------------------------------------------------------------
-# Ctrl+X 1: History durchsuchen mit Vorschau
-# Ctrl+X 2: Datei suchen mit bat-Vorschau, Pfad einfügen
-# Ctrl+X 3: Verzeichnis wechseln mit eza-Vorschau
-
-# ------------------------------------------------------------
 # KILL + FZF: Prozess-Management
 # ------------------------------------------------------------
 # Prozesse interaktiv suchen und beenden (Tab für Mehrfachauswahl)
