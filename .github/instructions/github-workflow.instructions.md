@@ -24,7 +24,7 @@ gh pr checks <nr>
 gh pr view <nr> --json reviews | jq '.reviews[] | select(.author.login | contains("copilot"))'
 
 # 3. Review-Kommentare LESEN und BEHEBEN
-gh api repos/{owner}/{repo}/pulls/<nr>/reviews
+gh api repos/{owner}/{repo}/pulls/<nr>/comments
 
 # 4. Erst wenn alle Kommentare adressiert sind: Mergen
 ```

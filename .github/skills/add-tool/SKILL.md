@@ -100,7 +100,7 @@ Prüfe ob ein offizielles Theme existiert auf `github.com/catppuccin/<toolname>`
 
 ### 5b: Semantische Farben anwenden
 
-Falls Anpassungen nötig sind, nutze die Zuweisungen aus `terminal/.config/theme-style`:
+Falls Anpassungen nötig sind, nutze die semantischen Farben aus `terminal/.config/theme-style` (Abschnitt „Semantische Farbzuweisungen"). Die häufigsten:
 
 | Verwendung | Farbe | Hex |
 | ---------- | ----- | --- |
@@ -109,6 +109,11 @@ Falls Anpassungen nötig sind, nutze die Zuweisungen aus `terminal/.config/theme
 | Marker | Lavender | `#B4BEFE` |
 | Success | Green | `#A6E3A1` |
 | Error | Red | `#F38BA8` |
+| Warning | Yellow | `#F9E2AF` |
+| Info/Link | Blue | `#89B4FA` |
+| Directory | Mauve | `#CBA6F7` |
+
+Vollständige Referenz: `theming.instructions.md` → Semantische Farben
 
 ### 5c: Theme-Quellen-Tabelle aktualisieren
 
@@ -122,7 +127,7 @@ Status-Werte: `upstream` (unverändert), `upstream+X` (Anpassung), `upstream-X` 
 
 ### 5d: Post-Install prüfen
 
-Manche Tools brauchen Cache-Rebuilds nach Theme-Änderungen (z.B. `bat cache --build`). Falls nötig, gehört das in ein Setup-Modul unter `setup/modules/`.
+Manche Tools brauchen Cache-Rebuilds nach Theme-Änderungen (z.B. `bat cache --build`). Falls nötig, gehört das in ein Setup-Modul unter `setup/modules/` — und muss im `MODULES`-Array in `setup/bootstrap.sh` registriert werden (Position beachten: Abhängigkeiten vorher).
 
 ## Schritt 6: Doku generieren
 
