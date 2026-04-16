@@ -497,17 +497,17 @@ Die `.alias`-Datei ist der zentrale Dokumentations-Hub für jedes Tool.
 
 ```text
 Hat das Tool eine .alias-Datei?
-├─ JA → Config-Pfad gehört dort: `# Config : ~/.config/tool/config`
+├─ JA → Config-Pfad gehört dort: `# Config      : ~/.config/tool/config`
 │       (Single Source of Truth für Tool-Dokumentation)
 │
 └─ NEIN → Config-Datei in ~/.config/<tool>/ suchen
-          ├─ Datei mit `# Pfad :` Header?
+          ├─ Datei mit `# Pfad        :` Header?
           │  └─ JA → Config-Pfad gefunden + tldr-Patch generierbar ✓
           └─ NEIN → Kein Config-Pfad, keine tldr-Dokumentation
 ```
 
-**Regel:** `# Config :` in Alias-Datei ist Pflicht, wenn das Tool eine lokale Config hat.
-Der Fallback (`# Pfad :` in Config-Dateien) ist für Tools ohne `.alias`-Datei.
+**Regel:** `# Config      :` in Alias-Datei ist Pflicht, wenn das Tool eine lokale Config hat.
+Der Fallback (`# Pfad        :` in Config-Dateien) ist für Tools ohne `.alias`-Datei.
 
 ### tldr-Dokumentation für Tools ohne Aliase
 
@@ -530,9 +530,9 @@ tldr-Generator Quellen:
 
 | Feld | Pflicht | Beispiel |
 | ---- | ------- | -------- |
-| `# Zweck` | ✅ | `# Zweck : GPU-Terminal mit Image-Support` |
-| `# Pfad` | ✅ | `# Pfad : ~/.config/kitty/kitty.conf` |
-| `# Docs` | ✅ | `# Docs : https://sw.kovidgoyal.net/kitty/` |
+| `# Zweck` | ✅ | `# Zweck       : GPU-Terminal mit Image-Support` |
+| `# Pfad` | ✅ | `# Pfad        : ~/.config/kitty/kitty.conf` |
+| `# Docs` | ✅ | `# Docs        : https://sw.kovidgoyal.net/kitty/` |
 | `# Reload` | ⚪ | `# Reload : Ctrl+Shift+F5` |
 | `# Theme` | ⚪ | `# Theme : current-theme.conf (via Stow)` |
 
@@ -796,7 +796,7 @@ Bestimmte Sektionen in `.alias`-Dateien werden automatisch in `tldr dotfiles` do
 > Neue Sektionen erscheinen ohne Code-Änderung in `dothelp`. Sektionen ohne öffentliche
 > Aliase/Funktionen (z.B. nur `_`-Prefix) werden automatisch übersprungen.
 >
-> `dotfiles.alias` bleibt hardcodiert, da die Sektion „tldr-abhängige Aliase" (`dothelp`/`dh`)
+> `dotfiles.alias` bleibt hardcodiert, da die Sektion „tldr-abhängige Aliase“ (`dothelp`/`dh`)
 > bereits im Header-Block der Page steht und eine dynamische Extraktion zu Duplikaten führen würde.
 
 ### Funktions-Syntax
