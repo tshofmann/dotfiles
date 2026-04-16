@@ -497,7 +497,7 @@ Die `.alias`-Datei ist der zentrale Dokumentations-Hub für jedes Tool.
 
 ```text
 Hat das Tool eine .alias-Datei?
-├─ JA → Config-Pfad gehört dort: `# Config : ~/.config/tool/config`
+├─ JA → Config-Pfad gehört dort: `# Config      : ~/.config/tool/config`
 │       (Single Source of Truth für Tool-Dokumentation)
 │
 └─ NEIN → Config-Datei in ~/.config/<tool>/ suchen
@@ -530,9 +530,9 @@ tldr-Generator Quellen:
 
 | Feld | Pflicht | Beispiel |
 | ---- | ------- | -------- |
-| `# Zweck` | ✅ | `# Zweck : GPU-Terminal mit Image-Support` |
-| `# Pfad` | ✅ | `# Pfad : ~/.config/kitty/kitty.conf` |
-| `# Docs` | ✅ | `# Docs : https://sw.kovidgoyal.net/kitty/` |
+| `# Zweck` | ✅ | `# Zweck       : GPU-Terminal mit Image-Support` |
+| `# Pfad` | ✅ | `# Pfad        : ~/.config/kitty/kitty.conf` |
+| `# Docs` | ✅ | `# Docs        : https://sw.kovidgoyal.net/kitty/` |
 | `# Reload` | ⚪ | `# Reload : Ctrl+Shift+F5` |
 | `# Theme` | ⚪ | `# Theme : current-theme.conf (via Stow)` |
 
