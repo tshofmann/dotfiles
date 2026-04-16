@@ -120,9 +120,9 @@ Der Aktions-Text (nach `=` bzw. `:`) muss **identisch** sein. Nur der Separator 
 | `open` | `xopen` | `platform.zsh` |
 | `sed -i` | `sedi` | `platform.zsh` |
 
-## Schritt 7: Header-Feld `# Aliase :` aktualisieren
+## Schritt 7: Header-Feld `# Aliase      :` aktualisieren
 
-In der `.alias`-Datei den Header-Kommentar aktualisieren — die neue Funktion zum `# Aliase :` Feld hinzufügen.
+In der `.alias`-Datei den Header-Kommentar aktualisieren — die neue Funktion zum `# Aliase      :` Feld hinzufügen.
 
 ## Schritt 8: Validieren
 
@@ -166,6 +166,6 @@ zj() {
 - [ ] `header-wrap` statt `--header=`
 - [ ] Keybinding-Text exakt synchron (Kommentar ↔ header-wrap)
 - [ ] Cross-Platform: `clip`/`xopen`/`sedi` statt nativer Befehle
-- [ ] `# Aliase :` Header-Feld aktualisiert
+- [ ] `# Aliase      :` Header-Feld aktualisiert
 - [ ] `check-header-sync.sh` bestanden
 - [ ] `generate-docs.sh --generate` ausgeführt

@@ -501,13 +501,13 @@ Hat das Tool eine .alias-Datei?
 │       (Single Source of Truth für Tool-Dokumentation)
 │
 └─ NEIN → Config-Datei in ~/.config/<tool>/ suchen
-          ├─ Datei mit `# Pfad :` Header?
+          ├─ Datei mit `# Pfad        :` Header?
           │  └─ JA → Config-Pfad gefunden + tldr-Patch generierbar ✓
           └─ NEIN → Kein Config-Pfad, keine tldr-Dokumentation
 ```
 
-**Regel:** `# Config :` in Alias-Datei ist Pflicht, wenn das Tool eine lokale Config hat.
-Der Fallback (`# Pfad :` in Config-Dateien) ist für Tools ohne `.alias`-Datei.
+**Regel:** `# Config      :` in Alias-Datei ist Pflicht, wenn das Tool eine lokale Config hat.
+Der Fallback (`# Pfad        :` in Config-Dateien) ist für Tools ohne `.alias`-Datei.
 
 ### tldr-Dokumentation für Tools ohne Aliase
 
