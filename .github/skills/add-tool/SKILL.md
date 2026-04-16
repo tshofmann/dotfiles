@@ -100,7 +100,7 @@ Prüfe ob ein offizielles Theme existiert auf `github.com/catppuccin/<toolname>`
 
 ### 5b: Semantische Farben anwenden
 
-Falls Anpassungen nötig sind, nutze die semantischen Farben aus `terminal/.config/theme-style` (Abschnitt „Semantische Farbzuweisungen"). Die häufigsten:
+Falls Anpassungen nötig sind, nutze die semantischen Farben aus `terminal/.config/theme-style` (Abschnitt „Semantische Farbzuweisungen“). Die häufigsten:
 
 | Verwendung | Farbe | Hex |
 | ---------- | ----- | --- |

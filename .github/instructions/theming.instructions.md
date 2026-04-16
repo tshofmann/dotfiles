@@ -21,7 +21,7 @@ applyTo: '**/theme-style'
 | Error/Invalid | Red | `#F38BA8` |
 | Warning/Modified | Yellow | `#F9E2AF` |
 | Directory | Mauve | `#CBA6F7` |
-| Symlink/Info | Blue | `#89B4FA` |
+| Info/Link | Blue | `#89B4FA` |
 
 ## Bei neuen Tool-Konfigurationen
 
