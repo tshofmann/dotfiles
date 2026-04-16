@@ -796,7 +796,7 @@ Bestimmte Sektionen in `.alias`-Dateien werden automatisch in `tldr dotfiles` do
 > Neue Sektionen erscheinen ohne Code-Änderung in `dothelp`. Sektionen ohne öffentliche
 > Aliase/Funktionen (z.B. nur `_`-Prefix) werden automatisch übersprungen.
 >
-> `dotfiles.alias` bleibt hardcodiert, da die Sektion „tldr-abhängige Aliase" (`dothelp`/`dh`)
+> `dotfiles.alias` bleibt hardcodiert, da die Sektion „tldr-abhängige Aliase“ (`dothelp`/`dh`)
 > bereits im Header-Block der Page steht und eine dynamische Extraktion zu Duplikaten führen würde.
 
 ### Funktions-Syntax
