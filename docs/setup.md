@@ -219,6 +219,7 @@ ff                                  # System-Info anzeigen
 | [`copilot-cli`](https://docs.github.com/en/copilot/concepts/agents/about-copilot-cli) | Agentic Coding |
 | [`github`](https://desktop.github.com/) | GitHub Desktop GUI |
 | [`kitty`](https://sw.kovidgoyal.net/kitty/) | GPU-Terminal mit Image-Support |
+| [`obsidian`](https://obsidian.md/) | Markdown-Wissensdatenbank |
 | [`visual-studio-code`](https://code.visualstudio.com/) | Editor |
 | [`font-jetbrains-mono-nerd-font`](https://github.com/ryanoasis/nerd-fonts) | Nerd Font |
 | [`font-meslo-lg-nerd-font`](https://github.com/ryanoasis/nerd-fonts) | Nerd Font |
