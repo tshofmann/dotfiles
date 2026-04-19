@@ -48,6 +48,7 @@ brew "mas"                                  # Mac App Store CLI | https://github
 cask "copilot-cli"                          # Agentic Coding | https://docs.github.com/en/copilot/concepts/agents/about-copilot-cli
 cask "github"                               # GitHub Desktop GUI | https://desktop.github.com/
 cask "kitty"                                # GPU-Terminal mit Image-Support | https://sw.kovidgoyal.net/kitty/
+cask "obsidian"                             # Markdown-Wissensdatenbank | https://obsidian.md/
 cask "visual-studio-code"                   # Editor | https://code.visualstudio.com/
 cask "font-jetbrains-mono-nerd-font"        # Nerd Font | https://github.com/ryanoasis/nerd-fonts
 cask "font-meslo-lg-nerd-font"              # Nerd Font | https://github.com/ryanoasis/nerd-fonts
