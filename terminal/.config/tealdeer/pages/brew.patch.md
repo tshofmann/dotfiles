@@ -4,10 +4,6 @@
 
 - dotfiles: Automatischer Outdated-Check (Standard: 12h) – zeigt einmalig pro Session eine Benachrichtigung, wenn Updates verfügbar sind. Konfigurierbar via check.conf (Intervall, Kanal, Meldung).
 
-- dotfiles: Homebrew Komplett-Update (update, upgrade, autoremove, cleanup, mas (setzt Auto-Check-Timer zurück)):
-
-`brew-up`
-
 - dotfiles: Zeige veraltete Mac App Store Apps:
 
 `maso`
@@ -27,6 +23,10 @@
 - dotfiles: Alle installierten Mac App Store Apps auflisten:
 
 `masl`
+
+- dotfiles: Homebrew Komplett-Update (update, upgrade, autoremove, cleanup, mas (setzt Auto-Check-Timer zurück)):
+
+`brew-up`
 
 - dotfiles: Brewfile Wartungs-Dashboard (Versionen, Updates, Drift):
 

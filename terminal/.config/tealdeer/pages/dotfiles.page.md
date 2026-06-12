@@ -71,10 +71,6 @@
 
 # Homebrew (inkl. Mac App Store)
 
-- Homebrew Komplett-Update (update, upgrade, autoremove, cleanup, mas (setzt Auto-Check-Timer zurück)):
-
-`brew-up`
-
 - Zeige veraltete Mac App Store Apps:
 
 `maso`
@@ -94,6 +90,10 @@
 - Alle installierten Mac App Store Apps auflisten:
 
 `masl`
+
+- Homebrew Komplett-Update (update, upgrade, autoremove, cleanup, mas (setzt Auto-Check-Timer zurück)):
+
+`brew-up`
 
 - Brewfile Wartungs-Dashboard (Versionen, Updates, Drift):
 
