@@ -37,8 +37,8 @@ alias unrar='7zz x'
 # ------------------------------------------------------------
 # Archiv Browser(pfad=.) – Enter=Entpacken, Ctrl+Y=Pfad kopieren
 7zf() {
-    if ! command -v fzf >/dev/null 2>&1; then
-        echo "fzf benötigt für 7zf" >&2
+    if ! command -v fzf >/dev/null 2>&1 || ! command -v fd >/dev/null 2>&1; then
+        echo "7zf benötigt fzf und fd (brew install fzf fd)" >&2
         return 1
     fi
 

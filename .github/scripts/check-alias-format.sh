@@ -25,7 +25,9 @@ source "${0:A:h}/lib/log.sh"
 # ------------------------------------------------------------
 # Prüft 6 Konventionen aus CONTRIBUTING.md:
 #   1. Header-Block (^# ====) in den ersten 3 Zeilen
-#   2. Guard-Check (command -v) vorhanden
+#   2. Guard-Abdeckung: Öffentliche Top-Level-Definitionen stehen
+#      nach einem Datei-Guard (if ! command -v … return 0) oder in
+#      einem Top-Level 'if command -v'-Block (Ausnahme: dotfiles.alias, #232)
 #   3. Pflichtfelder (Zweck, Pfad, Docs, Nutzt, Ersetzt) im Header
 #   4. Mindestens eine Sektion mit Trennern (^# ----)
 #   5. Beschreibungskommentar über jeder alias/function-Definition
@@ -40,7 +42,8 @@ check_alias_format() {
     local errors=0
     local name line prevline field i
     local -a lines header_lines
-    local total has_header header_end eq_count has_guard found
+    local total has_header header_end eq_count found
+    local file_guarded in_file_guard in_cmd_block
     local sep_count defline funcline
     local -A fo_lines
     local fo_fld fo_prev fo_prev_ln
@@ -77,14 +80,54 @@ check_alias_format() {
         done
         header_lines=("${(@)lines[1,$header_end]}")
 
-        # 2. Guard-Check vorhanden?
-        has_guard=0
-        for (( i = 1; i <= total; i++ )); do
-            [[ "${lines[$i]}" == *"command -v"*">/dev/null"* ]] && { has_guard=1; break; }
-        done
-        if (( ! has_guard )); then
-            err "$name: Kein Guard-Check"
-            (( errors++ )) || true
+        # 2. Guard-Abdeckung prüfen
+        #    Öffentliche Top-Level-Definitionen sind nur erlaubt nach einem
+        #    Datei-Guard (if ! command -v … return 0 … fi) oder innerhalb
+        #    eines Top-Level 'if command -v'-Blocks. Eingehakte Definitionen
+        #    (in sonstigen Blöcken) sind eingerückt und hier nicht erfasst.
+        #    Ausnahme: dotfiles.alias nutzt Laufzeit-Checks im Funktionskörper
+        #    statt Tool-Guards – bewusste Entscheidung aus #232.
+        if [[ "$name" != "dotfiles.alias" ]]; then
+            file_guarded=0
+            in_file_guard=0
+            in_cmd_block=0
+            for (( i = 1; i <= total; i++ )); do
+                line="${lines[$i]}"
+                # Datei-Guard beginnt: if ! command -v … (Top-Level)
+                if [[ "$line" == 'if ! command -v '* ]]; then
+                    in_file_guard=1
+                    continue
+                fi
+                # Datei-Guard bestätigt: return 0 innerhalb des Blocks
+                if (( in_file_guard )) && [[ "$line" == *'return 0'* ]]; then
+                    file_guarded=1
+                    continue
+                fi
+                # Guard-Block beginnt: if command -v … (Top-Level, positiv)
+                if [[ "$line" == 'if command -v '* ]]; then
+                    in_cmd_block=1
+                    continue
+                fi
+                # Top-Level fi schließt Datei-Guard-if und Guard-Block
+                if [[ "$line" == 'fi' || "$line" == 'fi '* ]]; then
+                    in_file_guard=0
+                    in_cmd_block=0
+                    continue
+                fi
+                # Nach bestätigtem Datei-Guard ist der Rest der Datei gedeckt
+                (( file_guarded )) && continue
+                # Innerhalb eines 'if command -v'-Blocks ebenfalls gedeckt
+                (( in_cmd_block )) && continue
+                # Ungeschützte öffentliche Top-Level-Definition?
+                if [[ "$line" =~ '^alias [a-zA-Z]' ]]; then
+                    defline="${line#alias }"
+                    err "$name:$i: 'alias ${defline%%=*}' ohne Guard-Abdeckung (Datei-Guard oder 'if command -v'-Block, siehe #438)"
+                    (( errors++ )) || true
+                elif [[ "$line" =~ '^[a-zA-Z][a-zA-Z0-9_-]*\(\)[[:space:]]*\{' ]]; then
+                    err "$name:$i: '${line%%\(*}()' ohne Guard-Abdeckung (Datei-Guard oder 'if command -v'-Block, siehe #438)"
+                    (( errors++ )) || true
+                fi
+            done
         fi
 
         # 3. Pflichtfelder im Header (CONTRIBUTING.md: Zweck, Pfad, Docs, Nutzt, Ersetzt)
