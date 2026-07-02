@@ -145,6 +145,7 @@ get_tools_from_brewfile() {
     [sevenzip]=7zz
     [poppler]=pdftotext
     [imagemagick]=magick
+    [pdftk-java]=pdftk
   )
 
   # Formulae die kein eigenständiges Binary haben (werden separat geprüft)
