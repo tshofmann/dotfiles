@@ -154,6 +154,7 @@ get_tools_from_brewfile() {
     zsh-syntax-highlighting
     zsh-autosuggestions
     mas
+    tesseract-lang
   )
 
   # Extrahiere brew-Formulae (keine casks, keine mas)

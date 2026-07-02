@@ -198,6 +198,7 @@ ff                                  # System-Info anzeigen
 | [`jq`](https://jqlang.org/) | JSON-Prozessor |
 | [`lazygit`](https://github.com/jesseduffield/lazygit) | Git-TUI |
 | [`markdownlint-cli2`](https://github.com/DavidAnson/markdownlint-cli2) | Markdown-Linter |
+| [`ocrmypdf`](https://ocrmypdf.readthedocs.io/en/latest/) | OCR-Textlayer für PDFs |
 | [`pdftk-java`](https://gitlab.com/pdftk-java/pdftk) | PDF-Formular-Toolkit |
 | [`poppler`](https://poppler.freedesktop.org/) | PDF-Rendering |
 | [`qpdf`](https://qpdf.sourceforge.io/) | PDF-Struktur & Transformation |
@@ -208,6 +209,7 @@ ff                                  # System-Info anzeigen
 | [`starship`](https://starship.rs/) | Shell-Prompt |
 | [`stow`](https://www.gnu.org/software/stow/) | Symlink-Manager |
 | [`tealdeer`](https://tealdeer-rs.github.io/tealdeer/) | tldr-Client |
+| [`tesseract-lang`](https://github.com/tesseract-ocr/tessdata_fast) | Tesseract-Sprachpakete (inkl. deu) |
 | [`yazi`](https://yazi-rs.github.io/) | File Manager |
 | [`zoxide`](https://github.com/ajeetdsouza/zoxide) | Smartes cd mit Frecency |
 | [`zsh-autosuggestions`](https://github.com/zsh-users/zsh-autosuggestions) | History-Vorschläge |

@@ -28,6 +28,7 @@ brew "imagemagick"                          # Bild-Manipulation | https://imagem
 brew "jq"                                   # JSON-Prozessor | https://jqlang.org/
 brew "lazygit"                              # Git-TUI | https://github.com/jesseduffield/lazygit
 brew "markdownlint-cli2"                    # Markdown-Linter | https://github.com/DavidAnson/markdownlint-cli2
+brew "ocrmypdf"                             # OCR-Textlayer für PDFs | https://ocrmypdf.readthedocs.io/en/latest/
 brew "pdftk-java"                           # PDF-Formular-Toolkit | https://gitlab.com/pdftk-java/pdftk
 brew "poppler"                              # PDF-Rendering | https://poppler.freedesktop.org/
 brew "qpdf"                                 # PDF-Struktur & Transformation | https://qpdf.sourceforge.io/
@@ -38,6 +39,7 @@ brew "shellcheck"                           # Shell-Script-Linter (für Bash) | 
 brew "starship"                             # Shell-Prompt | https://starship.rs/
 brew "stow"                                 # Symlink-Manager | https://www.gnu.org/software/stow/
 brew "tealdeer"                             # tldr-Client | https://tealdeer-rs.github.io/tealdeer/
+brew "tesseract-lang"                       # Tesseract-Sprachpakete (inkl. deu) | https://github.com/tesseract-ocr/tessdata_fast
 brew "yazi"                                 # File Manager | https://yazi-rs.github.io/
 brew "zoxide"                               # Smartes cd mit Frecency | https://github.com/ajeetdsouza/zoxide
 brew "zsh-autosuggestions"                  # History-Vorschläge | https://github.com/zsh-users/zsh-autosuggestions
