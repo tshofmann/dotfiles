@@ -1,0 +1,51 @@
+# ============================================================
+# ocrmypdf.alias - Aliase für OCRmyPDF (OCR-Textlayer)
+# ============================================================
+# Zweck       : Gescannte PDFs durchsuchbar machen (deutsch by default)
+# Pfad        : ~/.config/alias/ocrmypdf.alias
+# Docs        : https://ocrmypdf.readthedocs.io/
+# Nutzt       : -
+# Ersetzt     : -
+# Aliase      : pdfocr, pdfscan
+# ============================================================
+
+# Guard   : Nur wenn ocrmypdf installiert ist
+if ! command -v ocrmypdf >/dev/null 2>&1; then
+    return 0
+fi
+
+# ------------------------------------------------------------
+# OCR
+# ------------------------------------------------------------
+# OCR-Textlayer hinzufügen(pdf, sprache=deu, output?) – macht Scans durchsuchbar
+pdfocr() {
+    if [[ $# -lt 1 ]]; then
+        echo "Verwendung: pdfocr <pdf> [sprache=deu] [output]" >&2
+        return 1
+    fi
+    local input="$1"
+    local lang="${2:-deu}"
+    local output="${3:-${input%.*}-ocr.pdf}"
+
+    if [[ -e "$output" ]]; then
+        echo "Fehler: $output existiert bereits" >&2
+        return 1
+    fi
+    ocrmypdf -l "$lang" "$input" "$output"
+}
+
+# Scan optimieren und OCR(pdf, output?) – deskew, clean, rotate-pages, deutsch
+pdfscan() {
+    if [[ $# -lt 1 ]]; then
+        echo "Verwendung: pdfscan <pdf> [output]" >&2
+        return 1
+    fi
+    local input="$1"
+    local output="${2:-${input%.*}-scan.pdf}"
+
+    if [[ -e "$output" ]]; then
+        echo "Fehler: $output existiert bereits" >&2
+        return 1
+    fi
+    ocrmypdf --deskew --clean --rotate-pages -l deu "$input" "$output"
+}

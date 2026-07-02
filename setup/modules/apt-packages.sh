@@ -64,6 +64,7 @@ typeset -A BREW_TO_ALT=(
     [imagemagick]=apt:imagemagick
     [jq]=apt:jq
     [lazygit]=apt:lazygit
+    [ocrmypdf]=apt:ocrmypdf
     [poppler]=apt:poppler-utils
     [ripgrep]=apt:ripgrep
     [sevenzip]=apt:7zip
@@ -71,6 +72,7 @@ typeset -A BREW_TO_ALT=(
     [starship]=apt:starship
     [stow]=apt:stow
     [tealdeer]=apt:tealdeer
+    [tesseract-lang]=apt:tesseract-ocr-deu
     [zoxide]=apt:zoxide
 
     # ZSH-Plugins (apt, werden separat vom Plugin-Pfad-Fallback genutzt)
