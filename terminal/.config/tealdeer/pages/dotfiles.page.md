@@ -129,7 +129,7 @@
 
 - Jedes Tool hat ALLE Aliase+Funktionen dokumentiert:
 
-`tldr {{7z|bat|brew|btop|exiftool|eza|fastfetch|fd|ffmpeg|fzf|gh|git|kitty|lazygit|magick|ocrmypdf|rg|starship|yazi|zoxide|zsh}}`
+`tldr {{7z|bat|brew|btop|exiftool|eza|fastfetch|fd|ffmpeg|fzf|gh|git|kitty|lazygit|magick|ocrmypdf|pdftk|rg|starship|yazi|zoxide|zsh}}`
 
 - Eigene Seiten (ohne offizielle tldr-Basis):
 

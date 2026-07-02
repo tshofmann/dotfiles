@@ -199,7 +199,9 @@ ff                                  # System-Info anzeigen
 | [`lazygit`](https://github.com/jesseduffield/lazygit) | Git-TUI |
 | [`markdownlint-cli2`](https://github.com/DavidAnson/markdownlint-cli2) | Markdown-Linter |
 | [`ocrmypdf`](https://ocrmypdf.readthedocs.io/en/latest/) | OCR-Textlayer für PDFs |
+| [`pdftk-java`](https://gitlab.com/pdftk-java/pdftk) | PDF-Formular-Toolkit |
 | [`poppler`](https://poppler.freedesktop.org/) | PDF-Rendering |
+| [`qpdf`](https://qpdf.sourceforge.io/) | PDF-Struktur & Transformation |
 | [`resvg`](https://github.com/RazrFalcon/resvg) | SVG-Rendering |
 | [`ripgrep`](https://github.com/BurntSushi/ripgrep) | grep-Ersatz, schnellste Textsuche |
 | [`sevenzip`](https://7-zip.org/) | Archiv-Extraktion |

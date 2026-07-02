@@ -7,7 +7,7 @@
 # Config      : ~/.config/ImageMagick/policy.xml (Sicherheit)
 # Nutzt       : -
 # Ersetzt     : -
-# Aliase      : imgresize, towebp, topng, tojpg, imgmeta, imgsize, imgcrop, imgstrip
+# Aliase      : imgresize, imgwebp, imgpng, imgjpg, imgmeta, imgsize, imgcrop, imgstrip
 # ============================================================
 
 # Guard   : Nur wenn ImageMagick installiert ist
@@ -34,9 +34,9 @@ imgresize() {
 # Format-Konvertierung
 # ------------------------------------------------------------
 # Bild zu WebP konvertieren(bild, qualität=80, output)
-towebp() {
+imgwebp() {
     if [[ $# -lt 1 ]]; then
-        echo "Verwendung: towebp <bild> [qualität=80] [output.webp]" >&2
+        echo "Verwendung: imgwebp <bild> [qualität=80] [output.webp]" >&2
         return 1
     fi
     local input="$1"
@@ -46,9 +46,9 @@ towebp() {
 }
 
 # Bild zu PNG konvertieren(bild, output)
-topng() {
+imgpng() {
     if [[ $# -lt 1 ]]; then
-        echo "Verwendung: topng <bild> [output.png]" >&2
+        echo "Verwendung: imgpng <bild> [output.png]" >&2
         return 1
     fi
     local input="$1"
@@ -57,9 +57,9 @@ topng() {
 }
 
 # Bild zu JPEG konvertieren(bild, qualität=85, output) – Transparenz wird weiß
-tojpg() {
+imgjpg() {
     if [[ $# -lt 1 ]]; then
-        echo "Verwendung: tojpg <bild> [qualität=85] [output.jpg]" >&2
+        echo "Verwendung: imgjpg <bild> [qualität=85] [output.jpg]" >&2
         return 1
     fi
     local input="$1"

@@ -6,15 +6,15 @@
 
 - dotfiles: Bild zu WebP konvertieren:
 
-`towebp {{bild, qualität, output}}`
+`imgwebp {{bild, qualität, output}}`
 
 - dotfiles: Bild zu PNG konvertieren:
 
-`topng {{bild, output}}`
+`imgpng {{bild, output}}`
 
 - dotfiles: Bild zu JPEG konvertieren (Transparenz wird weiß):
 
-`tojpg {{bild, qualität, output}}`
+`imgjpg {{bild, qualität, output}}`
 
 - dotfiles: Bildinfo anzeigen (Format, Größe, Farbtiefe):
 

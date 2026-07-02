@@ -65,7 +65,9 @@ typeset -A BREW_TO_ALT=(
     [jq]=apt:jq
     [lazygit]=apt:lazygit
     [ocrmypdf]=apt:ocrmypdf
+    [pdftk-java]=apt:pdftk-java
     [poppler]=apt:poppler-utils
+    [qpdf]=apt:qpdf
     [ripgrep]=apt:ripgrep
     [sevenzip]=apt:7zip
     [shellcheck]=apt:shellcheck
@@ -113,6 +115,7 @@ typeset -A BREW_TO_BINARY=(
     [sevenzip]=7zz
     [poppler]=pdftotext
     [imagemagick]=magick
+    [pdftk-java]=pdftk
 )
 
 # ------------------------------------------------------------

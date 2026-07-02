@@ -68,7 +68,7 @@ Alle Workflows nutzen [fzf](https://github.com/junegunn/fzf) mit bat-Preview, Ke
 | ---- | ---------- |
 | exiftool | `exifshow`, `exifgps`, `exifstrip`, `exifrename` |
 | ffmpeg | `v2mp3`, `vthumb`, `vcut`, `vcompress`, `v2gif`, `v2mp4`, `vinfo` |
-| magick | `imgresize`, `towebp`, `topng`, `tojpg`, `imgmeta`, `imgsize`, `imgcrop`, `imgstrip` |
+| magick | `imgresize`, `imgwebp`, `imgpng`, `imgjpg`, `imgmeta`, `imgsize`, `imgcrop`, `imgstrip` |
 | poppler | `pdf2txt`, `pdf2img`, `pdfmeta`, `pdfpages`, `pdfsplit`, `pdfmerge` |
 | resvg | `svg2png`, `svgscale` |
 
