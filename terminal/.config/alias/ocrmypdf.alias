@@ -1,7 +1,7 @@
 # ============================================================
 # ocrmypdf.alias - Aliase für OCRmyPDF (OCR-Textlayer)
 # ============================================================
-# Zweck       : Gescannte PDFs durchsuchbar machen (deutsch by default)
+# Zweck       : Gescannte PDFs durchsuchbar machen (standardmäßig Deutsch)
 # Pfad        : ~/.config/alias/ocrmypdf.alias
 # Docs        : https://ocrmypdf.readthedocs.io/
 # Nutzt       : -
@@ -34,7 +34,7 @@ pdfocr() {
     ocrmypdf -l "$lang" "$input" "$output"
 }
 
-# Scan optimieren und OCR(pdf, output?) – deskew, clean, rotate-pages, deutsch
+# Scan optimieren und OCR(pdf, output?) – deskew, clean, rotate-pages, Deutsch
 pdfscan() {
     if [[ $# -lt 1 ]]; then
         echo "Verwendung: pdfscan <pdf> [output]" >&2
