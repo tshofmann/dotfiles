@@ -1,0 +1,111 @@
+# ============================================================
+# pdftk.alias - Aliase für pdftk-java (PDF-Formulare & Struktur)
+# ============================================================
+# Zweck       : PDF-Formulare befüllen, einfrieren, rotieren und stempeln
+# Pfad        : ~/.config/alias/pdftk.alias
+# Docs        : https://gitlab.com/pdftk-java/pdftk
+# Nutzt       : qpdf (für pdfflatten)
+# Ersetzt     : -
+# Aliase      : pdffields, pdffill, pdfflatten, pdfrotate, pdfstamp
+# ============================================================
+
+# Guard   : Nur wenn pdftk installiert ist
+if ! command -v pdftk >/dev/null 2>&1; then
+    return 0
+fi
+
+# ------------------------------------------------------------
+# Formulare
+# ------------------------------------------------------------
+# Formularfelder auflisten(pdf) – Feldnamen, Typen und Optionen
+pdffields() {
+    if [[ $# -lt 1 ]]; then
+        echo "Verwendung: pdffields <pdf>" >&2
+        return 1
+    fi
+    pdftk "$1" dump_data_fields_utf8
+}
+
+# PDF-Formular befüllen(pdf, fdf, output?) – need_appearances für Umlaute
+pdffill() {
+    if [[ $# -lt 2 ]]; then
+        echo "Verwendung: pdffill <pdf> <fdf-daten> [output]" >&2
+        return 1
+    fi
+    local input="$1"
+    local data="$2"
+    local output="${3:-${input%.*}-filled.pdf}"
+
+    if [[ -e "$output" ]]; then
+        echo "Fehler: $output existiert bereits" >&2
+        return 1
+    fi
+    pdftk "$input" fill_form "$data" output "$output" need_appearances
+}
+
+# Formular einfrieren(pdf, output?) – via qpdf, Feldwerte bleiben durchsuchbar
+pdfflatten() {
+    if [[ $# -lt 1 ]]; then
+        echo "Verwendung: pdfflatten <pdf> [output]" >&2
+        return 1
+    fi
+    if ! command -v qpdf >/dev/null 2>&1; then
+        echo "Fehler: pdfflatten benötigt qpdf" >&2
+        return 1
+    fi
+    local input="$1"
+    local output="${2:-${input%.*}-flat.pdf}"
+
+    if [[ -e "$output" ]]; then
+        echo "Fehler: $output existiert bereits" >&2
+        return 1
+    fi
+    qpdf --generate-appearances --flatten-annotations=all "$input" "$output"
+}
+
+# ------------------------------------------------------------
+# Seiten-Operationen
+# ------------------------------------------------------------
+# Seiten rotieren(pdf, richtung, output?) – north/east/south/west/left/right/down
+pdfrotate() {
+    if [[ $# -lt 2 ]]; then
+        echo "Verwendung: pdfrotate <pdf> <north|east|south|west|left|right|down> [output]" >&2
+        return 1
+    fi
+    local input="$1"
+    local dir="${(L)2}"
+    local output="${3:-${input%.*}-rotated.pdf}"
+
+    case "$dir" in
+        north|east|south|west|left|right|down) ;;
+        *)
+            echo "Fehler: Ungültige Richtung '$2' (north/east/south/west/left/right/down)" >&2
+            return 1
+            ;;
+    esac
+    if [[ -e "$output" ]]; then
+        echo "Fehler: $output existiert bereits" >&2
+        return 1
+    fi
+    pdftk "$input" cat "1-end${dir}" output "$output"
+}
+
+# ------------------------------------------------------------
+# Stempel / Wasserzeichen
+# ------------------------------------------------------------
+# Stempel auflegen(pdf, stempel-pdf, output?) – erste Stempelseite auf alle Seiten
+pdfstamp() {
+    if [[ $# -lt 2 ]]; then
+        echo "Verwendung: pdfstamp <pdf> <stempel-pdf> [output]" >&2
+        return 1
+    fi
+    local input="$1"
+    local stamp="$2"
+    local output="${3:-${input%.*}-stamped.pdf}"
+
+    if [[ -e "$output" ]]; then
+        echo "Fehler: $output existiert bereits" >&2
+        return 1
+    fi
+    pdftk "$input" stamp "$stamp" output "$output"
+}
