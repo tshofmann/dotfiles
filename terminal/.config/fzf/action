@@ -23,8 +23,8 @@ source "${XDG_CONFIG_HOME:-$HOME/.config}/theme-style" 2>/dev/null
 : "${C_RED:=}" "${C_RESET:=}"
 
 # Branch-Namen aus fzf-Zeile bereinigen – gemeinsame Quelle für copy-branch und
-# strip-branch: ANSI-Codes weg, führende Marker (*/Leerzeichen), remotes/<remote>/-
-# Präfix (verankert, damit remotes/ nur am Zeilenanfang entfernt wird).
+# strip-branch: ANSI-Codes weg, führende Marker (*/Leerzeichen) und ein
+# vorangestelltes remotes/<remote>/ (verankert, nur am Zeilenanfang entfernt).
 _strip_branch() {
     printf '%s' "$*" \
         | sed 's/\x1b\[[0-9;]*m//g; s/^[* ]*//' \
