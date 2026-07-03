@@ -319,8 +319,10 @@ _configure_ssh_hosts() {
         fi
 
         # Prüfe ob Host bereits in Config existiert (auch eingerückt / Mehrfach-
-        # Alias "Host a b"; Kommentarzeilen via [^#] ausgeschlossen)
-        if [[ -f "$_SSH_CONFIG" ]] && grep -qE "^[[:space:]]*Host[[:space:]]+([^#]*[[:space:]])?${alias_name}([[:space:]]|$)" "$_SSH_CONFIG" 2>/dev/null; then
+        # Alias "Host a b"; Kommentarzeilen via [^#] ausgeschlossen). alias_name
+        # ist auf [A-Za-z0-9._-] validiert → nur '.' ist ERE-aktiv, daher escapen.
+        local alias_re="${alias_name//./\\.}"
+        if [[ -f "$_SSH_CONFIG" ]] && grep -qE "^[[:space:]]*Host[[:space:]]+([^#]*[[:space:]])?${alias_re}([[:space:]]|$)" "$_SSH_CONFIG" 2>/dev/null; then
             warn "Host '$alias_name' bereits in SSH-Config vorhanden – übersprungen"
             continue
         fi

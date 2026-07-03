@@ -19,7 +19,9 @@ readonly _SETUP_PROMPTS_LOADED=1
 # Prompt-Ausgabe auf das controlling tty (sichtbar auch bei umgeleitetem stdout;
 # bei _ask_input würde $() sonst den Prompt einfangen). Die Subshell verwirft den
 # Redirection-Fehler, falls kein tty existiert (non-interaktiv) – ohne Fehler-Spam.
-_tty_print() { ( print "$@" >/dev/tty ) 2>/dev/null; }
+# || true: Ausgabe ist best-effort → immer Exit 0, damit ein Aufruf unter `set -e`
+# nie abbricht (sonst würde der EOF/Default-Fallback nicht erreicht).
+_tty_print() { ( print "$@" >/dev/tty ) 2>/dev/null || true; }
 
 # ------------------------------------------------------------
 # Ja/Nein-Abfrage (set -e sicher)
