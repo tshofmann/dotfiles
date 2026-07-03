@@ -53,22 +53,23 @@ case "${1:-}" in
         ;;
     branch-log)
         # Log-Vorschau für git-branch (Input per {}): Marker weg, remotes/ behalten
-        # (git log braucht den vollen Ref – auch für Remote-Branches)
+        # (git log braucht den vollen Ref – auch für Remote-Branches). -20 statt
+        # | head; abschließendes -- trennt Rev von Pfad (Branch kann wie Datei heißen).
         shift
         ref=$(_strip_marker "$*")
         [[ -z "$ref" ]] && exit 0
-        git log --oneline --color=always "$ref" | head -20
+        git log --oneline --color=always -20 "$ref" --
         ;;
     branch-delete)
         # Branch aus fzf-Zeile löschen (Input per {}) – Bestätigung weil destruktiv
-        # "$ref" gequotet → kein Glob-Risiko (der Marker * expandierte sonst zu Dateien)
+        # "$ref" gequotet + -- → kein Glob, keine Options-Deutung bei führendem -
         shift
         ref=$(_strip_marker "$*")
         [[ -z "$ref" ]] && exit 0
         printf 'Branch %s löschen? [y/N] ' "$ref"
         read -q || { echo; exit 0; }
         echo
-        git branch -d "$ref"
+        git branch -d -- "$ref"
         ;;
     copy-env)
         # Umgebungsvariable aus farbkodierter fzf-Zeile ins Clipboard kopieren
