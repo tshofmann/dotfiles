@@ -53,12 +53,13 @@ case "${1:-}" in
         ;;
     branch-log)
         # Log-Vorschau für git-branch (Input per {}): Marker weg, remotes/ behalten
-        # (git log braucht den vollen Ref – auch für Remote-Branches). -20 statt
-        # | head; abschließendes -- trennt Rev von Pfad (Branch kann wie Datei heißen).
+        # (git log braucht den vollen Ref – auch für Remote-Branches). -20 limitiert;
+        # --end-of-options neutralisiert ein evtl. führendes - im Ref (Pendant zum --
+        # bei branch-delete); abschließendes -- trennt Rev von Pfad (Branch wie Datei).
         shift
         ref=$(_strip_marker "$*")
         [[ -z "$ref" ]] && exit 0
-        git log --oneline --color=always -20 "$ref" --
+        git log --oneline --color=always -20 --end-of-options "$ref" --
         ;;
     branch-delete)
         # Branch aus fzf-Zeile löschen (Input per {}) – Bestätigung weil destruktiv
