@@ -7,8 +7,8 @@
 # Aufruf      : ~/.config/fzf/action <command> "argument" [...]
 # Nutzt       : platform.zsh (clip)
 # ============================================================
-# Commands: copy, copy-branch, strip-branch, copy-env, edit, git-diff,
-#           git-restore, git-add, zoxide-remove
+# Commands: copy, copy-branch, strip-branch, branch-log, branch-delete, copy-env,
+#           edit, git-diff, git-restore, git-add, zoxide-remove
 # ============================================================
 
 # Plattform-Abstraktionen laden (clip)
@@ -22,13 +22,16 @@ source "${XDG_CONFIG_HOME:-$HOME/.config}/platform.zsh" 2>/dev/null || {
 source "${XDG_CONFIG_HOME:-$HOME/.config}/theme-style" 2>/dev/null
 : "${C_RED:=}" "${C_RESET:=}"
 
-# Branch-Namen aus fzf-Zeile bereinigen – gemeinsame Quelle für copy-branch und
-# strip-branch: ANSI-Codes weg, führende Marker (*/Leerzeichen) und ein
-# vorangestelltes remotes/<remote>/ (verankert, nur am Zeilenanfang entfernt).
+# fzf-Branch-Zeile bereinigen – zwei Stufen für unterschiedliche Ziele:
+#   _strip_marker : ANSI-Codes weg + führende Marker (*/Leerzeichen). Behält
+#     remotes/<remote>/ – git log / git branch -d brauchen den vollen Ref.
+#   _strip_branch : zusätzlich vorangestelltes remotes/<remote>/ (verankert) –
+#     für Checkout/Kopieren, wo der kurze Branch-Name gewünscht ist.
+_strip_marker() {
+    printf '%s' "$*" | sed 's/\x1b\[[0-9;]*m//g; s/^[* ]*//'
+}
 _strip_branch() {
-    printf '%s' "$*" \
-        | sed 's/\x1b\[[0-9;]*m//g; s/^[* ]*//' \
-        | sed 's|^remotes/[^/]*/||'
+    _strip_marker "$*" | sed 's|^remotes/[^/]*/||'
 }
 
 case "${1:-}" in
@@ -47,6 +50,25 @@ case "${1:-}" in
         # Branch-Name aus fzf-Zeile bereinigen (Ausgabe für git-branch Checkout)
         shift
         _strip_branch "$@"
+        ;;
+    branch-log)
+        # Log-Vorschau für git-branch (Input per {}): Marker weg, remotes/ behalten
+        # (git log braucht den vollen Ref – auch für Remote-Branches)
+        shift
+        ref=$(_strip_marker "$*")
+        [[ -z "$ref" ]] && exit 0
+        git log --oneline --color=always "$ref" | head -20
+        ;;
+    branch-delete)
+        # Branch aus fzf-Zeile löschen (Input per {}) – Bestätigung weil destruktiv
+        # "$ref" gequotet → kein Glob-Risiko (der Marker * expandierte sonst zu Dateien)
+        shift
+        ref=$(_strip_marker "$*")
+        [[ -z "$ref" ]] && exit 0
+        printf 'Branch %s löschen? [y/N] ' "$ref"
+        read -q || { echo; exit 0; }
+        echo
+        git branch -d "$ref"
         ;;
     copy-env)
         # Umgebungsvariable aus farbkodierter fzf-Zeile ins Clipboard kopieren
@@ -105,6 +127,8 @@ Commands:
   copy <path>            Pfad ins Clipboard kopieren
   copy-branch <line>     Branch aus git-branch-Zeile bereinigen + kopieren
   strip-branch <line>    Branch aus git-branch-Zeile bereinigen (nur Ausgabe)
+  branch-log <line>      Log-Vorschau für git-branch-Zeile (Marker weg)
+  branch-delete <line>   Branch aus git-branch-Zeile löschen (mit Bestätigung)
   copy-env <fzf-line>    Umgebungsvariable aus vars()-Zeile kopieren
   edit <file> [line]     Datei im Editor öffnen
   git-diff <file>        Git diff für Datei anzeigen
