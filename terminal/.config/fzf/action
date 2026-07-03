@@ -23,12 +23,14 @@ source "${XDG_CONFIG_HOME:-$HOME/.config}/theme-style" 2>/dev/null
 : "${C_RED:=}" "${C_RESET:=}"
 
 # fzf-Branch-Zeile bereinigen – zwei Stufen für unterschiedliche Ziele:
-#   _strip_marker : ANSI-Codes weg + führende Marker (*/Leerzeichen). Behält
+#   _strip_marker : ANSI-Codes weg + der feste 2-Zeichen-Prefix von `git branch`
+#     (`* ` aktuell, `+ ` Worktree, `  ` sonst) – genau ein Marker + Space, nicht
+#     gierig; erfasst so auch `+ ` und lässt den Namen selbst unangetastet. Behält
 #     remotes/<remote>/ – git log / git branch -d brauchen den vollen Ref.
 #   _strip_branch : zusätzlich vorangestelltes remotes/<remote>/ (verankert) –
 #     für Checkout/Kopieren, wo der kurze Branch-Name gewünscht ist.
 _strip_marker() {
-    printf '%s' "$*" | sed 's/\x1b\[[0-9;]*m//g; s/^[* ]*//'
+    printf '%s' "$*" | sed 's/\x1b\[[0-9;]*m//g; s/^[*+ ] //'
 }
 _strip_branch() {
     _strip_marker "$*" | sed 's|^remotes/[^/]*/||'
