@@ -58,6 +58,12 @@ fi
 # Farb-Variablen: Defaults für Fallback-Pfad (theme-style nicht geladen)
 : "${C_YELLOW:=}" "${C_RESET:=}"
 
+# EOF-sichere Prompt-Helper (_ask_yes_no) – geteilt mit ssh-keys.sh
+source "${SCRIPT_DIR}/lib/prompts.zsh" || {
+    err "prompts.zsh nicht gefunden – Abbruch"
+    exit 1
+}
+
 # ------------------------------------------------------------
 # Prüfungen
 # ------------------------------------------------------------
@@ -213,7 +219,6 @@ cleanup_brew_packages() {
     local skip_confirm="$1"
     local dry_run="$2"
     local brewfile="${DOTFILES_DIR}/setup/Brewfile"
-    local response
 
     if ! command -v brew >/dev/null 2>&1; then
         warn "Homebrew nicht gefunden – Paketentfernung übersprungen"
@@ -255,9 +260,7 @@ cleanup_brew_packages() {
             else
                 local do_remove=true
                 if [[ "$skip_confirm" != "true" ]]; then
-                    echo -n "Diese ${#to_remove[@]} Formulae entfernen? [y/N] "
-                    read -r response
-                    [[ ! "$response" =~ ^[Yy]$ ]] && do_remove=false
+                    _ask_yes_no "Diese ${#to_remove[@]} Formulae entfernen?" || do_remove=false
                 fi
                 if [[ "$do_remove" == "true" ]]; then
                     for pkg in "${to_remove[@]}"; do
@@ -304,9 +307,7 @@ cleanup_brew_packages() {
             else
                 local do_remove=true
                 if [[ "$skip_confirm" != "true" ]]; then
-                    echo -n "Diese ${#to_remove_casks[@]} Casks entfernen? [y/N] "
-                    read -r response
-                    [[ ! "$response" =~ ^[Yy]$ ]] && do_remove=false
+                    _ask_yes_no "Diese ${#to_remove_casks[@]} Casks entfernen?" || do_remove=false
                 fi
                 if [[ "$do_remove" == "true" ]]; then
                     for pkg in "${to_remove_casks[@]}"; do
@@ -366,9 +367,7 @@ cleanup_brew_packages() {
                 else
                     local do_remove=true
                     if [[ "$skip_confirm" != "true" ]]; then
-                        echo -n "Diese ${#to_remove_mas[@]} MAS-Apps entfernen? [y/N] "
-                        read -r response
-                        [[ ! "$response" =~ ^[Yy]$ ]] && do_remove=false
+                        _ask_yes_no "Diese ${#to_remove_mas[@]} MAS-Apps entfernen?" || do_remove=false
                     fi
                     if [[ "$do_remove" == "true" ]]; then
                         for app_id in "${to_remove_mas_ids[@]}"; do
@@ -413,9 +412,7 @@ cleanup_brew_packages() {
             else
                 local do_remove=true
                 if [[ "$skip_confirm" != "true" ]]; then
-                    echo -n "Diese ${#to_remove_taps[@]} Taps entfernen? [y/N] "
-                    read -r response
-                    [[ ! "$response" =~ ^[Yy]$ ]] && do_remove=false
+                    _ask_yes_no "Diese ${#to_remove_taps[@]} Taps entfernen?" || do_remove=false
                 fi
                 if [[ "$do_remove" == "true" ]]; then
                     for tap in "${to_remove_taps[@]}"; do
@@ -440,7 +437,6 @@ cleanup_brew_packages() {
 cleanup_repository() {
     local skip_confirm="$1"
     local dry_run="$2"
-    local response
 
     # Sicherheitscheck: DOTFILES_DIR muss gesetzt, unter $HOME und ein Git-Repo sein
     if [[ -z "$DOTFILES_DIR" || "$DOTFILES_DIR" == "/" ]]; then
@@ -468,9 +464,7 @@ cleanup_repository() {
 
     if [[ "$skip_confirm" != "true" ]]; then
         echo "${C_YELLOW}WARNUNG:${C_RESET} Dies löscht das gesamte dotfiles-Repository unwiderruflich!"
-        echo -n "Repository entfernen? [y/N] "
-        read -r response
-        if [[ ! "$response" =~ ^[Yy]$ ]]; then
+        if ! _ask_yes_no "Repository entfernen?"; then
             dim "Repository-Entfernung übersprungen"
             return 0
         fi
@@ -487,7 +481,6 @@ main() {
     local skip_confirm=false
     local do_cleanup=false
     local dry_run=false
-    local response
 
     # Argumente parsen
     while [[ $# -gt 0 ]]; do
@@ -602,9 +595,7 @@ main() {
         echo "  • Stellt gesicherte Originaldateien wieder her"
         echo "  • Setzt Terminal-Profil auf 'Basic' zurück"
         echo ""
-        echo -n "Fortfahren? [y/N] "
-        read -r response
-        if [[ ! "$response" =~ ^[Yy]$ ]]; then
+        if ! _ask_yes_no "Fortfahren?"; then
             echo "Abgebrochen."
             return 0
         fi
