@@ -83,8 +83,8 @@ if command -v fzf >/dev/null 2>&1; then
                 --preview 'git log --oneline --color=always {1} | head -20' \
                 --bind "start,resize:transform-header:$FZF_HELPER_DIR/header-wrap 'Enter: Checkout' 'Ctrl+D: Löschen' 'Ctrl+Y: Branch kopieren'" \
                 --bind 'ctrl-d:execute(read -q "REPLY?Branch {1} löschen? [y/N] " && git branch -d {1}; echo)+reload(git branch --all --color=always | grep -v HEAD)' \
-                --bind "ctrl-y:execute-silent($FZF_HELPER_DIR/action copy-branch {})" | \
-            sed 's/^[* ]*//' | sed 's|remotes/[^/]*/||')
+                --bind "ctrl-y:execute-silent($FZF_HELPER_DIR/action copy-branch {})")
+        branch=$("$FZF_HELPER_DIR/action" strip-branch "$branch")
 
         [[ -n "$branch" ]] && git checkout "$branch"
     }
