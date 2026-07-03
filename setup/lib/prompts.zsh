@@ -16,6 +16,11 @@ readonly _SETUP_PROMPTS_LOADED=1
 # geladenes theme-style – ohne Fallback bräche ein unbound $C_MAUVE das Skript ab.
 : "${C_MAUVE:=}" "${C_RESET:=}" "${C_DIM:=}"
 
+# Prompt-Ausgabe auf das controlling tty (sichtbar auch bei umgeleitetem stdout;
+# bei _ask_input würde $() sonst den Prompt einfangen). Die Subshell verwirft den
+# Redirection-Fehler, falls kein tty existiert (non-interaktiv) – ohne Fehler-Spam.
+_tty_print() { ( print "$@" >/dev/tty ) 2>/dev/null; }
+
 # ------------------------------------------------------------
 # Ja/Nein-Abfrage (set -e sicher)
 # ------------------------------------------------------------
@@ -25,11 +30,10 @@ readonly _SETUP_PROMPTS_LOADED=1
 _ask_yes_no() {
     local prompt="$1"
     local answer
-    # Prompt auf /dev/tty statt stdout – sonst bei Umleitung unsichtbar
-    print -rn -- "${C_MAUVE}?${C_RESET} ${prompt} [j/N] " >/dev/tty
+    _tty_print -rn -- "${C_MAUVE}?${C_RESET} ${prompt} [j/N] "
     if ! read -r answer; then
         # EOF (Ctrl-D) → wie "Nein" behandeln
-        print -r -- "" >/dev/tty
+        _tty_print -r -- ""
         return 1
     fi
     # j (deutsch) und y (englisch) als Ja akzeptieren
@@ -46,13 +50,13 @@ _ask_input() {
     local default="${2:-}"
     local answer
     if [[ -n "$default" ]]; then
-        print -rn -- "${C_MAUVE}?${C_RESET} ${prompt} ${C_DIM}[$default]${C_RESET} " >/dev/tty
+        _tty_print -rn -- "${C_MAUVE}?${C_RESET} ${prompt} ${C_DIM}[$default]${C_RESET} "
     else
-        print -rn -- "${C_MAUVE}?${C_RESET} ${prompt} " >/dev/tty
+        _tty_print -rn -- "${C_MAUVE}?${C_RESET} ${prompt} "
     fi
     if ! read -r answer; then
         # EOF (Ctrl-D) → Default zurückgeben
-        print -r -- "" >/dev/tty
+        _tty_print -r -- ""
         print -r -- "$default"
         return 0
     fi
