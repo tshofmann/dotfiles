@@ -33,44 +33,11 @@ typeset -gr _SSH_CONFIG="$_SSH_DIR/config"
 typeset -gr _ALLOWED_SIGNERS="$_SSH_DIR/allowed_signers"
 
 # ------------------------------------------------------------
-# Helper: Ja/Nein-Abfrage (set -e sicher)
+# Interaktive Prompts (EOF-sicher) – geteilt mit restore.sh
 # ------------------------------------------------------------
-# read -r gibt immer Exit 0 zurück (solange stdin offen).
-# read -q würde Exit 1 bei "Nein" geben → set -e Crash.
-_ask_yes_no() {
-    local prompt="$1"
-    local answer
-    # Prompt auf /dev/tty statt stdout – sonst ist er bei Umleitung unsichtbar
-    print -rn -- "${C_MAUVE}?${C_RESET} ${prompt} [j/N] " >/dev/tty
-    if ! read -r answer; then
-        # EOF (Ctrl-D) → wie "Nein" behandeln
-        print -r -- "" >/dev/tty
-        return 1
-    fi
-    [[ "$answer" == [jJ] ]]
-}
-
-# ------------------------------------------------------------
-# Helper: Eingabe mit optionalem Vorschlag
-# ------------------------------------------------------------
-_ask_input() {
-    local prompt="$1"
-    local default="${2:-}"
-    local answer
-
-    # Prompt auf /dev/tty statt stdout – sonst fängt $() den Prompt ab
-    if [[ -n "$default" ]]; then
-        print -rn -- "${C_MAUVE}?${C_RESET} ${prompt} ${C_DIM}[$default]${C_RESET} " >/dev/tty
-    else
-        print -rn -- "${C_MAUVE}?${C_RESET} ${prompt} " >/dev/tty
-    fi
-    if ! read -r answer; then
-        # EOF (Ctrl-D) → Default zurückgeben
-        print -r -- "" >/dev/tty
-        print -r -- "$default"
-        return 0
-    fi
-    print -r -- "${answer:-$default}"
+source "${0:A:h:h}/lib/prompts.zsh" || {
+    echo "FEHLER: prompts.zsh nicht gefunden" >&2
+    return 1
 }
 
 # ------------------------------------------------------------
@@ -351,8 +318,11 @@ _configure_ssh_hosts() {
             continue
         fi
 
-        # Prüfe ob Host bereits in Config existiert
-        if [[ -f "$_SSH_CONFIG" ]] && grep -qxF "Host $alias_name" "$_SSH_CONFIG" 2>/dev/null; then
+        # Prüfe ob Host bereits in Config existiert (auch eingerückt / Mehrfach-
+        # Alias "Host a b"; Kommentarzeilen via [^#] ausgeschlossen). alias_name
+        # ist auf [A-Za-z0-9._-] validiert → nur '.' ist ERE-aktiv, daher escapen.
+        local alias_re="${alias_name//./\\.}"
+        if [[ -f "$_SSH_CONFIG" ]] && grep -qE "^[[:space:]]*Host[[:space:]]+([^#]*[[:space:]])?${alias_re}([[:space:]]|$)" "$_SSH_CONFIG" 2>/dev/null; then
             warn "Host '$alias_name' bereits in SSH-Config vorhanden – übersprungen"
             continue
         fi
