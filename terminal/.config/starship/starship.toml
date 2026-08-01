@@ -3,7 +3,7 @@
 # ============================================================
 # Zweck       : Starship Shell-Prompt Konfiguration
 # Pfad        : ~/.config/starship/starship.toml
-# Upstream    : github.com/catppuccin/starship (catppuccin-powerline Preset)
+# Upstream    : github.com/catppuccin/starship themes/mocha.toml (catppuccin-powerline Preset)
 # Docs        : https://starship.rs/
 # ============================================================
 "$schema" = 'https://starship.rs/config-schema.json'

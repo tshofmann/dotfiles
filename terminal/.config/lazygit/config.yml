@@ -3,7 +3,7 @@
 # ============================================================
 # Zweck       : lazygit Konfiguration mit Catppuccin Mocha Theme
 # Pfad        : ~/.config/lazygit/config.yml
-# Quelle      : https://github.com/catppuccin/lazygit
+# Quelle      : https://github.com/catppuccin/lazygit (themes-mergable/mocha/blue.yml)
 # Docs        : https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md
 # Theme       : ~/.config/theme-style
 # ============================================================
@@ -23,10 +23,16 @@ gui:
       - '#89b4fa' # Blue
     selectedLineBgColor:
       - '#45475a' # Surface1 (harmonisiert mit fzf/btop)
+    inactiveViewSelectedLineBgColor:
+      - '#6c7086' # Overlay0 (Upstream 04/2026)
     cherryPickedCommitBgColor:
       - '#585b70' # Surface2
     cherryPickedCommitFgColor:
       - '#cba6f7' # Mauve
+    markedBaseCommitBgColor:
+      - '#f9e2af' # Yellow (Upstream 04/2026)
+    markedBaseCommitFgColor:
+      - '#cba6f7' # Mauve (Upstream: Blue — Akzent-Konvention)
     unstagedChangesColor:
       - '#f38ba8' # Red
     defaultFgColor:

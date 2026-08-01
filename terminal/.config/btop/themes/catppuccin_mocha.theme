@@ -1,9 +1,9 @@
 # Catppuccin Mocha Theme for btop
+# Quelle : https://github.com/catppuccin/btop (themes/catppuccin_mocha.theme)
 # Theme   : ~/.config/theme-style
 # License: MIT
 
-# Main background, empty for terminal default, need to be empty if you want
-# transparent background
+# Main background, empty for terminal default, need to be empty if you want transparent background
 theme[main_bg]="#1e1e2e"
 
 # Main text color
@@ -34,10 +34,10 @@ theme[meter_bg]="#45475a"
 theme[proc_misc]="#f5e0dc"
 
 # CPU, Memory, Network, Proc box outline colors
-theme[cpu_box]="#cba6f7"
-theme[mem_box]="#a6e3a1"
-theme[net_box]="#eba0ac"
-theme[proc_box]="#89b4fa"
+theme[cpu_box]="#cba6f7" #Mauve
+theme[mem_box]="#a6e3a1" #Green
+theme[net_box]="#eba0ac" #Maroon
+theme[proc_box]="#89b4fa" #Blue
 
 # Box divider line and small boxes line color
 theme[div_line]="#6c7086"

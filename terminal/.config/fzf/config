@@ -12,7 +12,7 @@
 # ------------------------------------------------------------
 # Catppuccin Mocha Theme
 # ------------------------------------------------------------
-# Quelle: https://github.com/catppuccin/fzf
+# Quelle: https://github.com/catppuccin/fzf (themes/catppuccin-fzf-mocha.sh)
 # bg:#1E1E2E entfernt für transparenten Terminal-Hintergrund
 --color=bg+:#313244,spinner:#F5E0DC,hl:#F38BA8
 --color=fg:#CDD6F4,header:#F38BA8,info:#CBA6F7,pointer:#F5E0DC
@@ -28,7 +28,7 @@
 --border=rounded
 --margin=0,1
 
-# Zusätzliche Farb-Stile
+# Zusätzliche Farb-Stile (Ergänzung zum Upstream-Theme, Status-Tag: +styles)
 --color=header:italic
 --color=prompt:bold
 
