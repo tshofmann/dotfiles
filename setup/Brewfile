@@ -28,6 +28,7 @@ brew "imagemagick"                          # Bild-Manipulation | https://imagem
 brew "jq"                                   # JSON-Prozessor | https://jqlang.org/
 brew "lazygit"                              # Git-TUI | https://github.com/jesseduffield/lazygit
 brew "markdownlint-cli2"                    # Markdown-Linter | https://github.com/DavidAnson/markdownlint-cli2
+brew "mas"                                  # Mac App Store CLI | https://github.com/mas-cli/mas
 brew "ocrmypdf"                             # OCR-Textlayer für PDFs | https://ocrmypdf.readthedocs.io/en/latest/
 brew "pdftk-java"                           # PDF-Formular-Toolkit | https://gitlab.com/pdftk-java/pdftk
 brew "poppler"                              # PDF-Rendering | https://poppler.freedesktop.org/
@@ -44,7 +45,6 @@ brew "yazi"                                 # File Manager | https://yazi-rs.git
 brew "zoxide"                               # Smartes cd mit Frecency | https://github.com/ajeetdsouza/zoxide
 brew "zsh-autosuggestions"                  # History-Vorschläge | https://github.com/zsh-users/zsh-autosuggestions
 brew "zsh-syntax-highlighting"              # Syntax-Highlighting | https://github.com/zsh-users/zsh-syntax-highlighting
-brew "mas"                                  # Mac App Store CLI | https://github.com/mas-cli/mas
 
 # ------------------------------------------------------------
 # Homebrew Casks
