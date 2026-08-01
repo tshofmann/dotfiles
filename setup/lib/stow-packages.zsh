@@ -9,9 +9,10 @@
 # Nutzt       : - (bewusst ohne _core.sh: dotstow lädt kein Bootstrap-Core)
 # ============================================================
 
-# Mehrfaches Laden verhindern
+# Mehrfaches Laden verhindern (typeset -gr: bleibt auch beim Sourcen
+# aus Funktions-Scope global – nacktes readonly wäre dort lokal)
 [[ -n "${_STOW_PACKAGES_LOADED:-}" ]] && return 0
-readonly _STOW_PACKAGES_LOADED=1
+typeset -gr _STOW_PACKAGES_LOADED=1
 
 # Ermittelt Stow-Packages dynamisch aus der Verzeichnisstruktur.
 # Ein Package ist ein Verzeichnis mit mindestens einer Dotfile

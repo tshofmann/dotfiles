@@ -57,7 +57,10 @@ dotstow() {
         echo "stow-packages.zsh nicht gefunden (nur im vollständigen Repository verfügbar)" >&2
         return 1
     fi
-    source "$lib"
+    source "$lib" || {
+        echo "stow-packages.zsh konnte nicht geladen werden" >&2
+        return 1
+    }
 
     local -a pkgs=($(_get_stow_packages "$dotdir"))
 
