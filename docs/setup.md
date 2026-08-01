@@ -198,6 +198,7 @@ ff                                  # System-Info anzeigen
 | [`jq`](https://jqlang.org/) | JSON-Prozessor |
 | [`lazygit`](https://github.com/jesseduffield/lazygit) | Git-TUI |
 | [`markdownlint-cli2`](https://github.com/DavidAnson/markdownlint-cli2) | Markdown-Linter |
+| [`mas`](https://github.com/mas-cli/mas) | Mac App Store CLI |
 | [`ocrmypdf`](https://ocrmypdf.readthedocs.io/en/latest/) | OCR-Textlayer für PDFs |
 | [`pdftk-java`](https://gitlab.com/pdftk-java/pdftk) | PDF-Formular-Toolkit |
 | [`poppler`](https://poppler.freedesktop.org/) | PDF-Rendering |
@@ -214,7 +215,6 @@ ff                                  # System-Info anzeigen
 | [`zoxide`](https://github.com/ajeetdsouza/zoxide) | Smartes cd mit Frecency |
 | [`zsh-autosuggestions`](https://github.com/zsh-users/zsh-autosuggestions) | History-Vorschläge |
 | [`zsh-syntax-highlighting`](https://github.com/zsh-users/zsh-syntax-highlighting) | Syntax-Highlighting |
-| [`mas`](https://github.com/mas-cli/mas) | Mac App Store CLI |
 
 ### Homebrew Casks
 

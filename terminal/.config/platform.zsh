@@ -3,6 +3,7 @@
 # ============================================================
 # Zweck       : Einheitliche Funktionen für macOS und Linux
 # Pfad        : ~/.config/platform.zsh (nach stow)
+# Docs        : CONTRIBUTING.md (Cross-Platform Abstraktionen)
 # Geladen     : Früh in .zshrc (vor Aliase)
 # ============================================================
 # Funktionen:

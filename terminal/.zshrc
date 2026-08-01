@@ -101,8 +101,9 @@ typeset -gx \
 #   bd=Mauve/Sky  cd=Mauve/Yellow  su=Crust/Red
 #   sg=Crust/Sky  tw=Crust/Green  ow=Crust/Yellow
 #
-# Guard: Nur setzen wenn RGB-Variablen aus theme-style vorhanden sind
-if [[ -n ${RGB_MAUVE-} && -n ${RGB_BLUE-} && -n ${RGB_GREEN-} && -n ${RGB_YELLOW-} ]]; then
+# Guard: Nur setzen wenn alle 8 verwendeten RGB-Variablen aus theme-style vorhanden sind
+if [[ -n ${RGB_MAUVE-} && -n ${RGB_BLUE-} && -n ${RGB_GREEN-} && -n ${RGB_YELLOW-} &&
+      -n ${RGB_SKY-} && -n ${RGB_CRUST-} && -n ${RGB_RED-} && -n ${RGB_SURFACE1-} ]]; then
     export LS_COLORS="di=38;2;${RGB_MAUVE}:ln=38;2;${RGB_BLUE}:so=38;2;${RGB_GREEN}:pi=38;2;${RGB_YELLOW}:ex=38;2;${RGB_GREEN}:bd=38;2;${RGB_MAUVE};48;2;${RGB_SKY}:cd=38;2;${RGB_MAUVE};48;2;${RGB_YELLOW}:su=38;2;${RGB_CRUST};48;2;${RGB_RED}:sg=38;2;${RGB_CRUST};48;2;${RGB_SKY}:tw=38;2;${RGB_CRUST};48;2;${RGB_GREEN}:ow=38;2;${RGB_CRUST};48;2;${RGB_YELLOW}"
 
     # Completion-Farben: LS_COLORS für Dateitypen + Catppuccin Highlight für Auswahl
