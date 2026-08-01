@@ -20,7 +20,6 @@ _TEST_SHELL_COLORS="${_ASSERTIONS_DIR:h:h:h:h}/terminal/.config/theme-style"
 [[ -f "$_TEST_SHELL_COLORS" ]] && source "$_TEST_SHELL_COLORS"
 unset _ASSERTIONS_DIR _TEST_SHELL_COLORS
 
-# Zähler
 _TEST_PASSED=0
 _TEST_FAILED=0
 

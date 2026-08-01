@@ -87,7 +87,6 @@ _brew_outdated_check() {
     setopt LOCAL_OPTIONS extended_glob
     local stamp="$_BREW_CHECK_STATE/last-check"
 
-    # Verzeichnis sicherstellen (einmalig)
     [[ -d "$_BREW_CHECK_STATE" ]] || mkdir -p "$_BREW_CHECK_STATE" || return
 
     # Timestamp frisch genug? → ZSH Glob Qualifier: ms+N = älter als N Sekunden
@@ -133,7 +132,6 @@ _brew_outdated_check() {
 }
 
 _brew_outdated_notify() {
-    # Deaktiviert per Config
     [[ "$_BREW_CHECK_NOTIFY" == off ]] && return
     # Einmal pro Session anzeigen (Datei bleibt für neue Sessions)
     (( _BREW_NOTIFIED )) && return

@@ -29,7 +29,6 @@ SHELL_COLORS="$DOTFILES_DIR/terminal/.config/theme-style"
 # BREWFILE nur setzen wenn nicht bereits definiert (Konflikt mit homebrew.sh vermeiden)
 [[ -z "${BREWFILE:-}" ]] && BREWFILE="$DOTFILES_DIR/setup/Brewfile"
 
-# Farben (Catppuccin Mocha) – zentral definiert
 [[ -f "$SHELL_COLORS" ]] && source "$SHELL_COLORS"
 
 # ------------------------------------------------------------
