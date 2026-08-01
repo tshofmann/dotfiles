@@ -33,13 +33,17 @@ curl -sL "https://raw.githubusercontent.com/catppuccin/<tool>/main/<pfad>" -o /t
 
 ## Schritt 2: IST-Abweichungen messen (die Wahrheit)
 
-Normalisierter Diff (Kommentare + Leerzeilen raus), lokale Datei ohne
-Header-Block:
+Normalisierter Diff: Kommentarzeilen (inkl. Header-Block) und Leerzeilen
+herausfiltern — `[[:space:]]` statt `\s` (POSIX, läuft auf BSD- und GNU-grep):
 
 ```zsh
-diff <(grep -v '^\s*#' /tmp/upstream-neu | grep -v '^\s*$') \
-     <(sed -n '/^# ====/,$p' terminal/.config/<tool>/<datei> | grep -v '^\s*#' | grep -v '^\s*$')
+diff <(grep -v '^[[:space:]]*#' /tmp/upstream-neu | grep -v '^[[:space:]]*$') \
+     <(grep -v '^[[:space:]]*#' terminal/.config/<tool>/<datei> | grep -v '^[[:space:]]*$')
 ```
+
+> Der Kommentar-Filter entfernt den lokalen Header-Block gleich mit —
+> kein separates Abschneiden nötig. Nicht-Kommentar-Header (z. B. XML)
+> brauchen eine formatgerechte Normalisierung.
 
 Jede Diff-Zeile ist entweder:
 
