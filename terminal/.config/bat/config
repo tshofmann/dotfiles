@@ -37,13 +37,16 @@
 # ------------------------------------------------------------
 # Syntax-Mappings (Dateiendung → Sprache)
 # ------------------------------------------------------------
-# Alias-Dateien als Shell/Bash behandeln
+# ZSH-Dateien → Bash-Highlighting (bat hat keine native ZSH-Syntax,
+# Bash deckt ~95 % der ZSH-Syntax ab)
 --map-syntax "*.alias:Bash"
 
-# Zsh-Konfigurationsdateien
+# Nötig für bat < 0.26.0 (Linux/apt): builtin-Erkennung der
+# zsh-Dotfiles kam erst mit v0.26.0 (sharkdp/bat PR #3262)
 --map-syntax ".zshrc:Bash"
 --map-syntax ".zshenv:Bash"
 --map-syntax ".zprofile:Bash"
+--map-syntax ".zlogin:Bash"
 
 # Brewfile als Ruby
 --map-syntax "Brewfile:Ruby"
