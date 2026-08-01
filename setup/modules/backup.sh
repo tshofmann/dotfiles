@@ -43,29 +43,10 @@ _backup_log() {
 # Hilfsfunktionen
 # ------------------------------------------------------------
 
-# Ermittelt Stow-Packages dynamisch aus Verzeichnisstruktur
-# Ein Package ist ein Verzeichnis mit mindestens einer Datei die mit . beginnt
-# oder ein .config Unterverzeichnis hat
-_get_stow_packages() {
-    local dir
-    for dir in "${DOTFILES_DIR}"/*/; do
-        [[ -d "$dir" ]] || continue
-        local name="${dir%/}"
-        name="${name##*/}"
-
-        # Überspringe bekannte Nicht-Packages
-        [[ "$name" == "setup" ]] && continue
-        [[ "$name" == "docs" ]] && continue
-        [[ "$name" == ".git" ]] && continue
-        [[ "$name" == ".backup" ]] && continue
-        [[ "$name" == ".github" ]] && continue
-
-        # Prüfe ob es Dotfiles oder .config enthält
-        if [[ -n "$(find "$dir" -maxdepth 1 -name '.*' -not -name '.DS_Store' -type f 2>/dev/null | head -1)" ]] ||
-           [[ -d "${dir}.config" ]]; then
-            echo "$name"
-        fi
-    done
+# Stow-Package-Erkennung (_get_stow_packages) – geteilt mit dotstow()
+source "${0:A:h:h}/lib/stow-packages.zsh" || {
+    echo "FEHLER: stow-packages.zsh nicht gefunden" >&2
+    return 1
 }
 
 # Ermittelt alle Zieldateien die von Stow verlinkt würden
