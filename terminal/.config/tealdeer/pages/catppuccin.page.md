@@ -10,19 +10,19 @@
 
 - Themes aus offiziellen Catppuccin-Repositories (unverändert):
 
-`Terminal.app: ~/dotfiles/setup/`
 `bat: ~/.config/bat/themes/`
-`btop: ~/.config/btop/themes/`
 
 - Themes aus Upstream mit lokalen Anpassungen:
 
+`Terminal.app: ~/dotfiles/setup/ (font+window)`
 `Xcode: ~/dotfiles/setup/ (header)`
+`btop: ~/.config/btop/themes/ (header)`
 `eza: ~/.config/eza/theme.yml (header)`
-`fzf: ~/.config/fzf/config (bg+header)`
-`kitty: ~/.config/kitty/current-theme.conf (border+header)`
+`fzf: ~/.config/fzf/config (bg+styles+header)`
+`kitty: ~/.config/kitty/current-theme.conf (border-titlebar+header)`
 `lazygit: ~/.config/lazygit/config.yml (mauve+selection+header)`
-`starship: ~/.config/starship/starship.toml (palettes+header)`
-`yazi: ~/.config/yazi/theme.toml (mauve+text+marker+info+help+which+header)`
+`starship: ~/.config/starship/starship.toml (header)`
+`yazi: ~/.config/yazi/theme.toml (mauve+marker+icons+syntect+semantics+header)`
 `zsh-syntax: ~/.config/zsh/catppuccin_mocha-* (comment+header)`
 
 - Manuell konfiguriert (basierend auf catppuccin.com/palette):
@@ -48,4 +48,3 @@
 `starship: github.com/catppuccin/starship`
 `yazi: github.com/catppuccin/yazi`
 `zsh-syntax: github.com/catppuccin/zsh-syntax-highlighting`
-

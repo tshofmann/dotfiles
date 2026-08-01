@@ -53,6 +53,7 @@ Anleitung für die Entwicklung an diesem dotfiles-Repository.
 - [Häufige Aufgaben](#häufige-aufgaben)
   - [Neues Tool hinzufügen](#neues-tool-hinzufügen)
   - [Dokumentation ändern](#dokumentation-ändern)
+  - [Upstream-Theme aktualisieren](#upstream-theme-aktualisieren)
   - [Screenshots aktualisieren](#screenshots-aktualisieren)
   - [Terminal-Profil ändern](#terminal-profil-ändern)
   - [Tealdeer-Patches (Auto-Generiert)](#tealdeer-patches-auto-generiert)
@@ -1015,6 +1016,19 @@ fi
 1. Änderung im **Quellcode** vornehmen (`.alias`, `Brewfile`, Configs, oder `generators/*.sh`)
 2. `./.github/scripts/generate-docs.sh --generate` ausführen
 3. Generierte Änderungen prüfen und committen
+
+### Upstream-Theme aktualisieren
+
+Ein Catppuccin-Theme auf eine neue Upstream-Version bringen, ohne lokale
+Abweichungen (Mauve-Akzent, entferntes `bg`, Header-Block) zu verlieren:
+
+> **Workflow:** [.github/skills/update-theme/SKILL.md](.github/skills/update-theme/SKILL.md)
+
+Kurzfassung: Exakte Upstream-Datei aus dem `Quelle`-Feld der Theme-Datei holen,
+IST-Abweichungen per normalisiertem Diff messen (nicht aus den Status-Tags
+rekonstruieren!), neuen Upstream als Basis nehmen, Abweichungen einzeln
+re-applizieren, hart validieren (Palette-Reinheit, Struktur-Parse,
+Tool-Lade-Maschinerie), Status-Tags + Doku nachziehen.
 
 ### Screenshots aktualisieren
 

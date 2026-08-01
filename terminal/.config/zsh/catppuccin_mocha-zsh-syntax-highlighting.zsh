@@ -3,7 +3,7 @@
 # ============================================================
 # Zweck       : Catppuccin Mocha Farben für zsh-syntax-highlighting
 # Pfad        : ~/.config/zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh
-# Quelle      : https://github.com/catppuccin/zsh-syntax-highlighting
+# Quelle      : https://github.com/catppuccin/zsh-syntax-highlighting (themes/catppuccin_mocha-zsh-syntax-highlighting.zsh)
 # Theme       : ~/.config/theme-style
 # Lizenz      : MIT
 # ============================================================
