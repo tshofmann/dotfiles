@@ -6,7 +6,7 @@
 #               format_param_for_tldr(), parse_yazi_keymap(),
 #               find_main_config_file(), parse_config_file_header(),
 #               parse_fzf_config_keybindings(), parse_shell_keybindings(),
-#               parse_cross_references(), find_config_only_tools()
+#               find_config_only_tools()
 # Pfad        : .github/scripts/tests/test-tldr-parsers.sh
 # Aufruf      : ./.github/scripts/tests/test-tldr-parsers.sh
 # ============================================================
@@ -309,31 +309,6 @@ assert_contains "Shell-Keybinding Taste 2" '<Ctrl x> 2' "$result"
 local zoxide_count
 zoxide_count=$(echo "$result" | grep -c "ZOXIDE" || true)
 assert_equals "Stoppt vor ZOXIDE" "0" "$zoxide_count"
-
-# ============================================================
-# parse_cross_references()
-# ============================================================
-echo ""
-echo "=== parse_cross_references ==="
-
-cat > "$_TEST_TMPDIR/crossref.alias" << 'FIXTURE'
-# ============================================================
-# crossref.alias - Test
-# ============================================================
-# Zweck       : Test Cross-References
-# Nutzt       : fzf (Preview)
-#               - git.alias → git-log(), git-branch()
-#               - brew.alias → brew-add
-# ============================================================
-
-# Guard
-if ! command -v crossref >/dev/null 2>&1; then return 0; fi
-FIXTURE
-
-result=$(parse_cross_references "$_TEST_TMPDIR/crossref.alias")
-assert_contains "git Cross-Ref" "git|" "$result"
-assert_contains "brew Cross-Ref" "brew|" "$result"
-assert_contains "git-log Funktion" "git-log" "$result"
 
 # ============================================================
 # find_config_only_tools()

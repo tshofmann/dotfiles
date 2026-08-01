@@ -13,11 +13,9 @@
 set -uo pipefail
 setopt extendedglob
 
-# Dotfiles-Verzeichnis ermitteln
 SCRIPT_DIR="${0:A:h}"
 DOTFILES_DIR="${SCRIPT_DIR:h:h}"  # .github/scripts → dotfiles
 
-# Logging + Farben (geteilte Library)
 source "${0:A:h}/lib/log.sh"
 
 # ------------------------------------------------------------

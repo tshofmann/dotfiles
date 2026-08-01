@@ -430,6 +430,70 @@ assert_contains "ToC: Erstes H3" "  - [Untertitel](#untertitel)" "$result"
 assert_contains "ToC: Zweites H3 dedupliziert" "  - [Untertitel](#untertitel-1)" "$result"
 
 # ============================================================
+# inject_toc() – Unit Tests
+# ============================================================
+echo ""
+echo "=== inject_toc (Unit) ==="
+
+_inject_input="# Haupttitel
+
+Intro-Text.
+
+## Erster Abschnitt
+
+Inhalt A.
+
+## Zweiter Abschnitt
+
+Inhalt B."
+
+result=$(inject_toc "$_inject_input")
+
+assert_contains "inject: Haupttitel erhalten" "# Haupttitel" "$result"
+assert_contains "inject: Inhalt-Überschrift eingefügt" "## Inhalt" "$result"
+assert_contains "inject: ToC-Eintrag 1" "- [Erster Abschnitt](#erster-abschnitt)" "$result"
+assert_contains "inject: ToC-Eintrag 2" "- [Zweiter Abschnitt](#zweiter-abschnitt)" "$result"
+
+# Reihenfolge: Header vor ToC, ToC vor Body
+local title_pos toc_pos body_pos
+title_pos=$(echo "$result" | grep -n '^# Haupttitel' | head -1 | cut -d: -f1)
+toc_pos=$(echo "$result" | grep -n '^## Inhalt' | head -1 | cut -d: -f1)
+body_pos=$(echo "$result" | grep -n '^## Erster Abschnitt' | head -1 | cut -d: -f1)
+[[ "$title_pos" -lt "$toc_pos" && "$toc_pos" -lt "$body_pos" ]]
+assert_equals "inject: Reihenfolge Header → ToC → Body" "0" "$?"
+
+# ## in Code-Blöcken beendet weder Header noch erzeugt es ToC-Einträge
+_inject_code_input='# Titel
+
+```zsh
+## Kommentar im Code
+```
+
+## Echter Abschnitt
+
+Text.'
+
+result=$(inject_toc "$_inject_code_input")
+assert_contains "inject: Abschnitt nach Code-Block im ToC" "- [Echter Abschnitt](#echter-abschnitt)" "$result"
+local code_heading_count
+code_heading_count=$(echo "$result" | grep -c 'Kommentar im Code](#' || true)
+assert_equals "inject: Kein ToC-Eintrag aus Code-Block" "0" "$code_heading_count"
+
+# --- beendet den Header ebenfalls (ToC wird davor eingefügt)
+_inject_hr_input="# Titel
+
+---
+
+## Abschnitt"
+
+result=$(inject_toc "$_inject_hr_input")
+local hr_pos
+toc_pos=$(echo "$result" | grep -n '^## Inhalt' | head -1 | cut -d: -f1)
+hr_pos=$(echo "$result" | grep -n '^---$' | head -1 | cut -d: -f1)
+[[ "$toc_pos" -lt "$hr_pos" ]]
+assert_equals "inject: ToC vor --- (Header-Ende)" "0" "$?"
+
+# ============================================================
 # Credits-Sektion – Integrations-Test
 # ============================================================
 echo ""

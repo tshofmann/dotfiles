@@ -357,32 +357,3 @@ parse_shell_keybindings() {
 
     echo -e "$output"
 }
-
-# ------------------------------------------------------------
-# Parser: Cross-Referenzen aus Header-Block
-# ------------------------------------------------------------
-parse_cross_references() {
-    local file="$1"
-    local output=""
-
-    while IFS= read -r line; do
-        [[ "$line" == "# Guard"* ]] && break
-
-        if [[ "$line" == *".alias"*"→"* ]]; then
-            local temp="${line#*- }"
-            local tool="${temp%%.alias*}"
-            tool="${tool// /}"
-
-            local after_arrow="${line#*→ }"
-            local funcs="$after_arrow"
-            while [[ "$funcs" == *'('*')'* ]]; do
-                funcs="${funcs%%\(*}${funcs#*\)}"
-            done
-            funcs="${funcs// /}"
-
-            [[ -n "$tool" && -n "$funcs" ]] && output+="${tool}|${funcs}\n"
-        fi
-    done < "$file"
-
-    echo -e "$output"
-}
