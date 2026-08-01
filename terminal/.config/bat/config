@@ -37,8 +37,8 @@
 # ------------------------------------------------------------
 # Syntax-Mappings (Dateiendung → Sprache)
 # ------------------------------------------------------------
-# ZSH-Dateien → Bash-Highlighting (bat hat keine native ZSH-Syntax,
-# Bash deckt ~95 % der ZSH-Syntax ab)
+# .alias-Dateien (ZSH-Syntax) → Bash-Highlighting: bat hat keine
+# eigenständige ZSH-Sprache, Bash deckt den Großteil der Syntax ab
 --map-syntax "*.alias:Bash"
 
 # Nötig für bat < 0.26.0 (Linux/apt): builtin-Erkennung der
