@@ -8,9 +8,10 @@
 # Nutzt       : theme-style Farben (mit Fallback)
 # ============================================================
 
-# Mehrfaches Laden verhindern
+# Mehrfaches Laden verhindern (typeset -gr: bleibt auch beim Sourcen
+# aus Funktions-Scope global – nacktes readonly wäre dort lokal)
 [[ -n "${_SETUP_PROMPTS_LOADED:-}" ]] && return 0
-readonly _SETUP_PROMPTS_LOADED=1
+typeset -gr _SETUP_PROMPTS_LOADED=1
 
 # Farb-Fallbacks: prompts.zsh läuft evtl. unter `set -u` (restore.sh) ohne
 # geladenes theme-style – ohne Fallback bräche ein unbound $C_MAUVE das Skript ab.

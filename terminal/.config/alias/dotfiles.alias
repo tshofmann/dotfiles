@@ -51,23 +51,18 @@ dotstow() {
         return 1
     fi
 
-    # Stow-Packages dynamisch erkennen
-    local -a pkgs=()
-    local dir name
-    for dir in "$dotdir"/*/; do
-        [[ -d "$dir" ]] || continue
-        name="${dir%/}"
-        name="${name##*/}"
+    # Package-Erkennung aus geteilter Quelle (auch von backup.sh genutzt)
+    local lib="$dotdir/setup/lib/stow-packages.zsh"
+    if [[ ! -f "$lib" ]]; then
+        echo "stow-packages.zsh nicht gefunden (nur im vollständigen Repository verfügbar)" >&2
+        return 1
+    fi
+    source "$lib" || {
+        echo "stow-packages.zsh konnte nicht geladen werden" >&2
+        return 1
+    }
 
-        # Bekannte Nicht-Packages überspringen
-        [[ "$name" == "setup" || "$name" == "docs" || "$name" == ".git" || "$name" == ".backup" || "$name" == ".github" ]] && continue
-
-        # Prüfe ob es Dotfiles oder .config enthält
-        if [[ -n "$(find "$dir" -maxdepth 1 -name '.*' -not -name '.DS_Store' -type f 2>/dev/null | head -1)" ]] ||
-           [[ -d "${dir}.config" ]]; then
-            pkgs+=("$name")
-        fi
-    done
+    local -a pkgs=($(_get_stow_packages "$dotdir"))
 
     if [[ ${#pkgs[@]} -eq 0 ]]; then
         echo "Keine Stow-Packages gefunden in: $dotdir" >&2

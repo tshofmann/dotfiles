@@ -8,6 +8,7 @@
 #
 # STEP        : Stow Symlinks | Verlinkt Dotfile-Packages dynamisch | ⚠️ Kritisch
 # Packages    : Automatisch erkannt via _get_stow_packages()
+#               (setup/lib/stow-packages.zsh, geladen durch backup.sh)
 # ============================================================
 
 # Guard: Core muss geladen sein
@@ -19,8 +20,9 @@
 # ------------------------------------------------------------
 # Konfiguration
 # ------------------------------------------------------------
-# Packages werden dynamisch via _get_stow_packages() aus backup.sh ermittelt
-# Keine hardcoded Liste mehr nötig
+# Packages werden dynamisch via _get_stow_packages() ermittelt
+# (setup/lib/stow-packages.zsh, von backup.sh geladen) – keine
+# hardcoded Liste nötig
 
 # ------------------------------------------------------------
 # Prüfen ob Stow installiert ist
