@@ -118,6 +118,10 @@ fi
 # Verwendung: echo "text" | clip
 #             clippaste → gibt Clipboard aus
 #
+# wl-paste hängt ohne -n ein \n an, pbpaste nicht. Mit -n liefern beide
+# Plattformen byte-identische Ausgabe.
+# Docs: https://github.com/bugaevc/wl-clipboard
+#
 # Headless: Stille No-Ops (kein Fehler, Daten werden verworfen)
 # Desktop Linux: Wayland mit wl-clipboard (GNOME, KDE, Hyprland)
 
@@ -131,7 +135,7 @@ case "$_PLATFORM_OS" in
             # Wayland Desktop: wl-clipboard (beide Befehle prüfen)
             if (( $+commands[wl-copy] )) && (( $+commands[wl-paste] )); then
                 clip()      { wl-copy; }
-                clippaste() { wl-paste; }
+                clippaste() { wl-paste -n; }
             else
                 # Wayland ohne wl-clipboard: Warnung
                 clip() {

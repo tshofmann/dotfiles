@@ -160,8 +160,8 @@ readonly -a MODULES=(
 | Funktion | macOS | Linux (Wayland) | Headless |
 | -------- | ----- | --------------- | -------- |
 | `clip` | `pbcopy` | `wl-copy` | No-Op |
-| `clippaste` | `pbpaste` | `wl-paste` | No-Op |
-| `xopen` | `open` | `xdg-open` | No-Op |
+| `clippaste` | `pbpaste` | `wl-paste -n` | No-Op |
+| `xopen` | `open` | `xdg-open` (je Argument einzeln) | No-Op |
 | `sedi` | `sed -i ''` | `sed -i` | `sed -i` |
 
 **Wichtig für Contributor:**
