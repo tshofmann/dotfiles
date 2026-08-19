@@ -169,6 +169,12 @@ esac
 # ------------------------------------------------------------
 # Verwendung: xopen file.pdf
 #             xopen https://example.com
+#             xopen a.pdf b.pdf
+#
+# macOS `open` nimmt beliebig viele Argumente, `xdg-open` laut Spezifikation
+# genau eines und bricht sonst mit Exit 1 (Syntaxfehler) ab. Der Linux-Zweig
+# reicht deshalb einzeln durch, damit beide Plattformen gleich reagieren.
+# Docs: https://man.archlinux.org/man/xdg-open.1.en
 #
 # Headless: Stiller No-Op (return 0, kein Fehler)
 
@@ -179,8 +185,11 @@ case "$_PLATFORM_OS" in
     linux)
         if (( _PLATFORM_HAS_DISPLAY )) && (( $+commands[xdg-open] )); then
             xopen() {
-                [[ -n "${DEBUG:-}" ]] && echo "xopen: xdg-open $*" >&2
-                xdg-open "$@" 2>/dev/null &!
+                local f
+                for f in "$@"; do
+                    [[ -n "${DEBUG:-}" ]] && echo "xopen: xdg-open $f" >&2
+                    xdg-open "$f" 2>/dev/null &!
+                done
             }
         elif (( _PLATFORM_HAS_DISPLAY )); then
             # Desktop ohne xdg-open
