@@ -32,17 +32,37 @@ jobs:
     # Kosteneffizienz + Linux-Validierung. Siehe #329.
     runs-on: ubuntu-latest
 
+    # Ohne diesen Wert greift der GitHub-Default von 360 Minuten. Ein hängender
+    # Paket-Mirror blockierte den Required Check dadurch volle 6 Stunden (#461).
+    # Realer Job: 48 s, davon apt 15 s.
+    timeout-minutes: 10
+
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
+      # Als apt.conf.d-Fragment statt -o Flags, damit es für update und install
+      # gilt. http und https sind getrennte Scopes, apt.conf(5): "Options do not
+      # inherit from their parent groups". Der harte Schutz ist der Job-Timeout
+      # oben, das hier verkürzt nur den Fehlerfall.
       - name: ZSH installieren
-        run: sudo apt-get update && sudo apt-get install -y zsh
+        run: |
+          sudo tee /etc/apt/apt.conf.d/99-ci-timeouts >/dev/null <<'CONF'
+          Acquire::Retries "3";
+          Acquire::http::Timeout "15";
+          Acquire::https::Timeout "15";
+          CONF
+          sudo apt-get update
+          sudo apt-get install -y zsh
 
+      # --retry-max-time deckelt die Summe aller Versuche, --max-time nur den
+      # einzelnen. Gemessen: --max-time 3 mit --retry 3 brauchte 18 s statt 3 s,
+      # hochgerechnet auf 120 s läge der Step über dem Job-Timeout.
       - name: tealdeer installieren
         run: |
           echo "Installiere tealdeer v1.8.1..."
-          curl -fsSL "https://github.com/tealdeer-rs/tealdeer/releases/download/v1.8.1/tealdeer-linux-x86_64-musl" \
+          curl -fsSL --retry 3 --retry-delay 2 --max-time 60 --retry-max-time 120 \
+            "https://github.com/tealdeer-rs/tealdeer/releases/download/v1.8.1/tealdeer-linux-x86_64-musl" \
             -o /tmp/tldr
           # SHA256-Verifizierung (offizielle Checksum von GitHub Releases)
           echo "6f2fad4435e0110484d3f25cdc4bf20129dae03238f32d06ebdd00bdc50ae2ed  /tmp/tldr" | sha256sum -c
