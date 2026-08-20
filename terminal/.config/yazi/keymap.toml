@@ -42,7 +42,10 @@ desc = "Papierkorb"
 # ------------------------------------------------------------
 # Quick Look (macOS native Preview)
 # ------------------------------------------------------------
+# for = "macos": Yazi blendet die Bindung auf anderen Systemen komplett aus,
+# qlmanage gibt es dort nicht.
 [[mgr.prepend_keymap]]
 on = ["<C-p>"]
 run = "shell -- qlmanage -p %s &>/dev/null"
 desc = "Quick Look"
+for = "macos"
