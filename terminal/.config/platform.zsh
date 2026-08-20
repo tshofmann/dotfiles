@@ -118,6 +118,10 @@ fi
 # Verwendung: echo "text" | clip
 #             clippaste → gibt Clipboard aus
 #
+# wl-paste hängt ohne -n ein \n an, pbpaste nicht. Mit -n liefern beide
+# Plattformen byte-identische Ausgabe.
+# Docs: https://github.com/bugaevc/wl-clipboard
+#
 # Headless: Stille No-Ops (kein Fehler, Daten werden verworfen)
 # Desktop Linux: Wayland mit wl-clipboard (GNOME, KDE, Hyprland)
 
@@ -131,7 +135,7 @@ case "$_PLATFORM_OS" in
             # Wayland Desktop: wl-clipboard (beide Befehle prüfen)
             if (( $+commands[wl-copy] )) && (( $+commands[wl-paste] )); then
                 clip()      { wl-copy; }
-                clippaste() { wl-paste; }
+                clippaste() { wl-paste -n; }
             else
                 # Wayland ohne wl-clipboard: Warnung
                 clip() {
@@ -169,6 +173,12 @@ esac
 # ------------------------------------------------------------
 # Verwendung: xopen file.pdf
 #             xopen https://example.com
+#             xopen a.pdf b.pdf
+#
+# macOS `open` nimmt beliebig viele Argumente, `xdg-open` laut Spezifikation
+# genau eines und bricht sonst mit Exit 1 (Syntaxfehler) ab. Der Linux-Zweig
+# reicht deshalb einzeln durch, damit beide Plattformen gleich reagieren.
+# Docs: https://man.archlinux.org/man/xdg-open.1.en
 #
 # Headless: Stiller No-Op (return 0, kein Fehler)
 
@@ -179,8 +189,11 @@ case "$_PLATFORM_OS" in
     linux)
         if (( _PLATFORM_HAS_DISPLAY )) && (( $+commands[xdg-open] )); then
             xopen() {
-                [[ -n "${DEBUG:-}" ]] && echo "xopen: xdg-open $*" >&2
-                xdg-open "$@" 2>/dev/null &!
+                local f
+                for f in "$@"; do
+                    [[ -n "${DEBUG:-}" ]] && echo "xopen: xdg-open $f" >&2
+                    xdg-open "$f" 2>/dev/null &!
+                done
             }
         elif (( _PLATFORM_HAS_DISPLAY )); then
             # Desktop ohne xdg-open

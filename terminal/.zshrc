@@ -9,6 +9,17 @@
 # ============================================================
 
 # ------------------------------------------------------------
+# Login-Shell-Umgebung nachziehen
+# ------------------------------------------------------------
+# macOS-Terminals starten Login-Shells, Linux-Terminal-Emulatoren typischerweise
+# nicht. Ohne .zprofile fehlen HOMEBREW_PREFIX (Plugin-Pfade am Ende dieser
+# Datei), der Linuxbrew-PATH und die site-functions in FPATH, deshalb steht der
+# Nachzug vor compinit.
+# Guard: DOTFILES_DIR wird ausschließlich in .zprofile gesetzt.
+[[ -z "${DOTFILES_DIR:-}" && -f "${ZDOTDIR:-$HOME}/.zprofile" ]] && \
+    source "${ZDOTDIR:-$HOME}/.zprofile"
+
+# ------------------------------------------------------------
 # History-Konfiguration
 # ------------------------------------------------------------
 # Zentrale History-Datei mit Timestamps und Duplikat-Filterung

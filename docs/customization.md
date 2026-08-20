@@ -318,6 +318,11 @@ bindkey '^X3' fzf-cd-widget              # Ctrl+X 3 = In Unterverzeichnis wechse
 | Datei | Wann geladen | Verwendung |
 | ----- | ------------ | ---------- |
 | `.zshenv` | Immer | Umgebungsvariablen (XDG, EDITOR, VISUAL) |
-| `.zprofile` | Login-Shell | DOTFILES_DIR, Homebrew (einmalig) |
+| `.zprofile` | Login-Shell (Fallback via `.zshrc`) | DOTFILES_DIR, Homebrew (einmalig) |
 | `.zshrc` | Interaktiv | Aliase, Prompt, Keybindings |
 | `.zlogin` | Nach Login | Background-Tasks nach `.zshrc` |
+
+> **Non-Login-Shells:** Linux-Terminal-Emulatoren starten meist keine Login-Shell,
+> dann bleibt `.zprofile` ungelesen. `.zshrc` lädt es in dem Fall selbst nach
+> (Guard: `DOTFILES_DIR` ist noch leer). Ohne diesen Schritt fehlten Homebrew im
+> `PATH` und die Pfade der ZSH-Plugins.
