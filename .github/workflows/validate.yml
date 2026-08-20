@@ -55,10 +55,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y zsh
 
+      # --retry-max-time deckelt die Summe aller Versuche, --max-time nur den
+      # einzelnen. Gemessen: --max-time 3 mit --retry 3 brauchte 18 s statt 3 s,
+      # hochgerechnet auf 120 s läge der Step über dem Job-Timeout.
       - name: tealdeer installieren
         run: |
           echo "Installiere tealdeer v1.8.1..."
-          curl -fsSL --retry 3 --retry-delay 2 --max-time 120 \
+          curl -fsSL --retry 3 --retry-delay 2 --max-time 60 --retry-max-time 120 \
             "https://github.com/tealdeer-rs/tealdeer/releases/download/v1.8.1/tealdeer-linux-x86_64-musl" \
             -o /tmp/tldr
           # SHA256-Verifizierung (offizielle Checksum von GitHub Releases)
