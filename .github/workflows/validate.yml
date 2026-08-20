@@ -32,17 +32,28 @@ jobs:
     # Kosteneffizienz + Linux-Validierung. Siehe #329.
     runs-on: ubuntu-latest
 
+    # Ohne diesen Wert greift der GitHub-Default von 360 Minuten. Ein hängender
+    # Paket-Mirror blockierte den Required Check dadurch volle 6 Stunden (#461).
+    # Realer Job: 48 s, davon apt 15 s.
+    timeout-minutes: 10
+
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
+      # Explizite Netzwerk-Grenzen: Bei totem Mirror bricht apt damit nach 22 s
+      # statt 38 s ab (gemessen auf ubuntu:24.04). Der harte Schutz ist der
+      # Job-Timeout oben, das hier verkürzt nur den Fehlerfall.
       - name: ZSH installieren
-        run: sudo apt-get update && sudo apt-get install -y zsh
+        run: |
+          sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=15 update
+          sudo apt-get install -y zsh
 
       - name: tealdeer installieren
         run: |
           echo "Installiere tealdeer v1.8.1..."
-          curl -fsSL "https://github.com/tealdeer-rs/tealdeer/releases/download/v1.8.1/tealdeer-linux-x86_64-musl" \
+          curl -fsSL --retry 3 --retry-delay 2 --max-time 120 \
+            "https://github.com/tealdeer-rs/tealdeer/releases/download/v1.8.1/tealdeer-linux-x86_64-musl" \
             -o /tmp/tldr
           # SHA256-Verifizierung (offizielle Checksum von GitHub Releases)
           echo "6f2fad4435e0110484d3f25cdc4bf20129dae03238f32d06ebdd00bdc50ae2ed  /tmp/tldr" | sha256sum -c
