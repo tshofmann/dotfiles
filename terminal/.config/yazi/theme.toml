@@ -36,6 +36,8 @@ count_selected = { fg = "#1e1e2e", bg = "#cba6f7" }
 border_symbol = "│"
 border_style  = { fg = "#7f849c" }
 
+# Die tmTheme-Datei liegt im Repo unter terminal/.config/bat/themes/ und wird
+# via Stow verlinkt, also unabhängig davon, ob bat installiert ist.
 syntect_theme = "~/.config/bat/themes/Catppuccin Mocha.tmTheme"
 
 [tabs]
