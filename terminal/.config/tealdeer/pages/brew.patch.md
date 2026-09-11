@@ -1,8 +1,8 @@
 - dotfiles: Config `~/.config/homebrew/check.conf`
 
-- dotfiles: Nutzt `fzf (Interactive), theme-style, jq, platform.zsh (notify)`
+- dotfiles: Nutzt `fzf (Interactive), theme-style, jq, platform.zsh (notify), mas+curl (MAS-Check)`
 
-- dotfiles: Automatischer Outdated-Check (Standard: 12h) – zeigt einmalig pro Session eine Benachrichtigung, wenn Updates verfügbar sind. Konfigurierbar via check.conf (Intervall, Kanal, Meldung).
+- dotfiles: Automatischer Outdated-Check (Standard: 12h) – zeigt einmalig pro Session eine Benachrichtigung, wenn Updates verfügbar sind. Konfigurierbar via check.conf (Intervall, Kanal, Meldung). Prüft zusätzlich, ob die MAS-IDs aus dem Brewfile im App Store noch existieren.
 
 - dotfiles: Zeige veraltete Mac App Store Apps:
 

@@ -5,7 +5,7 @@
 # Pfad        : ~/.config/alias/brew.alias
 # Docs        : https://docs.brew.sh/Manpage
 # Config      : ~/.config/homebrew/check.conf
-# Nutzt       : fzf (Interactive), theme-style, jq, platform.zsh (notify)
+# Nutzt       : fzf (Interactive), theme-style, jq, platform.zsh (notify), mas+curl (MAS-Check)
 # Ersetzt     : -
 # Aliase      : brew-up, brew-list, brew-add, brew-rm, maso, masu, mass, masi, masl
 # ============================================================
@@ -13,6 +13,8 @@
 #               zeigt einmalig pro Session eine Benachrichtigung,
 #               wenn Updates verfügbar sind. Konfigurierbar
 #               via check.conf (Intervall, Kanal, Meldung).
+#               Prüft zusätzlich, ob die MAS-IDs aus dem Brewfile
+#               im App Store noch existieren.
 # ============================================================
 
 # ------------------------------------------------------------
@@ -57,9 +59,12 @@ brew-up() {
     [[ -d "${_BREW_CHECK_STATE:-}" ]] && {
         touch "$_BREW_CHECK_STATE/last-check"
         rm -f "$_BREW_CHECK_STATE/last-check.result"
+        # mas upgrade repariert keine zurückgezogene Store-ID: neu prüfen statt verwerfen
+        _brew_mas_validate
     }
-    # Session-Flag zurücksetzen (Meldung erlauben falls erneut veraltet)
+    # Session-Flags zurücksetzen (Meldung erlauben falls erneut veraltet)
     _BREW_NOTIFIED=0
+    _BREW_MAS_NOTIFIED=0
 }
 
 # ------------------------------------------------------------
@@ -79,7 +84,117 @@ typeset -g _BREW_CHECK_TITLE="${_BREW_CHECK_TITLE:-🍺 Homebrew}"
 # \} im Default nötig: ungeschütztes } würde die ${...}-Expansion vorzeitig beenden
 typeset -g _BREW_CHECK_MESSAGE="${_BREW_CHECK_MESSAGE:-{count\} Updates verfügbar – Zeit für brew-up}"
 typeset -g _BREW_CHECK_STATE="${XDG_STATE_HOME:-$HOME/.local/state}/homebrew"
+typeset -g _BREW_CHECK_MAS_IDS="${_BREW_CHECK_MAS_IDS:-on}"
+typeset -g _BREW_CHECK_MAS_TITLE="${_BREW_CHECK_MAS_TITLE:- Mac App Store}"
+typeset -g _BREW_CHECK_MAS_MESSAGE="${_BREW_CHECK_MAS_MESSAGE:-{count\} ohne Store-Eintrag}"
+typeset -g _BREW_CHECK_MAS_REGION="${_BREW_CHECK_MAS_REGION:-}"
 typeset -gi _BREW_NOTIFIED=0
+typeset -gi _BREW_MAS_NOTIFIED=0
+
+# Brewfile-IDs gegen den Store prüfen – fängt ab, dass Apple ein Listing zurückzieht.
+# Läuft im Hintergrund (Netzwerk). Bei Fehlern lieber nichts melden als falsch melden.
+_brew_mas_validate() {
+    setopt LOCAL_OPTIONS extended_glob
+    [[ -n "$_BREW_CHECK_STATE" ]] || return
+    local stamp="$_BREW_CHECK_STATE/last-check"
+    local lock="$stamp.lock"
+
+    # Serialisieren: brew-up ruft direkt auf und umgeht den Zeitstempeltest, zwei
+    # Shells können ihn fast gleichzeitig passieren. mkdir ist atomar. Ein Lock
+    # aus einem abgebrochenen Lauf verfällt nach zehn Minuten.
+    if ! mkdir "$lock" 2>/dev/null; then
+        [[ -n "$lock"(#qN/mm+10) ]] || return
+        rmdir "$lock" 2>/dev/null
+        mkdir "$lock" 2>/dev/null || return
+    fi
+
+    _brew_mas_validate_locked "$stamp"
+    rmdir "$lock" 2>/dev/null
+}
+
+_brew_mas_validate_locked() {
+    setopt LOCAL_OPTIONS extended_glob
+    local stamp="$1"
+    # Invariante: Der veröffentlichte Status ist immer das Ergebnis genau eines
+    # vollständigen Laufs. Deshalb zuerst verwerfen, vor allen Guards – sonst
+    # überlebt er jeden Early Return und wird als aktueller Befund gemeldet.
+    rm -f "$stamp".mas-invalid(|.*)(#qN)
+
+    [[ "$_BREW_CHECK_MAS_IDS" == off ]] && return
+    command -v mas >/dev/null 2>&1 || return
+    command -v curl >/dev/null 2>&1 || return
+    command -v jq >/dev/null 2>&1 || return
+
+    local brewfile="${HOMEBREW_BUNDLE_FILE:-${DOTFILES_DIR:-$HOME/dotfiles}/setup/Brewfile}"
+    # Ohne country antwortet die API aus der US-Storefront und meldet regional
+    # verfügbare Apps fälschlich als zurückgezogen. mas kennt die effektive
+    # Storefront inklusive Regionen ohne eigenen Store (LI liefert CH).
+    local region="${(L)_BREW_CHECK_MAS_REGION}"
+    if [[ -z "$region" ]]; then
+        region=$(mas config --json 2>/dev/null | jq -e -r '.store | strings') || return
+        region="${(L)region}"
+    fi
+    [[ "$region" == [a-z][a-z] ]] || return
+
+    # Ohne Brewfile fällt der Kern der Prüfung aus. Ein Lauf ohne ihn ist
+    # unvollständig und darf keinen Status veröffentlichen.
+    [[ -r "$brewfile" ]] || return
+
+    # Pro App sammeln, sonst meldet ein Defekt aus beiden Quellen doppelt
+    local -A reasons=()
+    # Deklarierte Apps merken: mas prüft alle installierten, nicht nur diese
+    local -A managed=()
+    local line name id payload count
+
+    while IFS= read -r line; do
+        name="${line#mas \"}"; name="${name%%\"*}"
+        id="${line##*id:}"; id="${id##[[:space:]]}"; id="${id%%[!0-9]*}"
+        [[ -n "$id" ]] || continue
+        managed[$name]=1
+
+        # Abbruch statt Weitermachen: ohne Netz wäre jede ID fälschlich "tot"
+        payload=$(curl -sf --max-time 10 \
+            "https://itunes.apple.com/lookup?id=${id}&entity=macSoftware&country=${region}") || return
+        # -e und numbers: eine JSON-Fehlerantwort ohne resultCount bricht ab,
+        # statt die App stillschweigend als gültig zu werten
+        count=$(print -r -- "$payload" | jq -e -r '.resultCount | numbers' 2>/dev/null) || return
+        (( count == 0 )) && reasons[$name]="ID $id ungültig"
+    done < <(grep '^mas "' "$brewfile" 2>/dev/null)
+
+    # mas meldet gewanderte Bundle-IDs installierter Apps nur mit --verbose.
+    # Exit-Code statt Prozess-Substitution: mas fängt Lookup-Fehler pro App ab,
+    # zählt sie aber intern und endet dann mit Exit 1. Ohne diese Prüfung würde
+    # eine unvollständige Liste als vollständiges Ergebnis veröffentlicht.
+    local mas_out
+    mas_out=$(mas outdated --verbose 2>&1) || return
+
+    # Auf den Marker des Aufrufers filtern, nicht auf den Fehlertext: der hat
+    # sich zwischen mas 7.0.0 und Upstream bereits geändert.
+    local warn cause marker='; was expected to identify: '
+    while IFS= read -r warn; do
+        [[ "$warn" == *"$marker"* ]] || continue
+        name="${warn##*$marker}"
+        [[ -n "$name" ]] || continue
+        # Herkunft trennen: im Brewfile ist die ID zu korrigieren, sonst die App
+        cause="Bundle-ID gewandert"
+        [[ -n "${managed[$name]}" ]] || cause+=", nicht deklariert"
+        reasons[$name]="${reasons[$name]:+${reasons[$name]}, }$cause"
+    done <<< "$mas_out"
+
+    if (( ${#reasons} > 0 )); then
+        local -a invalid=()
+        for name in "${(@ko)reasons}"; do
+            invalid+=("$name (${reasons[$name]})")
+        done
+        # Eigene Zwischendatei pro Lauf, damit sich zwei Läufe nicht gegenseitig
+        # halbfertige Inhalte veröffentlichen
+        local tmp
+        tmp=$(mktemp "$stamp.mas-invalid.XXXXXX") || return
+        print -l "${invalid[@]}" > "$tmp" \
+            && mv "$tmp" "$stamp.mas-invalid" \
+            || rm -f "$tmp"
+    fi
+}
 
 _brew_outdated_check() {
     # (#q...)-Glob-Qualifier braucht EXTENDED_GLOB – lokal setzen statt
@@ -97,16 +212,25 @@ _brew_outdated_check() {
     # Sofort aktualisieren (Race-Condition-Schutz bei mehreren Shells)
     touch "$stamp"
 
+    # Gleiche Invariante wie in _brew_mas_validate: Ein veröffentlichter Status
+    # ist immer das Ergebnis genau eines vollständigen Laufs, deshalb zuerst
+    # verwerfen. Für mas-invalid schließt das zusätzlich die Lücke, bis der
+    # Hintergrundjob unten fertig ist.
+    rm -f "$stamp.result" "$stamp.result.tmp" "$stamp".mas-invalid(|.*)(#qN)
+
     # Background: Index aktualisieren (Netzwerk, blockiert nicht)
     {
         export HOMEBREW_LOCK_CONTEXT="brew-outdated-check (background)"
         brew update-if-needed 2>/dev/null
+        _brew_mas_validate
     } &!
 
     # Synchron: Lokalen Index lesen (~1s, kein Netzwerk)
     local brew_count=0 mas_count=0
     local brew_out
-    brew_out=$(HOMEBREW_NO_AUTO_UPDATE=1 brew outdated --quiet 2>/dev/null)
+    # Exit-Code prüfen, sonst ist ein Fehlschlag nicht von "keine Updates"
+    # unterscheidbar. Beide Befehle liefern 0, auch wenn sie Treffer melden.
+    brew_out=$(HOMEBREW_NO_AUTO_UPDATE=1 brew outdated --quiet 2>/dev/null) || return
     if [[ -n "$brew_out" ]]; then
         local -a _brew_lines=("${(f)brew_out}")
         brew_count=${#_brew_lines}
@@ -114,7 +238,7 @@ _brew_outdated_check() {
 
     if command -v mas >/dev/null 2>&1; then
         local mas_out
-        mas_out=$(mas outdated 2>/dev/null)
+        mas_out=$(mas outdated 2>/dev/null) || return
         if [[ -n "$mas_out" ]]; then
             local -a _mas_lines=("${(f)mas_out}")
             mas_count=${#_mas_lines}
@@ -126,31 +250,47 @@ _brew_outdated_check() {
         echo "$total" > "$stamp.result.tmp" \
             && mv "$stamp.result.tmp" "$stamp.result" \
             || rm -f "$stamp.result.tmp"
-    else
-        rm -f "$stamp.result" "$stamp.result.tmp"
     fi
+}
+
+# Meldung über den konfigurierten Kanal ausgeben
+_brew_check_emit() {
+    local title="$1" msg="$2"
+    case "$_BREW_CHECK_NOTIFY" in
+        desktop)
+            notify "$title" "$msg" 2>/dev/null ;;
+        terminal)
+            echo "${C_YELLOW}${title}: ${msg}${C_RESET}" ;;
+        *)  # auto: Desktop mit Terminal-Fallback
+            (( _PLATFORM_HAS_DISPLAY )) && notify "$title" "$msg" 2>/dev/null \
+                || echo "${C_YELLOW}${title}: ${msg}${C_RESET}" ;;
+    esac
 }
 
 _brew_outdated_notify() {
     [[ "$_BREW_CHECK_NOTIFY" == off ]] && return
-    # Einmal pro Session anzeigen (Datei bleibt für neue Sessions)
-    (( _BREW_NOTIFIED )) && return
-    local result="$_BREW_CHECK_STATE/last-check.result"
-    [[ -f "$result" ]] || return
+    local stamp="$_BREW_CHECK_STATE/last-check"
     local count
-    count=$(<"$result")
-    if (( count > 0 )); then
-        local msg="${_BREW_CHECK_MESSAGE//\{count\}/$count}"
-        case "$_BREW_CHECK_NOTIFY" in
-            desktop)
-                notify "$_BREW_CHECK_TITLE" "$msg" 2>/dev/null ;;
-            terminal)
-                echo "${C_YELLOW}${_BREW_CHECK_TITLE}: ${msg}${C_RESET}" ;;
-            *)  # auto: Desktop mit Terminal-Fallback
-                (( _PLATFORM_HAS_DISPLAY )) && notify "$_BREW_CHECK_TITLE" "$msg" 2>/dev/null \
-                    || echo "${C_YELLOW}${_BREW_CHECK_TITLE}: ${msg}${C_RESET}" ;;
-        esac
-        typeset -g _BREW_NOTIFIED=1
+
+    # Getrennte Flags: Der MAS-Befund trifft erst nach dem Hintergrundjob ein und
+    # würde von einem gemeinsamen Flag für die restliche Session verschluckt.
+    if (( ! _BREW_NOTIFIED )) && [[ -f "$stamp.result" ]]; then
+        count=$(<"$stamp.result")
+        if (( count > 0 )); then
+            _brew_check_emit "$_BREW_CHECK_TITLE" "${_BREW_CHECK_MESSAGE//\{count\}/$count}"
+            typeset -g _BREW_NOTIFIED=1
+        fi
+    fi
+
+    # Getrennte Meldung: tote Store-IDs sind kein Update, sondern ein Defekt
+    if (( ! _BREW_MAS_NOTIFIED )) && [[ "$_BREW_CHECK_MAS_IDS" != off ]] \
+        && [[ -f "$stamp.mas-invalid" ]]; then
+        local -a broken=("${(f)$(<"$stamp.mas-invalid")}")
+        if (( ${#broken} > 0 )); then
+            _brew_check_emit "$_BREW_CHECK_MAS_TITLE" \
+                "${_BREW_CHECK_MAS_MESSAGE//\{count\}/${#broken}}: ${(j:, :)broken}"
+            typeset -g _BREW_MAS_NOTIFIED=1
+        fi
     fi
 }
 

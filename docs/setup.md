@@ -232,10 +232,12 @@ ff                                  # System-Info anzeigen
 
 | Paket | Beschreibung |
 | ----- | ------------ |
-| [Keynote](https://apps.apple.com/app/id409183694) | Präsentationen |
-| [Numbers](https://apps.apple.com/app/id409203825) | Tabellenkalkulation |
-| [Pages](https://apps.apple.com/app/id409201541) | Textverarbeitung |
+| [iMovie](https://apps.apple.com/app/id408981434) | Videoschnitt |
+| [Keynote](https://apps.apple.com/app/id361285480) | Präsentationen |
+| [Numbers](https://apps.apple.com/app/id361304891) | Tabellenkalkulation |
+| [Pages](https://apps.apple.com/app/id361309726) | Textverarbeitung |
 | [Pixelmator Pro](https://apps.apple.com/app/id1289583905) | Bildbearbeitung |
+| [Prime Video](https://apps.apple.com/app/id545519333) | Streaming |
 | [Xcode](https://apps.apple.com/app/id497799835) | Apple IDE |
 
 > **Hinweis:** Die Anmeldung im App Store muss manuell erfolgen – die Befehle `mas account` und `mas signin` sind auf macOS 12+ nicht verfügbar.
