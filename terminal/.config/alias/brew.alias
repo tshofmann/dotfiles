@@ -86,7 +86,7 @@ typeset -g _BREW_CHECK_MESSAGE="${_BREW_CHECK_MESSAGE:-{count\} Updates verfügb
 typeset -g _BREW_CHECK_STATE="${XDG_STATE_HOME:-$HOME/.local/state}/homebrew"
 typeset -g _BREW_CHECK_MAS_IDS="${_BREW_CHECK_MAS_IDS:-on}"
 typeset -g _BREW_CHECK_MAS_TITLE="${_BREW_CHECK_MAS_TITLE:- Mac App Store}"
-typeset -g _BREW_CHECK_MAS_MESSAGE="${_BREW_CHECK_MAS_MESSAGE:-{count\} ohne Store-Eintrag, Brewfile prüfen}"
+typeset -g _BREW_CHECK_MAS_MESSAGE="${_BREW_CHECK_MAS_MESSAGE:-{count\} ohne Store-Eintrag}"
 typeset -g _BREW_CHECK_MAS_REGION="${_BREW_CHECK_MAS_REGION:-}"
 typeset -gi _BREW_NOTIFIED=0
 typeset -gi _BREW_MAS_NOTIFIED=0
@@ -117,25 +117,30 @@ _brew_mas_validate() {
     fi
     [[ "$region" == [a-z][a-z] ]] || return
 
+    # Ohne Brewfile fällt der Kern der Prüfung aus. Ein Lauf ohne ihn ist
+    # unvollständig und darf keinen Status veröffentlichen.
+    [[ -r "$brewfile" ]] || return
+
     # Pro App sammeln, sonst meldet ein Defekt aus beiden Quellen doppelt
     local -A reasons=()
+    # Deklarierte Apps merken: mas prüft alle installierten, nicht nur diese
+    local -A managed=()
     local line name id payload count
 
-    if [[ -r "$brewfile" ]]; then
-        while IFS= read -r line; do
-            name="${line#mas \"}"; name="${name%%\"*}"
-            id="${line##*id:}"; id="${id##[[:space:]]}"; id="${id%%[!0-9]*}"
-            [[ -n "$id" ]] || continue
+    while IFS= read -r line; do
+        name="${line#mas \"}"; name="${name%%\"*}"
+        id="${line##*id:}"; id="${id##[[:space:]]}"; id="${id%%[!0-9]*}"
+        [[ -n "$id" ]] || continue
+        managed[$name]=1
 
-            # Abbruch statt Weitermachen: ohne Netz wäre jede ID fälschlich "tot"
-            payload=$(curl -sf --max-time 10 \
-                "https://itunes.apple.com/lookup?id=${id}&entity=macSoftware&country=${region}") || return
-            # -e und numbers: eine JSON-Fehlerantwort ohne resultCount bricht ab,
-            # statt die App stillschweigend als gültig zu werten
-            count=$(print -r -- "$payload" | jq -e -r '.resultCount | numbers' 2>/dev/null) || return
-            (( count == 0 )) && reasons[$name]="ID $id ungültig"
-        done < <(grep '^mas "' "$brewfile" 2>/dev/null)
-    fi
+        # Abbruch statt Weitermachen: ohne Netz wäre jede ID fälschlich "tot"
+        payload=$(curl -sf --max-time 10 \
+            "https://itunes.apple.com/lookup?id=${id}&entity=macSoftware&country=${region}") || return
+        # -e und numbers: eine JSON-Fehlerantwort ohne resultCount bricht ab,
+        # statt die App stillschweigend als gültig zu werten
+        count=$(print -r -- "$payload" | jq -e -r '.resultCount | numbers' 2>/dev/null) || return
+        (( count == 0 )) && reasons[$name]="ID $id ungültig"
+    done < <(grep '^mas "' "$brewfile" 2>/dev/null)
 
     # mas meldet gewanderte Bundle-IDs installierter Apps nur mit --verbose.
     # Exit-Code statt Prozess-Substitution: mas fängt Lookup-Fehler pro App ab,
@@ -146,12 +151,15 @@ _brew_mas_validate() {
 
     # Auf den Marker des Aufrufers filtern, nicht auf den Fehlertext: der hat
     # sich zwischen mas 7.0.0 und Upstream bereits geändert.
-    local warn marker='; was expected to identify: '
+    local warn cause marker='; was expected to identify: '
     while IFS= read -r warn; do
         [[ "$warn" == *"$marker"* ]] || continue
         name="${warn##*$marker}"
         [[ -n "$name" ]] || continue
-        reasons[$name]="${reasons[$name]:+${reasons[$name]}, }Bundle-ID gewandert"
+        # Herkunft trennen: im Brewfile ist die ID zu korrigieren, sonst die App
+        cause="Bundle-ID gewandert"
+        [[ -n "${managed[$name]}" ]] || cause+=", nicht deklariert"
+        reasons[$name]="${reasons[$name]:+${reasons[$name]}, }$cause"
     done <<< "$mas_out"
 
     if (( ${#reasons} > 0 )); then
