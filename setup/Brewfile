@@ -60,8 +60,10 @@ cask "font-meslo-lg-nerd-font"              # Nerd Font | https://github.com/rya
 # ------------------------------------------------------------
 # Mac App Store
 # ------------------------------------------------------------
-mas "Keynote", id: 409183694                # Präsentationen
-mas "Numbers", id: 409203825                # Tabellenkalkulation
-mas "Pages", id: 409201541                  # Textverarbeitung
+mas "iMovie", id: 408981434                 # Videoschnitt
+mas "Keynote", id: 361285480                # Präsentationen
+mas "Numbers", id: 361304891                # Tabellenkalkulation
+mas "Pages", id: 361309726                  # Textverarbeitung
 mas "Pixelmator Pro", id: 1289583905        # Bildbearbeitung
+mas "Prime Video", id: 545519333            # Streaming
 mas "Xcode", id: 497799835                  # Apple IDE

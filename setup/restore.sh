@@ -337,7 +337,7 @@ cleanup_brew_packages() {
             local app_name_entry app_id
             while IFS= read -r app_name_entry; do
                 [[ -z "$app_name_entry" ]] && continue
-                # mas list Format: " 409183694  Keynote         (14.5)"
+                # mas list Format: " 361285480  Keynote         (15.3.1)"
                 # Exakter Name-Vergleich: ID extrahieren, Name zwischen ID und Version-Klammer
                 app_id=$(echo "$installed_mas" | awk -v name="$app_name_entry" '{
                     gsub(/^[[:space:]]+/, "")
