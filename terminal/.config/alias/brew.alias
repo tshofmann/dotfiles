@@ -87,6 +87,7 @@ typeset -g _BREW_CHECK_STATE="${XDG_STATE_HOME:-$HOME/.local/state}/homebrew"
 typeset -g _BREW_CHECK_MAS_IDS="${_BREW_CHECK_MAS_IDS:-on}"
 typeset -g _BREW_CHECK_MAS_TITLE="${_BREW_CHECK_MAS_TITLE:- Mac App Store}"
 typeset -g _BREW_CHECK_MAS_MESSAGE="${_BREW_CHECK_MAS_MESSAGE:-{count\} ohne Store-Eintrag, Brewfile prüfen}"
+typeset -g _BREW_CHECK_MAS_REGION="${_BREW_CHECK_MAS_REGION:-}"
 typeset -gi _BREW_NOTIFIED=0
 typeset -gi _BREW_MAS_NOTIFIED=0
 
@@ -99,7 +100,20 @@ _brew_mas_validate() {
     command -v jq >/dev/null 2>&1 || return
 
     local stamp="$_BREW_CHECK_STATE/last-check"
+    # Befund gilt nur für diesen Lauf. Auch für Direktaufrufer wie brew-up, die das
+    # synchrone Löschen in _brew_outdated_check nicht durchlaufen.
+    rm -f "$stamp.mas-invalid"
+
     local brewfile="${HOMEBREW_BUNDLE_FILE:-${DOTFILES_DIR:-$HOME/dotfiles}/setup/Brewfile}"
+    # Ohne country fragt die API die US-Storefront ab und meldet regional
+    # verfügbare Apps fälschlich als zurückgezogen.
+    local region="${_BREW_CHECK_MAS_REGION:-}"
+    if [[ -z "$region" ]]; then
+        local locale="${$(defaults read -g AppleLocale 2>/dev/null)%%@*}"
+        [[ "$locale" == *_* ]] && region="${(L)locale##*_}"
+    fi
+    [[ "$region" == [a-z][a-z] ]] || region=us
+
     # Pro App sammeln, sonst meldet ein Defekt aus beiden Quellen doppelt
     local -A reasons=()
     local line name id payload count
@@ -112,17 +126,21 @@ _brew_mas_validate() {
 
             # Abbruch statt Weitermachen: ohne Netz wäre jede ID fälschlich "tot"
             payload=$(curl -sf --max-time 10 \
-                "https://itunes.apple.com/lookup?id=${id}&entity=macSoftware") || return
-            count=$(print -r -- "$payload" | jq -r '.resultCount // empty' 2>/dev/null) || return
-            [[ "$count" == 0 ]] && reasons[$name]="ID $id ungültig"
+                "https://itunes.apple.com/lookup?id=${id}&entity=macSoftware&country=${region}") || return
+            # -e und numbers: eine JSON-Fehlerantwort ohne resultCount bricht ab,
+            # statt die App stillschweigend als gültig zu werten
+            count=$(print -r -- "$payload" | jq -e -r '.resultCount | numbers' 2>/dev/null) || return
+            (( count == 0 )) && reasons[$name]="ID $id ungültig"
         done < <(grep '^mas "' "$brewfile" 2>/dev/null)
     fi
 
-    # mas meldet gewanderte Bundle-IDs installierter Apps nur mit --verbose
-    local warn
+    # mas meldet gewanderte Bundle-IDs installierter Apps nur mit --verbose.
+    # Auf den Marker des Aufrufers filtern, nicht auf den Fehlertext: der hat
+    # sich zwischen mas 7.0.0 und Upstream bereits geändert.
+    local warn marker='; was expected to identify: '
     while IFS= read -r warn; do
-        [[ "$warn" == Warning:*"No apps found"* ]] || continue
-        name="${warn##*expected to identify: }"
+        [[ "$warn" == *"$marker"* ]] || continue
+        name="${warn##*$marker}"
         [[ -n "$name" ]] || continue
         reasons[$name]="${reasons[$name]:+${reasons[$name]}, }Bundle-ID gewandert"
     done < <(mas outdated --verbose 2>&1)
