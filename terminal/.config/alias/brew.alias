@@ -58,11 +58,13 @@ brew-up() {
     # Timer zurücksetzen – nächster Check erst wieder nach _BREW_CHECK_INTERVAL
     [[ -d "${_BREW_CHECK_STATE:-}" ]] && {
         touch "$_BREW_CHECK_STATE/last-check"
-        rm -f "$_BREW_CHECK_STATE/last-check.result" \
-              "$_BREW_CHECK_STATE/last-check.mas-invalid"
+        rm -f "$_BREW_CHECK_STATE/last-check.result"
+        # mas upgrade repariert keine zurückgezogene Store-ID: neu prüfen statt verwerfen
+        _brew_mas_validate
     }
-    # Session-Flag zurücksetzen (Meldung erlauben falls erneut veraltet)
+    # Session-Flags zurücksetzen (Meldung erlauben falls erneut veraltet)
     _BREW_NOTIFIED=0
+    _BREW_MAS_NOTIFIED=0
 }
 
 # ------------------------------------------------------------
@@ -86,6 +88,7 @@ typeset -g _BREW_CHECK_MAS_IDS="${_BREW_CHECK_MAS_IDS:-on}"
 typeset -g _BREW_CHECK_MAS_TITLE="${_BREW_CHECK_MAS_TITLE:- Mac App Store}"
 typeset -g _BREW_CHECK_MAS_MESSAGE="${_BREW_CHECK_MAS_MESSAGE:-{count\} ohne Store-Eintrag, Brewfile prüfen}"
 typeset -gi _BREW_NOTIFIED=0
+typeset -gi _BREW_MAS_NOTIFIED=0
 
 # Brewfile-IDs gegen den Store prüfen – fängt ab, dass Apple ein Listing zurückzieht.
 # Läuft im Hintergrund (Netzwerk). Bei Fehlern lieber nichts melden als falsch melden.
@@ -96,8 +99,9 @@ _brew_mas_validate() {
     command -v jq >/dev/null 2>&1 || return
 
     local stamp="$_BREW_CHECK_STATE/last-check"
-    local brewfile="${HOMEBREW_BUNDLE_FILE:-}"
-    local -a invalid=()
+    local brewfile="${HOMEBREW_BUNDLE_FILE:-${DOTFILES_DIR:-$HOME/dotfiles}/setup/Brewfile}"
+    # Pro App sammeln, sonst meldet ein Defekt aus beiden Quellen doppelt
+    local -A reasons=()
     local line name id payload count
 
     if [[ -r "$brewfile" ]]; then
@@ -110,7 +114,7 @@ _brew_mas_validate() {
             payload=$(curl -sf --max-time 10 \
                 "https://itunes.apple.com/lookup?id=${id}&entity=macSoftware") || return
             count=$(print -r -- "$payload" | jq -r '.resultCount // empty' 2>/dev/null) || return
-            [[ "$count" == 0 ]] && invalid+=("$name ($id)")
+            [[ "$count" == 0 ]] && reasons[$name]="ID $id ungültig"
         done < <(grep '^mas "' "$brewfile" 2>/dev/null)
     fi
 
@@ -119,11 +123,16 @@ _brew_mas_validate() {
     while IFS= read -r warn; do
         [[ "$warn" == Warning:*"No apps found"* ]] || continue
         name="${warn##*expected to identify: }"
-        [[ -n "$name" ]] && invalid+=("$name (Bundle-ID gewandert)")
+        [[ -n "$name" ]] || continue
+        reasons[$name]="${reasons[$name]:+${reasons[$name]}, }Bundle-ID gewandert"
     done < <(mas outdated --verbose 2>&1)
 
-    if (( ${#invalid} > 0 )); then
-        print -l "${(@u)invalid}" > "$stamp.mas-invalid.tmp" \
+    if (( ${#reasons} > 0 )); then
+        local -a invalid=()
+        for name in "${(@ko)reasons}"; do
+            invalid+=("$name (${reasons[$name]})")
+        done
+        print -l "${invalid[@]}" > "$stamp.mas-invalid.tmp" \
             && mv "$stamp.mas-invalid.tmp" "$stamp.mas-invalid" \
             || rm -f "$stamp.mas-invalid.tmp"
     else
@@ -146,6 +155,10 @@ _brew_outdated_check() {
 
     # Sofort aktualisieren (Race-Condition-Schutz bei mehreren Shells)
     touch "$stamp"
+
+    # Defektstatus gehört zum Lauf: Bricht die Netzprüfung unten ab, darf kein
+    # Ergebnis des Vorlaufs weitergemeldet werden.
+    rm -f "$stamp.mas-invalid"
 
     # Background: Index aktualisieren (Netzwerk, blockiert nicht)
     {
@@ -198,31 +211,29 @@ _brew_check_emit() {
 
 _brew_outdated_notify() {
     [[ "$_BREW_CHECK_NOTIFY" == off ]] && return
-    # Einmal pro Session anzeigen (Datei bleibt für neue Sessions)
-    (( _BREW_NOTIFIED )) && return
     local stamp="$_BREW_CHECK_STATE/last-check"
-    local -i shown=0
     local count
 
-    if [[ -f "$stamp.result" ]]; then
+    # Getrennte Flags: Der MAS-Befund trifft erst nach dem Hintergrundjob ein und
+    # würde von einem gemeinsamen Flag für die restliche Session verschluckt.
+    if (( ! _BREW_NOTIFIED )) && [[ -f "$stamp.result" ]]; then
         count=$(<"$stamp.result")
         if (( count > 0 )); then
             _brew_check_emit "$_BREW_CHECK_TITLE" "${_BREW_CHECK_MESSAGE//\{count\}/$count}"
-            shown=1
+            typeset -g _BREW_NOTIFIED=1
         fi
     fi
 
     # Getrennte Meldung: tote Store-IDs sind kein Update, sondern ein Defekt
-    if [[ -f "$stamp.mas-invalid" ]]; then
+    if (( ! _BREW_MAS_NOTIFIED )) && [[ "$_BREW_CHECK_MAS_IDS" != off ]] \
+        && [[ -f "$stamp.mas-invalid" ]]; then
         local -a broken=("${(f)$(<"$stamp.mas-invalid")}")
         if (( ${#broken} > 0 )); then
             _brew_check_emit "$_BREW_CHECK_MAS_TITLE" \
                 "${_BREW_CHECK_MAS_MESSAGE//\{count\}/${#broken}}: ${(j:, :)broken}"
-            shown=1
+            typeset -g _BREW_MAS_NOTIFIED=1
         fi
     fi
-
-    (( shown )) && typeset -g _BREW_NOTIFIED=1
 }
 
 autoload -Uz add-zsh-hook
