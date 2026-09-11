@@ -94,12 +94,31 @@ typeset -gi _BREW_MAS_NOTIFIED=0
 # Brewfile-IDs gegen den Store prüfen – fängt ab, dass Apple ein Listing zurückzieht.
 # Läuft im Hintergrund (Netzwerk). Bei Fehlern lieber nichts melden als falsch melden.
 _brew_mas_validate() {
+    setopt LOCAL_OPTIONS extended_glob
     [[ -n "$_BREW_CHECK_STATE" ]] || return
     local stamp="$_BREW_CHECK_STATE/last-check"
+    local lock="$stamp.lock"
+
+    # Serialisieren: brew-up ruft direkt auf und umgeht den Zeitstempeltest, zwei
+    # Shells können ihn fast gleichzeitig passieren. mkdir ist atomar. Ein Lock
+    # aus einem abgebrochenen Lauf verfällt nach zehn Minuten.
+    if ! mkdir "$lock" 2>/dev/null; then
+        [[ -n "$lock"(#qN/mm+10) ]] || return
+        rmdir "$lock" 2>/dev/null
+        mkdir "$lock" 2>/dev/null || return
+    fi
+
+    _brew_mas_validate_locked "$stamp"
+    rmdir "$lock" 2>/dev/null
+}
+
+_brew_mas_validate_locked() {
+    setopt LOCAL_OPTIONS extended_glob
+    local stamp="$1"
     # Invariante: Der veröffentlichte Status ist immer das Ergebnis genau eines
     # vollständigen Laufs. Deshalb zuerst verwerfen, vor allen Guards – sonst
     # überlebt er jeden Early Return und wird als aktueller Befund gemeldet.
-    rm -f "$stamp.mas-invalid" "$stamp.mas-invalid.tmp"
+    rm -f "$stamp".mas-invalid(|.*)(#qN)
 
     [[ "$_BREW_CHECK_MAS_IDS" == off ]] && return
     command -v mas >/dev/null 2>&1 || return
@@ -167,11 +186,13 @@ _brew_mas_validate() {
         for name in "${(@ko)reasons}"; do
             invalid+=("$name (${reasons[$name]})")
         done
-        print -l "${invalid[@]}" > "$stamp.mas-invalid.tmp" \
-            && mv "$stamp.mas-invalid.tmp" "$stamp.mas-invalid" \
-            || rm -f "$stamp.mas-invalid.tmp"
-    else
-        rm -f "$stamp.mas-invalid" "$stamp.mas-invalid.tmp"
+        # Eigene Zwischendatei pro Lauf, damit sich zwei Läufe nicht gegenseitig
+        # halbfertige Inhalte veröffentlichen
+        local tmp
+        tmp=$(mktemp "$stamp.mas-invalid.XXXXXX") || return
+        print -l "${invalid[@]}" > "$tmp" \
+            && mv "$tmp" "$stamp.mas-invalid" \
+            || rm -f "$tmp"
     fi
 }
 
@@ -195,7 +216,7 @@ _brew_outdated_check() {
     # ist immer das Ergebnis genau eines vollständigen Laufs, deshalb zuerst
     # verwerfen. Für mas-invalid schließt das zusätzlich die Lücke, bis der
     # Hintergrundjob unten fertig ist.
-    rm -f "$stamp.result" "$stamp.result.tmp" "$stamp.mas-invalid"
+    rm -f "$stamp.result" "$stamp.result.tmp" "$stamp".mas-invalid(|.*)(#qN)
 
     # Background: Index aktualisieren (Netzwerk, blockiert nicht)
     {
