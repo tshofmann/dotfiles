@@ -94,25 +94,28 @@ typeset -gi _BREW_MAS_NOTIFIED=0
 # Brewfile-IDs gegen den Store prüfen – fängt ab, dass Apple ein Listing zurückzieht.
 # Läuft im Hintergrund (Netzwerk). Bei Fehlern lieber nichts melden als falsch melden.
 _brew_mas_validate() {
+    [[ -n "$_BREW_CHECK_STATE" ]] || return
+    local stamp="$_BREW_CHECK_STATE/last-check"
+    # Invariante: Der veröffentlichte Status ist immer das Ergebnis genau eines
+    # vollständigen Laufs. Deshalb zuerst verwerfen, vor allen Guards – sonst
+    # überlebt er jeden Early Return und wird als aktueller Befund gemeldet.
+    rm -f "$stamp.mas-invalid" "$stamp.mas-invalid.tmp"
+
     [[ "$_BREW_CHECK_MAS_IDS" == off ]] && return
     command -v mas >/dev/null 2>&1 || return
     command -v curl >/dev/null 2>&1 || return
     command -v jq >/dev/null 2>&1 || return
 
-    local stamp="$_BREW_CHECK_STATE/last-check"
-    # Befund gilt nur für diesen Lauf. Auch für Direktaufrufer wie brew-up, die das
-    # synchrone Löschen in _brew_outdated_check nicht durchlaufen.
-    rm -f "$stamp.mas-invalid"
-
     local brewfile="${HOMEBREW_BUNDLE_FILE:-${DOTFILES_DIR:-$HOME/dotfiles}/setup/Brewfile}"
-    # Ohne country fragt die API die US-Storefront ab und meldet regional
-    # verfügbare Apps fälschlich als zurückgezogen.
-    local region="${_BREW_CHECK_MAS_REGION:-}"
+    # Ohne country antwortet die API aus der US-Storefront und meldet regional
+    # verfügbare Apps fälschlich als zurückgezogen. mas kennt die effektive
+    # Storefront inklusive Regionen ohne eigenen Store (LI liefert CH).
+    local region="${(L)_BREW_CHECK_MAS_REGION}"
     if [[ -z "$region" ]]; then
-        local locale="${$(defaults read -g AppleLocale 2>/dev/null)%%@*}"
-        [[ "$locale" == *_* ]] && region="${(L)locale##*_}"
+        region=$(mas config --json 2>/dev/null | jq -e -r '.store | strings') || return
+        region="${(L)region}"
     fi
-    [[ "$region" == [a-z][a-z] ]] || region=us
+    [[ "$region" == [a-z][a-z] ]] || return
 
     # Pro App sammeln, sonst meldet ein Defekt aus beiden Quellen doppelt
     local -A reasons=()
@@ -135,6 +138,12 @@ _brew_mas_validate() {
     fi
 
     # mas meldet gewanderte Bundle-IDs installierter Apps nur mit --verbose.
+    # Exit-Code statt Prozess-Substitution: mas fängt Lookup-Fehler pro App ab,
+    # zählt sie aber intern und endet dann mit Exit 1. Ohne diese Prüfung würde
+    # eine unvollständige Liste als vollständiges Ergebnis veröffentlicht.
+    local mas_out
+    mas_out=$(mas outdated --verbose 2>&1) || return
+
     # Auf den Marker des Aufrufers filtern, nicht auf den Fehlertext: der hat
     # sich zwischen mas 7.0.0 und Upstream bereits geändert.
     local warn marker='; was expected to identify: '
@@ -143,7 +152,7 @@ _brew_mas_validate() {
         name="${warn##*$marker}"
         [[ -n "$name" ]] || continue
         reasons[$name]="${reasons[$name]:+${reasons[$name]}, }Bundle-ID gewandert"
-    done < <(mas outdated --verbose 2>&1)
+    done <<< "$mas_out"
 
     if (( ${#reasons} > 0 )); then
         local -a invalid=()
@@ -174,9 +183,11 @@ _brew_outdated_check() {
     # Sofort aktualisieren (Race-Condition-Schutz bei mehreren Shells)
     touch "$stamp"
 
-    # Defektstatus gehört zum Lauf: Bricht die Netzprüfung unten ab, darf kein
-    # Ergebnis des Vorlaufs weitergemeldet werden.
-    rm -f "$stamp.mas-invalid"
+    # Gleiche Invariante wie in _brew_mas_validate: Ein veröffentlichter Status
+    # ist immer das Ergebnis genau eines vollständigen Laufs, deshalb zuerst
+    # verwerfen. Für mas-invalid schließt das zusätzlich die Lücke, bis der
+    # Hintergrundjob unten fertig ist.
+    rm -f "$stamp.result" "$stamp.result.tmp" "$stamp.mas-invalid"
 
     # Background: Index aktualisieren (Netzwerk, blockiert nicht)
     {
@@ -188,7 +199,9 @@ _brew_outdated_check() {
     # Synchron: Lokalen Index lesen (~1s, kein Netzwerk)
     local brew_count=0 mas_count=0
     local brew_out
-    brew_out=$(HOMEBREW_NO_AUTO_UPDATE=1 brew outdated --quiet 2>/dev/null)
+    # Exit-Code prüfen, sonst ist ein Fehlschlag nicht von "keine Updates"
+    # unterscheidbar. Beide Befehle liefern 0, auch wenn sie Treffer melden.
+    brew_out=$(HOMEBREW_NO_AUTO_UPDATE=1 brew outdated --quiet 2>/dev/null) || return
     if [[ -n "$brew_out" ]]; then
         local -a _brew_lines=("${(f)brew_out}")
         brew_count=${#_brew_lines}
@@ -196,7 +209,7 @@ _brew_outdated_check() {
 
     if command -v mas >/dev/null 2>&1; then
         local mas_out
-        mas_out=$(mas outdated 2>/dev/null)
+        mas_out=$(mas outdated 2>/dev/null) || return
         if [[ -n "$mas_out" ]]; then
             local -a _mas_lines=("${(f)mas_out}")
             mas_count=${#_mas_lines}
@@ -208,8 +221,6 @@ _brew_outdated_check() {
         echo "$total" > "$stamp.result.tmp" \
             && mv "$stamp.result.tmp" "$stamp.result" \
             || rm -f "$stamp.result.tmp"
-    else
-        rm -f "$stamp.result" "$stamp.result.tmp"
     fi
 }
 
